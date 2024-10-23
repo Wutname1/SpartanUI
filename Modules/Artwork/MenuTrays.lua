@@ -1,4 +1,4 @@
-local _G, SUI = _G, SUI
+local _G, SUI, L = _G, SUI, SUI.L
 local module = SUI:GetModule('Artwork') ---@type SUI.Module.Artwork
 module.Trays = {}
 local trayWatcher = CreateFrame('Frame')
@@ -16,6 +16,8 @@ local SetBarVisibility = function(side, state)
 		['BT4BarBagBar'] = 'right',
 		['BT4BarMicroMenu'] = 'right',
 	}
+	if not SUI.DB.Artwork.Trays[SUI.DB.Artwork.Style][side].enabled then return end
+
 	for k, v in pairs(bt4Positions) do
 		if _G[k] and v == side and _G[k].isMoved and not _G[k].isMoved() then
 			if state == 'hide' then
@@ -34,7 +36,10 @@ local trayWatcherEvents = function()
 	module:updateOffset()
 
 	for _, key in ipairs(trayIDs) do
-		if SUI.DB.Artwork.SlidingTrays[key].collapsed then
+		if not SUI.DB.Artwork.Trays[SUI.DB.Artwork.Style][key].enabled then
+			module.Trays[key].expanded:Hide()
+			module.Trays[key].collapsed:Hide()
+		elseif SUI.DB.Artwork.SlidingTrays[key].collapsed then
 			module.Trays[key].expanded:Hide()
 			module.Trays[key].collapsed:Show()
 			SetBarVisibility(key, 'hide')
@@ -73,6 +78,7 @@ end
 -- Artwork Stuff
 function module:SlidingTrays(StyleSettings)
 	settings = StyleSettings
+	module:Options()
 
 	for _, key in ipairs(trayIDs) do
 		if not module.Trays[key] then
@@ -163,10 +169,45 @@ function module:SlidingTrays(StyleSettings)
 	trayWatcher:RegisterEvent('ZONE_CHANGED')
 	trayWatcher:RegisterEvent('ZONE_CHANGED_INDOORS')
 	trayWatcher:RegisterEvent('ZONE_CHANGED_NEW_AREA')
-	if SUI.IsRetail then
-		trayWatcher:RegisterEvent('UNIT_EXITED_VEHICLE')
-		trayWatcher:RegisterEvent('PET_BATTLE_CLOSE')
-	end
+	trayWatcher:RegisterEvent('UNIT_EXITED_VEHICLE')
+	trayWatcher:RegisterEvent('PET_BATTLE_CLOSE')
 
 	return module.Trays
+end
+
+function module:Options()
+	if not SUI.DB.Artwork.Trays then SUI.DB.Artwork.Trays = {} end
+	if not SUI.DB.Artwork.Trays[SUI.DB.Artwork.Style] then SUI.DB.Artwork.Trays[SUI.DB.Artwork.Style] = {
+		left = { enabled = true },
+		right = { enabled = true },
+	} end
+
+	SUI.opt.args.Artwork.args.Trays = {
+		name = L['Slider Trays'],
+		type = 'group',
+		args = {
+			TrayLeftEnabled = {
+				name = L['Enable left tray'],
+				type = 'toggle',
+				order = 3,
+				get = function(info)
+					return SUI.DB.Artwork.Trays[SUI.DB.Artwork.Style].left.enabled
+				end,
+				set = function(info, val)
+					SUI.DB.Artwork.Trays[SUI.DB.Artwork.Style].left.enabled = val
+				end,
+			},
+			TrayRightEnabled = {
+				name = L['Enable right tray'],
+				type = 'toggle',
+				order = 6,
+				get = function(info)
+					return SUI.DB.Artwork.Trays[SUI.DB.Artwork.Style].right.enabled
+				end,
+				set = function(info, val)
+					SUI.DB.Artwork.Trays[SUI.DB.Artwork.Style].right.enabled = val
+				end,
+			},
+		},
+	}
 end
