@@ -128,7 +128,8 @@ end
 
 function addon.BugWindow.Create()
 	window = CreateFrame('Frame', 'SUIErrorWindow', UIParent, 'SettingsFrameTemplate')
-	window:SetFrameStrata('DIALOG')
+	window:SetFrameStrata('FULLSCREEN')
+	window:SetFrameLevel(600)
 	window:SetSize(850, 500)
 	window:SetPoint('CENTER')
 	window:SetMovable(true)
