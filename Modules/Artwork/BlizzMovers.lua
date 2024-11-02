@@ -179,6 +179,8 @@ local function AbilityBars()
 	MoveIt:CreateMover(ExtraActionBarHolder, 'ExtraActionBar', 'Extra action button', nil, 'Blizzard UI')
 	MoveIt:CreateMover(ZoneAbilityHolder, 'ZoneAbility', 'Zone ability button', nil, 'Blizzard UI')
 
+	ExtraActionBarHolder:EnableMouse(false)
+	ZoneAbilityHolder:EnableMouse(false)
 	-- Update the layout when new frames are added
 	hooksecurefunc(ExtraAbilityContainer, 'AddFrame', function()
 		ExtraAB.Reparent()
