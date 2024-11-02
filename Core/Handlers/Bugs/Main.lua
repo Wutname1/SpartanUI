@@ -18,6 +18,8 @@ local function InitializeMinimapButton()
 		OnClick = function(self, button)
 			if IsAltKeyDown() then
 				BugGrabber:Reset()
+				addon.BugWindow.ResetUI()
+				addon:updatemapIcon()
 			elseif button == 'RightButton' then
 				Settings.OpenToCategory(addon.settingsCategory.ID)
 			else

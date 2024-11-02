@@ -238,15 +238,8 @@ function addon.BugWindow.Create()
 	clearAllBtn:SetPoint('BOTTOMRIGHT', search, 'TOPRIGHT', 0, 5)
 	clearAllBtn:SetScript('OnClick', function()
 		BugGrabber:Reset()
-		-- Reset the UI
-		currentErrorList = {}
-		currentErrorIndex = nil
-		updateDisplay(true)
-
-		-- Reset the MiniMap Icon
-		if addon.MiniMapIcon then
-			addon.MiniMapIcon:Reset() -- Assuming there's a Reset method for the MiniMap Icon
-		end
+		addon.BugWindow.ResetUI()
+		addon:updatemapIcon()
 	end)
 	window.Buttons.ClearAll = clearAllBtn
 
@@ -303,4 +296,11 @@ end
 
 function addon.BugWindow:IsShown()
 	return window and window:IsShown()
+end
+
+addon.BugWindow.ResetUI = function()
+	-- Reset the UI
+	currentErrorList = {}
+	currentErrorIndex = nil
+	updateDisplay(true)
 end
