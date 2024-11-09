@@ -1107,7 +1107,7 @@ function SUI:OnInitialize()
 			if arg == 'reset' then
 				_G.SUIErrorDisplay:Reset()
 			else
-				_G.SUIErrorDisplay:OpenErrWindow()
+				_G.SUIErrorDisplay:OpenErrorWindow()
 			end
 		end
 

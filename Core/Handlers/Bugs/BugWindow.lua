@@ -237,9 +237,7 @@ function addon.BugWindow.Create()
 	clearAllBtn:SetSize(120, 22)
 	clearAllBtn:SetPoint('BOTTOMRIGHT', search, 'TOPRIGHT', 0, 5)
 	clearAllBtn:SetScript('OnClick', function()
-		BugGrabber:Reset()
-		addon.BugWindow.ResetUI()
-		addon:updatemapIcon()
+		addon.Reset()
 	end)
 	window.Buttons.ClearAll = clearAllBtn
 

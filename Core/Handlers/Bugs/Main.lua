@@ -11,51 +11,69 @@ local icon = LibStub('LibDBIcon-1.0')
 addon.icon = icon
 
 local function InitializeMinimapButton()
-	local SUIErrorLauncher = LDB:NewDataObject(addonName, {
-		type = 'data source',
-		text = '0',
-		icon = 'Interface\\AddOns\\SpartanUI\\images\\MinimapError',
-		OnClick = function(self, button)
-			if IsAltKeyDown() then
-				BugGrabber:Reset()
-				addon.BugWindow.ResetUI()
-				addon:updatemapIcon()
-			elseif button == 'RightButton' then
-				Settings.OpenToCategory(addon.settingsCategory.ID)
+	-- Create a Icon via standard wow frame
+	local button = CreateFrame('Button', MinimapIconName, MinimapCluster)
+	button:SetSize(25, 25)
+	button:SetPoint('BOTTOM', MinimapCluster.BorderTop, 'TOP', 0, 2)
+	button:SetFrameLevel(500)
+	button:SetFrameStrata('MEDIUM')
+	button:SetNormalTexture('Interface\\AddOns\\SpartanUI\\images\\old_error.png')
+	button:SetHighlightTexture('Interface\\AddOns\\SpartanUI\\images\\old_error.png')
+	button:SetPushedTexture('Interface\\AddOns\\SpartanUI\\images\\old_error.png')
+	button:SetScript('OnEnter', function(self)
+		GameTooltip:SetOwner(self, 'TOP')
+		local errorsCurrent = addon.ErrorHandler:GetErrors(BugGrabber:GetSessionId())
+		local errorsTotal = #addon.ErrorHandler:GetErrors()
+		if #errorsCurrent == 0 then
+			if errorsTotal ~= 0 then
+				GameTooltip:AddLine('You no new bugs, but you have ' .. errorsTotal .. ' saved bugs.')
 			else
-				addon.BugWindow:OpenErrorWindow()
+				GameTooltip:AddLine('You have no bugs, yay!')
 			end
-		end,
-		OnTooltipShow = function(tt)
-			local hint = '|cffeda55fClick|r to open bug window with the last bug. |cffeda55fAlt-Click|r to clear all saved errors.'
+		else
+			GameTooltip:AddLine('SpartanUI error handler')
 			local line = '%d. %s (x%d)'
-			local errs = addon.ErrorHandler:GetErrors(BugGrabber:GetSessionId())
-			if #errs == 0 then
-				tt:AddLine('You have no bugs, yay!')
-			else
-				tt:AddLine('SpartanUI error handler')
-				for i, err in next, errs do
-					tt:AddLine(line:format(i, addon.ErrorHandler:ColorText(err.message), err.counter), 0.5, 0.5, 0.5)
-					if i > 8 then break end
-				end
+			for i, err in next, errorsCurrent do
+				GameTooltip:AddLine(line:format(i, addon.ErrorHandler:ColorText(err.message), err.counter), 0.5, 0.5, 0.5)
+				if i > 8 then break end
 			end
-			tt:AddLine(' ')
-			tt:AddLine(hint, 0.2, 1, 0.2, 1)
-		end,
-	})
+		end
+		GameTooltip:AddLine(' ')
+		GameTooltip:AddLine('|cffeda55fClick|r to open bug window.\n|cffeda55fAlt-Click|r to clear all saved errors.', 0.2, 1, 0.2, 1)
+		GameTooltip:Show()
+	end)
+	button:RegisterForClicks('AnyUp')
+	button:SetScript('OnClick', function(self, button)
+		if IsAltKeyDown() then
+			addon.Reset()
+		else
+			addon.BugWindow:OpenErrorWindow()
+		end
+	end)
+	button:Hide()
+	addon.MinimapButton = button
+end
 
-	icon:Register(MinimapIconName, SUIErrorLauncher, addon.Config.db.minimapIcon)
+addon.Reset = function()
+	BugGrabber:Reset()
+	addon.BugWindow:ResetUI()
+	addon:updatemapIcon()
 end
 
 addon.onError = function()
 	-- If the frame is shown, we need to update it.
-	if (not InCombatLockdown() and addon.Config:Get('autoPopup')) or (addon.BugWindow:IsShown()) then addon.BugWindow:OpenErrorWindow() end
+	if (not InCombatLockdown() and addon.Config:Get('autoPopup')) or (addon.BugWindow:IsShown()) then
+		local errorsCurrent = addon.ErrorHandler:GetErrors(BugGrabber:GetSessionId())
+		if errorsCurrent and #errorsCurrent > 0 then addon.BugWindow:OpenErrorWindow() end
+	end
 
 	addon:updatemapIcon()
 end
 
 local function OnAddonLoaded(self, event, loadedAddonName)
 	if loadedAddonName ~= addonName then return end
+	-- Initialize the minimap button
+	InitializeMinimapButton()
 
 	-- Initialize saved variables and options
 	addon.Config:Initialize()
@@ -65,9 +83,6 @@ local function OnAddonLoaded(self, event, loadedAddonName)
 
 	-- Initialize the error handler
 	addon.ErrorHandler:Initialize()
-
-	-- Initialize the minimap button
-	InitializeMinimapButton()
 
 	-- Create slash command
 	SLASH_SUIERRORS1 = '/suierrors'
@@ -105,16 +120,27 @@ _G.SUIErrorDisplay = {
 	CloseErrorWindow = function()
 		addon.BugWindow:CloseErrorWindow()
 	end,
+	Reset = function()
+		addon.Reset()
+	end,
 }
 
 -- Add a function to update the minimap icon
 function addon:updatemapIcon()
-	if icon:GetMinimapButton(MinimapIconName) then icon:Refresh(addonName) end
-
-	local count = #addon.ErrorHandler:GetErrors()
-	if count ~= 0 then
-		icon:Show(MinimapIconName)
+	local errorsCurrent = addon.ErrorHandler:GetErrors(BugGrabber:GetSessionId())
+	local errorsTotal = #addon.ErrorHandler:GetErrors()
+	if not addon.MinimapButton then InitializeMinimapButton() end
+	if errorsTotal ~= 0 and addon.MinimapButton then
+		addon.MinimapButton:Show()
+		-- Update Texture
+		if errorsCurrent and #errorsCurrent > 0 then
+			addon.MinimapButton:SetNormalTexture('Interface\\AddOns\\SpartanUI\\images\\error.png')
+			addon.MinimapButton:SetHighlightTexture('Interface\\AddOns\\SpartanUI\\images\\error.png')
+		else
+			addon.MinimapButton:SetNormalTexture('Interface\\AddOns\\SpartanUI\\images\\old_error.png')
+			addon.MinimapButton:SetHighlightTexture('Interface\\AddOns\\SpartanUI\\images\\old_error.png')
+		end
 	else
-		icon:Hide(MinimapIconName)
+		addon.MinimapButton:Hide()
 	end
 end
