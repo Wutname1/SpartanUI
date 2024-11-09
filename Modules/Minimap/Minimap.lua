@@ -448,7 +448,7 @@ end
 
 local isFrameIgnored = function(item)
 	local ignored = { 'HybridMinimap', 'AAP-Classic', 'HandyNotes' }
-	local WildcardIgnore = { 'Questie', 'HandyNotes' }
+	local WildcardIgnore = { 'Questie', 'HandyNotes', 'TTMinimap' }
 	if not item or not item.GetName then return false end
 
 	local name = item:GetName()
