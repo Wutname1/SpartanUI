@@ -31,7 +31,7 @@ local function InitializeMinimapButton()
 				GameTooltip:AddLine('You have no bugs, yay!')
 			end
 		else
-			GameTooltip:AddLine('SpartanUI error handler')
+			GameTooltip:AddLine('|cffffffffSpartan|cffe21f1fUI|r error handler')
 			local line = '%d. %s (x%d)'
 			for i, err in next, errorsCurrent do
 				GameTooltip:AddLine(line:format(i, addon.ErrorHandler:ColorText(err.message), err.counter), 0.5, 0.5, 0.5)
