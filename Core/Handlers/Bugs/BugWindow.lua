@@ -296,7 +296,7 @@ function addon.BugWindow:IsShown()
 	return window and window:IsShown()
 end
 
-addon.BugWindow.ResetUI = function()
+addon.BugWindow.Reset = function()
 	-- Reset the UI
 	currentErrorList = {}
 	currentErrorIndex = nil

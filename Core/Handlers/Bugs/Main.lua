@@ -56,7 +56,8 @@ end
 
 addon.Reset = function()
 	BugGrabber:Reset()
-	addon.BugWindow:ResetUI()
+	addon.ErrorHandler:Reset()
+	addon.BugWindow:Reset()
 	addon:updatemapIcon()
 end
 

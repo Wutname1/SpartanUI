@@ -241,7 +241,7 @@ function addon.ErrorHandler:Reset()
 	wipe(errorDB)
 	wipe(sessionList)
 	self:Initialize()
-	print(L['All stored errors have been wiped.'])
+	print(L['|cffffffffSpartan|cffe21f1fUI|r: All stored errors have been wiped.'])
 end
 
 return addon.ErrorHandler

@@ -1110,10 +1110,12 @@ function SUI:OnInitialize()
 				_G.SUIErrorDisplay:OpenErrorWindow()
 			end
 		end
-
-		SUI:AddChatCommand('errors', ErrHandler, 'Display SUI Error handler', {
+		local desc = 'Display SUI Error handler'
+		local args = {
 			reset = 'Clear all saved errors',
-		})
+		}
+		SUI:AddChatCommand('error', ErrHandler, desc, args)
+		SUI:AddChatCommand('errors', ErrHandler, desc, args)
 	end
 end
 
