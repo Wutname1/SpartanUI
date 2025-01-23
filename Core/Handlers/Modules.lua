@@ -18,7 +18,7 @@ function SUI:IsModuleEnabled(moduleName)
 		if not string.match(moduleName.name, 'Module_') then return true end
 		moduleName = SUI:GetModuleName(moduleName)
 	end
-	local moduleObj = SUI:GetModule('Module_' .. moduleName)
+	local moduleObj = SUI:GetModule('Module_' .. moduleName, true)
 	if moduleObj and moduleObj.override then return false end
 
 	if SUI.DB.DisabledModules[moduleName] then return false end
