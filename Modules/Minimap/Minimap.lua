@@ -9,6 +9,7 @@ module.Core = true
 module.Settings = nil ---@type SUI.Style.Settings.Minimap
 local Registry = {}
 local MinimapUpdater, VisibilityWatcher = CreateFrame('Frame'), CreateFrame('Frame')
+VisibilityWatcher.IsInControl = false
 ---@class SUI.Minimap.Holder : FrameExpanded, SUI.MoveIt.MoverParent
 local SUIMinimap = CreateFrame('Frame', 'SUI_Minimap')
 
@@ -629,12 +630,14 @@ function module:Update(fullUpdate)
 	-- If minimap default location is under the minimap setup scripts to move it
 	if module.Settings.UnderVehicleUI and SUI.DB.Artwork.VehicleUI and not VisibilityWatcher.hooked and (not MoveIt:IsMoved('Minimap')) then
 		local OnHide = function(args)
+			VisibilityWatcher.IsInControl = true
 			if SUI:IsModuleEnabled('Minimap') and SUI.DB.Artwork.VehicleUI and not MoveIt:IsMoved('Minimap') and SUIMinimap.position then
 				SUIMinimap:position(strsplit(',', module.Settings.vehiclePosition))
 			end
 		end
 		local OnShow = function(args)
 			if SUI:IsModuleEnabled('Minimap') and SUI.DB.Artwork.VehicleUI and not MoveIt:IsMoved('Minimap') then
+				VisibilityWatcher.IsInControl = false
 				-- Reset to skin position
 				module:UpdatePosition()
 				-- Update Scale
@@ -651,7 +654,7 @@ function module:Update(fullUpdate)
 		VisibilityWatcher.hooked = false
 	end
 
-	if fullUpdate then
+	if fullUpdate and not VisibilityWatcher.IsInControl then
 		module:UpdatePosition()
 		module:UpdateScale()
 	end
@@ -662,6 +665,7 @@ function module:SetActiveStyle(style)
 end
 
 function module:UpdatePosition()
+	print('update position')
 	if module.Settings.position and not MoveIt:IsMoved('Minimap') then
 		local point, anchor, secondaryPoint, x, y = strsplit(',', module.Settings.position)
 		if SUIMinimap.position then
