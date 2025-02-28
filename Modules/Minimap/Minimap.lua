@@ -665,7 +665,6 @@ function module:SetActiveStyle(style)
 end
 
 function module:UpdatePosition()
-	print('update position')
 	if module.Settings.position and not MoveIt:IsMoved('Minimap') then
 		local point, anchor, secondaryPoint, x, y = strsplit(',', module.Settings.position)
 		if SUIMinimap.position then
