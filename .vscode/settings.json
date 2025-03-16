@@ -487,7 +487,10 @@
     "Game12Font",
     "WeeklyRewardsFrame",
     "WeeklyRewards_LoadUI",
-    "UIParentLoadAddOn"
+    "UIParentLoadAddOn",
+    "OverrideActionBar",
+    "UISpecialFrames",
+    "SUI_CustomMover_VehicleMinimapPosition"
   ],
   "Lua.workspace.ignoreDir": [".vscode", "libs/*"],
   "Lua.diagnostics.enable": true,

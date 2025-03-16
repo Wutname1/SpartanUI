@@ -227,93 +227,62 @@ function module:BuildOptions()
 							module:Update(true)
 						end,
 					},
-					UnderVehicleUI = {
-						name = L['Under Vehicle UI'],
-						desc = L['Set to enabled if the minimap is under the Blizzard VehicleUI'],
-						type = 'toggle',
-						width = 'full',
-						order = 290,
-						get = function()
-							return module.Settings.UnderVehicleUI
-						end,
-					},
 					vehiclePosition = {
-						name = L['Vehicle Position'],
+						name = L['Vehicle UI Position'],
 						type = 'group',
-						order = 300,
+						order = 25,
 						inline = true,
-						disabled = function()
-							return not module.Settings.UnderVehicleUI
-						end,
-						get = function(info)
-							local point, anchor, secondaryPoint, x, y = strsplit(',', module.Settings.vehiclePosition)
-							if info[#info] == 'x' then
-								return tonumber(x)
-							elseif info[#info] == 'y' then
-								return tonumber(y)
-							elseif info[#info] == 'anchor' then
-								return point
-							elseif info[#info] == 'relativeTo' then
-								return anchor
-							elseif info[#info] == 'relativePoint' then
-								return secondaryPoint
-							end
-						end,
-						set = function(info, val)
-							local point, anchor, secondaryPoint, x, y = strsplit(',', module.Settings.vehiclePosition)
-
-							if info[#info] == 'x' then
-								x = val
-							elseif info[#info] == 'y' then
-								y = val
-							elseif info[#info] == 'anchor' then
-								point = val
-							elseif info[#info] == 'relativeTo' then
-								anchor = val
-							elseif info[#info] == 'relativePoint' then
-								secondaryPoint = val
-							end
-
-							module.Settings.vehiclePosition = strjoin(',', point, anchor, secondaryPoint, x, y)
-							module.DB.customSettings[SUI.DB.Artwork.Style].vehiclePosition = module.Settings.vehiclePosition
-							module:Update(true)
-						end,
 						args = {
-							x = {
-								name = L['X Axis'],
-								type = 'range',
+							UnderVehicleUI = {
+								name = L['Under Vehicle UI'],
+								desc = L['Set to enabled if the minimap is under the Blizzard VehicleUI'],
+								type = 'toggle',
+								width = 'full',
+								order = 290,
+								get = function()
+									return module.Settings.UnderVehicleUI
+								end,
+							},
+							enable = {
+								name = L['Configure Vehicle Position'],
+								desc = L['Open the mover to set the minimap position when in a vehicle'],
+								type = 'execute',
 								order = 1,
-								min = -200,
-								max = 200,
-								step = 1,
+								func = function()
+									module:VehicleUIMoverShow()
+								end,
 							},
-							y = {
-								name = L['Y Axis'],
-								type = 'range',
+							reset = {
+								name = L['Reset Position'],
+								desc = L['Reset the vehicle minimap position to default'],
+								type = 'execute',
 								order = 2,
-								min = -200,
-								max = 200,
-								step = 1,
+								func = function()
+									local point, anchor, secondaryPoint, x, y = strsplit(',', module.BaseOpt.vehiclePosition)
+									VehicleMover:ClearAllPoints()
+									VehicleMover:SetPoint(point, _G[anchor], secondaryPoint, x, y)
+
+									module.Settings.vehiclePosition = module.BaseOpt.vehiclePosition
+									local currentStyle = SUI.DB.Artwork.Style
+									if module.DB.customSettings[currentStyle] then module.DB.customSettings[currentStyle].vehiclePosition = nil end
+
+									SUI:Print(L['Vehicle minimap position reset to default'])
+								end,
 							},
-							anchor = {
-								name = L['Anchor point'],
-								type = 'select',
+							moveUnderVehicleUI = {
+								name = L['Move minimap under Vehicle UI'],
+								desc = L['Automatically move the minimap to a different position when in a vehicle'],
+								type = 'toggle',
 								order = 3,
-								values = anchorPoints,
-							},
-							relativeTo = {
-								name = 'Relative To',
-								type = 'select',
-								order = 3,
-								values = {
-									['UIParent'] = 'UIParent',
-								},
-							},
-							relativePoint = {
-								name = 'Relative Point',
-								type = 'select',
-								order = 3,
-								values = anchorPoints,
+								get = function()
+									return module.Settings.UnderVehicleUI
+								end,
+								set = function(_, val)
+									module.Settings.UnderVehicleUI = val
+									local currentStyle = SUI.DB.Artwork.Style
+									if not module.DB.customSettings[currentStyle] then module.DB.customSettings[currentStyle] = {} end
+									module.DB.customSettings[currentStyle].UnderVehicleUI = val
+								end,
 							},
 						},
 					},

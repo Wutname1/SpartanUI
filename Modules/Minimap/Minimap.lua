@@ -568,11 +568,12 @@ function module:CreateMover()
 end
 
 function module:SwitchMinimapPosition(inVehicle)
-	local position = inVehicle and self.Settings.vehiclePosition or self.Settings.position
-	if not MoveIt:IsMoved('Minimap') then
-		local point, anchor, secondaryPoint, x, y = strsplit(',', position)
+	if inVehicle then
 		SUIMinimap:ClearAllPoints()
-		SUIMinimap:SetPoint(point, _G[anchor], secondaryPoint, x, y)
+		SUIMinimap:SetPoint('TOPLEFT', SUI_CustomMover_VehicleMinimapPosition)
+	else
+		SUIMinimap:ClearAllPoints()
+		SUIMinimap:SetPoint('TOPLEFT', SUI_Mover_Minimap)
 	end
 end
 
@@ -631,13 +632,12 @@ function module:Update(fullUpdate)
 	if module.Settings.UnderVehicleUI and SUI.DB.Artwork.VehicleUI and not VisibilityWatcher.hooked and (not MoveIt:IsMoved('Minimap')) then
 		local OnHide = function(args)
 			VisibilityWatcher.IsInControl = true
-			if SUI:IsModuleEnabled('Minimap') and SUI.DB.Artwork.VehicleUI and not MoveIt:IsMoved('Minimap') and SUIMinimap.position then
-				SUIMinimap:position(strsplit(',', module.Settings.vehiclePosition))
-			end
+			module:SwitchMinimapPosition(true)
 		end
 		local OnShow = function(args)
 			if SUI:IsModuleEnabled('Minimap') and SUI.DB.Artwork.VehicleUI and not MoveIt:IsMoved('Minimap') then
 				VisibilityWatcher.IsInControl = false
+				module:SwitchMinimapPosition(false)
 				-- Reset to skin position
 				module:UpdatePosition()
 				-- Update Scale
@@ -692,6 +692,124 @@ function module:UpdateScale()
 			MinimapCluster:SetScale(scale)
 		end
 	end
+end
+
+-- Create a vehicle UI mover frame
+local VehicleMover
+
+-- Initialize the vehicle mover
+function module:InitializeVehicleMover()
+	-- Create the vehicle mover with our new reusable function
+	VehicleMover = SUI.MoveIt:CreateCustomMover('Vehicle Minimap Position', module.Settings.vehiclePosition, {
+		width = Minimap:GetWidth(),
+		height = (Minimap:GetHeight() + MinimapCluster.BorderTop:GetHeight() + 15),
+		savePosition = function(position)
+			module.Settings.vehiclePosition = position
+
+			-- Save to user settings
+			local currentStyle = SUI.DB.Artwork.Style
+			if not module.DB.customSettings[currentStyle] then module.DB.customSettings[currentStyle] = {} end
+			module.DB.customSettings[currentStyle].vehiclePosition = position
+		end,
+	})
+
+	VehicleMover.target = SUIMinimap
+
+	-- Register for vehicle events
+	module:RegisterEvent('UNIT_ENTERED_VEHICLE', 'OnVehicleChange')
+	module:RegisterEvent('UNIT_EXITED_VEHICLE', 'OnVehicleChange')
+	module:RegisterEvent('PLAYER_ENTERING_WORLD', 'CheckVehicleStatus')
+
+	-- Check if OverrideActionBar exists and is visible
+	module:RegisterEvent('UPDATE_OVERRIDE_ACTIONBAR', 'CheckOverrideActionBar')
+end
+
+-- Show the vehicle minimap mover
+function module:VehicleUIMoverShow()
+	if InCombatLockdown() then return end
+
+	VehicleMover:Show()
+
+	-- Show a notification to the user
+	SUI:Print(L["You can now position the minimap for when you're in a vehicle. Right-click to reset."])
+end
+
+-- Hide the vehicle minimap mover
+function module:VehicleUIMoverHide()
+	VehicleMover:Hide()
+end
+
+-- Handle vehicle state changes
+function module:OnVehicleChange(event, unit)
+	if unit ~= 'player' then return end
+
+	if event == 'UNIT_ENTERED_VEHICLE' then
+		-- if not firstVehicleDetected and module.Settings.UnderVehicleUI then
+		-- 	firstVehicleDetected = true
+
+		-- 	-- Ask the user if they want to set the vehicle position
+		-- 	StaticPopupDialogs['SUI_MINIMAP_VEHICLE_POSITION'] = {
+		-- 		text = L['Would you like to set a custom position for your minimap when in a vehicle?'],
+		-- 		button1 = L['Yes'],
+		-- 		button2 = L['No'],
+		-- 		OnAccept = function()
+		-- 			module:VehicleUIMoverShow()
+		-- 		end,
+		-- 		timeout = 0,
+		-- 		whileDead = true,
+		-- 		hideOnEscape = true,
+		-- 		preferredIndex = 3,
+		-- 	}
+
+		-- 	StaticPopup_Show('SUI_MINIMAP_VEHICLE_POSITION')
+		-- end
+
+		-- Apply the vehicle position
+		module:SwitchMinimapPosition(true)
+	elseif event == 'UNIT_EXITED_VEHICLE' then
+		-- Restore normal position
+		module:SwitchMinimapPosition(false)
+	end
+end
+
+-- Check vehicle status on login or reload
+function module:CheckVehicleStatus()
+	if UnitInVehicle('player') or (OverrideActionBar and OverrideActionBar:IsVisible()) then
+		module:SwitchMinimapPosition(true)
+	else
+		module:SwitchMinimapPosition(false)
+	end
+end
+
+-- Check for OverrideActionBar visibility changes
+function module:CheckOverrideActionBar()
+	C_Timer.After(0.5, function()
+		if OverrideActionBar and OverrideActionBar:IsVisible() then
+			if not module.Settings.firstVehicleDetected and module.Settings.UnderVehicleUI then
+				module.Settings.firstVehicleDetected = true
+				module.DB.customSettings[SUI.DB.Artwork.Style].firstVehicleDetected = true
+
+				StaticPopupDialogs['SUI_MINIMAP_VEHICLE_POSITION'] = {
+					text = L['Would you like to set a custom position for your minimap when in a vehicle?'],
+					button1 = L['Yes'],
+					button2 = L['No'],
+					OnAccept = function()
+						module:VehicleUIMoverShow()
+					end,
+					timeout = 0,
+					whileDead = true,
+					hideOnEscape = true,
+					preferredIndex = 3,
+				}
+
+				StaticPopup_Show('SUI_MINIMAP_VEHICLE_POSITION')
+			end
+
+			module:SwitchMinimapPosition(true)
+		else
+			module:SwitchMinimapPosition(false)
+		end
+	end)
 end
 
 function module:OnInitialize()
@@ -764,6 +882,16 @@ function module:OnEnable()
 
 	-- Initialize Buttons & Style settings
 	module:Update(true)
+
+	module:InitializeVehicleMover()
+
+	SUI:AddChatCommand('vehicleminimap', function()
+		if VehicleMover:IsShown() then
+			module:VehicleUIMoverHide()
+		else
+			module:VehicleUIMoverShow()
+		end
+	end, L['Toggle vehicle minimap mover'])
 
 	-- Setup Options
 	module:BuildOptions()
