@@ -719,6 +719,10 @@ function module:InitializeVehicleMover()
 	module:RegisterEvent('UNIT_ENTERED_VEHICLE', 'OnVehicleChange')
 	module:RegisterEvent('UNIT_EXITED_VEHICLE', 'OnVehicleChange')
 	module:RegisterEvent('PLAYER_ENTERING_WORLD', 'CheckVehicleStatus')
+	-- OnZone change
+	module:RegisterEvent('ZONE_CHANGED_NEW_AREA', function()
+		module:ScheduleTimer(module.CheckOverrideActionBar, 0.2)
+	end)
 
 	-- Check if OverrideActionBar exists and is visible
 	module:RegisterEvent('UPDATE_OVERRIDE_ACTIONBAR', 'CheckOverrideActionBar')
