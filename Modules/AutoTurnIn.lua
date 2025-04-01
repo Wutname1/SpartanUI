@@ -726,7 +726,15 @@ function module.QUEST_GREETING()
 	debug(numAvailableQuests)
 	for i = 1, numActiveQuests do
 		local isComplete = select(2, GetActiveTitle(i))
-		if isComplete then C_GossipInfo.SelectActiveQuest(i) end
+		debug('Option ' .. i .. ' isComplete: ' .. tostring(isComplete))
+		if isComplete then
+			C_GossipInfo.SelectActiveQuest(i)
+			if SelectActiveQuest then
+				debug('Selecting Active Quest ' .. i)
+				---@diagnostic disable-next-line: redundant-parameter
+				SelectActiveQuest(i)
+			end
+		end
 	end
 
 	for i = 1, numAvailableQuests do
