@@ -86,6 +86,37 @@ function module:OnEnable()
 
 		module:SetColor()
 
+		-- Show or hide individual elements based on settings
+		if SUI.DB.Styles.Minimal.HideCenterGraphic then
+			SUI_Art_Minimal_Base1:Hide()
+		else
+			SUI_Art_Minimal_Base1:Show()
+		end
+
+		if SUI.DB.Styles.Minimal.HideTopLeft then
+			SUI_Art_Minimal_Base2:Hide()
+		else
+			SUI_Art_Minimal_Base2:Show()
+		end
+
+		if SUI.DB.Styles.Minimal.HideTopRight then
+			SUI_Art_Minimal_Base3:Hide()
+		else
+			SUI_Art_Minimal_Base3:Show()
+		end
+
+		if SUI.DB.Styles.Minimal.HideBottomLeft then
+			SUI_Art_Minimal_Base4:Hide()
+		else
+			SUI_Art_Minimal_Base4:Show()
+		end
+
+		if SUI.DB.Styles.Minimal.HideBottomRight then
+			SUI_Art_Minimal_Base5:Hide()
+		else
+			SUI_Art_Minimal_Base5:Show()
+		end
+
 		SUI_Art_Minimal:Show()
 	end
 end
@@ -119,11 +150,75 @@ function module:Options()
 					end
 				end,
 			},
+			HideTopLeft = {
+				name = L['Hide Top Left'],
+				type = 'toggle',
+				order = 2,
+				get = function(info)
+					return SUI.DB.Styles.Minimal.HideTopLeft
+				end,
+				set = function(info, val)
+					SUI.DB.Styles.Minimal.HideTopLeft = val
+					if SUI.DB.Styles.Minimal.HideTopLeft then
+						SUI_Art_Minimal_Base2:Hide()
+					else
+						SUI_Art_Minimal_Base2:Show()
+					end
+				end,
+			},
+			HideTopRight = {
+				name = L['Hide Top Right'],
+				type = 'toggle',
+				order = 3,
+				get = function(info)
+					return SUI.DB.Styles.Minimal.HideTopRight
+				end,
+				set = function(info, val)
+					SUI.DB.Styles.Minimal.HideTopRight = val
+					if SUI.DB.Styles.Minimal.HideTopRight then
+						SUI_Art_Minimal_Base3:Hide()
+					else
+						SUI_Art_Minimal_Base3:Show()
+					end
+				end,
+			},
+			HideBottomLeft = {
+				name = L['Hide Bottom Left'],
+				type = 'toggle',
+				order = 4,
+				get = function(info)
+					return SUI.DB.Styles.Minimal.HideBottomLeft
+				end,
+				set = function(info, val)
+					SUI.DB.Styles.Minimal.HideBottomLeft = val
+					if SUI.DB.Styles.Minimal.HideBottomLeft then
+						SUI_Art_Minimal_Base4:Hide()
+					else
+						SUI_Art_Minimal_Base4:Show()
+					end
+				end,
+			},
+			HideBottomRight = {
+				name = L['Hide Bottom Right'],
+				type = 'toggle',
+				order = 5,
+				get = function(info)
+					return SUI.DB.Styles.Minimal.HideBottomRight
+				end,
+				set = function(info, val)
+					SUI.DB.Styles.Minimal.HideBottomRight = val
+					if SUI.DB.Styles.Minimal.HideBottomRight then
+						SUI_Art_Minimal_Base5:Hide()
+					else
+						SUI_Art_Minimal_Base5:Show()
+					end
+				end,
+			},
 			alpha = {
 				name = L['Artwork Color'],
 				type = 'color',
 				hasAlpha = true,
-				order = 2,
+				order = 6,
 				width = 'full',
 				desc = L['XP and Rep Bars are known issues and need a redesign to look right'],
 				get = function(info)

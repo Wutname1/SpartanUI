@@ -674,6 +674,10 @@ local DBdefault = {
 				},
 			},
 			HideCenterGraphic = false,
+			HideBottomRight = false,
+			HideBottomLeft = false,
+			HideTopRight = false,
+			HideTopLeft = false,
 		},
 		Fel = {
 			Artwork = {},

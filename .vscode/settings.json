@@ -490,7 +490,11 @@
     "UIParentLoadAddOn",
     "OverrideActionBar",
     "UISpecialFrames",
-    "SUI_CustomMover_VehicleMinimapPosition"
+    "SUI_CustomMover_VehicleMinimapPosition",
+    "SUI_Art_Minimal_Base2",
+    "SUI_Art_Minimal_Base3",
+    "SUI_Art_Minimal_Base4",
+    "SUI_Art_Minimal_Base5"
   ],
   "Lua.workspace.ignoreDir": [".vscode", "libs/*"],
   "Lua.diagnostics.enable": true,
@@ -526,6 +530,6 @@
     "libs\\oUF_Plugins",
     "Modules",
     "Themes",
-    "~\\.vscode\\extensions\\ketho.wow-api-0.18.2\\Annotations"
+    "~\\.vscode\\extensions\\ketho.wow-api-0.20.6\\Annotations\\Core"
   ]
 }
