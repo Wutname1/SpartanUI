@@ -22,7 +22,6 @@ local function Options()
 					return not module.DB.minimap.engulfed
 				end,
 				set = function(info, val)
-					print(val)
 					module.DB.minimap.engulfed = not val or false
 					module:MiniMap()
 				end,
@@ -92,6 +91,19 @@ function module:OnInitialize()
 		},
 	}
 	SUI.Minimap:Register('Fel', minimapSettings)
+	local minimapSettingsCalmed = {
+		size = { 156, 156 },
+		position = 'CENTER,SUI_Art_Fel_Left,RIGHT,0,-10',
+		engulfed = false,
+		elements = {
+			background = {
+				texture = 'Interface\\AddOns\\SpartanUI\\Themes\\Fel\\Images\\Minimap-Calmed',
+				size = { 162, 162 },
+				position = 'CENTER,Minimap,CENTER,3,-1',
+			},
+		},
+	}
+	SUI.Minimap:Register('FelCalmed', minimapSettingsCalmed)
 
 	local statusBarModule = SUI:GetModule('Artwork.StatusBars') ---@type SUI.Module.Artwork.StatusBars
 	---@type SUI.Style.Settings.StatusBars
@@ -172,21 +184,9 @@ end
 
 -- Minimap
 function module:MiniMap()
-	local enfulfed = {
-		texture = 'Interface\\AddOns\\SpartanUI\\Themes\\Fel\\Images\\Minimap-Engulfed',
-		size = { 220, 220 },
-		position = 'CENTER,Minimap,CENTER,5,23',
-	}
-	local calmed = {
-		texture = 'Interface\\AddOns\\SpartanUI\\Themes\\Fel\\Images\\Minimap-Calmed',
-		size = { 162, 162 },
-		position = 'CENTER,Minimap,CENTER,3,-1',
-	}
-
-	-- if module.DB.minimap.engulfed then
-	-- 	module.DB.minimap.BG = SUI:MergeData(module.DB.minimap.BG, enfulfed, true)
-	-- else
-	-- 	module.DB.minimap.BG = SUI:MergeData(module.DB.minimap.BG, calmed, true)
-	-- end
-	SUI:GetModule('Minimap'):update(true)
+	if module.DB.minimap.engulfed then
+		SUI.Minimap:SetActiveStyle('Fel')
+	else
+		SUI.Minimap:SetActiveStyle('FelCalmed')
+	end
 end

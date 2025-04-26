@@ -7,6 +7,7 @@ module.description = 'CORE: Skins, sizes, and positions the Minimap'
 module.Core = true
 ----------------------------------------------------------------------------------------------------
 module.Settings = nil ---@type SUI.Style.Settings.Minimap
+module.styleOverride = nil ---@type string|nil
 local Registry = {}
 local MinimapUpdater, VisibilityWatcher = CreateFrame('Frame'), CreateFrame('Frame')
 VisibilityWatcher.IsInControl = false
@@ -142,7 +143,7 @@ function module:UpdateSettings()
 	module.Settings = SUI:CopyData(BaseSettings, {})
 
 	-- Apply theme settings if available
-	local currentStyle = SUI.DB.Artwork.Style
+	local currentStyle = module.styleOverride or SUI.DB.Artwork.Style
 	if Registry[currentStyle] then module.Settings = SUI:MergeData(module.Settings, Registry[currentStyle].settings, true) end
 
 	module.BaseOpt = SUI:CopyTable({}, module.Settings)
@@ -661,7 +662,12 @@ function module:Update(fullUpdate)
 end
 
 function module:SetActiveStyle(style)
-	if Registry[style] then module:Update(true) end
+	if Registry[style] then
+		module.styleOverride = style
+
+		module:UpdateSettings()
+		module:Update(true)
+	end
 end
 
 function module:UpdatePosition()
