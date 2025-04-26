@@ -6,15 +6,28 @@ SUI.Handlers.ChatCommands = module
 local SUIChatCommands, CommandDetails, enabled = {}, {}, false
 
 function SUI:ChatCommand(input)
+	if not input or input:trim() == '' then
+		SUI.Options:ToggleOptions()
+		return
+	end
+
+	-- If input begins with '>' character, handle it as a path
+	if input:sub(1, 1) == '>' then
+		local pathInput = input:sub(2) -- Remove the leading '>'
+		local args = { strsplit('>', pathInput) }
+		for i, arg in ipairs(args) do
+			args[i] = arg:trim()
+		end
+		SUI.Options:ToggleOptions(args)
+		return
+	end
+
+	-- If no special handling needed, execute the command directly
 	if SUIChatCommands[input] then
 		SUIChatCommands[input]()
-	elseif string.find(input, ' ') then
-		for i in string.gmatch(input, '%S+') do
-			local arg, _ = string.gsub(input, i .. ' ', '')
-			if SUIChatCommands[i] then SUIChatCommands[i](arg) end
-		end
 	else
-		SUI:GetModule('Handler.Options'):ToggleOptions()
+		SUI:Print('Unknown command: ' .. input)
+		SUI:Print('Try /sui > Artwork to navigate to a specific options page')
 	end
 end
 
@@ -33,7 +46,7 @@ AddonCompartmentFrame:RegisterAddon({
 		-- elseif mouseButton == 'RightButton' then
 		-- end
 
-		SUI:GetModule('Handler.Options'):ToggleOptions()
+		SUI.Options:ToggleOptions()
 	end,
 	funcOnEnter = function()
 		-- GameTooltip:ClearLines()

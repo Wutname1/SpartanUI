@@ -413,7 +413,112 @@ function module:ToggleOptions(pages)
 			end)
 		end
 
-		if ACD and pages then ACD:SelectGroup('SpartanUI', unpack(pages)) end
+		if ACD and pages and #pages > 0 then
+			-- Check if the navigation path exists and provide feedback if it doesn't
+			local pathExists = true
+			local currentTable = SUI.opt.args
+			local validPath = {}
+
+			-- First validate if the navigation path exists in the options structure
+			for i, step in ipairs(pages) do
+				-- Direct match by key
+				if currentTable[step] then
+					table.insert(validPath, step)
+					if currentTable[step].args then
+						currentTable = currentTable[step].args
+					else
+						-- We've reached a leaf node that doesn't have any sub-options
+						if i < #pages then
+							pathExists = false
+							break
+						end
+					end
+				else
+					-- Try to match by displayed name (case insensitive)
+					local found = false
+					local exactMatchKey = nil
+					local lowercaseStep = step:lower()
+
+					for optKey, optData in pairs(currentTable) do
+						if type(optData) == 'table' and optData.name then
+							local optName = tostring(optData.name)
+							if optName == step then
+								-- Exact match
+								exactMatchKey = optKey
+								found = true
+								break
+							elseif optName:lower() == lowercaseStep then
+								-- Case insensitive match
+								exactMatchKey = optKey
+								found = true
+								break
+							end
+						end
+					end
+
+					if found and exactMatchKey then
+						table.insert(validPath, exactMatchKey)
+						if currentTable[exactMatchKey].args then
+							currentTable = currentTable[exactMatchKey].args
+						else
+							-- We've reached a leaf node that doesn't have any sub-options
+							if i < #pages then
+								pathExists = false
+								break
+							end
+						end
+					else
+						pathExists = false
+						break
+					end
+				end
+			end
+
+			if pathExists then
+				-- Valid path, navigate to it
+				ACD:SelectGroup('SpartanUI', unpack(validPath))
+			else
+				-- Path doesn't exist, provide feedback with available options
+				SUI:Print('Navigation path not found: ' .. table.concat(pages, ' > '))
+
+				-- List available options at the level where navigation failed
+				if #validPath > 0 then
+					-- We got partway through the path
+					SUI:Print('Successfully navigated to: ' .. table.concat(validPath, ' > '))
+
+					-- Get the table at the deepest valid level
+					currentTable = SUI.opt.args
+					for _, step in ipairs(validPath) do
+						currentTable = currentTable[step].args or {}
+					end
+
+					-- Navigate to the valid portion of the path
+					ACD:SelectGroup('SpartanUI', unpack(validPath))
+				end
+
+				-- Display available options at current level
+				local availableOptions = {}
+				for option, optData in pairs(currentTable) do
+					if type(optData) == 'table' and optData.name and type(option) == 'string' and not string.match(option, '^line%d+$') then
+						local displayName = tostring(optData.name)
+						if displayName ~= option then
+							table.insert(availableOptions, displayName .. ' (' .. option .. ')')
+						else
+							table.insert(availableOptions, displayName)
+						end
+					end
+				end
+
+				if #availableOptions > 0 then
+					table.sort(availableOptions)
+					SUI:Print('Available options at this level:')
+					-- Display options in a more readable format
+					for _, option in ipairs(availableOptions) do
+						SUI:Print('- ' .. option)
+					end
+				end
+			end
+		end
 	end
 end
 
