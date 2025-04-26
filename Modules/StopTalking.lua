@@ -16,6 +16,11 @@ function module:OnInitialize()
 		global = true,
 		history = {},
 		whitelist = {},
+		pageSize = 20,
+		currentBlacklistPage = 1,
+		currentWhitelistPage = 1,
+		searchBlacklist = '',
+		searchWhitelist = '',
 	}
 	module.Database = SUI.SpartanUIDB:RegisterNamespace('StopTalking', { profile = defaults, global = defaults })
 	module.DB = module.Database.profile ---@type SUI.Module.StopTalking.DB
@@ -104,80 +109,199 @@ function module:BuildOptions()
 
 		local sourceList = isBlacklist and (module.DBGlobal.global and module.DBGlobal.history or module.DB.history) or (module.DBGlobal.global and module.DBGlobal.whitelist or module.DB.whitelist)
 
-		local count = 0
+		-- Apply search filter
+		local filteredItems = {}
+		local searchText = isBlacklist and (module.DB.searchBlacklist or '') or (module.DB.searchWhitelist or '')
+		searchText = string.lower(searchText)
+
 		for itemId, entry in pairs(sourceList) do
 			-- Skip any non-string entries
-			if type(entry) == 'string' then
-				count = count + 1
-				local buttonText = isBlacklist and L['Move to Whitelist'] or L['Move to Blacklist']
-				local targetList = isBlacklist and 'whitelist' or 'history'
+			if type(entry) == 'string' and (searchText == '' or string.find(string.lower(entry), searchText)) then table.insert(filteredItems, { id = itemId, text = entry }) end
+		end
 
-				-- Truncate entry to first 18 words
-				local displayText = TruncateToWords(entry, 18)
+		-- Sort the filtered items to ensure consistent ordering
+		table.sort(filteredItems, function(a, b)
+			return a.text < b.text
+		end)
 
-				-- Create the entry label
-				listOpts[itemId .. 'label'] = {
-					type = 'description',
-					width = 'double',
-					fontSize = 'medium',
-					order = count * 3,
-					name = displayText,
-				}
+		-- Pagination variables
+		local pageSize = module.DB.pageSize or 20
+		local currentPage = isBlacklist and module.DB.currentBlacklistPage or module.DB.currentWhitelistPage
+		local totalItems = #filteredItems
+		local totalPages = math.ceil(totalItems / pageSize)
 
-				-- Create the delete button
-				listOpts[itemId .. 'delete'] = {
-					type = 'execute',
-					name = L['Delete'],
-					width = 'half',
-					order = (count * 3) + 1,
-					func = function()
-						if module.DBGlobal.global then
-							if isBlacklist then
-								module.DBGlobal.history[itemId] = nil
-							else
-								module.DBGlobal.whitelist[itemId] = nil
-							end
-						else
-							if isBlacklist then
-								module.DB.history[itemId] = nil
-							else
-								module.DB.whitelist[itemId] = nil
-							end
-						end
-						buildItemList(listType, mode)
-					end,
-				}
-
-				-- Create the move button
-				listOpts[itemId .. 'move'] = {
-					type = 'execute',
-					name = buttonText,
-					width = 'half',
-					order = (count * 3) + 2,
-					func = function()
-						local value = entry
-						if module.DBGlobal.global then
-							module.DBGlobal[targetList][itemId] = value
-							if isBlacklist then
-								module.DBGlobal.history[itemId] = nil
-							else
-								module.DBGlobal.whitelist[itemId] = nil
-							end
-						else
-							module.DB[targetList][itemId] = value
-							if isBlacklist then
-								module.DB.history[itemId] = nil
-							else
-								module.DB.whitelist[itemId] = nil
-							end
-						end
-
-						-- Rebuild both lists
-						buildItemList(listType, 'Blacklist')
-						buildItemList(listType, 'Whitelist')
-					end,
-				}
+		-- Ensure current page is valid
+		if currentPage > totalPages then
+			currentPage = totalPages
+			if isBlacklist then
+				module.DB.currentBlacklistPage = currentPage
+			else
+				module.DB.currentWhitelistPage = currentPage
 			end
+		end
+		if currentPage < 1 then currentPage = 1 end
+
+		-- Add pagination controls
+		listOpts['paginationInfo'] = {
+			type = 'description',
+			width = 'full',
+			fontSize = 'medium',
+			order = 1,
+			name = L['Page'] .. ' ' .. currentPage .. '/' .. (totalPages == 0 and 1 or totalPages) .. ' (' .. totalItems .. ' ' .. (totalItems == 1 and L['item'] or L['items']) .. ')',
+		}
+
+		-- Search box
+		local searchFieldName = isBlacklist and 'searchBlacklist' or 'searchWhitelist'
+		listOpts['searchField'] = {
+			type = 'input',
+			name = L['Search'],
+			width = 'full',
+			order = 2,
+			get = function()
+				return module.DB[searchFieldName]
+			end,
+			set = function(_, val)
+				module.DB[searchFieldName] = val
+				if isBlacklist then
+					module.DB.currentBlacklistPage = 1
+				else
+					module.DB.currentWhitelistPage = 1
+				end
+				buildItemList(listType, mode)
+			end,
+		}
+
+		-- Previous page button
+		listOpts['prevPage'] = {
+			type = 'execute',
+			name = L['Previous Page'],
+			width = 'half',
+			order = 3,
+			disabled = currentPage <= 1,
+			func = function()
+				if isBlacklist then
+					module.DB.currentBlacklistPage = module.DB.currentBlacklistPage - 1
+				else
+					module.DB.currentWhitelistPage = module.DB.currentWhitelistPage - 1
+				end
+				buildItemList(listType, mode)
+			end,
+		}
+
+		-- Next page button
+		listOpts['nextPage'] = {
+			type = 'execute',
+			name = L['Next Page'],
+			width = 'half',
+			order = 4,
+			disabled = currentPage >= totalPages,
+			func = function()
+				if isBlacklist then
+					module.DB.currentBlacklistPage = module.DB.currentBlacklistPage + 1
+				else
+					module.DB.currentWhitelistPage = module.DB.currentWhitelistPage + 1
+				end
+				buildItemList(listType, mode)
+			end,
+		}
+
+		-- Separator
+		listOpts['separator'] = {
+			type = 'header',
+			name = '',
+			width = 'full',
+			order = 5,
+		}
+
+		-- Calculate which items to show on the current page
+		local startIndex = ((currentPage - 1) * pageSize) + 1
+		local endIndex = math.min(startIndex + pageSize - 1, totalItems)
+
+		-- Display items for the current page
+		if totalItems > 0 then
+			for i = startIndex, endIndex do
+				local item = filteredItems[i]
+				if item then
+					local count = i
+					local itemId = item.id
+					local entry = item.text
+					local buttonText = isBlacklist and L['Move to Whitelist'] or L['Move to Blacklist']
+					local targetList = isBlacklist and 'whitelist' or 'history'
+
+					-- Truncate entry to first 18 words
+					local displayText = TruncateToWords(entry, 18)
+
+					-- Create the entry label
+					listOpts[tostring(count) .. 'label'] = {
+						type = 'description',
+						width = 'double',
+						fontSize = 'medium',
+						order = count * 3 + 10,
+						name = displayText,
+					}
+
+					-- Create the delete button
+					listOpts[tostring(count) .. 'delete'] = {
+						type = 'execute',
+						name = L['Delete'],
+						width = 'half',
+						order = (count * 3) + 11,
+						func = function()
+							if module.DBGlobal.global then
+								if isBlacklist then
+									module.DBGlobal.history[itemId] = nil
+								else
+									module.DBGlobal.whitelist[itemId] = nil
+								end
+							else
+								if isBlacklist then
+									module.DB.history[itemId] = nil
+								else
+									module.DB.whitelist[itemId] = nil
+								end
+							end
+							buildItemList(listType, mode)
+						end,
+					}
+
+					-- Create the move button
+					listOpts[tostring(count) .. 'move'] = {
+						type = 'execute',
+						name = buttonText,
+						width = 'half',
+						order = (count * 3) + 12,
+						func = function()
+							local value = entry
+							if module.DBGlobal.global then
+								module.DBGlobal[targetList][itemId] = value
+								if isBlacklist then
+									module.DBGlobal.history[itemId] = nil
+								else
+									module.DBGlobal.whitelist[itemId] = nil
+								end
+							else
+								module.DB[targetList][itemId] = value
+								if isBlacklist then
+									module.DB.history[itemId] = nil
+								else
+									module.DB.whitelist[itemId] = nil
+								end
+							end
+
+							-- Rebuild both lists
+							buildItemList(listType, 'Blacklist')
+							buildItemList(listType, 'Whitelist')
+						end,
+					}
+				end
+			end
+		else
+			listOpts['noItems'] = {
+				type = 'description',
+				width = 'full',
+				order = 10,
+				name = L['No items found'],
+			}
 		end
 	end
 
@@ -218,6 +342,22 @@ function module:BuildOptions()
 				buildItemList('history', 'Blacklist')
 				buildItemList('whitelist', 'Whitelist')
 				SUI:Print('StopTalking database cleaned')
+			end,
+		},
+		pageSize = {
+			name = L['Items per page'],
+			type = 'range',
+			order = 4,
+			width = 'full',
+			min = 10,
+			max = 50,
+			step = 5,
+			set = function(info, val)
+				module.DB.pageSize = val
+				module.DB.currentBlacklistPage = 1
+				module.DB.currentWhitelistPage = 1
+				buildItemList('history', 'Blacklist')
+				buildItemList('whitelist', 'Whitelist')
 			end,
 		},
 		Blacklist = {
