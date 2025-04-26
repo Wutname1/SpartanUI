@@ -14,7 +14,7 @@ local function InitializeMinimapButton()
 	-- Create a Icon via standard wow frame
 	local button = CreateFrame('Button', MinimapIconName, MinimapCluster)
 	button:SetSize(25, 25)
-	button:SetPoint('BOTTOM', MinimapCluster.BorderTop, 'TOP', 0, 2)
+	button:SetPoint('BOTTOM', Minimap, 'BOTTOM', 0, 2)
 	button:SetFrameLevel(500)
 	button:SetFrameStrata('MEDIUM')
 	button:SetNormalTexture('Interface\\AddOns\\SpartanUI\\images\\old_error.png')
