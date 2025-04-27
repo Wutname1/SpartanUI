@@ -224,20 +224,20 @@ local TooltipSetItem = function(tooltip, tooltipData)
 			local _, _, _, _, _, _, _, itemStackCount, _, _, itemSellPrice = C_Item.GetItemInfo(itemLink)
 			if itemSellPrice then
 				SetTooltipMoney(tooltip, itemSellPrice, 'STATIC', L['Vendors for:'])
-				local itemUnderMouse = GetMouseFocus()
-				if itemUnderMouse:GetName() then
-					if itemStackCount > 1 and _G[itemUnderMouse:GetName() .. 'Count'] then
-						-- local buttonUnderMouse = itemUnderMouse:GetName() and ()
-						local count = _G[itemUnderMouse:GetName() .. 'Count']:GetText()
-						count = tonumber(count) or 1
-						if count <= 1 then count = 1 end
+				-- local itemUnderMouse = GetMouseFocus()
+				-- if itemUnderMouse:GetName() then
+				-- 	if itemStackCount > 1 and _G[itemUnderMouse:GetName() .. 'Count'] then
+				-- 		-- local buttonUnderMouse = itemUnderMouse:GetName() and ()
+				-- 		local count = _G[itemUnderMouse:GetName() .. 'Count']:GetText()
+				-- 		count = tonumber(count) or 1
+				-- 		if count <= 1 then count = 1 end
 
-						if count > 1 and count ~= itemStackCount then
-							local curValue = count * itemSellPrice
-							SetTooltipMoney(tooltip, curValue, 'STATIC', L['Vendors for:'], string.format(L[' (current stack of %d)'], count))
-						end
-					end
-				end
+				-- 		if count > 1 and count ~= itemStackCount then
+				-- 			local curValue = count * itemSellPrice
+				-- 			SetTooltipMoney(tooltip, curValue, 'STATIC', L['Vendors for:'], string.format(L[' (current stack of %d)'], count))
+				-- 		end
+				-- 	end
+				-- end
 			end
 		end
 
@@ -258,8 +258,8 @@ local TooltipSetUnit = function(self, data)
 
 	local unit = select(2, self:GetUnit())
 	if not unit then
-		local mFocus = GetMouseFocus()
-		if mFocus and mFocus.GetAttribute and mFocus:GetAttribute('unit') then unit = mFocus:GetAttribute('unit') end
+		-- local mFocus = GetMouseFocus()
+		-- if mFocus and mFocus.GetAttribute and mFocus:GetAttribute('unit') then unit = mFocus:GetAttribute('unit') end
 		if not unit or not UnitExists(unit) then return end
 	end
 
