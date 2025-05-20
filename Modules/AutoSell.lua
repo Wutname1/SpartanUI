@@ -64,6 +64,7 @@ local DbDefaults = {
 			141446, --Tome of the Tranquil Mind
 			81055, -- Darkmoon ride ticket
 			150372, -- Arsenal: The Warglaives of Azzinoth
+			32837, -- Warglaive of Azzinoth
 			--Professions
 			6219, -- Arclight Spanner
 			140209, --imported blacksmith hammer

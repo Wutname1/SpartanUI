@@ -533,6 +533,13 @@ function module:VarArgForAvailableQuests(...)
 			else
 				C_GossipInfo.SelectAvailableQuest(quest.questID)
 			end
+		else
+			debug('Quest is not appropriate: ' .. quest.title)
+			debug('-isImportant: ' .. tostring(quest.isImportant))
+			debug('-isMeta: ' .. tostring(quest.isMeta))
+			debug('-Trivial: ' .. tostring(trivialORAllowed))
+			debug('-Repeatable: ' .. tostring(isRepeatableORAllowed))
+			debug('-Blacklisted: ' .. tostring(module.Blacklist.isBlacklisted(quest.title)) .. ', ' .. tostring(module.Blacklist.isBlacklisted(quest.questID)))
 		end
 	end
 end
