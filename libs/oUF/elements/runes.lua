@@ -50,7 +50,7 @@ local oUF = ns.oUF
 local sort = sort
 local ipairs = ipairs
 local UnitHasVehicleUI = UnitHasVehicleUI
-local GetSpecialization = GetSpecialization
+local GetSpecialization = type(GetSpecialization) == "function" and GetSpecialization or nil
 local GetRuneCooldown = GetRuneCooldown
 local GetRuneType = GetRuneType
 local UnitIsUnit = UnitIsUnit
@@ -122,7 +122,7 @@ local function UpdateColor(self, event, runeID, alt)
 			rune = UpdateRuneType(element[runemap[runeID]], runeID, alt)
 		end
 	else
-		local spec = element.colorSpec and GetSpecialization() or 0
+		local spec = (element.colorSpec and type(GetSpecialization) == "function") and GetSpecialization() or 0
 		if spec > 0 and spec < 4 then
 			specType = spec
 		end
