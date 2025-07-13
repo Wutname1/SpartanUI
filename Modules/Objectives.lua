@@ -354,17 +354,17 @@ function module:FirstTimeSetup()
 					SUI_Win.Objectives[k].Condition = control
 
 					--InCombat 1
-					SUI_Win.Objectives[k].InCombat = CreateFrame('CheckButton', 'SUI_Objectives_InCombat_' .. k, SUI_Win.Objectives, 'OptionsCheckButtonTemplate')
-					SUI_Win.Objectives[k].InCombat:SetPoint('LEFT', SUI_Win.Objectives[k].Condition.frame, 'RIGHT', 20, -7)
-					_G['SUI_Objectives_InCombat_' .. k .. 'Text']:SetText(L['Only if in combat'])
-					SUI_Win.Objectives[k].InCombat:SetScript('OnClick', DummyFunction)
+					-- SUI_Win.Objectives[k].InCombat = CreateFrame('CheckButton', 'SUI_Objectives_InCombat_' .. k, SUI_Win.Objectives, 'OptionsCheckButtonTemplate')
+					-- SUI_Win.Objectives[k].InCombat:SetPoint('LEFT', SUI_Win.Objectives[k].Condition.frame, 'RIGHT', 20, -7)
+					-- _G['SUI_Objectives_InCombat_' .. k .. 'Text']:SetText(L['Only if in combat'])
+					-- SUI_Win.Objectives[k].InCombat:SetScript('OnClick', DummyFunction)
 				end
 
 				--Defaults
 				SUI_Win.Objectives[1].Condition:SetValue('Raid')
 
 				if UnitLevel('player') == 110 then
-					SUI_Win.Objectives[1].InCombat:SetChecked(true)
+					-- SUI_Win.Objectives[1].InCombat:SetChecked(true)
 					SUI_Win.Objectives[2].Condition:SetValue('Instance')
 				end
 			end
@@ -379,7 +379,7 @@ function module:FirstTimeSetup()
 				for k, v in ipairs(RuleList) do
 					module.DB[v] = {
 						Status = SUI_Win.Objectives[k].Condition:GetValue(),
-						Combat = (SUI_Win.Objectives[k].InCombat:GetChecked() == true or false),
+						-- Combat = (SUI_Win.Objectives[k].InCombat:GetChecked() == true or false),
 					}
 				end
 			end
