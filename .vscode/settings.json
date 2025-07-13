@@ -407,7 +407,9 @@
     "WeeklyRewardsFrame",
     "UIParentLoadAddOn",
     "OverrideActionBar",
-    "MACROS"
+    "MACROS",
+    "GameTooltip_SetDefaultAnchor",
+    "PlayerPowerBarAlt"
   ],
   "Lua.workspace.ignoreDir": [".vscode", "libs/*"],
   "Lua.diagnostics.enable": true,
