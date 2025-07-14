@@ -385,5 +385,5 @@ function module:FirstTimeSetup()
 			end
 		end,
 	}
-	SUI.Setup:AddPage(PageData)
+	-- SUI.Setup:AddPage(PageData)
 end

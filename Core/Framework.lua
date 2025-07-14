@@ -16,6 +16,7 @@ SUI.IsClassic = (WOW_PROJECT_ID == WOW_PROJECT_CLASSIC) ---@type boolean
 SUI.IsTBC = (WOW_PROJECT_ID == WOW_PROJECT_BURNING_CRUSADE_CLASSIC) ---@type boolean
 SUI.IsWrath = (WOW_PROJECT_ID == WOW_PROJECT_WRATH_CLASSIC) ---@type boolean
 SUI.IsCata = (WOW_PROJECT_ID == WOW_PROJECT_CATACLYSM_CLASSIC) ---@type boolean
+SUI.isMists = (WOW_PROJECT_ID == WOW_PROJECT_MISTS_CLASSIC) ---@type boolean
 SUI.GitHash = '@project-abbreviated-hash@' -- The ZIP packager will replace this with the Git hash.
 local wowVersion = 'Retail'
 if SUI.IsClassic then wowVersion = 'Classic' end

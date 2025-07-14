@@ -409,7 +409,8 @@
     "OverrideActionBar",
     "MACROS",
     "GameTooltip_SetDefaultAnchor",
-    "PlayerPowerBarAlt"
+    "PlayerPowerBarAlt",
+    "PowerBarColor"
   ],
   "Lua.workspace.ignoreDir": [".vscode", "libs/*"],
   "Lua.diagnostics.enable": true,
