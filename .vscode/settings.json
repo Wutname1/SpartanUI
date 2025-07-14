@@ -494,7 +494,8 @@
     "SUI_Art_Minimal_Base2",
     "SUI_Art_Minimal_Base3",
     "SUI_Art_Minimal_Base4",
-    "SUI_Art_Minimal_Base5"
+    "SUI_Art_Minimal_Base5",
+    "BLUE_FONT_COLOR"
   ],
   "Lua.workspace.ignoreDir": [".vscode", "libs/*"],
   "Lua.diagnostics.enable": true,
@@ -530,6 +531,6 @@
     "libs\\oUF_Plugins",
     "Modules",
     "Themes",
-    "~\\.vscode\\extensions\\ketho.wow-api-0.20.6\\Annotations\\Core"
+    "~\\.vscode\\extensions\\ketho.wow-api-0.20.8\\Annotations\\Core"
   ]
 }
