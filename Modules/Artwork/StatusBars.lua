@@ -44,6 +44,7 @@ local DBDefaults = {
 			ToolTip = 'hover',
 			text = Enums.TextDisplayMode.OnMouseOver,
 			alpha = 1,
+			enabled = true,
 		},
 	},
 }
@@ -263,10 +264,30 @@ function module:UpdateBars()
 		self:UpdateBarTextVisibility('Left')
 		self:UpdateBarTextVisibility('Right')
 
-		-- Update container alphas
+		-- Update container alphas and visibility
 		for _, key in ipairs({ 'Left', 'Right' }) do
 			local barContainer = module.bars[key]
-			if barContainer then barContainer:SetAlpha(DB.bars[key].alpha or 1) end
+			if barContainer then
+				if DB.bars[key].enabled then
+					-- Check if this container actually has a bar to show
+					local hasActiveBar = false
+					for _, bar in pairs(barContainer.bars) do
+						if bar:IsShown() and bar.barIndex and bar.barIndex ~= Enums.Bars.None then
+							hasActiveBar = true
+							break
+						end
+					end
+
+					if hasActiveBar then
+						barContainer:SetAlpha(DB.bars[key].alpha or 1)
+						barContainer:Show()
+					else
+						barContainer:Hide()
+					end
+				else
+					barContainer:Hide()
+				end
+			end
 		end
 
 		-- Refresh the options display
@@ -323,6 +344,12 @@ function module:CreateBarManager()
 			end
 		end
 
+		-- Check if containers are enabled and hide disabled ones
+		for i, barContainer in ipairs(self.barContainers) do
+			local containerKey = i == 1 and 'Left' or 'Right'
+			if not DB.bars[containerKey].enabled then barContainer:SetShownBar(Enums.Bars.None) end
+		end
+
 		-- Determine what bars should be shown
 		local newBarIndicesToShow = {}
 		for _, barIndex in pairs(Enums.Bars) do
@@ -336,28 +363,41 @@ function module:CreateBarManager()
 			return self:GetBarPriority(left) < self:GetBarPriority(right)
 		end)
 
-		-- We can only show as many bars as we have containers for
-		while #newBarIndicesToShow > #self.barContainers do
+		-- Filter out containers that are disabled
+		local enabledContainers = {}
+		for i, barContainer in ipairs(self.barContainers) do
+			local containerKey = i == 1 and 'Left' or 'Right'
+			if DB.bars[containerKey].enabled then table.insert(enabledContainers, { container = barContainer, index = i }) end
+		end
+
+		-- We can only show as many bars as we have enabled containers for
+		while #newBarIndicesToShow > #enabledContainers do
 			table.remove(newBarIndicesToShow)
 		end
 
-		-- Assign the bar indices to the bar containers
+		-- Assign the bar indices to the enabled bar containers
 		for i = 1, #self.barContainers do
 			local barContainer = self.barContainers[i]
-			local newBarIndex
+			local containerKey = i == 1 and 'Left' or 'Right'
+			local newBarIndex = Enums.Bars.None
 
-			if #newBarIndicesToShow == 1 then
-				-- Special case for single bar
-				if DB.PriorityDirection == 'ltr' then
-					newBarIndex = (i == 1) and newBarIndicesToShow[1] or Enums.Bars.None
-				else
-					newBarIndex = (i == #self.barContainers) and newBarIndicesToShow[1] or Enums.Bars.None
+			-- Only assign bars to enabled containers
+			if DB.bars[containerKey].enabled then
+				local enabledIndex = 0
+				for j = 1, i do
+					local checkKey = j == 1 and 'Left' or 'Right'
+					if DB.bars[checkKey].enabled then enabledIndex = enabledIndex + 1 end
 				end
-			else
-				if DB.PriorityDirection == 'ltr' then
-					newBarIndex = newBarIndicesToShow[i] or Enums.Bars.None
+
+				if #newBarIndicesToShow == 1 then
+					-- Special case for single bar - show on first enabled container
+					if enabledIndex == 1 then newBarIndex = newBarIndicesToShow[1] end
 				else
-					newBarIndex = newBarIndicesToShow[#newBarIndicesToShow - i + 1] or Enums.Bars.None
+					if DB.PriorityDirection == 'ltr' then
+						newBarIndex = newBarIndicesToShow[enabledIndex] or Enums.Bars.None
+					else
+						newBarIndex = newBarIndicesToShow[#newBarIndicesToShow - enabledIndex + 1] or Enums.Bars.None
+					end
 				end
 			end
 
@@ -442,7 +482,11 @@ function module:SetupBarContainerPosition(barContainer, barStyle, index)
 	barContainer:ClearAllPoints()
 	barContainer:SetPoint(point, anchor, secondaryPoint, x, y)
 	local containerKey = index == 1 and 'Left' or 'Right'
-	barContainer:SetAlpha(DB.bars[containerKey].alpha or 1)
+
+	-- Set initial visibility and alpha based on enabled state
+	-- Note: We start hidden and let UpdateBars() show containers that have content
+	if DB.bars[containerKey].enabled then barContainer:SetAlpha(DB.bars[containerKey].alpha or 1) end
+	barContainer:Hide() -- Start hidden, UpdateBars will show if there's content
 end
 
 function module:SetupBarContainerBehavior(barContainer, index)
@@ -628,10 +672,25 @@ function module:CreateContainerOptions(containerKey, order)
 		inline = true,
 		order = order,
 		args = {
+			enabled = {
+				name = 'Enable ' .. containerKey .. ' Bar',
+				type = 'toggle',
+				order = 0,
+				get = function()
+					return DB.bars[containerKey].enabled
+				end,
+				set = function(_, value)
+					DB.bars[containerKey].enabled = value
+					self:UpdateBars()
+				end,
+			},
 			text = {
 				name = 'Text Display',
 				type = 'select',
 				order = 1,
+				disabled = function()
+					return not DB.bars[containerKey].enabled
+				end,
 				values = {
 					[Enums.TextDisplayMode.OnMouseOver] = 'On Mouse Over',
 					[Enums.TextDisplayMode.Always] = 'Always',
@@ -652,6 +711,9 @@ function module:CreateContainerOptions(containerKey, order)
 				min = 0,
 				max = 1,
 				step = 0.01,
+				disabled = function()
+					return not DB.bars[containerKey].enabled
+				end,
 				get = function()
 					return DB.bars[containerKey].alpha
 				end,
