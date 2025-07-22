@@ -5,8 +5,6 @@ module.DisplayName = L['Auto sell']
 module.description = 'Auto sells junk and more'
 
 ----------------------------------------------------------------------------------------------------
-local MaxiLVL = 500
-
 local Tooltip = CreateFrame('GameTooltip', 'AutoSellTooltip', nil, 'GameTooltipTemplate')
 local LoadedOnce = false
 local totalValue = 0
@@ -17,6 +15,7 @@ local DbDefaults = {
 	NotCrafting = true,
 	NotConsumables = true,
 	NotInGearset = true,
+	MaximumiLVL = 500,
 	MaxILVL = 200,
 	Gray = true,
 	White = false,
@@ -155,7 +154,7 @@ local function SetupPage()
 				-- Max iLVL
 				AutoSell.iLVLDesc = StdUi:Label(AutoSell, L['Maximum iLVL to sell'], nil, nil, 350)
 				AutoSell.iLVLLabel = StdUi:NumericBox(AutoSell, 80, 20, module.DB.MaxILVL)
-				AutoSell.iLVLLabel:SetMaxValue(MaxiLVL)
+				AutoSell.iLVLLabel:SetMaxValue(module.DB.MaximumiLVL)
 				AutoSell.iLVLLabel:SetMinValue(1)
 				AutoSell.iLVLLabel.OnValueChanged = function()
 					local win = SUI.Setup.window.content.AutoSell
@@ -163,7 +162,7 @@ local function SetupPage()
 					if math.floor(AutoSell.iLVLLabel:GetValue()) ~= math.floor(AutoSell.iLVLSlider:GetValue()) then AutoSell.iLVLSlider:SetValue(math.floor(AutoSell.iLVLLabel:GetValue())) end
 				end
 
-				AutoSell.iLVLSlider = StdUi:Slider(AutoSell, MaxiLVL, 20, module.DB.MaxILVL, false, 1, MaxiLVL)
+				AutoSell.iLVLSlider = StdUi:Slider(AutoSell, module.DB.MaximumiLVL, 20, module.DB.MaxILVL, false, 1, module.DB.MaximumiLVL)
 				AutoSell.iLVLSlider.OnValueChanged = function()
 					local win = SUI.Setup.window.content.AutoSell
 
@@ -317,7 +316,7 @@ local function BuildOptions()
 			order = 10,
 			width = 'full',
 			min = 1,
-			max = MaxiLVL,
+			max = module.DB.MaximumiLVL,
 			step = 1,
 		},
 		Gray = {
@@ -530,19 +529,34 @@ function module:SellTrash()
 	totalValue = 0
 	-- ItemsToSellTotal = 0
 	local ItemToSell = {}
+	local highestILVL = 0
 
-	--Find Items to sell
+	--Find Items to sell and track highest iLVL
 	for bag = 0, 4 do
 		for slot = 1, C_Container.GetContainerNumSlots(bag) do
 			local itemInfo, _, _, _, _, _, link, _, _, itemID = C_Container.GetContainerItemInfo(bag, slot)
-			if SUI.IsRetail and itemInfo and module:IsSellable(itemInfo.itemID, itemInfo.hyperlink, bag, slot) then
-				ItemToSell[#ItemToSell + 1] = { bag, slot }
-				totalValue = totalValue + (select(11, C_Item.GetItemInfo(itemInfo.itemID)) * itemInfo.stackCount)
-			elseif not SUI.IsRetail and module:IsSellable(itemID, link, bag, slot) then
-				ItemToSell[#ItemToSell + 1] = { bag, slot }
-				totalValue = totalValue + (select(11, C_Item.GetItemInfo(itemID)) * select(2, C_Container.GetContainerItemInfo(bag, slot)))
+			if SUI.IsRetail and itemInfo then
+				local iLevel = SUI:GetiLVL(itemInfo.hyperlink)
+				if iLevel and iLevel > highestILVL then highestILVL = iLevel end
+				if module:IsSellable(itemInfo.itemID, itemInfo.hyperlink, bag, slot) then
+					ItemToSell[#ItemToSell + 1] = { bag, slot }
+					totalValue = totalValue + (select(11, C_Item.GetItemInfo(itemInfo.itemID)) * itemInfo.stackCount)
+				end
+			elseif not SUI.IsRetail and itemID then
+				local iLevel = SUI:GetiLVL(link)
+				if iLevel and iLevel > highestILVL then highestILVL = iLevel end
+				if module:IsSellable(itemID, link, bag, slot) then
+					ItemToSell[#ItemToSell + 1] = { bag, slot }
+					totalValue = totalValue + (select(11, C_Item.GetItemInfo(itemID)) * select(2, C_Container.GetContainerItemInfo(bag, slot)))
+				end
 			end
 		end
+	end
+
+	-- Auto-increase MaximumiLVL if we detected higher iLVL items
+	if highestILVL > 0 and (highestILVL + 50) > module.DB.MaximumiLVL then
+		module.DB.MaximumiLVL = highestILVL + 50
+		debugMsg('Auto-increased MaximumiLVL to: ' .. module.DB.MaximumiLVL .. ' (highest detected: ' .. highestILVL .. ')')
 	end
 
 	--Sell Items if needed
