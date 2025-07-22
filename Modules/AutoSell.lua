@@ -17,6 +17,7 @@ local DbDefaults = {
 	NotInGearset = true,
 	MaximumiLVL = 500,
 	MaxILVL = 200,
+	LastWowProjectID = WOW_PROJECT_ID,
 	Gray = true,
 	White = false,
 	Green = false,
@@ -614,9 +615,64 @@ function module:MERCHANT_CLOSED()
 	if totalValue > 0 then totalValue = 0 end
 end
 
+local function HandleItemLevelSquish()
+	-- Check if the WOW_PROJECT_ID has changed (indicating potential expansion change)
+	if module.DB.LastWowProjectID ~= WOW_PROJECT_ID then
+		debugMsg('Detected WOW_PROJECT_ID change from ' .. (module.DB.LastWowProjectID or 'unknown') .. ' to ' .. WOW_PROJECT_ID)
+
+		-- Scan all items to find the new highest item level
+		local newHighestILVL = 0
+		for bag = 0, 4 do
+			for slot = 1, C_Container.GetContainerNumSlots(bag) do
+				local itemInfo, _, _, _, _, _, link, _, _, itemID = C_Container.GetContainerItemInfo(bag, slot)
+				local iLevel = 0
+				if SUI.IsRetail and itemInfo then
+					iLevel = SUI:GetiLVL(itemInfo.hyperlink)
+				elseif not SUI.IsRetail and itemID then
+					iLevel = SUI:GetiLVL(link)
+				end
+				if iLevel and iLevel > newHighestILVL then newHighestILVL = iLevel end
+			end
+		end
+
+		-- Add buffer to new highest level
+		local newMaximumiLVL = newHighestILVL + 50
+
+		-- Check if this represents a squish (new max is significantly lower than old max)
+		if newMaximumiLVL > 0 and newMaximumiLVL < (module.DB.MaximumiLVL * 0.8) then
+			local squishRatio = newMaximumiLVL / module.DB.MaximumiLVL
+			local oldMaxILVL = module.DB.MaxILVL
+			local newMaxILVL = math.floor(oldMaxILVL * squishRatio)
+
+			-- Ensure we don't go below 1
+			if newMaxILVL < 1 then newMaxILVL = 1 end
+
+			debugMsg('Item level squish detected!')
+			debugMsg('Old MaximumiLVL: ' .. module.DB.MaximumiLVL .. ' -> New: ' .. newMaximumiLVL)
+			debugMsg('Old MaxILVL: ' .. oldMaxILVL .. ' -> New: ' .. newMaxILVL .. ' (ratio: ' .. string.format('%.2f', squishRatio) .. ')')
+
+			-- Apply the adjustments
+			module.DB.MaximumiLVL = newMaximumiLVL
+			module.DB.MaxILVL = newMaxILVL
+
+			SUI:Print('Item level squish detected! Adjusted sell threshold from ' .. oldMaxILVL .. ' to ' .. newMaxILVL)
+		elseif newMaximumiLVL > module.DB.MaximumiLVL then
+			-- Normal case: just increase the maximum if we found higher level items
+			module.DB.MaximumiLVL = newMaximumiLVL
+			debugMsg('Increased MaximumiLVL to: ' .. newMaximumiLVL)
+		end
+
+		-- Update the stored project ID
+		module.DB.LastWowProjectID = WOW_PROJECT_ID
+	end
+end
+
 function module:OnInitialize()
 	module.Database = SUI.SpartanUIDB:RegisterNamespace('AutoSell', { profile = DbDefaults })
 	module.DB = module.Database.profile ---@type SUI.Module.AutoSell.DB
+
+	-- Handle potential item level squish after DB is initialized
+	HandleItemLevelSquish()
 end
 
 function module:OnEnable()
