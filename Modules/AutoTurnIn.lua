@@ -885,6 +885,11 @@ function module:OnEnable()
 
 	local IsCollapsed = true
 
+	-- Store panel references so we can hide them on disable
+	if not module.QuestPanels then
+		module.QuestPanels = {}
+	end
+
 	for _, v in ipairs({ 'QuestFrame', 'GossipFrame' }) do
 		local OptionsPopdown = StdUi:Panel(_G[v], 330, 20)
 		OptionsPopdown:SetScale(0.95)
@@ -943,6 +948,9 @@ function module:OnEnable()
 
 		OptionsPopdown.Panel = Panel
 		OptionsPopdown.Panel.options = options
+		
+		-- Store panel reference for cleanup on disable
+		module.QuestPanels[v] = OptionsPopdown
 	end
 end
 
@@ -954,6 +962,18 @@ function module:OnDisable()
 	ATI_Container:UnregisterEvent('QUEST_COMPLETE') -- quest turn in screen
 	ATI_Container:UnregisterEvent('MERCHANT_SHOW')
 	ATI_Container:UnregisterEvent('MERCHANT_CLOSED')
+	
+	-- Hide and cleanup quest panels
+	if module.QuestPanels then
+		for _, panel in pairs(module.QuestPanels) do
+			if panel then
+				panel:Hide()
+				if panel.Panel then
+					panel.Panel:Hide()
+				end
+			end
+		end
+	end
 end
 
 function module:BuildOptions()

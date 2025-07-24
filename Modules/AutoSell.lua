@@ -688,6 +688,11 @@ function module:OnEnable()
 	-- Create quick access panel for vendor windows
 	local IsCollapsed = true
 	local StdUi = SUI.StdUi
+	
+	-- Store panel references so we can hide them on disable
+	if not module.VendorPanels then
+		module.VendorPanels = {}
+	end
 
 	for _, v in ipairs({ 'MerchantFrame' }) do
 		local panelWidth = _G[v]:GetWidth() / 3
@@ -817,6 +822,9 @@ function module:OnEnable()
 
 		OptionsPopdown.Panel = Panel
 		OptionsPopdown.Panel.options = options
+		
+		-- Store panel reference for cleanup on disable
+		module.VendorPanels[v] = OptionsPopdown
 	end
 
 	LoadedOnce = true
@@ -826,4 +834,16 @@ function module:OnDisable()
 	SUI:Print('Autosell disabled')
 	module:UnregisterEvent('MERCHANT_SHOW')
 	module:UnregisterEvent('MERCHANT_CLOSED')
+	
+	-- Hide and cleanup vendor panels
+	if module.VendorPanels then
+		for _, panel in pairs(module.VendorPanels) do
+			if panel then
+				panel:Hide()
+				if panel.Panel then
+					panel.Panel:Hide()
+				end
+			end
+		end
+	end
 end
