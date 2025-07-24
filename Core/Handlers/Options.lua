@@ -560,6 +560,11 @@ function Options:hasChanges(UserSetting, DefaultSetting)
 	return false
 end
 
+---@param moduleName string The name of the module to open settings for
+function Options:OpenModuleSettings(moduleName)
+	self:ToggleOptions({ 'Modules', moduleName })
+end
+
 Options.ToggleOptions = module.ToggleOptions
 
 SUI.Options = Options

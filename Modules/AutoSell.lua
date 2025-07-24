@@ -684,6 +684,141 @@ function module:OnEnable()
 
 	module:RegisterEvent('MERCHANT_SHOW')
 	module:RegisterEvent('MERCHANT_CLOSED')
+
+	-- Create quick access panel for vendor windows
+	local IsCollapsed = true
+	local StdUi = SUI.StdUi
+
+	for _, v in ipairs({ 'MerchantFrame' }) do
+		local panelWidth = _G[v]:GetWidth() / 3
+
+		local OptionsPopdown = StdUi:Panel(_G[v], panelWidth, 20)
+		OptionsPopdown:SetScale(0.95)
+		-- Position on bottom right, avoiding the tabs on the bottom left
+		OptionsPopdown:SetPoint('TOPRIGHT', _G[v], 'BOTTOMRIGHT', -5, -2)
+		OptionsPopdown.title = StdUi:Label(OptionsPopdown, '|cffffffffSpartan|cffe21f1fUI|r AutoSell', 10)
+		OptionsPopdown.title:SetPoint('CENTER')
+
+		-- Function to refresh panel values from database
+		local function RefreshPanelValues()
+			if OptionsPopdown.Panel and OptionsPopdown.Panel.options then
+				local opts = OptionsPopdown.Panel.options
+
+				-- Update checkboxes
+				if opts.AutoRepair then opts.AutoRepair:SetChecked(module.DB.AutoRepair) end
+				if opts.Green then opts.Green:SetChecked(module.DB.Green) end
+				if opts.Blue then opts.Blue:SetChecked(module.DB.Blue) end
+				if opts.Purple then opts.Purple:SetChecked(module.DB.Purple) end
+
+				-- Update slider and input values
+				if opts.MaxILVLSlider then opts.MaxILVLSlider:SetValue(module.DB.MaxILVL) end
+				if opts.MaxILVLInput and opts.MaxILVLInput.SetValue then opts.MaxILVLInput:SetValue(module.DB.MaxILVL) end
+
+				-- Update slider maximum if it has changed
+				if opts.MaxILVLSlider and opts.MaxILVLSlider.SetMaxValue then opts.MaxILVLSlider:SetMaxValue(module.DB.MaximumiLVL) end
+				if opts.MaxILVLInput and opts.MaxILVLInput.SetMaxValue then opts.MaxILVLInput:SetMaxValue(module.DB.MaximumiLVL) end
+			end
+		end
+
+		-- Make the title clickable to toggle the panel
+		OptionsPopdown.title:EnableMouse(true)
+		OptionsPopdown.title:SetScript('OnMouseUp', function()
+			-- Refresh values from database before showing/hiding
+			RefreshPanelValues()
+
+			if OptionsPopdown.Panel:IsVisible() then
+				OptionsPopdown.Panel:Hide()
+				IsCollapsed = true
+			else
+				OptionsPopdown.Panel:Show()
+				IsCollapsed = false
+			end
+		end)
+
+		OptionsPopdown:HookScript('OnShow', function()
+			-- Refresh all values from the database when the panel is shown
+			RefreshPanelValues()
+
+			if IsCollapsed then
+				OptionsPopdown.Panel:Hide()
+			else
+				OptionsPopdown.Panel:Show()
+			end
+		end)
+
+		-- Create the expanded panel with increased height to accommodate the settings button
+		local Panel = StdUi:Panel(OptionsPopdown, _G[v]:GetWidth(), 120)
+		Panel:SetPoint('TOPRIGHT', OptionsPopdown, 'BOTTOMRIGHT', 0, -10)
+		Panel:Hide()
+
+		local options = {}
+
+		-- Settings button (moved into the expanded area)
+		options.openSettingsButton = StdUi:Button(Panel, 120, 20, L['All Settings'])
+		options.openSettingsButton:SetScript('OnClick', function()
+			SUI.Options:OpenModuleSettings('AutoSell')
+		end)
+
+		-- Auto repair checkbox
+		options.AutoRepair = StdUi:Checkbox(Panel, L['Auto repair'], nil, 20)
+
+		-- Max iLVL slider and input (adjusted for smaller panel width)
+		options.MaxILVLLabel = StdUi:Label(Panel, L['Maximum iLVL to sell'], nil, nil, Panel:GetWidth() - 10)
+		options.MaxILVLSlider = StdUi:Slider(Panel, Panel:GetWidth() - 70, 20, module.DB.MaxILVL, false, 1, module.DB.MaximumiLVL)
+		options.MaxILVLInput = StdUi:NumericBox(Panel, 50, 20, module.DB.MaxILVL)
+
+		-- Configure numeric box
+		if options.MaxILVLInput.SetMaxValue then options.MaxILVLInput:SetMaxValue(module.DB.MaximumiLVL) end
+		if options.MaxILVLInput.SetMinValue then options.MaxILVLInput:SetMinValue(1) end
+
+		-- Quality checkboxes
+		options.Green = StdUi:Checkbox(Panel, L['Sell green'], nil, 20)
+		options.Blue = StdUi:Checkbox(Panel, L['Sell blue'], nil, 20)
+		options.Purple = StdUi:Checkbox(Panel, L['Sell purple'], nil, 20)
+
+		-- Set up event handlers
+		for setting, control in pairs(options) do
+			if setting == 'MaxILVLSlider' then
+				control:SetValue(module.DB.MaxILVL)
+				control.OnValueChanged = function()
+					local value = math.floor(control:GetValue())
+					module.DB.MaxILVL = value
+					if options.MaxILVLInput.SetValue then options.MaxILVLInput:SetValue(value) end
+				end
+			elseif setting == 'MaxILVLInput' then
+				if control.SetValue then control:SetValue(module.DB.MaxILVL) end
+				control.OnValueChanged = function()
+					if control.GetValue then
+						local value = math.floor(control:GetValue())
+						module.DB.MaxILVL = value
+						options.MaxILVLSlider:SetValue(value)
+					end
+				end
+			elseif setting ~= 'MaxILVLLabel' and setting ~= 'openSettingsButton' then
+				control:SetChecked(module.DB[setting])
+				control:HookScript('OnClick', function()
+					module.DB[setting] = control:GetChecked()
+				end)
+			end
+		end
+
+		-- Position the controls (settings button at top, then other controls below)
+		StdUi:GlueTop(options.openSettingsButton, Panel, 5, -5, 'LEFT')
+
+		StdUi:GlueBelow(options.AutoRepair, options.openSettingsButton, 0, -5, 'LEFT')
+
+		StdUi:GlueBelow(options.MaxILVLLabel, options.AutoRepair, 0, -5, 'LEFT')
+		StdUi:GlueBelow(options.MaxILVLSlider, options.MaxILVLLabel, 0, -2, 'LEFT')
+		StdUi:GlueRight(options.MaxILVLInput, options.MaxILVLSlider, 5, 0)
+
+		StdUi:GlueBelow(options.Green, options.MaxILVLSlider, 0, -5, 'LEFT')
+		StdUi:GlueRight(options.Blue, options.Green, 0, 0)
+		StdUi:GlueRight(options.Purple, options.Blue, 0, 0)
+
+		OptionsPopdown.Panel = Panel
+		OptionsPopdown.Panel.options = options
+	end
+
 	LoadedOnce = true
 end
 
