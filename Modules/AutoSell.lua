@@ -702,6 +702,39 @@ function module:OnEnable()
 		OptionsPopdown.title = StdUi:Label(OptionsPopdown, '|cffffffffSpartan|cffe21f1fUI|r AutoSell', 10)
 		OptionsPopdown.title:SetPoint('CENTER')
 
+		-- Function to count sellable items and update sell button
+		local function UpdateSellButton()
+			if not OptionsPopdown.Panel or not OptionsPopdown.Panel.options then return end
+
+			local sellableCount = 0
+
+			-- Count items that would be sold with current settings
+			for bag = 0, 4 do
+				for slot = 1, C_Container.GetContainerNumSlots(bag) do
+					local itemInfo, _, _, _, _, _, link, _, _, itemID = C_Container.GetContainerItemInfo(bag, slot)
+					if SUI.IsRetail and itemInfo then
+						-- Use pcall to safely handle any tooltip-related errors
+						local success, result = pcall(module.IsSellable, module, itemInfo.itemID, itemInfo.hyperlink, bag, slot)
+						if success and result then sellableCount = sellableCount + 1 end
+					elseif not SUI.IsRetail and itemID then
+						-- Use pcall to safely handle any tooltip-related errors
+						local success, result = pcall(module.IsSellable, module, itemID, link, bag, slot)
+						if success and result then sellableCount = sellableCount + 1 end
+					end
+				end
+			end
+
+			local sellButton = OptionsPopdown.Panel.options.sellItemsButton
+			if sellButton then
+				if sellableCount > 0 then
+					sellButton:SetText('Sell ' .. sellableCount .. ' Items')
+					sellButton:Show()
+				else
+					sellButton:Hide()
+				end
+			end
+		end
+
 		-- Function to refresh panel values from database
 		local function RefreshPanelValues()
 			if OptionsPopdown.Panel and OptionsPopdown.Panel.options then
@@ -762,6 +795,14 @@ function module:OnEnable()
 			SUI.Options:OpenModuleSettings('AutoSell')
 		end)
 
+		-- Sell Items button (appears in top right when items are detected)
+		options.sellItemsButton = StdUi:Button(Panel, 120, 20, 'Sell 0 Items')
+		options.sellItemsButton:SetScript('OnClick', function()
+			module:SellTrash()
+			options.sellItemsButton:Hide()
+		end)
+		options.sellItemsButton:Hide()
+
 		-- Auto repair checkbox
 		options.AutoRepair = StdUi:Checkbox(Panel, L['Auto repair'], nil, 20)
 
@@ -784,29 +825,51 @@ function module:OnEnable()
 			if setting == 'MaxILVLSlider' then
 				control:SetValue(module.DB.MaxILVL)
 				control.OnValueChanged = function()
+					-- Stop any current selling operation
+					if module:TimeLeft('SellTrashInBag') and module:TimeLeft('SellTrashInBag') > 0 then
+						module:CancelAllTimers()
+						SUI:Print('AutoSell operation interrupted by settings change')
+					end
+
 					local value = math.floor(control:GetValue())
 					module.DB.MaxILVL = value
 					if options.MaxILVLInput.SetValue then options.MaxILVLInput:SetValue(value) end
+					UpdateSellButton() -- Update sell button when slider changes
 				end
 			elseif setting == 'MaxILVLInput' then
 				if control.SetValue then control:SetValue(module.DB.MaxILVL) end
 				control.OnValueChanged = function()
 					if control.GetValue then
+						-- Stop any current selling operation
+						if module:TimeLeft('SellTrashInBag') and module:TimeLeft('SellTrashInBag') > 0 then
+							module:CancelAllTimers()
+							SUI:Print('AutoSell operation interrupted by settings change')
+						end
+
 						local value = math.floor(control:GetValue())
 						module.DB.MaxILVL = value
 						options.MaxILVLSlider:SetValue(value)
+						UpdateSellButton() -- Update sell button when input changes
 					end
 				end
-			elseif setting ~= 'MaxILVLLabel' and setting ~= 'openSettingsButton' then
+			elseif setting ~= 'MaxILVLLabel' and setting ~= 'openSettingsButton' and setting ~= 'sellItemsButton' then
 				control:SetChecked(module.DB[setting])
 				control:HookScript('OnClick', function()
+					-- Stop any current selling operation
+					if module:TimeLeft('SellTrashInBag') and module:TimeLeft('SellTrashInBag') > 0 then
+						module:CancelAllTimers()
+						SUI:Print('AutoSell operation interrupted by settings change')
+					end
+
 					module.DB[setting] = control:GetChecked()
+					UpdateSellButton() -- Update sell button when checkboxes change
 				end)
 			end
 		end
 
 		-- Position the controls (settings button at top, then other controls below)
 		StdUi:GlueTop(options.openSettingsButton, Panel, 5, -5, 'LEFT')
+		StdUi:GlueTop(options.sellItemsButton, Panel, -5, -5, 'RIGHT')
 
 		StdUi:GlueBelow(options.AutoRepair, options.openSettingsButton, 0, -5, 'LEFT')
 

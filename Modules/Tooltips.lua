@@ -91,15 +91,27 @@ end
 
 local onShow = function(self)
 	if not self.SetBackdrop then Mixin(self, BackdropTemplateMixin) end
-	self:SetBackdrop(whitebg)
-	self.SUITip:SetBackdrop({ bgFile = LSM:Fetch('background', module.DB.Background), tile = false })
-	self.SUITip:SetFrameLevel(0)
+
+	-- Safely set backdrop with error protection
+	local success, err = pcall(function()
+		self:SetBackdrop(whitebg)
+		if self.SUITip then
+			local bgFile = LSM:Fetch('background', module.DB.Background)
+			if bgFile and bgFile ~= '' then self.SUITip:SetBackdrop({ bgFile = bgFile, tile = false }) end
+			self.SUITip:SetFrameLevel(0)
+		end
+	end)
+
+	if not success then
+		-- If backdrop setting fails, skip it for this show event
+		return
+	end
 
 	if (module.DB.Background == 'none' or module.DB.ColorOverlay) or not self.SUITip then
 		self:SetBackdropColor(unpack(module.DB.Color))
-		self.SUITip:SetBackdropColor(1, 1, 1, 1)
+		if self.SUITip then self.SUITip:SetBackdropColor(1, 1, 1, 1) end
 	else
-		self.SUITip:SetBackdropColor(unpack(module.DB.Color))
+		if self.SUITip then self.SUITip:SetBackdropColor(unpack(module.DB.Color)) end
 		self:SetBackdropColor(0, 0, 0, 0)
 	end
 end
