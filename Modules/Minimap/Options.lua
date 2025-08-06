@@ -232,16 +232,18 @@ function module:BuildOptions()
 						type = 'group',
 						order = 25,
 						inline = true,
+						hidden = function()
+							-- Only show vehicle options if the skin defines the minimap as being under Vehicle UI
+							if not module.Settings then return true end -- Hide if settings not loaded
+							return not module.Settings.UnderVehicleUI
+						end,
 						args = {
-							UnderVehicleUI = {
-								name = L['Under Vehicle UI'],
-								desc = L['Set to enabled if the minimap is under the Blizzard VehicleUI'],
-								type = 'toggle',
+							skinInfo = {
+								name = L['Skin Position Info'],
+								desc = L['This skin positions the minimap under the Blizzard Vehicle UI. You can configure how the minimap behaves when in a vehicle.'],
+								type = 'description',
 								width = 'full',
-								order = 290,
-								get = function()
-									return module.Settings.UnderVehicleUI
-								end,
+								order = 0,
 							},
 							enable = {
 								name = L['Configure Vehicle Position'],
@@ -258,30 +260,30 @@ function module:BuildOptions()
 								type = 'execute',
 								order = 2,
 								func = function()
-									local point, anchor, secondaryPoint, x, y = strsplit(',', module.BaseOpt.vehiclePosition)
-									VehicleMover:ClearAllPoints()
-									VehicleMover:SetPoint(point, _G[anchor], secondaryPoint, x, y)
-
-									module.Settings.vehiclePosition = module.BaseOpt.vehiclePosition
-									local currentStyle = SUI.DB.Artwork.Style
-									if module.DB.customSettings[currentStyle] then module.DB.customSettings[currentStyle].vehiclePosition = nil end
-
-									SUI:Print(L['Vehicle minimap position reset to default'])
+									module:ResetVehiclePosition()
 								end,
 							},
-							moveUnderVehicleUI = {
-								name = L['Move minimap under Vehicle UI'],
-								desc = L['Automatically move the minimap to a different position when in a vehicle'],
+							useVehicleMover = {
+								name = L['Use Vehicle Position'],
+								desc = L['When enabled, the minimap will move to a different position when in a vehicle. When disabled, the minimap stays in its normal position.'],
 								type = 'toggle',
 								order = 3,
 								get = function()
-									return module.Settings.UnderVehicleUI
+									if not module.Settings then return true end -- Default to true if settings not loaded
+									return module.Settings.useVehicleMover ~= false -- Default to true if nil or true
 								end,
 								set = function(_, val)
-									module.Settings.UnderVehicleUI = val
 									local currentStyle = SUI.DB.Artwork.Style
 									if not module.DB.customSettings[currentStyle] then module.DB.customSettings[currentStyle] = {} end
-									module.DB.customSettings[currentStyle].UnderVehicleUI = val
+									module.DB.customSettings[currentStyle].useVehicleMover = val
+
+									-- Update runtime settings after saving to DB
+									if module.Settings then module.Settings.useVehicleMover = val end
+
+									-- If disabling the setting and currently in vehicle, return to normal position
+									if not val and (UnitInVehicle('player') or (OverrideActionBar and OverrideActionBar:IsVisible())) then module:SwitchMinimapPosition(false) end
+
+									module:Update(true)
 								end,
 							},
 						},

@@ -21,6 +21,7 @@ local BaseSettings = {
 	size = { 180, 180 },
 	scaleWithArt = true,
 	UnderVehicleUI = true,
+	useVehicleMover = true,
 	position = 'TOPRIGHT,UIParent,TOPRIGHT,-20,-20',
 	vehiclePosition = 'TOPRIGHT,UIParent,TOPRIGHT,-20,-20',
 	rotate = false,
@@ -630,7 +631,7 @@ function module:Update(fullUpdate)
 	module:UpdateMinimapSize()
 
 	-- If minimap default location is under the minimap setup scripts to move it
-	if module.Settings.UnderVehicleUI and SUI.DB.Artwork.VehicleUI and not VisibilityWatcher.hooked and (not MoveIt:IsMoved('Minimap')) then
+	if module.Settings.UnderVehicleUI and module.Settings.useVehicleMover ~= false and SUI.DB.Artwork.VehicleUI and not VisibilityWatcher.hooked and (not MoveIt:IsMoved('Minimap')) then
 		local OnHide = function(args)
 			VisibilityWatcher.IsInControl = true
 			module:SwitchMinimapPosition(true)
@@ -650,7 +651,7 @@ function module:Update(fullUpdate)
 		VisibilityWatcher:SetScript('OnShow', OnShow)
 		RegisterStateDriver(VisibilityWatcher, 'visibility', '[petbattle][overridebar][vehicleui] hide; show')
 		VisibilityWatcher.hooked = true
-	elseif (MoveIt:IsMoved('Minimap') or not SUI.DB.Artwork.VehicleUI) and VisibilityWatcher.hooked then
+	elseif (MoveIt:IsMoved('Minimap') or not SUI.DB.Artwork.VehicleUI or not module.Settings.UnderVehicleUI or module.Settings.useVehicleMover == false) and VisibilityWatcher.hooked then
 		UnregisterStateDriver(VisibilityWatcher, 'visibility')
 		VisibilityWatcher.hooked = false
 	end
@@ -749,6 +750,19 @@ function module:VehicleUIMoverHide()
 	VehicleMover:Hide()
 end
 
+-- Reset vehicle position to default
+function module:ResetVehiclePosition()
+	local point, anchor, secondaryPoint, x, y = strsplit(',', module.BaseOpt.vehiclePosition)
+	VehicleMover:ClearAllPoints()
+	VehicleMover:SetPoint(point, _G[anchor], secondaryPoint, x, y)
+
+	module.Settings.vehiclePosition = module.BaseOpt.vehiclePosition
+	local currentStyle = SUI.DB.Artwork.Style
+	if module.DB.customSettings[currentStyle] then module.DB.customSettings[currentStyle].vehiclePosition = nil end
+
+	SUI:Print(L['Vehicle minimap position reset to default'])
+end
+
 -- Handle vehicle state changes
 function module:OnVehicleChange(event, unit)
 	if unit ~= 'player' then return end
@@ -775,15 +789,17 @@ function module:OnVehicleChange(event, unit)
 		-- end
 
 		-- Apply the vehicle position
-		module:SwitchMinimapPosition(true)
+		if module.Settings.UnderVehicleUI and module.Settings.useVehicleMover ~= false then module:SwitchMinimapPosition(true) end
 	elseif event == 'UNIT_EXITED_VEHICLE' then
 		-- Restore normal position
-		module:SwitchMinimapPosition(false)
+		if module.Settings.UnderVehicleUI and module.Settings.useVehicleMover ~= false then module:SwitchMinimapPosition(false) end
 	end
 end
 
 -- Check vehicle status on login or reload
 function module:CheckVehicleStatus()
+	if not (module.Settings.UnderVehicleUI and module.Settings.useVehicleMover ~= false) then return end
+
 	if UnitInVehicle('player') or (OverrideActionBar and OverrideActionBar:IsVisible()) then
 		module:SwitchMinimapPosition(true)
 	else
@@ -795,7 +811,7 @@ end
 function module:CheckOverrideActionBar()
 	C_Timer.After(0.5, function()
 		if OverrideActionBar and OverrideActionBar:IsVisible() then
-			if not module.Settings.firstVehicleDetected and module.Settings.UnderVehicleUI then
+			if not module.Settings.firstVehicleDetected and module.Settings.UnderVehicleUI and module.Settings.useVehicleMover ~= false then
 				module.Settings.firstVehicleDetected = true
 				module.DB.customSettings[SUI.DB.Artwork.Style].firstVehicleDetected = true
 
@@ -815,9 +831,9 @@ function module:CheckOverrideActionBar()
 				StaticPopup_Show('SUI_MINIMAP_VEHICLE_POSITION')
 			end
 
-			module:SwitchMinimapPosition(true)
+			if module.Settings.UnderVehicleUI and module.Settings.useVehicleMover ~= false then module:SwitchMinimapPosition(true) end
 		else
-			module:SwitchMinimapPosition(false)
+			if module.Settings.UnderVehicleUI and module.Settings.useVehicleMover ~= false then module:SwitchMinimapPosition(false) end
 		end
 	end)
 end
