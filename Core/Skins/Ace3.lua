@@ -239,16 +239,38 @@ local function SkinAce3()
 					-- Add Shift+Click handler for navigation commands
 					newButton:HookScript('OnClick', function(frame, button, down)
 						if IsShiftKeyDown() and button == 'LeftButton' and frame.uniquevalue then
-							-- Convert the uniquevalue to a path for the /sui > command
-							local pathParts = { strsplit('\001', frame.uniquevalue) }
-							local pathString = table.concat(pathParts, ' > ')
+							-- Check if we're in a SpartanUI options window
+							local isSpartanUIWindow = false
+							if Lib.AceCD and Lib.AceCD.OpenFrames then
+								for appName, configData in pairs(Lib.AceCD.OpenFrames) do
+									if (appName == 'SpartanUI' or appName == 'SpartanUIBliz') and configData.frame and configData.frame:IsVisible() then
+										-- Check if this button belongs to the SpartanUI config window
+										local parent = frame:GetParent()
+										while parent do
+											if parent == configData.frame then
+												isSpartanUIWindow = true
+												break
+											end
+											parent = parent:GetParent()
+										end
+										if isSpartanUIWindow then break end
+									end
+								end
+							end
 
-							-- Set the chat edit box text
-							if ChatEdit_GetActiveWindow() then
-								ChatEdit_GetActiveWindow():SetText('/sui > ' .. pathString)
-							else
-								-- If no chat window is active, open the default chat frame
-								ChatFrame_OpenChat('/sui > ' .. pathString, DEFAULT_CHAT_FRAME)
+							-- Only execute if we're in a SpartanUI options window
+							if isSpartanUIWindow then
+								-- Convert the uniquevalue to a path for the /sui > command
+								local pathParts = { strsplit('\001', frame.uniquevalue) }
+								local pathString = table.concat(pathParts, ' > ')
+
+								-- Set the chat edit box text
+								if ChatEdit_GetActiveWindow() then
+									ChatEdit_GetActiveWindow():SetText('/sui > ' .. pathString)
+								else
+									-- If no chat window is active, open the default chat frame
+									ChatFrame_OpenChat('/sui > ' .. pathString, DEFAULT_CHAT_FRAME)
+								end
 							end
 						end
 					end)
