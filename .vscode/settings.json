@@ -496,7 +496,9 @@
     "SUI_Art_Minimal_Base4",
     "SUI_Art_Minimal_Base5",
     "BLUE_FONT_COLOR",
-    "PossessActionBar"
+    "PossessActionBar",
+    "ChatEdit_GetActiveWindow",
+    "ChatFrame_OpenChat"
   ],
   "Lua.workspace.ignoreDir": [".vscode", "libs/*"],
   "Lua.diagnostics.enable": true,

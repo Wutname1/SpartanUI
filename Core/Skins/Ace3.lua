@@ -235,6 +235,24 @@ local function SkinAce3()
 						if not strfind(texture, 'PushButton') then frame:SetPushedTexture('Interface\\AddOns\\SpartanUI\\images\\textures\\PushButton') end
 					end)
 					Skin('Button', newButton.toggle)
+
+					-- Add Shift+Click handler for navigation commands
+					newButton:HookScript('OnClick', function(frame, button, down)
+						if IsShiftKeyDown() and button == 'LeftButton' and frame.uniquevalue then
+							-- Convert the uniquevalue to a path for the /sui > command
+							local pathParts = { strsplit('\001', frame.uniquevalue) }
+							local pathString = table.concat(pathParts, ' > ')
+
+							-- Set the chat edit box text
+							if ChatEdit_GetActiveWindow() then
+								ChatEdit_GetActiveWindow():SetText('/sui > ' .. pathString)
+							else
+								-- If no chat window is active, open the default chat frame
+								ChatFrame_OpenChat('/sui > ' .. pathString, DEFAULT_CHAT_FRAME)
+							end
+						end
+					end)
+
 					return newButton
 				end
 			elseif not widgetParent.Panel then
