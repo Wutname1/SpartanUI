@@ -11,6 +11,14 @@ module.styleOverride = nil ---@type string|nil
 local Registry = {}
 local MinimapUpdater, VisibilityWatcher = CreateFrame('Frame'), CreateFrame('Frame')
 VisibilityWatcher.IsInControl = false
+
+-- Create a secure vehicle UI watcher frame similar to oUF's PetBattleFrameHider
+local VehicleUIWatcher = CreateFrame('Frame', 'SUI_Minimap_VehicleUIWatcher', UIParent, 'SecureHandlerStateTemplate')
+VehicleUIWatcher:SetAllPoints()
+VehicleUIWatcher:SetFrameStrata('LOW')
+-- Register state driver to detect when vehicle UI is active (not just any vehicle)
+RegisterStateDriver(VehicleUIWatcher, 'visibility', '[possessbar][overridebar][vehicleui] hide; show')
+
 ---@class SUI.Minimap.Holder : FrameExpanded, SUI.MoveIt.MoverParent
 local SUIMinimap = CreateFrame('Frame', 'SUI_Minimap')
 
@@ -131,6 +139,44 @@ local function IsMouseOver()
 	end
 
 	return false
+end
+
+-- Check if Vehicle UI is actually active (not just in any vehicle)
+local function IsVehicleUIActive()
+	-- First check OverrideActionBar (most reliable)
+	if OverrideActionBar and OverrideActionBar:IsVisible() then return true end
+
+	-- Check if in vehicle AND has vehicle UI (excludes passengers, flight paths, etc)
+	if UnitInVehicle('player') and UnitHasVehicleUI('player') then return true end
+
+	-- Check possess bar (fallback for older content or edge cases)
+	-- Note: PossessActionBar might not exist in all game versions
+	if _G.PossessActionBar and _G.PossessActionBar:IsVisible() then return true end
+
+	return false
+end
+
+-- Expose to module for options access
+function module:IsVehicleUIActive()
+	return IsVehicleUIActive()
+end
+
+-- Setup vehicle UI monitoring using the secure watcher frame
+local function SetupVehicleUIMonitoring()
+	-- Hook the watcher frame's visibility changes
+	VehicleUIWatcher:HookScript('OnHide', function()
+		-- Vehicle UI is now active (frame is hidden when vehicle UI shows)
+		if module.Settings and module.Settings.UnderVehicleUI and module.Settings.useVehicleMover ~= false then
+			module:SwitchMinimapPosition(true)
+		end
+	end)
+	
+	VehicleUIWatcher:HookScript('OnShow', function()
+		-- Vehicle UI is no longer active (frame is shown when vehicle UI hides)
+		if module.Settings and module.Settings.UnderVehicleUI and module.Settings.useVehicleMover ~= false then
+			module:SwitchMinimapPosition(false)
+		end
+	end)
 end
 
 function module:Register(name, settings)
@@ -630,33 +676,25 @@ function module:Update(fullUpdate)
 	module:UpdateMinimapShape()
 	module:UpdateMinimapSize()
 
-	-- If minimap default location is under the minimap setup scripts to move it
-	if module.Settings.UnderVehicleUI and module.Settings.useVehicleMover ~= false and SUI.DB.Artwork.VehicleUI and not VisibilityWatcher.hooked and (not MoveIt:IsMoved('Minimap')) then
-		local OnHide = function(args)
-			VisibilityWatcher.IsInControl = true
+	-- Setup vehicle UI monitoring if conditions are met
+	if module.Settings.UnderVehicleUI and module.Settings.useVehicleMover ~= false and SUI.DB.Artwork.VehicleUI and (not MoveIt:IsMoved('Minimap')) then
+		-- Initialize vehicle UI monitoring if not already done
+		if not VehicleUIWatcher.monitoringSetup then
+			SetupVehicleUIMonitoring()
+			VehicleUIWatcher.monitoringSetup = true
+		end
+		
+		-- Check current state and apply immediately if needed
+		if not VehicleUIWatcher:IsVisible() then
+			-- VehicleUIWatcher is hidden, meaning vehicle UI is active
 			module:SwitchMinimapPosition(true)
+		else
+			-- VehicleUIWatcher is visible, meaning vehicle UI is not active  
+			module:SwitchMinimapPosition(false)
 		end
-		local OnShow = function(args)
-			if SUI:IsModuleEnabled('Minimap') and SUI.DB.Artwork.VehicleUI and not MoveIt:IsMoved('Minimap') then
-				VisibilityWatcher.IsInControl = false
-				module:SwitchMinimapPosition(false)
-				-- Reset to skin position
-				module:UpdatePosition()
-				-- Update Scale
-				module:UpdateScale()
-			end
-		end
-
-		VisibilityWatcher:SetScript('OnHide', OnHide)
-		VisibilityWatcher:SetScript('OnShow', OnShow)
-		RegisterStateDriver(VisibilityWatcher, 'visibility', '[petbattle][overridebar][vehicleui] hide; show')
-		VisibilityWatcher.hooked = true
-	elseif (MoveIt:IsMoved('Minimap') or not SUI.DB.Artwork.VehicleUI or not module.Settings.UnderVehicleUI or module.Settings.useVehicleMover == false) and VisibilityWatcher.hooked then
-		UnregisterStateDriver(VisibilityWatcher, 'visibility')
-		VisibilityWatcher.hooked = false
 	end
 
-	if fullUpdate and not VisibilityWatcher.IsInControl then
+	if fullUpdate then
 		module:UpdatePosition()
 		module:UpdateScale()
 	end
@@ -800,7 +838,7 @@ end
 function module:CheckVehicleStatus()
 	if not (module.Settings.UnderVehicleUI and module.Settings.useVehicleMover ~= false) then return end
 
-	if UnitInVehicle('player') or (OverrideActionBar and OverrideActionBar:IsVisible()) then
+	if IsVehicleUIActive() then
 		module:SwitchMinimapPosition(true)
 	else
 		module:SwitchMinimapPosition(false)
@@ -810,7 +848,7 @@ end
 -- Check for OverrideActionBar visibility changes
 function module:CheckOverrideActionBar()
 	C_Timer.After(0.5, function()
-		if OverrideActionBar and OverrideActionBar:IsVisible() then
+		if IsVehicleUIActive() then
 			if not module.Settings.firstVehicleDetected and module.Settings.UnderVehicleUI and module.Settings.useVehicleMover ~= false then
 				module.Settings.firstVehicleDetected = true
 				module.DB.customSettings[SUI.DB.Artwork.Style].firstVehicleDetected = true

@@ -280,9 +280,7 @@ function module:BuildOptions()
 									-- Update runtime settings after saving to DB
 									if module.Settings then module.Settings.useVehicleMover = val end
 
-									-- If disabling the setting and currently in vehicle, return to normal position
-									if not val and (UnitInVehicle('player') or (OverrideActionBar and OverrideActionBar:IsVisible())) then module:SwitchMinimapPosition(false) end
-
+									-- Update will handle the vehicle monitoring setup/cleanup automatically
 									module:Update(true)
 								end,
 							},

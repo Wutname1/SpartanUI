@@ -495,7 +495,8 @@
     "SUI_Art_Minimal_Base3",
     "SUI_Art_Minimal_Base4",
     "SUI_Art_Minimal_Base5",
-    "BLUE_FONT_COLOR"
+    "BLUE_FONT_COLOR",
+    "PossessActionBar"
   ],
   "Lua.workspace.ignoreDir": [".vscode", "libs/*"],
   "Lua.diagnostics.enable": true,
