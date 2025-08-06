@@ -9,8 +9,7 @@ module.Core = true
 module.Settings = nil ---@type SUI.Style.Settings.Minimap
 module.styleOverride = nil ---@type string|nil
 local Registry = {}
-local MinimapUpdater, VisibilityWatcher = CreateFrame('Frame'), CreateFrame('Frame')
-VisibilityWatcher.IsInControl = false
+local MinimapUpdater = CreateFrame('Frame')
 
 -- Create a secure vehicle UI watcher frame similar to oUF's PetBattleFrameHider
 local VehicleUIWatcher = CreateFrame('Frame', 'SUI_Minimap_VehicleUIWatcher', UIParent, 'SecureHandlerStateTemplate')
@@ -166,16 +165,12 @@ local function SetupVehicleUIMonitoring()
 	-- Hook the watcher frame's visibility changes
 	VehicleUIWatcher:HookScript('OnHide', function()
 		-- Vehicle UI is now active (frame is hidden when vehicle UI shows)
-		if module.Settings and module.Settings.UnderVehicleUI and module.Settings.useVehicleMover ~= false then
-			module:SwitchMinimapPosition(true)
-		end
+		if module.Settings and module.Settings.UnderVehicleUI and module.Settings.useVehicleMover ~= false then module:SwitchMinimapPosition(true) end
 	end)
-	
+
 	VehicleUIWatcher:HookScript('OnShow', function()
 		-- Vehicle UI is no longer active (frame is shown when vehicle UI hides)
-		if module.Settings and module.Settings.UnderVehicleUI and module.Settings.useVehicleMover ~= false then
-			module:SwitchMinimapPosition(false)
-		end
+		if module.Settings and module.Settings.UnderVehicleUI and module.Settings.useVehicleMover ~= false then module:SwitchMinimapPosition(false) end
 	end)
 end
 
@@ -683,13 +678,13 @@ function module:Update(fullUpdate)
 			SetupVehicleUIMonitoring()
 			VehicleUIWatcher.monitoringSetup = true
 		end
-		
+
 		-- Check current state and apply immediately if needed
 		if not VehicleUIWatcher:IsVisible() then
 			-- VehicleUIWatcher is hidden, meaning vehicle UI is active
 			module:SwitchMinimapPosition(true)
 		else
-			-- VehicleUIWatcher is visible, meaning vehicle UI is not active  
+			-- VehicleUIWatcher is visible, meaning vehicle UI is not active
 			module:SwitchMinimapPosition(false)
 		end
 	end
