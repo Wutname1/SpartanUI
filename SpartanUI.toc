@@ -14,6 +14,15 @@
 ## SavedVariables: SpartanUIDB, SUIErrorHandler
 ## SavedVariablesPerCharacter: SpartanUICharDB
 ## X-BugGrabber-Display: SUIErrorDisplay
+## Category: User Interface
+## Category-deDE: Benutzeroberfläche
+## Category-esES: Interfaz de Usuario
+## Category-frFR: Interface Utilisateur
+## Category-itIT: Interfaccia Utente
+## Category-koKR: 사용자 인터페이스
+## Category-ruRU: Пользовательский интерфейс
+## Category-zhCN: 用户界面
+## Category-zhTW: 使用者介面
 
 # General Libraries
 libs\TaintLess\TaintLess.xml
