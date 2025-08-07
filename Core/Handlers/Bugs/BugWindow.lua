@@ -149,7 +149,7 @@ function addon.BugWindow.Create()
 
 	local title = window:CreateFontString(nil, 'OVERLAY', 'GameFontNormalLarge')
 	title:SetPoint('TOPLEFT', 32, -27)
-	title:SetText(L['|cffffffffSpartan|cffe21f1fUI|r Error Display'])
+	title:SetText(string.format('|cffffffffSpartan|cffe21f1fUI|r Error Display %s %s %s', SUI.wowVersion, SUI.Version, SUI.releaseType or ''))
 
 	countLabel = window:CreateFontString(nil, 'OVERLAY', 'GameFontNormal')
 	countLabel:SetPoint('TOPRIGHT', -15, -27)
