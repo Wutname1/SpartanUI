@@ -6,6 +6,7 @@
 	<Script file="AutoSell.lua" />
 	<Script file="Minimap\Minimap.lua" />
 	<Script file="Minimap\Options.lua" />
+	<Script file="ExpandedExpansionButton.lua" />
 	<Script file="Objectives.lua" />
 	<Script file="Tooltips.lua" />
 	<Script file="MailOpenAll.lua" />

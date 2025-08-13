@@ -40,6 +40,7 @@ SUI.Version = ''
 ---@field StdUi StdUi
 ---@field LSM LibSharedMedia-3.0
 ---@field LEM LibEditMode
+---@field LibQTip LibQTip-1.0
 SUI.Lib = {}
 SUI.Handlers = {}
 
@@ -67,6 +68,7 @@ SUI.AddLib('Base64', 'LibBase64-1.0-SUI')
 SUI.AddLib('StdUi', 'StdUi')
 SUI.AddLib('LSM', 'LibSharedMedia-3.0')
 SUI.AddLib('LEM', 'LibEditMode')
+SUI.AddLib('LibQTip', 'LibQTip-1.0')
 
 SLASH_RELOADUI1 = '/rl' -- new slash command for reloading UI
 SlashCmdList.RELOADUI = ReloadUI

@@ -47,6 +47,7 @@ libs\LibDualSpec-1.0\LibDualSpec-1.0.lua
 libs\HereBeDragons\HereBeDragons-2.0.lua
 libs\LibSharedMedia-3.0\lib.xml
 libs\AceGUI-3.0-SharedMediaWidgets\widget.xml
+libs\LibQTip-1.0\LibQTip-1.0.lua
 
 # Unit Frame libraries
 libs\oUF\oUF.xml

@@ -468,26 +468,8 @@ function module:SetupExpansionButton()
 
 	ExpansionLandingPageMinimapButton:SetScale(module.Settings.elements.expansionButton.scale)
 	module:PositionItem(ExpansionLandingPageMinimapButton, module.Settings.elements.expansionButton.position)
-	ExpansionLandingPageMinimapButton:RegisterForClicks('LeftButtonUp', 'RightButtonUp')
-
-	ExpansionLandingPageMinimapButton:SetScript('OnClick', function(self, button)
-		if button == 'LeftButton' then
-			self:ToggleLandingPage()
-			return
-		elseif button == 'RightButton' then
-			if InCombatLockdown() then SUI:Print(L['You cannot open the Great Vault while in combat.']) end
-
-			if button == 'RightButton' then
-				if not WeeklyRewardsFrame then UIParentLoadAddOn('Blizzard_WeeklyRewards') end
-
-				if _G['WeeklyRewardsFrame'] then
-					ShowUIPanel(WeeklyRewardsFrame, true)
-				else
-					SUI:Print('Something went wrong and the weekly rewards could not be loaded.')
-				end
-			end
-		end
-	end)
+	-- Note: Right-click functionality is now handled by the ExpandedExpansionButton module
+	-- This keeps the default left-click behavior intact
 end
 
 local isFrameIgnored = function(item)
