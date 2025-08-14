@@ -150,8 +150,20 @@ local defaultExpansions = {
 			ToggleFrame(GenericTraitFrame)
 		end,
 		requirementCheck = function()
-			return GetExpansionLevel() >= 10
+			if GetExpansionLevel() < 10 then return false end
+			local itemID = 235499 -- Reshii Wraps item ID
+			-- Check equipped slots
+			if GetInventoryItemID('player', 15) == itemID then return true end
+
+			-- Check bags
+			for bag = 0, NUM_BAG_SLOTS do
+				for slot = 1, C_Container.GetContainerNumSlots(bag) do
+					if C_Container.GetContainerItemID(bag, slot) == itemID then return true end
+				end
+			end
+			return false
 		end,
+		0,
 	},
 	{
 		expansion = 'DF',
