@@ -121,15 +121,27 @@ local defaultExpansions = {
 	},
 	{
 		expansion = 'TWW',
+		displayText = 'TWW: Brann Configuration',
+		enabled = true,
+		icon = 'delves-bountiful',
+		onClick = function()
+			if not DelvesCompanionConfigurationFrame then C_AddOns.LoadAddOn('Blizzard_DelvesCompanionConfiguration') end
+			if not DelvesCompanionConfigurationFrame:IsShown() then
+				ShowUIPanel(DelvesCompanionConfigurationFrame)
+			else
+				HideUIPanel(DelvesCompanionConfigurationFrame)
+			end
+		end,
+		requirementCheck = function()
+			return GetExpansionLevel() >= 10
+		end,
+	},
+	{
+		expansion = 'TWW',
 		displayText = 'TWW: Reshii Wraps',
 		enabled = true,
 		icon = 'Interface\\Icons\\Inv_cape_armor_etherealshawl_d_01',
 		onClick = function()
-			if InCombatLockdown() then
-				SUI:Print('Cannot open Reshii Wraps while in combat.')
-				return
-			end
-
 			if GenericTraitFrame and GenericTraitFrame:IsShown() then GenericTraitFrame:Hide() end
 
 			GenericTraitUI_LoadUI()
@@ -138,7 +150,7 @@ local defaultExpansions = {
 			ToggleFrame(GenericTraitFrame)
 		end,
 		requirementCheck = function()
-			return GetExpansionLevel() >= 10 -- The War Within
+			return GetExpansionLevel() >= 10
 		end,
 	},
 	{
