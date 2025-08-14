@@ -761,14 +761,27 @@ local function CreateMenu()
 	end
 end
 
----Handle right-click on expansion button
-local function OnExpansionButtonRightClick()
+---Handle button clicks on expansion button
+local function OnExpansionButtonClick(button)
 	if InCombatLockdown() then
 		SUI:Print('Cannot open expansion menu while in combat.')
 		return
 	end
 
-	CreateMenu()
+	local shouldOpenMenu = false
+
+	if button == 'RightButton' and module.DB.menuTriggers.rightClick then
+		shouldOpenMenu = true
+	elseif button == 'LeftButton' and module.DB.menuTriggers.leftClick then
+		shouldOpenMenu = true
+	end
+
+	if shouldOpenMenu then
+		CreateMenu()
+		return true -- Indicate we handled the click
+	end
+
+	return false -- Let default behavior proceed
 end
 
 ----------------------------------------------------------------------------------------------------
@@ -789,11 +802,43 @@ function module:BuildOptions()
 				name = 'Configure which expansion features appear in the right-click menu.',
 				order = 1,
 			},
+			menuTriggers = {
+				type = 'group',
+				name = 'Menu Open On',
+				inline = true,
+				order = 2,
+				args = {
+					rightClick = {
+						type = 'toggle',
+						name = 'Right Click',
+						desc = 'Open expansion menu on right click',
+						get = function()
+							return module.DB.menuTriggers.rightClick
+						end,
+						set = function(_, value)
+							module.DB.menuTriggers.rightClick = value
+						end,
+						order = 1,
+					},
+					leftClick = {
+						type = 'toggle',
+						name = 'Left Click',
+						desc = 'Open expansion menu on left click (overrides default behavior)',
+						get = function()
+							return module.DB.menuTriggers.leftClick
+						end,
+						set = function(_, value)
+							module.DB.menuTriggers.leftClick = value
+						end,
+						order = 2,
+					},
+				},
+			},
 			enabledItems = {
 				type = 'group',
 				name = 'Menu Items',
 				inline = true,
-				order = 2,
+				order = 3,
 				args = {},
 			},
 		},
@@ -828,6 +873,10 @@ function module:OnInitialize()
 	local defaults = {
 		enabled = true,
 		enabledItems = {},
+		menuTriggers = {
+			rightClick = true,
+			leftClick = false,
+		},
 	}
 
 	module.Database = SUI.SpartanUIDB:RegisterNamespace('ExpandedExpansionButton', { profile = defaults })
@@ -853,12 +902,8 @@ function module:OnEnable()
 		local originalOnClick = ExpansionLandingPageMinimapButton:GetScript('OnClick')
 
 		ExpansionLandingPageMinimapButton:SetScript('OnClick', function(self, button, down)
-			if button == 'RightButton' then
-				OnExpansionButtonRightClick()
-				return -- Block default behavior
-			elseif originalOnClick then
-				originalOnClick(self, button, down)
-			end
+			local handled = OnExpansionButtonClick(button)
+			if not handled and originalOnClick then originalOnClick(self, button, down) end
 		end)
 	else
 		-- Wait for the button to be created
@@ -873,12 +918,8 @@ function module:OnEnable()
 				local originalOnClick = ExpansionLandingPageMinimapButton:GetScript('OnClick')
 
 				ExpansionLandingPageMinimapButton:SetScript('OnClick', function(self, button, down)
-					if button == 'RightButton' then
-						OnExpansionButtonRightClick()
-						return -- Block default behavior
-					elseif originalOnClick then
-						originalOnClick(self, button, down)
-					end
+					local handled = OnExpansionButtonClick(button)
+					if not handled and originalOnClick then originalOnClick(self, button, down) end
 				end)
 
 				frame:UnregisterAllEvents()
@@ -901,7 +942,7 @@ SUI.ExpandedExpansionButton = {
 	UnregisterExpansionItem = function(...)
 		return module:UnregisterExpansionItem(...)
 	end,
-	GetRegisteredItems = function(...)
-		return module:GetRegisteredItems(...)
+	GetRegisteredItems = function()
+		return module:GetRegisteredItems()
 	end,
 }
