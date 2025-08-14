@@ -163,7 +163,10 @@ local defaultExpansions = {
 			end
 			return false
 		end,
-		0,
+		showWhenDisabled = function()
+			return GetExpansionLevel() == 10 -- Show in TWW even if wraps not owned
+		end,
+		disabledTooltip = 'Reshii Wraps not found in bags or equipped',
 	},
 	{
 		expansion = 'DF',
@@ -377,7 +380,8 @@ local defaultExpansions = {
 ---@param icon string|nil Optional icon path for the menu item
 ---@param isDisabled function|nil Optional function to check if item should be disabled
 ---@param disabledTooltip string|nil Optional tooltip text when disabled
-function module:RegisterExpansionItem(expansion, displayText, onClick, requirementCheck, enabled, icon, isDisabled, disabledTooltip)
+---@param showWhenDisabled function|nil Optional function to show item even when requirements aren't met
+function module:RegisterExpansionItem(expansion, displayText, onClick, requirementCheck, enabled, icon, isDisabled, disabledTooltip, showWhenDisabled)
 	if not expansion or not displayText or not onClick then
 		SUI:Error('ExpandedExpansionButton', 'Invalid registration parameters')
 		return
@@ -394,6 +398,7 @@ function module:RegisterExpansionItem(expansion, displayText, onClick, requireme
 		icon = icon,
 		isDisabled = isDisabled,
 		disabledTooltip = disabledTooltip,
+		showWhenDisabled = showWhenDisabled,
 		id = expansion .. '_' .. displayText:gsub('[^%w]', ''),
 	}
 
@@ -491,8 +496,10 @@ local function CreateLibQTipMenu()
 	for _, item in ipairs(registeredExpansions) do
 		local requirementMet = item.requirementCheck()
 		local itemEnabled = module:IsItemEnabled(item.id)
+		local showWhenDisabled = item.showWhenDisabled and item.showWhenDisabled()
 
-		if requirementMet and itemEnabled then
+		-- Show item if: requirement met and enabled, OR if showWhenDisabled is true
+		if (requirementMet and itemEnabled) or (showWhenDisabled and itemEnabled) then
 			if not expansionGroups[item.expansion] then expansionGroups[item.expansion] = {} end
 			table.insert(expansionGroups[item.expansion], item)
 		end
@@ -522,7 +529,8 @@ local function CreateLibQTipMenu()
 
 		for _, item in ipairs(items) do
 			-- Check if item should be disabled
-			local isItemDisabled = item.isDisabled and item.isDisabled() or false
+			local requirementMet = item.requirementCheck()
+			local isItemDisabled = (item.isDisabled and item.isDisabled()) or not requirementMet
 
 			local line = menuFrame:AddLine()
 
@@ -827,7 +835,7 @@ function module:OnInitialize()
 
 	-- Register default expansion items
 	for _, item in ipairs(defaultExpansions) do
-		module:RegisterExpansionItem(item.expansion, item.displayText, item.onClick, item.requirementCheck, item.enabled, item.icon, item.isDisabled, item.disabledTooltip)
+		module:RegisterExpansionItem(item.expansion, item.displayText, item.onClick, item.requirementCheck, item.enabled, item.icon, item.isDisabled, item.disabledTooltip, item.showWhenDisabled)
 	end
 end
 
