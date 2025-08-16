@@ -447,6 +447,14 @@ function module:CreateBarContainer(barManager, key, index)
 	self:SetupBarContainerVisuals(barContainer, barStyle)
 	self:SetupBarContainerPosition(barContainer, barStyle, index)
 
+	-- Create MoveIt mover for this statusbar
+	if SUI.MoveIt then
+		-- Set dirtyWidth/dirtyHeight to match the visual statusbar size (with padding)
+		barContainer.dirtyWidth = barStyle.size[1] - 30
+		barContainer.dirtyHeight = barStyle.size[2] - 5
+		SUI.MoveIt:CreateMover(barContainer, 'StatusBar_' .. key, key .. ' Status Bar', nil, 'StatusBars')
+	end
+
 	return barContainer
 end
 
