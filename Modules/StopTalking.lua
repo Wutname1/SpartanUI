@@ -25,9 +25,6 @@ function module:OnInitialize()
 	module.Database = SUI.SpartanUIDB:RegisterNamespace('StopTalking', { profile = defaults, global = defaults })
 	module.DB = module.Database.profile ---@type SUI.Module.StopTalking.DB
 	module.DBGlobal = module.Database.global ---@type SUI.Module.StopTalking.DB
-
-	-- Clean up potentially corrupted database entries
-	module:CleanupDatabase()
 end
 
 -- Helper function to truncate text to a specific number of words
