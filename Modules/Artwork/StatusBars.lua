@@ -45,6 +45,7 @@ local DBDefaults = {
 			text = Enums.TextDisplayMode.OnMouseOver,
 			alpha = 1,
 			enabled = true,
+			showTooltip = true,
 		},
 	},
 }
@@ -446,6 +447,7 @@ function module:CreateBarContainer(barManager, key, index)
 
 	self:SetupBarContainerVisuals(barContainer, barStyle)
 	self:SetupBarContainerPosition(barContainer, barStyle, index)
+	self:SetupBarContainerMouseEvents(barContainer, index)
 
 	-- Create MoveIt mover for this statusbar
 	if SUI.MoveIt then
@@ -497,6 +499,57 @@ function module:SetupBarContainerPosition(barContainer, barStyle, index)
 	barContainer:Hide() -- Start hidden, UpdateBars will show if there's content
 end
 
+function module:HandleBarOnEnter(bar, containerKey)
+	-- Show text if configured for mouseover
+	if DB.bars[containerKey].text == Enums.TextDisplayMode.OnMouseOver then bar.OverlayFrame.Text:Show() end
+
+	-- Show custom tooltip using the bar's data (if enabled)
+	if DB.bars[containerKey].showTooltip then
+		GameTooltip:ClearLines()
+		GameTooltip:SetOwner(bar, 'ANCHOR_CURSOR')
+		if bar.barIndex == Enums.Bars.Experience then
+			module:GetExperienceTooltipText()
+		elseif bar.barIndex == Enums.Bars.Reputation then
+			module:GetReputationTooltipText()
+		elseif bar.barIndex == Enums.Bars.Honor then
+			module:GetHonorTooltipText()
+		end
+		GameTooltip:Show()
+	end
+end
+
+function module:HandleBarOnLeave(bar, containerKey)
+	-- Hide text if configured for mouseover
+	if DB.bars[containerKey].text == Enums.TextDisplayMode.OnMouseOver then bar.OverlayFrame.Text:Hide() end
+	-- Hide tooltip (if it was enabled)
+	if DB.bars[containerKey].showTooltip then
+		GameTooltip:Hide()
+	end
+end
+
+function module:SetupBarContainerMouseEvents(barContainer, index)
+	-- Add mouse events to the container itself to handle cases where mover blocks individual bar events
+	barContainer:EnableMouse(true)
+	local containerKey = index == 1 and 'Left' or 'Right'
+
+	barContainer:SetScript('OnEnter', function(self)
+		-- Find the active bar in this container and trigger its tooltip
+		for _, bar in pairs(self.bars) do
+			if bar:IsShown() and bar.barIndex and bar.barIndex ~= Enums.Bars.None then
+				module:HandleBarOnEnter(bar, containerKey)
+				break -- Only handle the first active bar
+			end
+		end
+	end)
+
+	barContainer:SetScript('OnLeave', function(self)
+		-- Hide text and tooltip for all bars in this container
+		for _, bar in pairs(self.bars) do
+			if bar:IsShown() and bar.barIndex and bar.barIndex ~= Enums.Bars.None then module:HandleBarOnLeave(bar, containerKey) end
+		end
+	end)
+end
+
 function module:SetupBarContainerBehavior(barContainer, index)
 	local width, height = unpack(barContainer.settings.size)
 	for _, bar in pairs(barContainer.bars) do
@@ -523,27 +576,12 @@ function module:SetupBar(bar, barContainer, width, height, index)
 
 	bar:HookScript('OnEnter', function(self)
 		local containerKey = index == 1 and 'Left' or 'Right'
-		if DB.bars[containerKey].text == Enums.TextDisplayMode.OnMouseOver then bar.OverlayFrame.Text:Show() end
-
-		-- Show custom tooltip
-		GameTooltip:ClearLines()
-		GameTooltip:SetOwner(self, 'ANCHOR_CURSOR')
-		if self.barIndex == Enums.Bars.Experience then
-			module:GetExperienceTooltipText()
-		elseif self.barIndex == Enums.Bars.Reputation then
-			module:GetReputationTooltipText()
-		elseif self.barIndex == Enums.Bars.Honor then
-			module:GetHonorTooltipText()
-		end
-		GameTooltip:Show()
+		module:HandleBarOnEnter(self, containerKey)
 	end)
 
 	bar:HookScript('OnLeave', function(self)
 		local containerKey = index == 1 and 'Left' or 'Right'
-		if DB.bars[containerKey].text == Enums.TextDisplayMode.OnMouseOver then bar.OverlayFrame.Text:Hide() end
-
-		-- Hide tooltip
-		GameTooltip:Hide()
+		module:HandleBarOnLeave(self, containerKey)
 	end)
 end
 
@@ -728,6 +766,20 @@ function module:CreateContainerOptions(containerKey, order)
 				set = function(_, value)
 					DB.bars[containerKey].alpha = value
 					self:UpdateBars()
+				end,
+			},
+			showTooltip = {
+				name = 'Show Tooltip on Mouseover',
+				type = 'toggle',
+				order = 3,
+				disabled = function()
+					return not DB.bars[containerKey].enabled
+				end,
+				get = function()
+					return DB.bars[containerKey].showTooltip
+				end,
+				set = function(_, value)
+					DB.bars[containerKey].showTooltip = value
 				end,
 			},
 		},
