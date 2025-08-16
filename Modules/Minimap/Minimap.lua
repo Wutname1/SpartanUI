@@ -235,6 +235,46 @@ function module:UpdateMinimapSize()
 	-- Set size of MinimapCluster BorderTop
 	MinimapCluster.BorderTop:SetWidth(Minimap:GetWidth() / 1.1)
 	MinimapCluster.BorderTop:SetHeight(MinimapCluster.ZoneTextButton:GetHeight() * 2.8)
+	
+	-- Update overlay texture positioning if it exists to prevent clipping
+	if Minimap.overlay then
+		Minimap.overlay:SetAllPoints(Minimap)
+	end
+	
+	-- Force minimap to refresh and re-render after size changes
+	-- We delay this slightly to ensure the size changes have taken effect
+	C_Timer.After(0.1, function()
+		module:UpdateMinimapShape()
+		
+		-- Force minimap refresh by triggering various update methods
+		if Minimap.RefreshAll then
+			Minimap:RefreshAll()
+		end
+		
+		-- Force a zoom update to refresh the display
+		local currentZoom = Minimap:GetZoom()
+		if currentZoom > 0 then
+			Minimap:SetZoom(currentZoom - 1)
+			C_Timer.After(0.05, function()
+				Minimap:SetZoom(currentZoom)
+			end)
+		end
+		
+		-- Trigger minimap update events if available
+		if MinimapCluster.UpdateBlips then
+			MinimapCluster:UpdateBlips()
+		end
+		
+		-- Force texture coordinate refresh
+		if GetCVar('rotateMinimap') == '1' then
+			-- Temporarily toggle rotation to force refresh
+			local rotate = module.Settings.rotate
+			C_CVar.SetCVar('rotateMinimap', rotate and '0' or '1')
+			C_Timer.After(0.05, function()
+				C_CVar.SetCVar('rotateMinimap', rotate and '1' or '0')
+			end)
+		end
+	end)
 end
 
 function module:UpdateMinimapShape()
