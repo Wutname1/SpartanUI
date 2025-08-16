@@ -725,6 +725,10 @@ function module:OnInitialize()
 			['target'] = 'BOTTOMLEFT,SUI_BottomAnchor,BOTTOM,182,160',
 			['targettarget'] = 'BOTTOMLEFT,SUI_UF_target,BOTTOMRIGHT,50,-5',
 		},
+		displayName = 'Classic',
+		setup = {
+			image = 'Interface\\AddOns\\SpartanUI\\images\\setup\\Style_Frames_Classic',
+		},
 	}
 	UF.Style:Register('Classic', ufsettings)
 

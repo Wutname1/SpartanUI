@@ -25,6 +25,10 @@ function module:OnInitialize()
 				PVPAlpha = 0.4,
 			},
 		},
+		displayName = 'Digital',
+		setup = {
+			image = 'Interface\\AddOns\\SpartanUI\\images\\setup\\Style_Frames_Digital',
+		},
 	}
 	SUI.UF.Style:Register('Digital', ufsettings)
 

@@ -74,6 +74,10 @@ function module:OnInitialize()
 				PVPAlpha = 0.8,
 			},
 		},
+		displayName = 'Fel',
+		setup = {
+			image = 'Interface\\AddOns\\SpartanUI\\images\\setup\\Style_Frames_Fel',
+		},
 	}
 	SUI.UF.Style:Register('Fel', ufsettings)
 

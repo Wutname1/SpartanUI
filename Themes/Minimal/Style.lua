@@ -54,7 +54,12 @@ function module:OnInitialize()
 	}
 	SUI.Minimap:Register('Minimal', minimapSettings)
 
-	SUI.UF.Style:Register('Minimal', {})
+	SUI.UF.Style:Register('Minimal', { 
+		displayName = 'Minimal',
+		setup = {
+			image = 'Interface\\AddOns\\SpartanUI\\images\\setup\\Style_Frames_Minimal',
+		},
+	})
 end
 
 function module:OnEnable()

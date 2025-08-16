@@ -67,6 +67,9 @@ function module:OnInitialize()
 	---@type SUI.Style.Settings.UnitFrames
 	local RedUFSettings = {
 		displayName = 'Arcane red',
+		setup = {
+			image = 'Interface\\AddOns\\SpartanUI\\images\\setup\\Style_Frames_ArcaneRed',
+		},
 		artwork = {
 			top = {
 				heightScale = 0.225,
@@ -103,6 +106,9 @@ function module:OnInitialize()
 	---@type SUI.Style.Settings.UnitFrames
 	local BlueUFSettings = {
 		displayName = 'Arcane blue',
+		setup = {
+			image = 'Interface\\AddOns\\SpartanUI\\images\\setup\\Style_Frames_Arcane',
+		},
 		artwork = {
 			top = {
 				heightScale = 0.225,

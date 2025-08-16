@@ -119,6 +119,10 @@ function module:OnInitialize()
 			['target'] = 'LEFT,SUI_UF_player,RIGHT,244,0',
 			['targettarget'] = 'BOTTOMLEFT,SUI_UF_target,BOTTOMRIGHT,50,0',
 		},
+		displayName = 'Transparent',
+		setup = {
+			image = 'Interface\\AddOns\\SpartanUI\\images\\setup\\Style_Frames_Transparent',
+		},
 	}
 	SUI.UF.Style:Register('Transparent', ufsettings)
 

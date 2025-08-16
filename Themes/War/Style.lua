@@ -83,6 +83,10 @@ function module:OnInitialize()
 	if SUI.UF then
 		---@type SUI.Style.Settings.UnitFrames
 		local ufsettings = {
+			displayName = 'War',
+			setup = {
+				image = 'Interface\\AddOns\\SpartanUI\\images\\setup\\Style_Frames_War',
+			},
 			artwork = {
 				top = {
 					path = pathFunc,

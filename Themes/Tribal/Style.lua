@@ -46,6 +46,10 @@ function module:OnInitialize()
 		positions = {
 			['player'] = 'BOTTOMRIGHT,SUI_BottomAnchor,BOTTOM,-45,250',
 		},
+		displayName = 'Tribal',
+		setup = {
+			image = 'Interface\\AddOns\\SpartanUI\\images\\setup\\Style_Frames_Tribal',
+		},
 	}
 	SUI.UF.Style:Register('Tribal', ufsettings)
 
