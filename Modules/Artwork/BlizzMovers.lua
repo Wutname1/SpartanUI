@@ -203,6 +203,7 @@ end
 
 local function AlertFrame()
 	local holder = GenerateHolder('AlertFrame')
+	holder:SetSize(180, 40)
 
 	AttachToHolder(_G['AlertFrame'], holder, 'BOTTOM')
 	AttachToHolder(_G['GroupLootContainer'], holder, 'BOTTOM')
