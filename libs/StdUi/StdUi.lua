@@ -1,4 +1,4 @@
-local MAJOR, MINOR = 'StdUi', 5;
+local MAJOR, MINOR = 'StdUi', 6;
 ---@class StdUi
 local StdUi = LibStub:NewLibrary(MAJOR, MINOR);
 

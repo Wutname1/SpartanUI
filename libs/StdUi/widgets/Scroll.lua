@@ -211,7 +211,13 @@ StdUi.FauxScrollFrameMethods = {
 
 	--- Redraws items in case of manual update from outside without changing parameters
 	Redraw = function(self)
-		self:Update(self.itemCount or #self.scrollChild.items, self.displayCount, self.lineHeight)
+		local itemCount = self.itemCount
+		if not itemCount and self.scrollChild and self.scrollChild.items then
+			itemCount = #self.scrollChild.items
+		end
+		if itemCount then
+			self:Update(itemCount, self.displayCount, self.lineHeight)
+		end
 	end,
 
 	UpdateItemsCount = function(self, newCount)
