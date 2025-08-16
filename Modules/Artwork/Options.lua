@@ -330,6 +330,353 @@ function module:SetupOptions()
 						updateOpt('alpha', val)
 					end,
 				},
+				bgType = {
+					order = 3,
+					name = L['Background Type'],
+					type = 'select',
+					values = {
+						['texture'] = L['Theme Texture'],
+						['color'] = L['Solid Color'],
+						['custom'] = L['Custom Texture'],
+					},
+					get = function(info)
+						return module.ActiveStyle.Artwork.barBG[key].bgType or 'texture'
+					end,
+					set = function(info, val)
+						updateOpt('bgType', val)
+					end,
+				},
+				backgroundColor = {
+					order = 4,
+					name = L['Background Color'],
+					type = 'color',
+					hasAlpha = true,
+					hidden = function(info)
+						return module.ActiveStyle.Artwork.barBG[key].bgType ~= 'color' or module.ActiveStyle.Artwork.barBG[key].classColorBG
+					end,
+					get = function(info)
+						local color = module.ActiveStyle.Artwork.barBG[key].backgroundColor or { 0, 0, 0, 1 }
+						return color[1], color[2], color[3], color[4]
+					end,
+					set = function(info, r, g, b, a)
+						updateOpt('backgroundColor', { r, g, b, a })
+					end,
+				},
+				customTexture = {
+					order = 5,
+					name = L['Custom Texture'],
+					type = 'select',
+					dialogControl = 'LSM30_Statusbar',
+					values = AceGUIWidgetLSMlists.statusbar,
+					hidden = function(info)
+						return module.ActiveStyle.Artwork.barBG[key].bgType ~= 'custom'
+					end,
+					get = function(info)
+						return module.ActiveStyle.Artwork.barBG[key].customTexture or 'Blizzard'
+					end,
+					set = function(info, val)
+						updateOpt('customTexture', val)
+					end,
+				},
+				useSkinColors = {
+					order = 6,
+					name = L['Use Skin Colors'],
+					type = 'toggle',
+					desc = L['Let the current skin control texture colors. Uncheck to use custom colors.'],
+					get = function(info)
+						return module.ActiveStyle.Artwork.barBG[key].useSkinColors ~= false
+					end,
+					set = function(info, val)
+						updateOpt('useSkinColors', val)
+					end,
+				},
+				textureColor = {
+					order = 7,
+					name = L['Texture Color/Tint'],
+					type = 'color',
+					hasAlpha = true,
+					hidden = function(info)
+						return module.ActiveStyle.Artwork.barBG[key].bgType == 'color' or module.ActiveStyle.Artwork.barBG[key].useSkinColors ~= false or module.ActiveStyle.Artwork.barBG[key].classColorBG
+					end,
+					get = function(info)
+						local color = module.ActiveStyle.Artwork.barBG[key].textureColor or { 1, 1, 1, 1 }
+						return color[1], color[2], color[3], color[4]
+					end,
+					set = function(info, r, g, b, a)
+						updateOpt('textureColor', { r, g, b, a })
+					end,
+				},
+				resetToSkin = {
+					order = 8,
+					name = L['Reset to Skin Defaults'],
+					type = 'execute',
+					desc = L['Reset all customizations and use skin default settings'],
+					func = function()
+						-- Reset to skin defaults
+						updateOpt('useSkinColors', true)
+						updateOpt('textureColor', { 1, 1, 1, 1 })
+						updateOpt('bgType', 'texture')
+						updateOpt('backgroundColor', nil)
+						updateOpt('customTexture', nil)
+						-- Reset border options
+						updateOpt('borderEnabled', false)
+						updateOpt('borderColors', nil)
+						updateOpt('borderSize', 1)
+						updateOpt('borderSides', { top = true, bottom = true, left = true, right = true })
+						-- Reset class color options
+						updateOpt('classColorBG', false)
+						updateOpt('classColorBorders', {})
+					end,
+				},
+				borderEnabled = {
+					order = 9,
+					name = L['Enable Border'],
+					type = 'toggle',
+					get = function(info)
+						return module.ActiveStyle.Artwork.barBG[key].borderEnabled or false
+					end,
+					set = function(info, val)
+						updateOpt('borderEnabled', val)
+					end,
+				},
+				borderColors = {
+					order = 10,
+					name = L['Border Colors'],
+					type = 'group',
+					inline = true,
+					hidden = function(info)
+						return not module.ActiveStyle.Artwork.barBG[key].borderEnabled
+					end,
+					args = {
+						top = {
+							order = 1,
+							name = L['Top'],
+							type = 'color',
+							hasAlpha = true,
+							width = 0.5,
+							hidden = function(info)
+								local classColors = module.ActiveStyle.Artwork.barBG[key].classColorBorders or {}
+								return classColors.top
+							end,
+							get = function(info)
+								local colors = module.ActiveStyle.Artwork.barBG[key].borderColors or {}
+								local color = colors.top or { 1, 1, 1, 1 }
+								return color[1], color[2], color[3], color[4]
+							end,
+							set = function(info, r, g, b, a)
+								local colors = module.ActiveStyle.Artwork.barBG[key].borderColors or {}
+								colors.top = { r, g, b, a }
+								updateOpt('borderColors', colors)
+							end,
+						},
+						bottom = {
+							order = 2,
+							name = L['Bottom'],
+							type = 'color',
+							hasAlpha = true,
+							width = 0.5,
+							hidden = function(info)
+								local classColors = module.ActiveStyle.Artwork.barBG[key].classColorBorders or {}
+								return classColors.bottom
+							end,
+							get = function(info)
+								local colors = module.ActiveStyle.Artwork.barBG[key].borderColors or {}
+								local color = colors.bottom or { 1, 1, 1, 1 }
+								return color[1], color[2], color[3], color[4]
+							end,
+							set = function(info, r, g, b, a)
+								local colors = module.ActiveStyle.Artwork.barBG[key].borderColors or {}
+								colors.bottom = { r, g, b, a }
+								updateOpt('borderColors', colors)
+							end,
+						},
+						left = {
+							order = 3,
+							name = L['Left'],
+							type = 'color',
+							hasAlpha = true,
+							width = 0.5,
+							hidden = function(info)
+								local classColors = module.ActiveStyle.Artwork.barBG[key].classColorBorders or {}
+								return classColors.left
+							end,
+							get = function(info)
+								local colors = module.ActiveStyle.Artwork.barBG[key].borderColors or {}
+								local color = colors.left or { 1, 1, 1, 1 }
+								return color[1], color[2], color[3], color[4]
+							end,
+							set = function(info, r, g, b, a)
+								local colors = module.ActiveStyle.Artwork.barBG[key].borderColors or {}
+								colors.left = { r, g, b, a }
+								updateOpt('borderColors', colors)
+							end,
+						},
+						right = {
+							order = 4,
+							name = L['Right'],
+							type = 'color',
+							hasAlpha = true,
+							width = 0.5,
+							hidden = function(info)
+								local classColors = module.ActiveStyle.Artwork.barBG[key].classColorBorders or {}
+								return classColors.right
+							end,
+							get = function(info)
+								local colors = module.ActiveStyle.Artwork.barBG[key].borderColors or {}
+								local color = colors.right or { 1, 1, 1, 1 }
+								return color[1], color[2], color[3], color[4]
+							end,
+							set = function(info, r, g, b, a)
+								local colors = module.ActiveStyle.Artwork.barBG[key].borderColors or {}
+								colors.right = { r, g, b, a }
+								updateOpt('borderColors', colors)
+							end,
+						},
+						copyToAll = {
+							order = 5,
+							name = L['Copy Top Color to All Sides'],
+							type = 'execute',
+							func = function()
+								local colors = module.ActiveStyle.Artwork.barBG[key].borderColors or {}
+								local topColor = colors.top or { 1, 1, 1, 1 }
+								colors.bottom = { topColor[1], topColor[2], topColor[3], topColor[4] }
+								colors.left = { topColor[1], topColor[2], topColor[3], topColor[4] }
+								colors.right = { topColor[1], topColor[2], topColor[3], topColor[4] }
+								updateOpt('borderColors', colors)
+							end,
+						},
+					},
+				},
+				borderSize = {
+					order = 11,
+					name = L['Border Size'],
+					type = 'range',
+					min = 1,
+					max = 10,
+					step = 1,
+					hidden = function(info)
+						return not module.ActiveStyle.Artwork.barBG[key].borderEnabled
+					end,
+					get = function(info)
+						return module.ActiveStyle.Artwork.barBG[key].borderSize or 1
+					end,
+					set = function(info, val)
+						updateOpt('borderSize', val)
+					end,
+				},
+				classColorOptions = {
+					order = 12,
+					name = L['Class Color Options'],
+					type = 'group',
+					inline = true,
+					args = {
+						classColorBG = {
+							order = 1,
+							name = L['Use Class Color for Background'],
+							type = 'toggle',
+							get = function(info)
+								return module.ActiveStyle.Artwork.barBG[key].classColorBG or false
+							end,
+							set = function(info, val)
+								updateOpt('classColorBG', val)
+							end,
+						},
+						classColorBorders = {
+							order = 2,
+							name = L['Use Class Color for Borders'],
+							type = 'group',
+							inline = true,
+							hidden = function(info)
+								return not module.ActiveStyle.Artwork.barBG[key].borderEnabled
+							end,
+							args = {
+								classColorBorderTop = {
+									order = 1,
+									name = L['Top'],
+									type = 'toggle',
+									width = 0.5,
+									get = function(info)
+										local colors = module.ActiveStyle.Artwork.barBG[key].classColorBorders or {}
+										return colors.top or false
+									end,
+									set = function(info, val)
+										local colors = module.ActiveStyle.Artwork.barBG[key].classColorBorders or {}
+										colors.top = val
+										updateOpt('classColorBorders', colors)
+									end,
+								},
+								classColorBorderBottom = {
+									order = 2,
+									name = L['Bottom'],
+									type = 'toggle',
+									width = 0.5,
+									get = function(info)
+										local colors = module.ActiveStyle.Artwork.barBG[key].classColorBorders or {}
+										return colors.bottom or false
+									end,
+									set = function(info, val)
+										local colors = module.ActiveStyle.Artwork.barBG[key].classColorBorders or {}
+										colors.bottom = val
+										updateOpt('classColorBorders', colors)
+									end,
+								},
+								classColorBorderLeft = {
+									order = 3,
+									name = L['Left'],
+									type = 'toggle',
+									width = 0.5,
+									get = function(info)
+										local colors = module.ActiveStyle.Artwork.barBG[key].classColorBorders or {}
+										return colors.left or false
+									end,
+									set = function(info, val)
+										local colors = module.ActiveStyle.Artwork.barBG[key].classColorBorders or {}
+										colors.left = val
+										updateOpt('classColorBorders', colors)
+									end,
+								},
+								classColorBorderRight = {
+									order = 4,
+									name = L['Right'],
+									type = 'toggle',
+									width = 0.5,
+									get = function(info)
+										local colors = module.ActiveStyle.Artwork.barBG[key].classColorBorders or {}
+										return colors.right or false
+									end,
+									set = function(info, val)
+										local colors = module.ActiveStyle.Artwork.barBG[key].classColorBorders or {}
+										colors.right = val
+										updateOpt('classColorBorders', colors)
+									end,
+								},
+							},
+						},
+					},
+				},
+				borderSides = {
+					order = 13,
+					name = L['Border Sides'],
+					type = 'multiselect',
+					hidden = function(info)
+						return not module.ActiveStyle.Artwork.barBG[key].borderEnabled
+					end,
+					values = {
+						top = L['Top'],
+						bottom = L['Bottom'],
+						left = L['Left'],
+						right = L['Right'],
+					},
+					get = function(info, side)
+						local sides = module.ActiveStyle.Artwork.barBG[key].borderSides or { top = true, bottom = true, left = true, right = true }
+						return sides[side]
+					end,
+					set = function(info, side, val)
+						local sides = module.ActiveStyle.Artwork.barBG[key].borderSides or { top = true, bottom = true, left = true, right = true }
+						sides[side] = val
+						updateOpt('borderSides', sides)
+					end,
+				},
 			},
 		}
 	end

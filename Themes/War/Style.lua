@@ -185,11 +185,20 @@ end
 function module:CreateArtwork()
 	if War_ActionBarPlate then return end
 
+	-- Set faction-based colors
+	local factionColor = { 1, 1, 1, 0.25 } -- Default white
+	if UnitFactionGroup('PLAYER') == 'Horde' then
+		factionColor = { 1, 0, 0, 0.25 } -- Red for Horde
+	else
+		factionColor = { 0, 0, 1, 0.25 } -- Blue for Alliance
+	end
+
 	local BarBGSettings = {
 		name = 'War',
 		TexturePath = 'Interface\\AddOns\\SpartanUI\\Themes\\War\\Images\\Barbg',
 		TexCoord = { 0.07421875, 0.92578125, 0.359375, 0.6796875 },
 		alpha = 0.5,
+		color = factionColor, -- Pass faction color to the framework
 	}
 
 	local plate = CreateFrame('Frame', 'War_ActionBarPlate', SUI_Art_War)
@@ -200,11 +209,6 @@ function module:CreateArtwork()
 
 	for i = 1, 4 do
 		plate['BG' .. i] = Artwork_Core:CreateBarBG(BarBGSettings, i, War_ActionBarPlate)
-		if UnitFactionGroup('PLAYER') == 'Horde' then
-			_G['War_Bar' .. i .. 'BG']:SetVertexColor(1, 0, 0, 0.25)
-		else
-			_G['War_Bar' .. i .. 'BG']:SetVertexColor(0, 0, 1, 0.25)
-		end
 	end
 	plate.BG1:SetPoint('BOTTOMRIGHT', plate, 'BOTTOM', -110, 70)
 	plate.BG2:SetPoint('BOTTOMRIGHT', plate, 'BOTTOM', -110, 25)

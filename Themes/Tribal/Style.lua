@@ -138,6 +138,7 @@ function module:CreateArtwork()
 		name = 'Tribal',
 		TexturePath = 'Interface\\AddOns\\SpartanUI\\Themes\\Tribal\\Images\\Barbg',
 		TexCoord = { 0.07421875, 0.92578125, 0.359375, 0.6796875 },
+		color = { 0, 0, 0, 0.5 }, -- Tribal theme uses black backgrounds
 	}
 
 	local plate = CreateFrame('Frame', 'Tribal_ActionBarPlate', SUI_Art_Tribal)
@@ -148,7 +149,6 @@ function module:CreateArtwork()
 
 	for i = 1, 4 do
 		plate['BG' .. i] = Artwork_Core:CreateBarBG(BarBGSettings, i, Tribal_ActionBarPlate)
-		_G['Tribal_Bar' .. i .. 'BG']:SetVertexColor(0, 0, 0, 0.5)
 	end
 	plate.BG1:SetPoint('BOTTOMRIGHT', plate, 'BOTTOM', -110, 70)
 	plate.BG2:SetPoint('BOTTOMRIGHT', plate, 'BOTTOM', -110, 25)

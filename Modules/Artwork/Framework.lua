@@ -298,6 +298,9 @@ function module:OnInitialize()
 	-- Initalize style
 	module:SetActiveStyle()
 
+	-- Register theme textures with LibSharedMedia
+	module:RegisterThemeTextures()
+
 	-- Loop over the BlizzMovers and execute them
 	module.BlizzMovers()
 end
@@ -338,10 +341,199 @@ function module:UpdateBarBG()
 			if usersettings[i].enabled then
 				bgFrame:Show()
 				bgFrame.BG:Show()
-				bgFrame.BG:SetAlpha((bgFrame.skinSettings.alpha or 1) * usersettings[i].alpha)
+
+				-- Keep background in normal position - borders will extend outside
+				-- Reset background to default positioning first
+				bgFrame.BG:ClearAllPoints()
+				if bgFrame.skinSettings.point then
+					bgFrame.BG:SetPoint(bgFrame.skinSettings.point)
+				else
+					bgFrame.BG:SetAllPoints(bgFrame)
+				end
+
+				-- Handle different background types
+				local bgType = usersettings[i].bgType or 'texture'
+				if bgType == 'color' then
+					-- Solid color background
+					local color
+					if usersettings[i].classColorBG then
+						-- Use class color for background
+						local _, class = UnitClass('player')
+						local classColor = RAID_CLASS_COLORS[class]
+						if classColor then
+							color = { classColor.r, classColor.g, classColor.b, 1 }
+						else
+							color = usersettings[i].backgroundColor or { 0, 0, 0, 1 }
+						end
+					else
+						color = usersettings[i].backgroundColor or { 0, 0, 0, 1 }
+					end
+					bgFrame.BG:SetColorTexture(color[1], color[2], color[3], color[4] * usersettings[i].alpha)
+				elseif bgType == 'custom' then
+					-- Custom texture from LibSharedMedia
+					local LSM = LibStub('LibSharedMedia-3.0')
+					local texture = usersettings[i].customTexture or 'Blizzard'
+					bgFrame.BG:SetTexture(LSM:Fetch('statusbar', texture))
+					bgFrame.BG:SetAlpha((bgFrame.skinSettings.alpha or 1) * usersettings[i].alpha)
+					
+					-- Apply texture color/tint
+					local useSkinColors = usersettings[i].useSkinColors ~= false -- Default to true
+					if usersettings[i].classColorBG then
+						-- Use class color for background texture
+						local _, class = UnitClass('player')
+						local classColor = RAID_CLASS_COLORS[class]
+						if classColor then
+							bgFrame.BG:SetVertexColor(classColor.r, classColor.g, classColor.b, 1)
+						else
+							local skinColor = bgFrame.skinSettings.color or { 1, 1, 1, 1 }
+							bgFrame.BG:SetVertexColor(skinColor[1], skinColor[2], skinColor[3], skinColor[4])
+						end
+					elseif not useSkinColors and usersettings[i].textureColor then
+						-- Use custom user color
+						local textureColor = usersettings[i].textureColor
+						bgFrame.BG:SetVertexColor(textureColor[1], textureColor[2], textureColor[3], textureColor[4])
+					else
+						-- Use default/skin colors (for custom textures, default to white)
+						local skinColor = bgFrame.skinSettings.color or { 1, 1, 1, 1 }
+						bgFrame.BG:SetVertexColor(skinColor[1], skinColor[2], skinColor[3], skinColor[4])
+					end
+				else
+					-- Default theme texture
+					bgFrame.BG:SetTexture(bgFrame.skinSettings.TexturePath)
+					bgFrame.BG:SetTexCoord(unpack(bgFrame.skinSettings.TexCoord or { 0, 1, 0, 1 }))
+					bgFrame.BG:SetAlpha((bgFrame.skinSettings.alpha or 1) * usersettings[i].alpha)
+					
+					-- Apply texture color/tint or use skin defaults
+					local useSkinColors = usersettings[i].useSkinColors ~= false -- Default to true
+					if usersettings[i].classColorBG then
+						-- Use class color for background texture
+						local _, class = UnitClass('player')
+						local classColor = RAID_CLASS_COLORS[class]
+						if classColor then
+							bgFrame.BG:SetVertexColor(classColor.r, classColor.g, classColor.b, 1)
+						else
+							local skinColor = bgFrame.skinSettings.color or { 1, 1, 1, 1 }
+							bgFrame.BG:SetVertexColor(skinColor[1], skinColor[2], skinColor[3], skinColor[4])
+						end
+					elseif not useSkinColors and usersettings[i].textureColor then
+						-- Use custom user color
+						local textureColor = usersettings[i].textureColor
+						bgFrame.BG:SetVertexColor(textureColor[1], textureColor[2], textureColor[3], textureColor[4])
+					else
+						-- Use skin-defined colors or default
+						local skinColor = bgFrame.skinSettings.color or { 1, 1, 1, 1 }
+						bgFrame.BG:SetVertexColor(skinColor[1], skinColor[2], skinColor[3], skinColor[4])
+					end
+				end
+
+				-- Handle borders with individual side support
+				if usersettings[i].borderEnabled then
+					-- Initialize border container if not exists
+					if not bgFrame.Borders then
+						bgFrame.Borders = {}
+					end
+
+					local borderSize = usersettings[i].borderSize or 1
+					local borderColors = usersettings[i].borderColors or {}
+					local borderSides = usersettings[i].borderSides or { top = true, bottom = true, left = true, right = true }
+
+					-- Create/update individual border sides
+					local sides = { 'top', 'bottom', 'left', 'right' }
+					for _, side in ipairs(sides) do
+						if borderSides[side] then
+							-- Create border side if it doesn't exist
+							if not bgFrame.Borders[side] then
+								bgFrame.Borders[side] = CreateFrame('Frame', nil, bgFrame:GetParent())
+								bgFrame.Borders[side]:SetFrameLevel(bgFrame:GetFrameLevel() + 1) -- Above background
+								bgFrame.Borders[side].texture = bgFrame.Borders[side]:CreateTexture(nil, 'ARTWORK')
+								bgFrame.Borders[side].texture:SetTexture('Interface\\Buttons\\WHITE8X8')
+							end
+
+							-- Get individual border color for this side
+							local sideColor = borderColors[side] or { 1, 1, 1, 1 }
+							
+							-- Use class color if enabled for this specific side
+							local classColorBorders = usersettings[i].classColorBorders or {}
+							if classColorBorders[side] then
+								local _, class = UnitClass('player')
+								local classColor = RAID_CLASS_COLORS[class]
+								if classColor then
+									sideColor = { classColor.r, classColor.g, classColor.b, sideColor[4] or 1 }
+								end
+							end
+
+							-- Position border sides outside the background frame
+							-- Horizontal borders (top/bottom) extend to cover vertical border areas for proper corners
+							local border = bgFrame.Borders[side]
+							border:ClearAllPoints()
+							
+							if side == 'top' then
+								-- Extend left/right to cover vertical border areas
+								local leftExtend = (borderSides.left and borderSize) or 0
+								local rightExtend = (borderSides.right and borderSize) or 0
+								border:SetPoint('BOTTOMLEFT', bgFrame, 'TOPLEFT', -leftExtend, 0)
+								border:SetPoint('BOTTOMRIGHT', bgFrame, 'TOPRIGHT', rightExtend, 0)
+								border:SetHeight(borderSize)
+							elseif side == 'bottom' then
+								-- Extend left/right to cover vertical border areas
+								local leftExtend = (borderSides.left and borderSize) or 0
+								local rightExtend = (borderSides.right and borderSize) or 0
+								border:SetPoint('TOPLEFT', bgFrame, 'BOTTOMLEFT', -leftExtend, 0)
+								border:SetPoint('TOPRIGHT', bgFrame, 'BOTTOMRIGHT', rightExtend, 0)
+								border:SetHeight(borderSize)
+							elseif side == 'left' then
+								-- Don't extend vertically - horizontal borders will cover corners
+								border:SetPoint('TOPRIGHT', bgFrame, 'TOPLEFT', 0, 0)
+								border:SetPoint('BOTTOMRIGHT', bgFrame, 'BOTTOMLEFT', 0, 0)
+								border:SetWidth(borderSize)
+							elseif side == 'right' then
+								-- Don't extend vertically - horizontal borders will cover corners
+								border:SetPoint('TOPLEFT', bgFrame, 'TOPRIGHT', 0, 0)
+								border:SetPoint('BOTTOMLEFT', bgFrame, 'BOTTOMRIGHT', 0, 0)
+								border:SetWidth(borderSize)
+							end
+
+							border.texture:SetAllPoints(border)
+							border.texture:SetColorTexture(sideColor[1], sideColor[2], sideColor[3], sideColor[4])
+							border:Show()
+						elseif bgFrame.Borders[side] then
+							-- Hide unused border sides
+							bgFrame.Borders[side]:Hide()
+						end
+					end
+				elseif bgFrame.Borders then
+					-- Hide all border sides and reset background positioning
+					for _, side in ipairs({ 'top', 'bottom', 'left', 'right' }) do
+						if bgFrame.Borders[side] then
+							bgFrame.Borders[side]:Hide()
+						end
+					end
+					-- Reset background to default positioning when borders are disabled
+					bgFrame.BG:ClearAllPoints()
+					if bgFrame.skinSettings.point then
+						bgFrame.BG:SetPoint(bgFrame.skinSettings.point)
+					else
+						bgFrame.BG:SetAllPoints(bgFrame)
+					end
+				end
 			else
 				bgFrame:Hide()
 				bgFrame.BG:Hide()
+				if bgFrame.Border then bgFrame.Border:Hide() end
+				if bgFrame.Borders then
+					for _, side in ipairs({ 'top', 'bottom', 'left', 'right' }) do
+						if bgFrame.Borders[side] then
+							bgFrame.Borders[side]:Hide()
+						end
+					end
+				end
+				-- Reset background positioning when disabled
+				bgFrame.BG:ClearAllPoints()
+				if bgFrame.skinSettings.point then
+					bgFrame.BG:SetPoint(bgFrame.skinSettings.point)
+				else
+					bgFrame.BG:SetAllPoints(bgFrame)
+				end
 			end
 		end
 	end
@@ -368,4 +560,58 @@ function module:CreateBarBG(skinSettings, number, parent)
 	module:UpdateBarBG()
 
 	return frame
+end
+
+---Register theme textures with LibSharedMedia for use in custom backgrounds
+function module:RegisterThemeTextures()
+	local LSM = SUI.Lib.LSM
+	if not LSM then return end
+
+	-- Define theme texture mappings
+	local themeTextures = {
+		War = {
+			{ name = 'SUI War - StatusBar Alliance', file = 'Interface\\AddOns\\SpartanUI\\Themes\\War\\Images\\StatusBar-Alliance.blp' },
+			{ name = 'SUI War - StatusBar Horde', file = 'Interface\\AddOns\\SpartanUI\\Themes\\War\\Images\\StatusBar-Horde.blp' },
+			{ name = 'SUI War - StatusBar Neutral', file = 'Interface\\AddOns\\SpartanUI\\Themes\\War\\Images\\StatusBar-Neutral.blp' },
+			{ name = 'SUI War - Bar Background', file = 'Interface\\AddOns\\SpartanUI\\Themes\\War\\Images\\Barbg.blp' },
+			{ name = 'SUI War - Bar Background Alliance', file = 'Interface\\AddOns\\SpartanUI\\Themes\\War\\Images\\Barbg-Alliance.blp' },
+			{ name = 'SUI War - Bar Background Horde', file = 'Interface\\AddOns\\SpartanUI\\Themes\\War\\Images\\Barbg-Horde.blp' },
+		},
+		Fel = {
+			{ name = 'SUI Fel - StatusBar', file = 'Interface\\AddOns\\SpartanUI\\Themes\\Fel\\Images\\StatusBar.png' },
+			{ name = 'SUI Fel - Status Fill', file = 'Interface\\AddOns\\SpartanUI\\Themes\\Fel\\Images\\Status_bar_Fill.blp' },
+		},
+		Tribal = {
+			{ name = 'SUI Tribal - StatusBar', file = 'Interface\\AddOns\\SpartanUI\\Themes\\Tribal\\images\\Statusbar.blp' },
+			{ name = 'SUI Tribal - Bar Background', file = 'Interface\\AddOns\\SpartanUI\\Themes\\Tribal\\images\\Barbg.tga' },
+		},
+		Digital = {
+			{ name = 'SUI Digital - Bar Background', file = 'Interface\\AddOns\\SpartanUI\\Themes\\Digital\\Images\\BarBG.blp' },
+		},
+		Classic = {
+			{ name = 'SUI Classic - Bar Backdrop 0', file = 'Interface\\AddOns\\SpartanUI\\Themes\\Classic\\Images\\bar-backdrop0.blp' },
+			{ name = 'SUI Classic - Bar Backdrop 1', file = 'Interface\\AddOns\\SpartanUI\\Themes\\Classic\\Images\\bar-backdrop1.blp' },
+			{ name = 'SUI Classic - Bar Backdrop 3', file = 'Interface\\AddOns\\SpartanUI\\Themes\\Classic\\Images\\bar-backdrop3.blp' },
+		},
+		Minimal = {
+			{ name = 'SUI Minimal - Bar Backdrop 1', file = 'Interface\\AddOns\\SpartanUI\\Themes\\Minimal\\Images\\bar-backdrop1.blp' },
+			{ name = 'SUI Minimal - Bar Backdrop 3', file = 'Interface\\AddOns\\SpartanUI\\Themes\\Minimal\\Images\\bar-backdrop3.blp' },
+		},
+		Transparent = {
+			{ name = 'SUI Transparent - Bar Backdrop 0', file = 'Interface\\AddOns\\SpartanUI\\Themes\\Transparent\\Images\\bar-backdrop0.blp' },
+			{ name = 'SUI Transparent - Bar Backdrop 1', file = 'Interface\\AddOns\\SpartanUI\\Themes\\Transparent\\Images\\bar-backdrop1.blp' },
+			{ name = 'SUI Transparent - Bar Backdrop 3', file = 'Interface\\AddOns\\SpartanUI\\Themes\\Transparent\\Images\\bar-backdrop3.blp' },
+		},
+		Arcane = {
+			{ name = 'SUI Arcane - StatusBar', file = 'Interface\\AddOns\\SpartanUI\\Themes\\Arcane\\Images\\StatusBar.tga' },
+		},
+	}
+
+	-- Register all textures with LibSharedMedia
+	for themeName, textures in pairs(themeTextures) do
+		for _, texture in pairs(textures) do
+			LSM:Register('statusbar', texture.name, texture.file)
+		end
+	end
+	
 end
