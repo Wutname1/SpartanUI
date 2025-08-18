@@ -393,9 +393,116 @@ local configSchema = {
 
 ## 3. Display Engine Architecture
 
-### 3.1 Bar Management System
+### 3.1 Revolutionary Flexible Display System
 
-**Advanced Bar Framework:**
+**🚀 COMPETITIVE ADVANTAGE: LibsDataBar introduces a dual-mode display system that no other data broker addon offers:**
+
+1. **Traditional Bars**: Full-width bars like TitanPanel/ChocolateBar for familiar usage
+2. **Smart Containers**: Flexible, moveable rectangles that can be positioned anywhere on screen
+
+**This flexible positioning system allows users to create highly customized layouts that are impossible with competing addons:**
+
+- **3-item horizontal container** above chat box
+- **Vertical sidebar container** with 5 plugins on screen edge  
+- **Corner mini-containers** for critical info near action bars
+- **Floating containers** that follow screen real estate usage
+- **Mixed layouts** with both bars and containers simultaneously
+
+### 3.1.1 Container Architecture
+
+**Smart Container System:**
+
+```lua
+---@class Container : DataBar
+---@field containerType "floating"|"docked"|"anchored"
+---@field dimensions table Container size and constraints
+---@field dragHandle Frame Drag handle for movement
+---@field resizeHandle Frame Resize handle for sizing
+---@field snapZones table Available snap positions
+local Container = setmetatable({}, {__index = DataBar})
+
+function Container:Create(config)
+    local container = DataBar:Create(config)
+    setmetatable(container, {__index = Container})
+    
+    -- Container-specific properties
+    container.containerType = config.containerType or "floating"
+    container.dimensions = {
+        minWidth = config.minWidth or 100,
+        maxWidth = config.maxWidth or 800,
+        minHeight = config.minHeight or 24,
+        maxHeight = config.maxHeight or 200,
+        aspectRatio = config.aspectRatio or nil
+    }
+    
+    -- Create container-specific UI elements
+    container:CreateDragHandle()
+    container:CreateResizeHandle()
+    container:SetupSnapping()
+    
+    return container
+end
+
+function Container:CreateDragHandle()
+    self.dragHandle = CreateFrame("Frame", nil, self.frame)
+    self.dragHandle:SetAllPoints(self.frame)
+    self.dragHandle:EnableMouse(true)
+    self.dragHandle:RegisterForDrag("LeftButton")
+    
+    self.dragHandle:SetScript("OnDragStart", function()
+        if not self.config.behavior.locked then
+            self:StartDrag()
+        end
+    end)
+    
+    self.dragHandle:SetScript("OnDragStop", function()
+        self:StopDrag()
+    end)
+end
+
+function Container:CreateResizeHandle()
+    if not self.config.behavior.resizable then return end
+    
+    self.resizeHandle = CreateFrame("Frame", nil, self.frame)
+    self.resizeHandle:SetSize(16, 16)
+    self.resizeHandle:SetPoint("BOTTOMRIGHT", self.frame, "BOTTOMRIGHT", -2, 2)
+    
+    -- Visual resize indicator
+    local texture = self.resizeHandle:CreateTexture(nil, "OVERLAY")
+    texture:SetAllPoints()
+    texture:SetTexture("Interface\\ChatFrame\\UI-ChatIM-SizeGrabber-Up")
+    
+    self.resizeHandle:EnableMouse(true)
+    self.resizeHandle:RegisterForDrag("LeftButton")
+    
+    self.resizeHandle:SetScript("OnDragStart", function()
+        self:StartResize()
+    end)
+    
+    self.resizeHandle:SetScript("OnDragStop", function()
+        self:StopResize()
+    end)
+end
+
+function Container:SetupSnapping()
+    self.snapZones = {
+        -- Screen edges
+        {type = "screen", edge = "top", threshold = 50},
+        {type = "screen", edge = "bottom", threshold = 50},
+        {type = "screen", edge = "left", threshold = 50},
+        {type = "screen", edge = "right", threshold = 50},
+        
+        -- Other containers
+        {type = "container", mode = "adjacent", threshold = 20},
+        
+        -- Custom anchor points (chat frame, minimap, etc.)
+        {type = "anchor", frame = "ChatFrame1", threshold = 30},
+        {type = "anchor", frame = "Minimap", threshold = 30},
+    }
+end
+```
+
+### 3.1.2 Advanced Bar Framework
 
 ```lua
 ---@class DataBar
