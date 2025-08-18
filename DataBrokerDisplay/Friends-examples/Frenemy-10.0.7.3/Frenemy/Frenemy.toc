@@ -1,0 +1,26 @@
+## Interface: 100007
+## Title: Frenemy
+## Notes: A customizable view of friends and guildmates.
+## Author: Torhal
+## Version: 10.0.7.3
+## X-Date: 2023-04-05T06:23:38Z
+## X-Email: jcallahan@curse.com
+## OptionalDeps: Ace3, CallbackHandler-1.0, HereBeDragons, LibDBIcon-1.0, LibDialog-1.0, LibQTip-1.0, LibTextDump-1.0
+## SavedVariables: FrenemyDB
+
+## LoadManagers: AddonLoader
+## X-LoadOn-Always: Delayed
+
+## X-Curse-Project-ID: 79480
+## X-WoWI-ID: 22846
+
+embeds.xml
+
+Locales\Manifest.xml
+Common\Manifest.xml
+Preferences\Manifest.xml
+TooltipHandler\Manifest.xml
+
+DataObject.lua
+Frenemy.lua
+

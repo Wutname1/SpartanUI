@@ -219,18 +219,6 @@ local function AlertFrame()
 	MoveIt:CreateMover(holder, 'AlertHolder', 'Alert frame anchor', nil, 'Blizzard UI')
 end
 
-local function DurabilityFrame()
-	local element = _G['DurabilityFrame']
-	local holder = GenerateHolder('DurabilityFrame')
-
-	element:ClearAllPoints()
-	element:SetPoint('CENTER', holder, 'CENTER')
-	element.SUIHolder = holder
-
-	hooksecurefunc(element, 'SetPoint', ResetPosition)
-	MoveIt:CreateMover(holder, 'DurabilityFrame', 'Durability Frame', nil, 'Blizzard UI')
-end
-
 local function VehicleLeaveButton()
 	local function MoverCreate()
 		local point, _, secondaryPoint, x, y = strsplit(',', SUI.DB.Styles[SUI.DB.Artwork.Style].BlizzMovers.VehicleLeaveButton)
@@ -324,7 +312,6 @@ function module.BlizzMovers()
 	FramerateFrame()
 	AbilityBars()
 	AlertFrame()
-	-- DurabilityFrame()
 	TopCenterContainer()
 	-- TalkingHead()
 	VehicleLeaveButton()

@@ -1,0 +1,15 @@
+## Interface: 80200
+
+## Title: BetterObjectives
+## Author: Darcey Lloyd
+## Version: 1.0.1
+## Notes: BetterObjectives is an addon to add some features to the objectives tracker
+## eMail: Darcey.Lloyd@gmail.com
+## URL: www.aftc.io
+## DefaultState: Enabled
+## LoadOnDemand: 0
+## SavedVariablesPerCharacter: BetterDB, BetterObjectivesAceDB
+
+embeds.xml
+
+BetterObjectives.lua

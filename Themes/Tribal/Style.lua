@@ -176,26 +176,14 @@ end
 
 -- Artwork Stuff
 function module:SlidingTrays()
-	local Settings = {
-		bg = {
-			Texture = 'Interface\\AddOns\\SpartanUI\\Themes\\Tribal\\Images\\Trays',
-			TexCoord = { 0.076171875, 0.92578125, 0, 0.18359375 },
-		},
-		bgCollapsed = {
-			Texture = 'Interface\\AddOns\\SpartanUI\\Themes\\Tribal\\Images\\Trays',
-			TexCoord = { 0.076171875, 0.92578125, 1, 0.92578125 },
-		},
-		UpTex = {
-			Texture = 'Interface\\AddOns\\SpartanUI\\Themes\\Tribal\\Images\\Trays',
-			TexCoord = { 0.3671875, 0.640625, 0.20703125, 0.25390625 },
-		},
-		DownTex = {
-			Texture = 'Interface\\AddOns\\SpartanUI\\Themes\\Tribal\\Images\\Trays',
-			TexCoord = { 0.3671875, 0.640625, 0.25390625, 0.20703125 },
-		},
-	}
+	-- Uses all default options from DefaultTraySettings
+	Artwork_Core:SlidingTrays()
 
-	Artwork_Core:SlidingTrays(Settings)
+	-- Register frames that this skin places in trays
+	Artwork_Core:RegisterSkinTrayFrames('Tribal', {
+		left = 'BT4BarPetBar,BT4BarStanceBar,MultiCastActionBarFrame',
+		right = 'BT4BarMicroMenu,BT4BarBagBar'
+	})
 
 	if BT4BarBagBar and BT4BarPetBar.position then
 		BT4BarPetBar:position('TOPLEFT', 'SlidingTray_left', 'TOPLEFT', 50, -2)

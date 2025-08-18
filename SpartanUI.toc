@@ -59,3 +59,5 @@ core\Framework.lua
 modules\LoadAll.xml
 core\Framework.xml
 Themes\Themes.xml
+
+DataBrokerDisplay\LibsDataBar\Loader.xml

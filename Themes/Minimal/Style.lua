@@ -244,22 +244,8 @@ end
 
 function module:SlidingTrays()
 	local Settings = {
-		bg = {
-			Texture = 'Interface\\AddOns\\SpartanUI\\Themes\\Minimal\\Images\\base-center-top',
-			TexCoord = { 0.076171875, 0.92578125, 0, 0.18359375 },
-		},
-		bgCollapsed = {
-			Texture = 'Interface\\AddOns\\SpartanUI\\Themes\\Minimal\\Images\\base-center-top',
-			TexCoord = { 0.076171875, 0.92578125, 1, 0.92578125 },
-		},
-		UpTex = {
-			Texture = 'Interface\\AddOns\\SpartanUI\\Themes\\Minimal\\Images\\base-center-top',
-			TexCoord = { 0.3675, 0.64, 0.235, 0.265 },
-		},
-		DownTex = {
-			Texture = 'Interface\\AddOns\\SpartanUI\\Themes\\Minimal\\Images\\base-center-top',
-			TexCoord = { 0.3675, 0.64, 0.265, 0.235 },
-		},
+		trayImage = 'Interface\\AddOns\\SpartanUI\\Themes\\Minimal\\Images\\base-center-top',
+		-- Uses default coordinates from DefaultTraySettings
 	}
 
 	Artwork_Core:SlidingTrays(Settings)

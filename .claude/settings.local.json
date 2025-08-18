@@ -1,0 +1,21 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(grep:*)",
+      "Bash(mkdir:*)",
+      "WebSearch",
+      "WebFetch(domain:www.curseforge.com)",
+      "WebFetch(domain:www.wowace.com)",
+      "WebFetch(domain:github.com)",
+      "Bash(rm:*)"
+    ],
+    "deny": [],
+    "ask": [],
+    "defaultMode": "acceptEdits",
+    "additionalDirectories": [
+      "C:\\Users\\jerem\\Syncthing\\WOWUICode\\wow-ui-source\\Interface\\AddOns",
+      "C:\\Users\\jerem\\Syncthing\\WoW\\AppData\\_retail_\\Interface\\Addons\\Bartender4\\"
+    ]
+  },
+  "outputStyle": "default"
+}

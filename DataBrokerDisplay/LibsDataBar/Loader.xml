@@ -1,0 +1,42 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\..\FrameXML\UI.xsd">
+	<!-- LibsDataBar Core Library Loader -->
+	<!-- Load order is important for dependencies -->
+	
+	<!-- Core Library -->
+	<Script file="LibsDataBar.lua" />
+	
+	<!-- Display Engine (Phase 2) -->
+	<Script file="Display\DataBar.lua" />
+	<Script file="Display\Container.lua" />
+	<Script file="Display\PluginButton.lua" />
+	<!-- <Script file="Display\LayoutManager.lua" /> -->
+	<Script file="Display\ThemeManager.lua" />
+	
+	<!-- Plugin System (Phase 1/2) -->
+	<!-- <Script file="Plugins\PluginManager.lua" /> -->
+	<Script file="Plugins\LDBAdapter.lua" />
+	<!-- <Script file="Plugins\TitanAdapter.lua" /> -->
+	
+	<!-- Built-in Plugins (Phase 1) -->
+	<Script file="Plugins\Clock.lua" />
+	<Script file="Plugins\Currency.lua" />
+	<Script file="Plugins\Performance.lua" />
+	<Script file="Plugins\Location.lua" />
+	<Script file="Plugins\Bags.lua" />
+	<Script file="Plugins\Volume.lua" />
+	<Script file="Plugins\Experience.lua" />
+	<Script file="Plugins\Repair.lua" />
+	<Script file="Plugins\PlayedTime.lua" />
+	<Script file="Plugins\Reputation.lua" />
+	<Script file="Plugins\Friends.lua" />
+	
+	<!-- Configuration UI -->
+	<Script file="Options.lua" />
+	
+	<!-- Developer Tools (Phase 2) -->
+	<!-- <Script file="Developer\Debugger.lua" /> -->
+	<!-- <Script file="Developer\Validator.lua" /> -->
+	<!-- <Script file="Developer\Templates.lua" /> -->
+</Ui>

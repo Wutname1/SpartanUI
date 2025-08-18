@@ -1,0 +1,9 @@
+## Interface: 110200, 50500, 11507
+## Title: Titan Panel [|cffeda55fBag|r] |cff00aa008.3.3|r
+## Version: 8.3.3
+## IconTexture: Interface\AddOns\TitanBag\TitanBag
+## Notes: Adds bag and free slot information to Titan Panel
+## Author: Titan Panel Development Team (http://www.titanpanel.org)
+## SavedVariables: 
+## Dependencies: Titan
+TitanBag.lua

@@ -1,0 +1,10 @@
+## Interface: 110200, 50500, 11507
+## Title: Titan Panel [|cffeda55fGold|r] |cff00aa008.3.3|r
+## Version: 8.3.3
+## IconTexture: Interface\AddOns\TitanGold\Artwork\TitanGold
+## Notes: Keeps track of all gold held by a player's toons on a per server/faction basis.
+## Author: Titan Panel Development Team (http://www.titanpanel.org)
+## SavedVariables: GoldSave
+## OptionalDeps: 
+## Dependencies: Titan
+TitanGold.lua

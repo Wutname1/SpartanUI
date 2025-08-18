@@ -1,0 +1,13 @@
+## Interface: 110000
+## Title: StarterLDB
+## Notes: LDB example
+## Author: Titan Dev Team
+## DefaultState: Enabled
+## SavedVariables: 
+## OptionalDeps: 
+## Dependencies: 
+## Version: 1.1
+## X-Child-Of:
+libs/CallbackHandler-1.0/CallbackHandler-1.0.xml
+libs/LibDataBroker-1.1.lua
+StarterLDB.lua

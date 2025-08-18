@@ -1,0 +1,21 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\FrameXML\UI.xsd">
+<!--
+	<Include file="libs\LibFunctional-1.0\lib.xml"/>
+	<Include file="libs\LibGroupInSpecT-1.1\lib.xml"/>
+-->
+	<Script file="cooldowns_spelldata.lua"/>
+	<Script file="cooldowns_wrath_druid.lua"/>
+	<Script file="cooldowns_wrath_deathknight.lua"/>
+	<Script file="cooldowns_wrath_hunter.lua"/>
+	<Script file="cooldowns_wrath_mage.lua"/>
+	<Script file="cooldowns_wrath_paladin.lua"/>
+	<Script file="cooldowns_wrath_priest.lua"/>
+	<Script file="cooldowns_wrath_rogue.lua"/>
+	<Script file="cooldowns_wrath_shaman.lua"/>
+	<Script file="cooldowns_wrath_warlock.lua"/>
+	<Script file="cooldowns_wrath_warrior.lua"/>
+	<Script file="cooldowns_wrath_racials.lua"/>
+	<Script file="cooldowns_wrath_items.lua"/>
+	<Script file="library.lua"/>
+</Ui>

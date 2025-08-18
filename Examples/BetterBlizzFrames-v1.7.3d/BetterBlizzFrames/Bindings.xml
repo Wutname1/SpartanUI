@@ -1,0 +1,5 @@
+<Bindings>
+  <Binding name="Toggle Filter Override" description="Toggle all filters on/off so you can quickly check ALL Target/Focus/Player auras." category="Better|cff00c0ffBlizz|rFrames">
+    BBF.ToggleFilterOverride()
+  </Binding>
+</Bindings>

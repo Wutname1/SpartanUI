@@ -1,0 +1,29 @@
+From:
+Ace3 - https://www.curseforge.com/wow/addons/ace3
+
+AceGUI-3.0-SharedMediaWidgets - https://www.curseforge.com/wow/addons/ace-gui-3-0-shared-media-widgets
+LibQTip-1.0 - https://www.curseforge.com/wow/addons/libqtip-1-0
+LibSharedMedia-3.0 - https://www.curseforge.com/wow/addons/libsharedmedia-3-0
+
+
+*** 2025-May ***
+- Dropped !LibUIDropDownMenu, again; updated wrappers to Blizz version
+LibUIDropDownMenu - https://www.curseforge.com/wow/addons/libuidropdownmenu
+
+*** 2023-Dec ***
+- Updated libs to latest
+- Added back !LibUIDropDownMenu per combined Titan versions
+
+*** 2023-04-12 ***
+- libs created folder for Ace libraries for clarity
+- Moved LDB lib to libs
+
+*** 2021-02-10 ***
+* Ace3 removed : !LibUIDropDownMenu : https://www.wowace.com/projects/libuidropdownmenu
+
+*** 2020-12-02 ***
+* Ace3 release is used
+* Added :
+- !LibUIDropDownMenu : https://www.wowace.com/projects/libuidropdownmenu
+- AceGUI-3.0-SharedMediaWidgets : https://www.wowace.com/projects/ace-gui-3-0-shared-media-widgets
+- LibSharedMedia-3.0 : https://www.wowace.com/projects/libsharedmedia-3-0
