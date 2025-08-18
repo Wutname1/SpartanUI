@@ -1,3 +1,0 @@
-A complete change history for Titan Panel since version 3.0.0.20000 is available at http://www.titanpanel.org/changes.html.
-
-You may also find the most recent release notes, on our SourceForge page, here : https://sourceforge.net/p/titanpanel/wiki/Titan_Panel_Version_History/
