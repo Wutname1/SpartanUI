@@ -1,0 +1,158 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\FrameXML\UI.xsd">
+	<Button name="TitanPanelButtonTemplate" hidden="true" movable="true" virtual="true">
+		<Scripts>
+			<OnLoad>  
+				TitanPanelButton_OnLoad(self);
+			</OnLoad>
+			<OnShow>
+				TitanPanelButton_OnShow(self);
+			</OnShow>
+			<OnClick>
+				TitanPanelButton_OnClick(self, button);
+			</OnClick>
+			<OnEnter>
+				TitanPanelButton_OnEnter(self);
+			</OnEnter>
+			<OnLeave>
+				TitanPanelButton_OnLeave(self);
+			</OnLeave>
+		</Scripts>
+	</Button>
+	<Button name="TitanPanelTextTemplate" inherits="TitanPanelButtonTemplate" virtual="true">
+		<Size>
+			<AbsDimension x="0" y="16" />
+		</Size>
+		<ButtonText name="$parentText" inherits="GameFontNormalSmall" justifyH="LEFT">
+			<Anchors>
+				<Anchor point="LEFT">
+					<Offset>
+						<AbsDimension x="0" y="1" />
+					</Offset>
+				</Anchor>
+			</Anchors>
+		</ButtonText>
+		<PushedTextOffset>
+			<AbsDimension x="0" y="0"/>
+		</PushedTextOffset>
+	</Button>
+	<Button name="TitanPanelIconTemplate" inherits="TitanPanelButtonTemplate" virtual="true">
+		<Size>
+			<AbsDimension x="16" y="16" />
+		</Size>
+		<Layers>
+			<Layer level="ARTWORK">
+				<Texture name="$parentIcon">
+					<Size>
+						<AbsDimension x="16" y="16"/>
+					</Size>
+					<Anchors>
+						<Anchor point="LEFT" />
+					</Anchors>
+				</Texture>
+			</Layer>
+		</Layers>
+	</Button>
+	<Button name="TitanPanelComboTemplate" inherits="TitanPanelButtonTemplate" virtual="true">
+		<Size>
+			<AbsDimension x="0" y="16" />
+		</Size>
+		<Layers>
+			<Layer level="ARTWORK">
+				<Texture name="$parentIcon">
+					<Size>
+						<AbsDimension x="0" y="16"/>
+					</Size>
+					<Anchors>
+						<Anchor point="LEFT" />
+					</Anchors>
+				</Texture>
+			</Layer>
+		</Layers>
+		<ButtonText name="$parentText" inherits="GameFontNormalSmall" justifyH="LEFT" />
+		<PushedTextOffset>
+			<AbsDimension x="0" y="0"/>
+		</PushedTextOffset>
+	</Button>
+
+	<Slider name="TitanOptionsSliderTemplate" orientation="VERTICAL" inherits="BackdropTemplate" virtual="true" enableMouse="true" >
+		<Size>
+			<AbsDimension x="10" y="100"/>
+		</Size>
+		<HitRectInsets>
+			<AbsInset left="-10" right="-10" top="0" bottom="0"/>
+		</HitRectInsets>
+		<Layers>
+			<Layer level="ARTWORK">
+				<FontString name="$parentText" inherits="GameFontGreenSmall">
+					<Anchors>
+						<Anchor point="LEFT" relativePoint="RIGHT">
+							<Offset>
+								<AbsDimension x="2" y="0" />
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</FontString>
+				<FontString name="$parentLow" inherits="GameFontHighlightSmall" text="LOW">
+					<Anchors>
+						<Anchor point="BOTTOM" relativePoint="TOP">
+							<Offset>
+								<AbsDimension x="0" y="3"/>
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</FontString>
+				<FontString name="$parentHigh" inherits="GameFontHighlightSmall" text="HIGH">
+					<Anchors>
+						<Anchor point="TOP" relativePoint="BOTTOM">
+							<Offset>
+								<AbsDimension x="0" y="0"/>
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</FontString>
+			</Layer>
+		</Layers>
+		<ThumbTexture name="$parentThumb" file="Interface\Buttons\UI-SliderBar-Button-Vertical">
+			<Size>
+				<AbsDimension x="32" y="32"/>
+			</Size>
+		</ThumbTexture>
+		<Scripts>
+			<!-- Draagonflight (DF) Appears Blizz moved EnableMouseWheel from declaration to code -->
+			<OnLoad>
+				TitanOptionsSliderTemplate_OnLoad(self);
+
+				self:EnableMouseWheel(true);
+			</OnLoad>
+		</Scripts>
+	</Slider>
+
+	<GameTooltip name="TitanPanelTooltip" inherits="GameTooltipTemplate" parent="UIParent" hidden="true"/>
+	
+	<Button name="TitanPanelBarButtonHiderTemplate" frameStrata="BACKGROUND" toplevel="true" movable="true" parent="UIParent" virtual="true">
+		<Scripts>
+			<OnLoad>
+				self:RegisterForClicks("LeftButtonUp", "RightButtonDown")
+			</OnLoad>
+		</Scripts>
+		<Size>
+			<AbsDimension x="2560" y="24"/>
+		</Size>
+	</Button>
+
+	<!--
+	This is a control frame used to capture events Titan is interested in.
+	Other buttons will be used for display.
+	-->
+	<Button name="TitanPanelBarButton" frameStrata="BACKGROUND" parent="UIParent">
+		<Size>
+			<AbsDimension x="0" y="0"/>
+		</Size>
+	</Button>
+
+	<Button name="Titan_Bar__Display_Template" frameStrata="DIALOG" inherits="BackdropTemplate"
+		toplevel="true" movable="true" parent="UIParent" virtual="true">
+	</Button>
+
+</Ui>

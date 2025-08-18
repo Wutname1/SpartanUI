@@ -1,0 +1,24 @@
+## Interface: 110005
+## Title: Socialite
+## Notes: A customizable data broker for displaying friends and guild members.
+## Author: solocommand
+## SavedVariables: SocialiteSettings
+## Version: 11.0.5
+## X-ReleaseDate: 2024-10-22T22:38:02Z
+## X-License: MIT
+## X-Curse-Project-ID: 26811
+## X-Wago-ID: rkGr7xNy
+## OptionalDeps: Ace3, LibDataBroker-1.1, LibDBIcon-1.0
+## IconTexture: Interface\AddOns\Socialite\Socialite
+
+embeds.xml
+
+i18n\enUS.lua
+# i18n\deDE.lua
+# i18n\esES.lua
+# i18n\ruRU.lua
+
+tooltip.lua
+functions.lua
+Socialite.lua
+config.lua

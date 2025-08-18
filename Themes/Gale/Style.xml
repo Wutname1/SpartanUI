@@ -1,0 +1,27 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\..\FrameXML\UI.xsd">
+	<!-- frameStrata Parameters:  BACKGROUND, LOW, MEDIUM, HIGH, DIALOG, FULLSCREEN, FULLSCREEN_DIALOG, TOOLTIP  -->
+	<!-- Layer level Parameters:  BACKGROUND, BORDER, ARTWORK, OVERLAY, HIGHLIGHT -->
+
+	<!-- Gale Theme - Minimal design with solid black backgrounds and class borders -->
+	<Frame name="SUI_Art_Gale" frameStrata="BACKGROUND" parent="SpartanUI">
+		<Anchors>
+			<Anchor point="BOTTOMLEFT" relativeTo="SpartanUI" relativePoint="BOTTOMLEFT" />
+			<Anchor point="TOPRIGHT" relativeTo="SpartanUI" relativePoint="TOPRIGHT" />
+		</Anchors>
+		<Layers>
+			<Layer level="BACKGROUND">
+				<!-- Main bottom center element for action bar backgrounds -->
+				<Texture name="$parent_Base1">
+					<Anchors>
+						<Anchor point="BOTTOM" relativeTo="SUI_BottomAnchor" relativePoint="BOTTOM"/>
+					</Anchors>
+					<Color r="0" g="0" b="0" a="1"/>  <!-- Solid black background -->
+				</Texture>
+			</Layer>
+		</Layers>
+	</Frame>
+
+	<Script file="Style.lua" />
+</Ui>

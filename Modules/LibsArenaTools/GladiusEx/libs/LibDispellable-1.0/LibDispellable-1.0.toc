@@ -1,0 +1,10 @@
+## Interface: 70300
+## LoadOnDemand: 1
+## Title: Lib: Dispellable-1.0
+## Version: 2.0.1
+## X-Date: @project-date@
+## Notes: Test whether the player can really dispell a buff or debuff, given its talents.
+## Author: Adirelle
+
+LibStub.lua
+LibDispellable-1.0.lua

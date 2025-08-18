@@ -513,15 +513,22 @@ function module:CreateMiniVendorPanels()
 			if not OptionsPopdown.Panel or not OptionsPopdown.Panel.options then return end
 
 			local sellableCount = 0
+			local blizzardCount = 0
 
 			-- Count items that would be sold with current settings
 			for bag = 0, 4 do
 				for slot = 1, C_Container.GetContainerNumSlots(bag) do
 					local itemInfo, _, _, _, _, _, link, _, _, itemID = C_Container.GetContainerItemInfo(bag, slot)
 					if SUI.IsRetail and itemInfo then
-						-- Use pcall to safely handle any tooltip-related errors
-						local success, result = pcall(module.IsSellable, module, itemInfo.itemID, itemInfo.hyperlink, bag, slot)
-						if success and result then sellableCount = sellableCount + 1 end
+						-- Check if Blizzard will sell this item
+						local _, _, quality = C_Item.GetItemInfo(itemInfo.itemID)
+						if module:WouldBlizzardSell(itemInfo.itemID, quality) and module.DB.Gray then
+							blizzardCount = blizzardCount + 1
+						else
+							-- Use pcall to safely handle any tooltip-related errors
+							local success, result = pcall(module.IsSellable, module, itemInfo.itemID, itemInfo.hyperlink, bag, slot)
+							if success and result then sellableCount = sellableCount + 1 end
+						end
 					elseif not SUI.IsRetail and itemID then
 						-- Use pcall to safely handle any tooltip-related errors
 						local success, result = pcall(module.IsSellable, module, itemID, link, bag, slot)
@@ -532,8 +539,15 @@ function module:CreateMiniVendorPanels()
 
 			local sellButton = OptionsPopdown.Panel.options.sellItemsButton
 			if sellButton then
-				if sellableCount > 0 then
-					sellButton:SetText('Sell ' .. sellableCount .. ' Items')
+				local totalItems = sellableCount + blizzardCount
+				if totalItems > 0 then
+					if blizzardCount > 0 and sellableCount > 0 then
+						sellButton:SetText('Sell ' .. totalItems .. ' Items (' .. blizzardCount .. ' + ' .. sellableCount .. ')')
+					elseif blizzardCount > 0 then
+						sellButton:SetText('Sell ' .. blizzardCount .. ' Junk Items')
+					else
+						sellButton:SetText('Sell ' .. sellableCount .. ' Items')
+					end
 					sellButton:Show()
 				else
 					sellButton:Hide()

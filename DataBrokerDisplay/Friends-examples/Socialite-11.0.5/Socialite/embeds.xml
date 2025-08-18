@@ -1,0 +1,14 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\FrameXML\UI.xsd">
+  <Script file="vendor\LibStub\LibStub.lua"/>
+  <Script file="vendor\CallbackHandler-1.0\CallbackHandler-1.0.lua"/>
+  <!--@no-lib-strip@-->
+  <Include file="vendor\AceGUI-3.0\AceGUI-3.0.xml"/>
+  <Include file="vendor\AceConfig-3.0\AceConfig-3.0.xml"/>
+  <Include file="vendor\AceConsole-3.0\AceConsole-3.0.xml"/>
+  <!--@end-no-lib-strip@-->
+  <Script file="vendor\LibDataBroker-1.1\LibDataBroker-1.1.lua"/>
+  <!--@no-lib-strip@-->
+  <Script file="vendor\LibDBIcon-1.0\LibDBIcon-1.0.lua"/>
+  <!--@end-no-lib-strip@-->
+</Ui>

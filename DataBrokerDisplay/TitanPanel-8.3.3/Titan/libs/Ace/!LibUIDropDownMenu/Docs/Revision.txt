@@ -1,0 +1,266 @@
+$Id: Revision.txt 135 2024-02-05 16:50:14Z arithmandar $
+
+Revision History:
+=================
+
+v4.26.10020553040 (2024/02/06)
+------------------------------
+- OpenColorPicker related feature's compatibility enhancement
+
+v4.25.10020553040 (2024/01/30)
+------------------------------
+- Enhanced frame or texture's creation to set the name as nil when parent frame name is also nil
+- Further error handling for NewFeature
+
+v4.24.10020553007 (2024/01/23)
+------------------------------
+- Fixed issue of version confliction when older version was loaded first and then newer version was to replace the library. 
+  What has been created won't have the "NewFeature" frame there.
+
+v4.23.10020553007 (2024/01/22)
+------------------------------
+- Fixed issue with the compatibility with WoW 3.4.3 / 1.15.0
+
+v4.22.10020553007 (2024/01/21)
+------------------------------
+- Toc update to support WoW 10.2.5 / 3.4.3 / 1.15.0
+- function sync with build 53007
+
+v4.21.10010550587 (2023/07/29)
+------------------------------
+- Toc update to support WoW 10.1.5 / 3.4.2
+- function sync with build 50587
+
+v4.20.10000748520 (2023/03/20)
+------------------------------
+- Toc update to support WoW 10.0.7
+
+v4.19.10000047936 (2023/02/05)
+------------------------------
+- Toc update to support WoW 10.0.5 / 3.4.1
+
+v4.18.10000046801 (2022/11/29)
+------------------------------
+- Replace SetBackdrop with backdropInfo
+
+v4.17.10000046801 (2022/11/29)
+------------------------------
+- update backdrop template to DialogBorderDarkTemplate
+  - update BACKDROP_DIALOG_DARK.insets.bottom to 11
+- update menubackdrop template to TooltipBackdropTemplate
+
+v4.16.10000046689 (2022/11/18)
+------------------------------
+- Fixing tagging error
+
+v4.15.10000046689 (2022/11/18)
+------------------------------
+- Toc update to support WoW 10.0.2
+- Updated lib:UIDropDownMenu_JustifyText()
+
+v4.14.10000046455 (2022/11/04)
+------------------------------
+- minor bug fix for menu icon onclick
+
+v4.13.10000046366 (2022/11/03)
+-----------------------------
+- Toc update to support WoW 10.0.0
+- function sync with build 46366
+
+v4.12.9020745161 (2022/08/23)
+-----------------------------
+- Classic ToC update to support WoW 1.14.3
+- Release for WOLTKC
+
+v4.11.9020745114 (2022/08/17)
+-----------------------------
+- Toc update to support WoW 9.2.7
+- Added support for Wrath of the Lich King Classic (WoW 3.4.0)
+
+v4.10.9020542423 (2022/07/17)
+-----------------------------
+- Toc update to support WoW 9.2.5
+- function sync with build 44232
+- Fixed: Global Mouse Down making menu not toggle properly from the button (TeeloJubeithos)
+
+v4.09.9020042698 (2022/03/23)
+-----------------------------
+- BCC ToC update to support WoW 2.5.4
+
+v4.09.9020042488 (2022/02/28)
+-----------------------------
+- Fixed issue while in Classic or BCC in counting maximum buttons
+
+v4.08.9020042423 (2022/02/23)
+-----------------------------
+- Toc update to support WoW 9.2.0
+- function sync with build 42423
+
+v4.07.9020042277 (2022/02/13)
+-----------------------------
+- function sync with build 42277
+- enhanced the auto hide feature in ClassicEra and Classic TBC
+
+v4.07.9020042257 (2022/02/10)
+-----------------------------
+- function sync with build 42257
+- BCC ToC update to support WoW 2.5.3
+- Classic ToC update to support WoW 1.14.2
+
+v4.07.9020042174 (2022/02/09)
+-----------------------------
+- Support multiple ToC
+- BCC ToC update to support WoW 2.5.3
+- Classic ToC update to support WoW 1.14.1
+
+v4.07.9020042069 (2022/01/26)
+-----------------------------
+- Toc update to support WoW 9.1.5
+- function sync with build 42069
+- fixed the issue that backdrop was not properly set
+
+v4.06.9010039185 (2021/06/30)
+-----------------------------
+- Toc update to support WoW 9.1.0
+- function sync with build 39185
+
+v4.05.9000538556 (2021/06/14)
+-----------------------------
+- Rework on dropdown menu's audo-hide
+
+v4.04.9000538556 (2021/06/14)
+-----------------------------
+- Allowing dropdown frame to be wihout a name (nil) given (for an anonymous frame)
+- Added timeout for classic (both classic era and TBC) so that dropdown menu will auto-hide when mouse is away (thanks to DahkCeles)
+
+v4.03.9000538556 (2021/05/19)
+-----------------------------
+- Added codes for fixing Tainting UIMenus and CloseMenus() (thanks to DahkCeles)
+
+v4.02.9000538556 (2021/05/19)
+-----------------------------
+- Supported WoW Classic 2.5.1 (38707)
+
+v4.01.9000236639 (2020/12/14)
+-----------------------------
+- Fixed issues that classic server doesn't have UIDropDownMenu_HandleGlobalMouseEvent()
+
+v4.00.9000236639 (2020/11/22)
+-----------------------------
+- Toc update to support WoW 9.0.2
+- LibUIDropDownMenu
+  - Set major version to 4.0
+  - Migrate all global functions to be under library tables
+  - Insert "L_DropDownList1" and "L_DropDownList2" to global UIMenus
+  - UIDropDownMenu_HandleGlobalMouseEvent (thanks to SLOKnightFall)
+- LibEasyMenu
+  - Move function calls to under LibUIDropDownMenu and under library tables
+- LibUIDropDownMenuTemplates
+  - Move codes to under LibUIDropDownMenu so that thet can de under one single library
+
+v3.02.9000136272.01 (2020/10/20)
+-----------------------------
+- Fixed version detection while setting ColorSwatch's backdrop template. It should now be correctly detecting the retail (as well as ShadowLands) version
+
+v3.02.9000136272 (2020/10/18)
+-----------------------------
+- Update to sync with 9.0.1 build 36272
+- ToC update to support WoW 9.0.1
+
+v3.01.9000135522 (2020/09/07)
+-----------------------------
+- Updated Backdrop's handling
+
+v3.00.9000135522 (2020/08/19)
+-----------------------------
+- Shadowlands support and backward compatibility for both WoW classic and BFA
+
+v2.01.8020031429 (2019/08/12)
+-----------------------------
+- Update to sync with 8.2.0 build 31429
+- ToC update
+
+v2.00.8010028833 (2018/12/27)
+-----------------------------
+- Migrate template to Lua function call
+  (Refer to below page for more details:
+   https://www.wowace.com/projects/libuidropdownmenu/pages/faq/changes-regarding-to-dropdown-templates-usage )
+- Update major version to "LibUIDropDownMenu-2.0"
+   
+v1.08.8010028768 (2018/12/17)
+-----------------------------
+- Update to sync with 8.0.1 build 28768
+- ToC update
+
+v1.08.8000127326 (2018/08/11)
+-----------------------------
+- Workaround to get rid of addons which are still using old version of this library
+  (thanks to ddcorkum)
+
+v1.08.8000127165 (2018/07/25)
+-----------------------------
+- Sync with WoW 8.0.1.27165
+  - Added L_UIDropDownMenu_SetDisplayMode()
+  - Added L_UIDropDownMenuButtonInvisibleButton_OnEnter()
+  - Added L_UIDropDownMenuButtonInvisibleButton_OnLeave()
+  - Added L_UIDropDownMenuButton_OnEnter()
+  - Added L_UIDropDownMenuButton_OnLeave()
+
+v1.08.8000126433 (2018/04/24)
+-----------------------------
+- Sync with WoW 8.0.1.26433
+  - Added LibUIDropDownMenuTemplates.lua
+  - Added frame template: L_UIDropDownCustomMenuEntryTemplate
+  - Added local function GetChild()
+  - New custom frame functions:
+    - L_UIDropDownMenu_CheckAddCustomFrame()
+	- L_UIDropDownMenu_RegisterCustomFrame()
+  - New button attribute: info.customFrame
+  - Changes of L_UIDropDownMenu_AddSeparator() is to be reflected only on WoW 8.x.x
+    - L_UIDropDownMenu_AddSeparator(info, level) == > L_UIDropDownMenu_AddSeparator(level)
+	  No need to specify info there to prevent from messing up other menu items if info is to be re-used.
+- Fixed the lib's major version. 
+  Previously with the wrong major version which also has the release version, it makes all the different versions of lib to be presented 
+  as different entities, which means newer version won't replace the older version. The latest loaded one will replace all the constants
+  and functions.
+  This change will take effect until all the addons which embed this lib to replace with latest version.
+
+v1.07.7030525961 (2018/04/23)
+-----------------------------
+- Remove external
+- Refine upvalue and local function pre-definition
+- Rename local parameters to make them consistent with others
+
+v1.07.7030024931 (2017/08/31)
+-----------------------------
+- Remove PlaySound compact code.
+
+v1.06.7030024931 (2017/08/31)
+-----------------------------
+- Remove PlaySound compact code.
+
+v1.05.7030024920 (2017/08/29)
+-----------------------------
+- ToC update to support WoW 7.3.0
+
+v1.04.7030024484 (2017/07/02)
+-----------------------------
+- Changed soundkit's ID to key indicator likes SOUNDKIT.U_CHAT_SCROLL_BUTTON
+
+v1.03.7030024484 (2017/06/30)
+-----------------------------
+- Update version number
+
+v1.02.7030024484 (2017/06/30)
+-----------------------------
+- Updated PlaySound API's usage method to support both 7.2.5 and 7.3.0 of WoW clients
+
+v1.01.7020024015 (2017/05/25)
+----------------------------
+- Fixed the wrong name of LibEasyMenu.lua specified in LibUIDropDownMenu.xml
+
+v1.00.7020024015 (2017/05/24)
+----------------------------
+- Clone from NoTaint_UIDropDownMenu v7.2.0.24015-r2
+- Changed LIB_ and Lib_ to L_ to prevent from conflict with outdated 
+  NoTaint_UIDropDownMenu being loaded from other addons

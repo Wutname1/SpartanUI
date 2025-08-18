@@ -5,6 +5,7 @@
 	<Include file="Digital\Style.xml"/>
 	<Include file="Fel\Style.xml"/>
 	<Include file="Minimal\Style.xml"/>
+	<Include file="Gale\Style.xml"/>
 	<Include file="Transparent\Style.xml"/>
 	<Include file="Tribal\Style.xml"/>
 </Ui>

@@ -71,6 +71,8 @@ SUI.AddLib('StdUi', 'StdUi')
 SUI.AddLib('LSM', 'LibSharedMedia-3.0')
 SUI.AddLib('LEM', 'LibEditMode')
 SUI.AddLib('LibQTip', 'LibQTip-1.0')
+SUI.AddLib('LibEditMode', 'LibEditMode')
+SUI.AddLib('EditModeOverride', 'LibEditModeOverride-1.0')
 
 SLASH_RELOADUI1 = '/rl' -- new slash command for reloading UI
 SlashCmdList.RELOADUI = ReloadUI

@@ -1,0 +1,9 @@
+## Interface: 110000
+## Title: Titan Starter
+## Version: 1.0.0
+## Notes: Adds bag and free slot information to Titan Panel
+## Author: Titan Panel Development Team (http://www.titanpanel.org)
+## SavedVariables: 
+## Dependencies: Titan
+## DefaultState: Enabled
+TitanStarter.lua

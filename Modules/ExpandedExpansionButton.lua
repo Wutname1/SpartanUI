@@ -138,6 +138,33 @@ local defaultExpansions = {
 	},
 	{
 		expansion = 'TWW',
+		displayText = 'TWW: DRIVE System',
+		enabled = true,
+		icon = 'ui-questtracker-tracker-dragon-ridingworld-factionquest',
+		onClick = function()
+			if InCombatLockdown() then
+				SUI:Print('Cannot open DRIVE System while in combat.')
+				return
+			end
+
+			if GenericTraitFrame and GenericTraitFrame:IsShown() then
+				GenericTraitFrame:Hide()
+				return
+			end
+			C_AddOns.LoadAddOn("Blizzard_GenericTraitUI")
+			if tIndexOf(UISpecialFrames, "GenericTraitFrame") == nil then
+				table.insert(UISpecialFrames, "GenericTraitFrame")
+			end
+			GenericTraitFrame:SetTreeID(1056)
+			GenericTraitFrame:Show()
+			GenericTraitFrame:SetPoint("CENTER")
+		end,
+		requirementCheck = function()
+			return GetExpansionLevel() >= 10 -- The War Within
+		end,
+	},
+	{
+		expansion = 'TWW',
 		displayText = 'TWW: Reshii Wraps',
 		enabled = true,
 		icon = 'Interface\\Icons\\Inv_cape_armor_etherealshawl_d_01',
