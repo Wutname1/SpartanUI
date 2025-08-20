@@ -27,7 +27,7 @@ local InCombatLockdown = InCombatLockdown
 
 -- Library Constants
 local LIBSDATABAR_VERSION = "1.0.0"
-local LIBSDATABAR_DEBUG = true -- Enable debug for Phase 1 completion
+local LIBSDATABAR_DEBUG = false -- Phase 1 debugging complete
 
 ---@class LibsDataBar
 ---@field version string Library version
@@ -502,12 +502,12 @@ function lib:SetupDefaults()
         
         anchor = {
             x = 0,
-            y = 10
+            y = 0
         },
         
         appearance = {
             background = {
-                show = false,
+                show = true,
                 texture = "Interface\\Tooltips\\UI-Tooltip-Background",
                 color = {r=0, g=0, b=0, a=0.8}
             },
@@ -612,6 +612,24 @@ function lib:CreateBar(config)
     if self.DataBar then
         local bar = self.DataBar:Create(config)
         if bar then
+            -- Register the bar in our multi-bar system
+            self.bars[config.id] = bar
+            
+            -- Apply intelligent positioning if not explicitly set
+            if not config.position then
+                local position = self:GetOptimalBarPosition()
+                local offset = self:CalculateBarOffset(position, config.size and config.size.height or 24)
+                bar.config.position = position
+                bar.config.anchor.x = offset.x
+                bar.config.anchor.y = offset.y
+                bar:UpdatePosition()
+            end
+            
+            -- Fire bar created event
+            if self.callbacks then
+                self.callbacks:Fire("LibsDataBar_BarCreated", config.id, bar)
+            end
+            
             self:DebugLog("info", "DataBar created: " .. config.id)
             return bar
         end
@@ -620,6 +638,261 @@ function lib:CreateBar(config)
     end
     
     return nil
+end
+
+---Get optimal position for a new bar based on existing bars
+---@return string position Optimal position (top, bottom, left, right)
+function lib:GetOptimalBarPosition()
+    local positions = {
+        bottom = 0,
+        top = 0,
+        left = 0,
+        right = 0
+    }
+    
+    -- Count bars at each position
+    for _, bar in pairs(self.bars) do
+        if bar.config.position and positions[bar.config.position] ~= nil then
+            positions[bar.config.position] = positions[bar.config.position] + 1
+        end
+    end
+    
+    -- Find position with least bars
+    local minCount = math.huge
+    local bestPosition = "bottom"
+    
+    local preferredOrder = {"bottom", "top", "left", "right"}
+    for _, pos in ipairs(preferredOrder) do
+        if positions[pos] < minCount then
+            minCount = positions[pos]
+            bestPosition = pos
+        end
+    end
+    
+    return bestPosition
+end
+
+---Calculate intelligent offset for a new bar to avoid collisions
+---@param position string Bar position (top, bottom, left, right)
+---@param barHeight? number Height of the new bar (default: 24)
+---@return table offset {x, y} offset values
+function lib:CalculateBarOffset(position, barHeight)
+    barHeight = barHeight or 24
+    local baseOffset = {x = 0, y = 0}
+    local barSpacing = 4 -- Spacing between bars
+    
+    -- Count existing bars at this position
+    local barsAtPosition = 0
+    for _, bar in pairs(self.bars) do
+        if bar.config.position == position then
+            barsAtPosition = barsAtPosition + 1
+        end
+    end
+    
+    -- Calculate offset based on position and existing bars
+    if position == "bottom" then
+        baseOffset.y = 0 + (barsAtPosition * (barHeight + barSpacing))
+    elseif position == "top" then
+        baseOffset.y = 0 - (barsAtPosition * (barHeight + barSpacing))
+    elseif position == "left" then
+        baseOffset.x = 0 + (barsAtPosition * (barHeight + barSpacing))
+    elseif position == "right" then
+        baseOffset.x = 0 - (barsAtPosition * (barHeight + barSpacing))
+    end
+    
+    return baseOffset
+end
+
+---Update all bar positions to prevent overlaps
+function lib:UpdateBarPositions()
+    -- Group bars by position
+    local barsByPosition = {
+        bottom = {},
+        top = {},
+        left = {},
+        right = {}
+    }
+    
+    for barId, bar in pairs(self.bars) do
+        local pos = bar.config.position or "bottom"
+        if barsByPosition[pos] then
+            tinsert(barsByPosition[pos], {id = barId, bar = bar})
+        end
+    end
+    
+    -- Update positions with proper spacing
+    for position, bars in pairs(barsByPosition) do
+        for i, barData in ipairs(bars) do
+            local offset = self:CalculateBarOffset(position, barData.bar.config.size.height)
+            barData.bar.config.anchor.x = offset.x
+            barData.bar.config.anchor.y = offset.y
+            barData.bar:UpdatePosition()
+        end
+    end
+end
+
+---Delete a data bar
+---@param barId string Bar ID to delete
+---@return boolean success Whether deletion was successful
+function lib:DeleteBar(barId)
+    local bar = self.bars[barId]
+    if not bar then
+        self:DebugLog("warning", "Cannot delete bar - not found: " .. tostring(barId))
+        return false
+    end
+    
+    -- Don't allow deletion of main bar
+    if barId == "main" then
+        self:DebugLog("warning", "Cannot delete main bar")
+        return false
+    end
+    
+    -- Hide and cleanup the bar
+    if bar.frame then
+        bar.frame:Hide()
+    end
+    
+    -- Remove all plugins from the bar
+    if bar.plugins then
+        for pluginId, _ in pairs(bar.plugins) do
+            bar:RemovePlugin(pluginId)
+        end
+    end
+    
+    -- Fire bar deleted event
+    if self.callbacks then
+        self.callbacks:Fire("LibsDataBar_BarDeleted", barId, bar)
+    end
+    
+    -- Remove from registry
+    self.bars[barId] = nil
+    
+    self:DebugLog("info", "DataBar deleted: " .. barId)
+    return true
+end
+
+---Get list of all bar IDs
+---@return table barIds Array of bar IDs
+function lib:GetBarList()
+    local barIds = {}
+    for barId, _ in pairs(self.bars) do
+        tinsert(barIds, barId)
+    end
+    return barIds
+end
+
+---Get bar by ID
+---@param barId string Bar ID
+---@return DataBar? bar Bar instance or nil
+function lib:GetBar(barId)
+    return self.bars[barId]
+end
+
+---Move plugin between bars
+---@param pluginId string Plugin ID
+---@param fromBarId string Source bar ID
+---@param toBarId string Target bar ID
+---@return boolean success Whether move was successful
+function lib:MovePlugin(pluginId, fromBarId, toBarId)
+    local fromBar = self.bars[fromBarId]
+    local toBar = self.bars[toBarId]
+    
+    if not fromBar then
+        self:DebugLog("error", "Source bar not found: " .. tostring(fromBarId))
+        return false
+    end
+    
+    if not toBar then
+        self:DebugLog("error", "Target bar not found: " .. toString(toBarId))
+        return false
+    end
+    
+    local plugin = self.plugins[pluginId]
+    if not plugin then
+        self:DebugLog("error", "Plugin not found: " .. tostring(pluginId))
+        return false
+    end
+    
+    -- Remove from source bar
+    if not fromBar:RemovePlugin(pluginId) then
+        self:DebugLog("error", "Failed to remove plugin from source bar")
+        return false
+    end
+    
+    -- Add to target bar
+    local button = toBar:AddPlugin(plugin)
+    if not button then
+        self:DebugLog("error", "Failed to add plugin to target bar")
+        -- Try to restore to source bar
+        fromBar:AddPlugin(plugin)
+        return false
+    end
+    
+    -- Fire plugin moved event
+    if self.callbacks then
+        self.callbacks:Fire("LibsDataBar_PluginMoved", pluginId, fromBarId, toBarId)
+    end
+    
+    self:DebugLog("info", "Plugin moved: " .. pluginId .. " from " .. fromBarId .. " to " .. toBarId)
+    return true
+end
+
+---Create a quick secondary bar with intelligent positioning
+---@param barId? string Optional bar ID (auto-generated if not provided)
+---@param position? string Optional position override
+---@return DataBar? bar Created bar or nil if failed
+function lib:CreateQuickBar(barId, position)
+    barId = barId or ("bar_" .. (#self:GetBarList() + 1))
+    
+    local quickBarConfig = {
+        id = barId,
+        position = position, -- Will auto-determine if nil
+        enabled = true,
+        
+        size = {
+            width = 0, -- Full width
+            height = 20, -- Slightly smaller than main
+            scale = 1.0
+        },
+        
+        appearance = {
+            background = {
+                show = false,
+                texture = "Interface\\Tooltips\\UI-Tooltip-Background",
+                color = {r=0, g=0, b=0, a=0.6}
+            },
+            border = {
+                show = false,
+                texture = "Interface\\Tooltips\\UI-Tooltip-Border",
+                color = {r=1, g=1, b=1, a=1},
+                size = 1
+            }
+        },
+        
+        behavior = {
+            autoHide = false,
+            combatHide = false,
+            strata = "MEDIUM",
+            level = 1
+        },
+        
+        layout = {
+            orientation = "horizontal",
+            alignment = "center",
+            spacing = 4,
+            padding = {left=8, right=8, top=2, bottom=2}
+        }
+    }
+    
+    local bar = self:CreateBar(quickBarConfig)
+    if bar then
+        self:DebugLog("info", "Quick bar created: " .. barId)
+        
+        -- Update all bar positions to prevent overlaps
+        self:UpdateBarPositions()
+    end
+    
+    return bar
 end
 
 ---Create a new flexible container

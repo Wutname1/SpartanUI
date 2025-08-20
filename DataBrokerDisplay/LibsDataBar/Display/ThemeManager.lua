@@ -69,8 +69,8 @@ local DEFAULT_THEMES = {
         
         bar = {
             background = {
-                show = false,
-                color = {0, 0, 0, 0.5},
+                show = true,
+                color = {0, 0, 0, 0.8},
                 texture = "Interface\\ChatFrame\\ChatFrameBackground"
             },
             border = {
@@ -190,6 +190,482 @@ local DEFAULT_THEMES = {
                 face = "Fonts\\FRIZQT__.TTF",
                 size = 11,
                 flags = "OUTLINE"
+            }
+        }
+    },
+    
+    modern = {
+        id = "modern",
+        name = "Modern",
+        description = "Clean modern theme with subtle gradients",
+        version = "1.0.0",
+        author = "LibsDataBar Team",
+        
+        bar = {
+            background = {
+                show = true,
+                color = {0.2, 0.2, 0.25, 0.9},
+                texture = "Interface\\ChatFrame\\ChatFrameBackground"
+            },
+            border = {
+                show = true,
+                color = {0.4, 0.6, 0.8, 0.8},
+                texture = "Interface\\Tooltips\\UI-Tooltip-Border",
+                size = 1
+            },
+            spacing = 3,
+            padding = {top = 4, bottom = 4, left = 6, right = 6}
+        },
+        
+        button = {
+            font = {
+                face = "Fonts\\ARIALN.TTF",
+                size = 12,
+                flags = "",
+                color = {0.95, 0.95, 0.95, 1}
+            },
+            background = {
+                show = true,
+                color = {0.25, 0.25, 0.3, 0.6},
+                texture = "Interface\\ChatFrame\\ChatFrameBackground"
+            },
+            border = {
+                show = true,
+                color = {0.5, 0.7, 0.9, 0.6},
+                texture = "Interface\\Tooltips\\UI-Tooltip-Border",
+                size = 1
+            },
+            highlight = {
+                show = true,
+                color = {0.6, 0.8, 1.0, 0.4},
+                texture = "Interface\\Buttons\\UI-Common-MouseHilight"
+            },
+            spacing = 4,
+            padding = {top = 4, bottom = 4, left = 8, right = 8}
+        },
+        
+        tooltip = {
+            background = {
+                color = {0.15, 0.15, 0.2, 0.95},
+                texture = "Interface\\Tooltips\\UI-Tooltip-Background"
+            },
+            border = {
+                color = {0.5, 0.7, 0.9, 1},
+                texture = "Interface\\Tooltips\\UI-Tooltip-Border"
+            },
+            font = {
+                face = "Fonts\\ARIALN.TTF",
+                size = 12,
+                flags = ""
+            }
+        }
+    },
+    
+    minimal = {
+        id = "minimal",
+        name = "Minimal",
+        description = "Ultra-minimal theme with maximum screen space",
+        version = "1.0.0",
+        author = "LibsDataBar Team",
+        
+        bar = {
+            background = {
+                show = false,
+                color = {0, 0, 0, 0},
+                texture = "Interface\\ChatFrame\\ChatFrameBackground"
+            },
+            border = {
+                show = false,
+                color = {0, 0, 0, 0},
+                texture = "Interface\\Tooltips\\UI-Tooltip-Border",
+                size = 0
+            },
+            spacing = 8,
+            padding = {top = 0, bottom = 0, left = 4, right = 4}
+        },
+        
+        button = {
+            font = {
+                face = "Fonts\\FRIZQT__.TTF",
+                size = 11,
+                flags = "",
+                color = {0.8, 0.8, 0.8, 0.9}
+            },
+            background = {
+                show = false,
+                color = {0, 0, 0, 0},
+                texture = "Interface\\ChatFrame\\ChatFrameBackground"
+            },
+            border = {
+                show = false,
+                color = {0, 0, 0, 0},
+                texture = "Interface\\Tooltips\\UI-Tooltip-Border",
+                size = 0
+            },
+            highlight = {
+                show = true,
+                color = {1, 1, 1, 0.15},
+                texture = "Interface\\Buttons\\UI-Common-MouseHilight"
+            },
+            spacing = 1,
+            padding = {top = 1, bottom = 1, left = 3, right = 3}
+        },
+        
+        tooltip = {
+            background = {
+                color = {0, 0, 0, 0.85},
+                texture = "Interface\\Tooltips\\UI-Tooltip-Background"
+            },
+            border = {
+                color = {0.8, 0.8, 0.8, 1},
+                texture = "Interface\\Tooltips\\UI-Tooltip-Border"
+            },
+            font = {
+                face = "Fonts\\FRIZQT__.TTF",
+                size = 11,
+                flags = ""
+            }
+        }
+    },
+    
+    classic = {
+        id = "classic",
+        name = "Classic",
+        description = "Traditional WoW interface styling",
+        version = "1.0.0",
+        author = "LibsDataBar Team",
+        
+        bar = {
+            background = {
+                show = true,
+                color = {0.3, 0.25, 0.15, 0.8},
+                texture = "Interface\\DialogFrame\\UI-DialogBox-Background"
+            },
+            border = {
+                show = true,
+                color = {0.8, 0.7, 0.5, 1},
+                texture = "Interface\\DialogFrame\\UI-DialogBox-Border",
+                size = 8
+            },
+            spacing = 3,
+            padding = {top = 5, bottom = 5, left = 8, right = 8}
+        },
+        
+        button = {
+            font = {
+                face = "Fonts\\MORPHEUS.TTF",
+                size = 12,
+                flags = "",
+                color = {1, 0.82, 0, 1}
+            },
+            background = {
+                show = true,
+                color = {0.25, 0.2, 0.1, 0.7},
+                texture = "Interface\\DialogFrame\\UI-DialogBox-Background"
+            },
+            border = {
+                show = true,
+                color = {0.7, 0.6, 0.4, 0.8},
+                texture = "Interface\\DialogFrame\\UI-DialogBox-Border",
+                size = 4
+            },
+            highlight = {
+                show = true,
+                color = {1, 0.9, 0.5, 0.3},
+                texture = "Interface\\Buttons\\UI-Common-MouseHilight"
+            },
+            spacing = 4,
+            padding = {top = 4, bottom = 4, left = 8, right = 8}
+        },
+        
+        tooltip = {
+            background = {
+                color = {0.2, 0.15, 0.1, 0.95},
+                texture = "Interface\\DialogFrame\\UI-DialogBox-Background"
+            },
+            border = {
+                color = {0.8, 0.7, 0.5, 1},
+                texture = "Interface\\DialogFrame\\UI-DialogBox-Border"
+            },
+            font = {
+                face = "Fonts\\MORPHEUS.TTF",
+                size = 12,
+                flags = ""
+            }
+        }
+    },
+    
+    gaming = {
+        id = "gaming",
+        name = "Gaming",
+        description = "High-contrast theme for competitive gaming",
+        version = "1.0.0",
+        author = "LibsDataBar Team",
+        
+        bar = {
+            background = {
+                show = true,
+                color = {0, 0, 0, 0.95},
+                texture = "Interface\\ChatFrame\\ChatFrameBackground"
+            },
+            border = {
+                show = true,
+                color = {0, 1, 0, 1},
+                texture = "Interface\\Tooltips\\UI-Tooltip-Border",
+                size = 2
+            },
+            spacing = 1,
+            padding = {top = 2, bottom = 2, left = 4, right = 4}
+        },
+        
+        button = {
+            font = {
+                face = "Fonts\\ARIALN.TTF",
+                size = 11,
+                flags = "OUTLINE",
+                color = {0, 1, 0, 1}
+            },
+            background = {
+                show = true,
+                color = {0, 0, 0, 0.8},
+                texture = "Interface\\ChatFrame\\ChatFrameBackground"
+            },
+            border = {
+                show = true,
+                color = {0, 0.8, 0, 0.8},
+                texture = "Interface\\Tooltips\\UI-Tooltip-Border",
+                size = 1
+            },
+            highlight = {
+                show = true,
+                color = {0, 1, 0, 0.5},
+                texture = "Interface\\Buttons\\UI-Common-MouseHilight"
+            },
+            spacing = 1,
+            padding = {top = 2, bottom = 2, left = 4, right = 4}
+        },
+        
+        tooltip = {
+            background = {
+                color = {0, 0, 0, 1},
+                texture = "Interface\\Tooltips\\UI-Tooltip-Background"
+            },
+            border = {
+                color = {0, 1, 0, 1},
+                texture = "Interface\\Tooltips\\UI-Tooltip-Border"
+            },
+            font = {
+                face = "Fonts\\ARIALN.TTF",
+                size = 11,
+                flags = "OUTLINE"
+            }
+        }
+    },
+    
+    -- Additional Themes (following standard broker display patterns)
+    standard = {
+        id = "standard",
+        name = "Standard",
+        description = "Standard theme with simple backgrounds",
+        version = "1.0.0",
+        author = "LibsDataBar Team",
+        
+        bar = {
+            background = {
+                show = true,
+                color = {0, 0, 0, 1.0},
+                texture = "Interface\\Tooltips\\UI-Tooltip-Background",
+                tile = false,
+                tileSize = 0
+            },
+            border = {
+                show = false,
+                color = {0.8, 0.6, 0.0, 1.0},
+                texture = "Interface\\Tooltips\\UI-Tooltip-Border",
+                size = 0
+            },
+            spacing = 8,
+            padding = {top = 2, bottom = 2, left = 8, right = 8}
+        },
+        
+        button = {
+            font = {
+                face = "Fonts\\FRIZQT__.TTF",
+                size = 12,
+                flags = "",
+                color = {1.0, 0.82, 0, 1}
+            },
+            background = {
+                show = false,
+                color = {0, 0, 0, 0},
+                texture = ""
+            },
+            border = {
+                show = false,
+                color = {0, 0, 0, 0},
+                texture = "",
+                size = 0
+            },
+            highlight = {
+                show = true,
+                color = {1, 1, 1, 0.2},
+                texture = "Interface\\Buttons\\UI-Common-MouseHilight"
+            },
+            spacing = 2,
+            padding = {top = 2, bottom = 2, left = 4, right = 4}
+        },
+        
+        tooltip = {
+            background = {
+                color = {0, 0, 0, 0.9},
+                texture = "Interface\\Tooltips\\UI-Tooltip-Background"
+            },
+            border = {
+                color = {1, 1, 1, 1},
+                texture = "Interface\\Tooltips\\UI-Tooltip-Border"
+            },
+            font = {
+                face = "Fonts\\FRIZQT__.TTF",
+                size = 12,
+                flags = ""
+            }
+        }
+    },
+    
+    clean = {
+        id = "clean",
+        name = "Clean",
+        description = "Clean theme with minimal backgrounds",
+        version = "1.0.0",
+        author = "LibsDataBar Team",
+        
+        bar = {
+            background = {
+                show = false,
+                color = {0, 0, 0, 0},
+                texture = "",
+                tile = false,
+                tileSize = 0
+            },
+            border = {
+                show = false,
+                color = {0, 0, 0, 0},
+                texture = "",
+                size = 0
+            },
+            spacing = 4,
+            padding = {top = 1, bottom = 1, left = 2, right = 2}
+        },
+        
+        button = {
+            font = {
+                face = "Fonts\\FRIZQT__.TTF",
+                size = 11,
+                flags = "",
+                color = {0.9, 0.9, 0.9, 1}
+            },
+            background = {
+                show = false,
+                color = {0, 0, 0, 0},
+                texture = ""
+            },
+            border = {
+                show = false,
+                color = {0, 0, 0, 0},
+                texture = "",
+                size = 0
+            },
+            highlight = {
+                show = true,
+                color = {1, 1, 1, 0.15},
+                texture = "Interface\\Buttons\\UI-Common-MouseHilight"
+            },
+            spacing = 1,
+            padding = {top = 1, bottom = 1, left = 3, right = 3}
+        },
+        
+        tooltip = {
+            background = {
+                color = {0, 0, 0, 0.85},
+                texture = "Interface\\Tooltips\\UI-Tooltip-Background"
+            },
+            border = {
+                color = {0.8, 0.8, 0.8, 1},
+                texture = "Interface\\Tooltips\\UI-Tooltip-Border"
+            },
+            font = {
+                face = "Fonts\\FRIZQT__.TTF",
+                size = 11,
+                flags = ""
+            }
+        }
+    },
+    
+    dialog = {
+        id = "dialog",
+        name = "Dialog",
+        description = "Theme using Blizzard dialog backgrounds",
+        version = "1.0.0",
+        author = "LibsDataBar Team",
+        
+        bar = {
+            background = {
+                show = true,
+                color = {0, 0, 0, 1.0},
+                texture = "Interface\\DialogFrame\\UI-DialogBox-Background",
+                tile = false,
+                tileSize = 0
+            },
+            border = {
+                show = true,
+                color = {0.8, 0.6, 0.0, 1.0},
+                texture = "Interface\\DialogFrame\\UI-DialogBox-Border",
+                size = 16
+            },
+            spacing = 8,
+            padding = {top = 5, bottom = 5, left = 8, right = 8}
+        },
+        
+        button = {
+            font = {
+                face = "Fonts\\MORPHEUS.TTF",
+                size = 12,
+                flags = "",
+                color = {1, 0.82, 0, 1}
+            },
+            background = {
+                show = false,
+                color = {0.25, 0.2, 0.1, 0.7},
+                texture = "Interface\\DialogFrame\\UI-DialogBox-Background"
+            },
+            border = {
+                show = false,
+                color = {0.7, 0.6, 0.4, 0.8},
+                texture = "Interface\\DialogFrame\\UI-DialogBox-Border",
+                size = 0
+            },
+            highlight = {
+                show = true,
+                color = {1, 0.9, 0.5, 0.3},
+                texture = "Interface\\Buttons\\UI-Common-MouseHilight"
+            },
+            spacing = 4,
+            padding = {top = 4, bottom = 4, left = 8, right = 8}
+        },
+        
+        tooltip = {
+            background = {
+                color = {0.2, 0.15, 0.1, 0.95},
+                texture = "Interface\\DialogFrame\\UI-DialogBox-Background"
+            },
+            border = {
+                color = {0.8, 0.7, 0.5, 1},
+                texture = "Interface\\DialogFrame\\UI-DialogBox-Border"
+            },
+            font = {
+                face = "Fonts\\MORPHEUS.TTF",
+                size = 12,
+                flags = ""
             }
         }
     }
@@ -344,45 +820,74 @@ function ThemeManager:ApplyThemeToBar(bar, theme)
     LibsDataBar:DebugLog("debug", "Applied theme " .. theme.id .. " to bar " .. bar.id)
 end
 
----Apply bar theme styling
+---Apply bar theme styling (standard backdrop system)
 ---@param bar DataBar Bar to style
 ---@param barTheme BarTheme Theme configuration
 function ThemeManager:ApplyBarTheme(bar, barTheme)
     if not bar.frame or not barTheme then return end
     
-    -- Apply background
-    if barTheme.background then
-        if barTheme.background.show and not bar.backgroundTexture then
-            bar.backgroundTexture = bar.frame:CreateTexture(nil, "BACKGROUND")
-        end
+    -- Apply proper backdrop system (prevents texture issues)
+    if barTheme.background and barTheme.background.show then
+        -- Use proper SetBackdrop system
+        local backdrop = {
+            bgFile = barTheme.background.texture,
+            edgeFile = barTheme.border and barTheme.border.show and barTheme.border.texture or nil,
+            tile = barTheme.background.tile or false,
+            tileSize = barTheme.background.tileSize or 0,
+            edgeSize = barTheme.border and barTheme.border.size or 0,
+            insets = {left = 0, right = 0, top = 0, bottom = 0}
+        }
         
+        -- Set backdrop
+        if bar.frame.SetBackdrop then
+            bar.frame:SetBackdrop(backdrop)
+            
+            -- Apply colors using standard method
+            if barTheme.background.color then
+                bar.frame:SetBackdropColor(
+                    barTheme.background.color[1] or barTheme.background.color.r or 0,
+                    barTheme.background.color[2] or barTheme.background.color.g or 0,
+                    barTheme.background.color[3] or barTheme.background.color.b or 0,
+                    barTheme.background.color[4] or barTheme.background.color.a or 1
+                )
+            end
+            
+            if barTheme.border and barTheme.border.show and barTheme.border.color then
+                bar.frame:SetBackdropBorderColor(
+                    barTheme.border.color[1] or barTheme.border.color.r or 1,
+                    barTheme.border.color[2] or barTheme.border.color.g or 1,
+                    barTheme.border.color[3] or barTheme.border.color.b or 1,
+                    barTheme.border.color[4] or barTheme.border.color.a or 1
+                )
+            end
+        else
+            -- Fallback for frames without SetBackdrop
+            if not bar.backgroundTexture then
+                bar.backgroundTexture = bar.frame:CreateTexture(nil, "BACKGROUND")
+            end
+            
+            bar.backgroundTexture:SetTexture(barTheme.background.texture)
+            if barTheme.background.color then
+                bar.backgroundTexture:SetVertexColor(
+                    barTheme.background.color[1] or barTheme.background.color.r or 0,
+                    barTheme.background.color[2] or barTheme.background.color.g or 0,
+                    barTheme.background.color[3] or barTheme.background.color.b or 0,
+                    barTheme.background.color[4] or barTheme.background.color.a or 1
+                )
+            end
+            bar.backgroundTexture:SetAllPoints(bar.frame)
+            bar.backgroundTexture:Show()
+        end
+    else
+        -- Hide background
+        if bar.frame.SetBackdrop then
+            bar.frame:SetBackdrop(nil)
+        end
         if bar.backgroundTexture then
-            if barTheme.background.show then
-                bar.backgroundTexture:SetTexture(barTheme.background.texture)
-                bar.backgroundTexture:SetVertexColor(unpack(barTheme.background.color))
-                bar.backgroundTexture:SetAllPoints(bar.frame)
-                bar.backgroundTexture:Show()
-            else
-                bar.backgroundTexture:Hide()
-            end
+            bar.backgroundTexture:Hide()
         end
-    end
-    
-    -- Apply border
-    if barTheme.border then
-        if barTheme.border.show and not bar.borderTexture then
-            bar.borderTexture = bar.frame:CreateTexture(nil, "OVERLAY")
-        end
-        
         if bar.borderTexture then
-            if barTheme.border.show then
-                bar.borderTexture:SetTexture(barTheme.border.texture)
-                bar.borderTexture:SetVertexColor(unpack(barTheme.border.color))
-                bar.borderTexture:SetAllPoints(bar.frame)
-                bar.borderTexture:Show()
-            else
-                bar.borderTexture:Hide()
-            end
+            bar.borderTexture:Hide()
         end
     end
     

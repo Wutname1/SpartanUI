@@ -11,6 +11,7 @@
 	<Script file="Display\DataBar.lua" />
 	<Script file="Display\Container.lua" />
 	<Script file="Display\PluginButton.lua" />
+	<Script file="Display\AnimationManager.lua" />
 	<!-- <Script file="Display\LayoutManager.lua" /> -->
 	<Script file="Display\ThemeManager.lua" />
 	
@@ -35,8 +36,17 @@
 	<!-- Configuration UI -->
 	<Script file="Options.lua" />
 	
+	<!-- Advanced Configuration System (Phase 3) -->
+	<Script file="Configuration\ConfigManager.lua" />
+	<Script file="Configuration\PluginManager.lua" />
+	
+	<!-- Integration API -->
+	<Script file="Integration\API.lua" />
+	
 	<!-- Developer Tools (Phase 2) -->
-	<!-- <Script file="Developer\Debugger.lua" /> -->
-	<!-- <Script file="Developer\Validator.lua" /> -->
-	<!-- <Script file="Developer\Templates.lua" /> -->
+	<Script file="Developer\PluginTemplates.lua" />
+	<Script file="Developer\PluginValidator.lua" />
+	<Script file="Developer\PluginWizard.lua" />
+	<Script file="Developer\Debugger.lua" />
+	<Script file="Developer\HotReload.lua" />
 </Ui>

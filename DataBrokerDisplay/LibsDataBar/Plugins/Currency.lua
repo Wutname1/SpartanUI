@@ -79,6 +79,21 @@ function CurrencyPlugin:GetText()
 	end
 end
 
+---Add comma formatting to numbers
+---@param num number Number to format
+---@return string formatted Formatted number with commas
+function CurrencyPlugin:FormatNumber(num)
+	local formatted = tostring(num)
+	local k
+	while true do
+		formatted, k = string.gsub(formatted, "^(-?%d+)(%d%d%d)", '%1,%2')
+		if (k==0) then
+			break
+		end
+	end
+	return formatted
+end
+
 ---Format current money for display
 ---@param money number Total money in copper
 ---@return string formatted Formatted money string
@@ -94,10 +109,11 @@ function CurrencyPlugin:FormatCurrentMoney(money)
 	local shortFormat = self:GetConfig('shortFormat')
 
 	if gold > 0 and self:GetConfig('showGold') then
+		local formattedGold = self:FormatNumber(gold)
 		if colorText then
-			goldText = goldText .. '|cFFFFD700' .. gold .. 'g|r'
+			goldText = goldText .. '|cFFFFD700' .. formattedGold .. 'g|r'
 		else
-			goldText = goldText .. gold .. 'g'
+			goldText = goldText .. formattedGold .. 'g'
 		end
 	end
 

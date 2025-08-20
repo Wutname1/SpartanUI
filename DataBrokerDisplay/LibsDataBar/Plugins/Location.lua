@@ -162,10 +162,18 @@ end
 ---@param button string Mouse button
 function LocationPlugin:OnClick(button)
 	if button == 'LeftButton' then
-		-- Toggle coordinates display
-		local showCoords = not self:GetConfig('showCoordinates')
-		self:SetConfig('showCoordinates', showCoords)
-		LibsDataBar:DebugLog('info', 'Location coordinates display ' .. (showCoords and 'enabled' or 'disabled'))
+		-- Open the map
+		if WorldMapFrame then
+			if WorldMapFrame:IsShown() then
+				HideUIPanel(WorldMapFrame)
+			else
+				ShowUIPanel(WorldMapFrame)
+			end
+		elseif ToggleWorldMap then
+			-- Fallback for older versions
+			ToggleWorldMap()
+		end
+		LibsDataBar:DebugLog('info', 'Location plugin opened map')
 	elseif button == 'RightButton' then
 		-- Show configuration menu (placeholder)
 		LibsDataBar:DebugLog('info', 'Location configuration menu (coming in Phase 2)')

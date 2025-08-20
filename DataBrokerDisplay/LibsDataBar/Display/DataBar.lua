@@ -146,13 +146,13 @@ function DataBar:ApplyDefaults()
     
     -- Set position-specific defaults
     if self.config.position == "top" then
-        self.config.anchor.y = self.config.anchor.y or -10 -- Offset from top edge
+        self.config.anchor.y = self.config.anchor.y or 0 -- Align to top edge
     elseif self.config.position == "bottom" then
-        self.config.anchor.y = self.config.anchor.y or 10 -- Offset from bottom edge
+        self.config.anchor.y = self.config.anchor.y or 0 -- Align to bottom edge
     elseif self.config.position == "left" then
-        self.config.anchor.x = self.config.anchor.x or 10 -- Offset from left edge
+        self.config.anchor.x = self.config.anchor.x or 0 -- Align to left edge
     elseif self.config.position == "right" then
-        self.config.anchor.x = self.config.anchor.x or -10 -- Offset from right edge
+        self.config.anchor.x = self.config.anchor.x or 0 -- Align to right edge
     end
     
     -- Button defaults
@@ -173,6 +173,11 @@ function DataBar:UpdateSize()
     
     self.frame:SetSize(width, height)
     self.frame:SetScale(scale)
+    
+    -- Fire size change event through API
+    if LibsDataBar.API then
+        LibsDataBar.API:NotifyPositionChange(self.id, "resize")
+    end
 end
 
 ---Update bar position based on configuration
@@ -183,29 +188,29 @@ function DataBar:UpdatePosition()
     self.frame:ClearAllPoints()
     
     if position == "top" then
-        self.frame:SetPoint("TOP", UIParent, "TOP", anchor.x or 0, anchor.y or -10)
+        self.frame:SetPoint("TOP", UIParent, "TOP", anchor.x or 0, anchor.y or 0)
     elseif position == "top-center" then
-        self.frame:SetPoint("TOP", UIParent, "TOP", 0, anchor.y or -10)
+        self.frame:SetPoint("TOP", UIParent, "TOP", 0, anchor.y or 0)
     elseif position == "top-left" then
-        self.frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", anchor.x or 10, anchor.y or -10)
+        self.frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", anchor.x or 0, anchor.y or 0)
     elseif position == "top-right" then
-        self.frame:SetPoint("TOPRIGHT", UIParent, "TOPRIGHT", anchor.x or -10, anchor.y or -10)
+        self.frame:SetPoint("TOPRIGHT", UIParent, "TOPRIGHT", anchor.x or 0, anchor.y or 0)
     elseif position == "bottom" then
-        self.frame:SetPoint("BOTTOM", UIParent, "BOTTOM", anchor.x or 0, anchor.y or 10)
+        self.frame:SetPoint("BOTTOM", UIParent, "BOTTOM", anchor.x or 0, anchor.y or 0)
     elseif position == "bottom-center" then
-        self.frame:SetPoint("BOTTOM", UIParent, "BOTTOM", 0, anchor.y or 10)
+        self.frame:SetPoint("BOTTOM", UIParent, "BOTTOM", 0, anchor.y or 0)
     elseif position == "bottom-left" then
-        self.frame:SetPoint("BOTTOMLEFT", UIParent, "BOTTOMLEFT", anchor.x or 10, anchor.y or 10)
+        self.frame:SetPoint("BOTTOMLEFT", UIParent, "BOTTOMLEFT", anchor.x or 0, anchor.y or 0)
     elseif position == "bottom-right" then
-        self.frame:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOMRIGHT", anchor.x or -10, anchor.y or 10)
+        self.frame:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOMRIGHT", anchor.x or 0, anchor.y or 0)
     elseif position == "left" then
-        self.frame:SetPoint("LEFT", UIParent, "LEFT", anchor.x or 10, anchor.y or 0)
+        self.frame:SetPoint("LEFT", UIParent, "LEFT", anchor.x or 0, anchor.y or 0)
     elseif position == "left-center" then
-        self.frame:SetPoint("LEFT", UIParent, "LEFT", anchor.x or 10, 0)
+        self.frame:SetPoint("LEFT", UIParent, "LEFT", anchor.x or 0, 0)
     elseif position == "right" then
-        self.frame:SetPoint("RIGHT", UIParent, "RIGHT", anchor.x or -10, anchor.y or 0)
+        self.frame:SetPoint("RIGHT", UIParent, "RIGHT", anchor.x or 0, anchor.y or 0)
     elseif position == "right-center" then
-        self.frame:SetPoint("RIGHT", UIParent, "RIGHT", anchor.x or -10, 0)
+        self.frame:SetPoint("RIGHT", UIParent, "RIGHT", anchor.x or 0, 0)
     elseif position == "center" then
         self.frame:SetPoint("CENTER", UIParent, "CENTER", anchor.x or 0, anchor.y or 0)
     else
@@ -227,44 +232,49 @@ function DataBar:UpdatePosition()
     if self.config.behavior.level then
         self.frame:SetFrameLevel(self.config.behavior.level)
     end
+    
+    -- Fire position change event through API
+    if LibsDataBar.API then
+        LibsDataBar.API:NotifyPositionChange(self.id, "move")
+    end
 end
 
 ---Set bar position to top of screen
 ---@param x? number X offset (default: 0)
----@param y? number Y offset (default: -10)
+---@param y? number Y offset (default: 0)
 function DataBar:SetPositionTop(x, y)
     self.config.position = "top"
     self.config.anchor.x = x or 0
-    self.config.anchor.y = y or -10
+    self.config.anchor.y = y or 0
     self:UpdatePosition()
 end
 
 ---Set bar position to bottom of screen
 ---@param x? number X offset (default: 0)
----@param y? number Y offset (default: 10)
+---@param y? number Y offset (default: 0)
 function DataBar:SetPositionBottom(x, y)
     self.config.position = "bottom"
     self.config.anchor.x = x or 0
-    self.config.anchor.y = y or 10
+    self.config.anchor.y = y or 0
     self:UpdatePosition()
 end
 
 ---Set bar position to left side of screen
----@param x? number X offset (default: 10)
+---@param x? number X offset (default: 0)
 ---@param y? number Y offset (default: 0)
 function DataBar:SetPositionLeft(x, y)
     self.config.position = "left"
-    self.config.anchor.x = x or 10
+    self.config.anchor.x = x or 0
     self.config.anchor.y = y or 0
     self:UpdatePosition()
 end
 
 ---Set bar position to right side of screen
----@param x? number X offset (default: -10)
+---@param x? number X offset (default: 0)
 ---@param y? number Y offset (default: 0)
 function DataBar:SetPositionRight(x, y)
     self.config.position = "right"
-    self.config.anchor.x = x or -10
+    self.config.anchor.x = x or 0
     self.config.anchor.y = y or 0
     self:UpdatePosition()
 end
@@ -357,6 +367,24 @@ end
 ---Setup mouse event handling
 function DataBar:SetupMouseHandling()
     self.frame:EnableMouse(true)
+    
+    -- Enable dragging
+    self.frame:RegisterForDrag("LeftButton")
+    self.frame:SetMovable(true)
+    self.frame:SetClampedToScreen(true)
+    
+    -- Drag and drop handling
+    self.frame:SetScript("OnDragStart", function(frame)
+        if not InCombatLockdown() then
+            self:StartDragging()
+        end
+    end)
+    
+    self.frame:SetScript("OnDragStop", function(frame)
+        if not InCombatLockdown() then
+            self:StopDragging()
+        end
+    end)
     
     -- Right-click for configuration
     self.frame:SetScript("OnMouseUp", function(frame, button)
@@ -521,7 +549,7 @@ function DataBar:UpdateLayout()
         button.frame:ClearAllPoints()
         
         if orientation == "horizontal" then
-            button.frame:SetPoint("LEFT", self.frame, "BOTTOMLEFT", currentX, currentY)
+            button.frame:SetPoint("LEFT", self.frame, "LEFT", currentX, currentY)
             currentX = currentX + button.frame:GetWidth() + spacing
             maxHeight = math.max(maxHeight, button.frame:GetHeight())
         else
@@ -630,6 +658,150 @@ function DataBar:StartAutoHideTimer()
     self.autoHideTimer = C_Timer.NewTimer(delay, function()
         self:Hide()
     end)
+end
+
+---Start dragging the bar
+function DataBar:StartDragging()
+    self.frame:StartMoving()
+    self.isDragging = true
+    
+    -- Create visual feedback
+    self:CreateDragIndicators()
+    
+    -- Fire drag start event
+    if LibsDataBar.callbacks then
+        LibsDataBar.callbacks:Fire("LibsDataBar_BarDragStart", self.id, self)
+    end
+    
+    LibsDataBar:DebugLog("debug", "Started dragging bar: " .. self.id)
+end
+
+---Stop dragging the bar
+function DataBar:StopDragging()
+    self.frame:StopMovingOrSizing()
+    self.isDragging = false
+    
+    -- Update position configuration
+    local point, relativeTo, relativePoint, x, y = self.frame:GetPoint()
+    self.config.anchor.point = point
+    self.config.anchor.relativePoint = relativePoint  
+    self.config.anchor.x = x
+    self.config.anchor.y = y
+    
+    -- Determine new position based on location
+    local newPosition = self:DeterminePositionFromLocation()
+    if newPosition ~= self.config.position then
+        self.config.position = newPosition
+        LibsDataBar:DebugLog("info", "Bar " .. self.id .. " moved to: " .. newPosition)
+    end
+    
+    -- Clean up visual feedback
+    self:RemoveDragIndicators()
+    
+    -- Update all bar positions to prevent overlaps
+    if LibsDataBar.UpdateBarPositions then
+        LibsDataBar:UpdateBarPositions()
+    end
+    
+    -- Fire drag stop event
+    if LibsDataBar.callbacks then
+        LibsDataBar.callbacks:Fire("LibsDataBar_BarDragStop", self.id, self, newPosition)
+    end
+    
+    LibsDataBar:DebugLog("debug", "Stopped dragging bar: " .. self.id)
+end
+
+---Determine position based on current screen location
+---@return string position Position (top, bottom, left, right)
+function DataBar:DeterminePositionFromLocation()
+    local screenWidth = UIParent:GetWidth()
+    local screenHeight = UIParent:GetHeight()
+    
+    local frameX = self.frame:GetLeft() + (self.frame:GetWidth() / 2)
+    local frameY = self.frame:GetBottom() + (self.frame:GetHeight() / 2)
+    
+    -- Determine which edge is closest
+    local distanceToBottom = frameY
+    local distanceToTop = screenHeight - frameY
+    local distanceToLeft = frameX
+    local distanceToRight = screenWidth - frameX
+    
+    local minDistance = math.min(distanceToBottom, distanceToTop, distanceToLeft, distanceToRight)
+    
+    if minDistance == distanceToBottom then
+        return "bottom"
+    elseif minDistance == distanceToTop then
+        return "top"
+    elseif minDistance == distanceToLeft then
+        return "left"
+    else
+        return "right"
+    end
+end
+
+---Create visual indicators during dragging
+function DataBar:CreateDragIndicators()
+    -- Create snap zone indicators
+    if not self.dragIndicators then
+        self.dragIndicators = {}
+        
+        local screenWidth = UIParent:GetWidth()
+        local screenHeight = UIParent:GetHeight()
+        
+        -- Bottom indicator
+        local bottomIndicator = CreateFrame("Frame", nil, UIParent)
+        bottomIndicator:SetSize(screenWidth, 4)
+        bottomIndicator:SetPoint("BOTTOM", UIParent, "BOTTOM", 0, 0)
+        bottomIndicator.texture = bottomIndicator:CreateTexture(nil, "OVERLAY")
+        bottomIndicator.texture:SetAllPoints()
+        bottomIndicator.texture:SetColorTexture(0, 1, 0, 0.5)
+        bottomIndicator:Hide()
+        self.dragIndicators.bottom = bottomIndicator
+        
+        -- Top indicator  
+        local topIndicator = CreateFrame("Frame", nil, UIParent)
+        topIndicator:SetSize(screenWidth, 4)
+        topIndicator:SetPoint("TOP", UIParent, "TOP", 0, 0)
+        topIndicator.texture = topIndicator:CreateTexture(nil, "OVERLAY")
+        topIndicator.texture:SetAllPoints()
+        topIndicator.texture:SetColorTexture(0, 1, 0, 0.5)
+        topIndicator:Hide()
+        self.dragIndicators.top = topIndicator
+        
+        -- Left indicator
+        local leftIndicator = CreateFrame("Frame", nil, UIParent)
+        leftIndicator:SetSize(4, screenHeight)
+        leftIndicator:SetPoint("LEFT", UIParent, "LEFT", 0, 0)
+        leftIndicator.texture = leftIndicator:CreateTexture(nil, "OVERLAY")
+        leftIndicator.texture:SetAllPoints()
+        leftIndicator.texture:SetColorTexture(0, 1, 0, 0.5)
+        leftIndicator:Hide()
+        self.dragIndicators.left = leftIndicator
+        
+        -- Right indicator
+        local rightIndicator = CreateFrame("Frame", nil, UIParent)
+        rightIndicator:SetSize(4, screenHeight)
+        rightIndicator:SetPoint("RIGHT", UIParent, "RIGHT", 0, 0)
+        rightIndicator.texture = rightIndicator:CreateTexture(nil, "OVERLAY")
+        rightIndicator.texture:SetAllPoints()
+        rightIndicator.texture:SetColorTexture(0, 1, 0, 0.5)
+        rightIndicator:Hide()
+        self.dragIndicators.right = rightIndicator
+    end
+    
+    -- Show all indicators
+    for _, indicator in pairs(self.dragIndicators) do
+        indicator:Show()
+    end
+end
+
+---Remove visual indicators after dragging
+function DataBar:RemoveDragIndicators()
+    if self.dragIndicators then
+        for _, indicator in pairs(self.dragIndicators) do
+            indicator:Hide()
+        end
+    end
 end
 
 ---Show context menu for bar configuration

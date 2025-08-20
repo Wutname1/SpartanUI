@@ -70,12 +70,28 @@ end
 ---Optional: Get tooltip information
 ---@return string tooltip Tooltip text
 function ClockPlugin:GetTooltip()
-	local tooltip = 'Server Time: ' .. date('%A, %B %d, %Y\n%H:%M:%S')
-
-	if self._timeZone ~= 'server' then tooltip = tooltip .. '\nLocal Time: ' .. date('%H:%M:%S', time()) end
-
+	-- Get server time
+	local serverTime = GetGameTime()
+	local serverHour, serverMinute = floor(serverTime), floor((serverTime - floor(serverTime)) * 60)
+	
+	-- Format server time
+	local serverTimeStr
+	if self._format24Hour then
+		serverTimeStr = string.format('%02d:%02d', serverHour, serverMinute)
+	else
+		local displayHour = serverHour == 0 and 12 or (serverHour > 12 and serverHour - 12 or serverHour)
+		local ampm = serverHour < 12 and 'AM' or 'PM'
+		serverTimeStr = string.format('%d:%02d %s', displayHour, serverMinute, ampm)
+	end
+	
+	-- Get local time
+	local localTimeFormat = self._format24Hour and '%H:%M' or '%I:%M %p'
+	local localTimeStr = date(localTimeFormat)
+	
+	local tooltip = string.format('Realm Time: %s\nLocal Time: %s', serverTimeStr, localTimeStr)
 	tooltip = tooltip .. '\n\nLeft-click: Toggle 12/24 hour format'
 	tooltip = tooltip .. '\nRight-click: Configuration options'
+	tooltip = tooltip .. '\nMiddle-click: Toggle seconds display'
 
 	return tooltip
 end
@@ -84,7 +100,7 @@ end
 ---@param button string Mouse button ("LeftButton", "RightButton", etc.)
 function ClockPlugin:OnClick(button)
 	if button == 'LeftButton' then
-		-- Toggle 24-hour format
+		-- Toggle 12/24 hour format like a normal data broker plugin
 		self._format24Hour = not self._format24Hour
 		self:SetConfig('format24Hour', self._format24Hour)
 		LibsDataBar:DebugLog('info', 'Clock format toggled to ' .. (self._format24Hour and '24-hour' or '12-hour'))
