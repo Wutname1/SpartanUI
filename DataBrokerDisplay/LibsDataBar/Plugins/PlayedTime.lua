@@ -180,11 +180,11 @@ end
 ---@param button string Mouse button
 function PlayedTimePlugin:OnClick(button)
 	if button == 'LeftButton' then
+		-- Cycle display formats (session, level, character, account)
+		self:CycleDisplayFormat()
+	elseif button == 'RightButton' then
 		-- Request fresh /played data
 		self:RequestPlayedTime()
-	elseif button == 'RightButton' then
-		-- Cycle display formats
-		self:CycleDisplayFormat()
 	elseif button == 'MiddleButton' then
 		-- Reset session timer
 		self:ResetSessionTimer()

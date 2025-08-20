@@ -364,7 +364,6 @@
     "BossButtonHolder",
     "SetCVar",
     "GetCVar",
-    "Mixin",
     "GetNumFactions",
     "GetWatchedFactionInfo",
     "GetFactionInfo",
@@ -1164,7 +1163,8 @@
     "OBJECTIVES_VIEW_ACHIEVEMENT",
     "AchievementFrameAchievements",
     "EVALUATION_TREE_FLAG_PROGRESS_BAR",
-    "CRITERIA_TYPE_ACHIEVEMENT"
+    "CRITERIA_TYPE_ACHIEVEMENT",
+    "ToggleWorldMap"
   ],
   "Lua.workspace.ignoreDir": [".vscode", "libs/*"],
   "Lua.diagnostics.enable": true,
@@ -1200,6 +1200,6 @@
     "libs\\oUF_Plugins",
     "Modules",
     "Themes",
-    "~\\.vscode\\extensions\\ketho.wow-api-0.20.8\\Annotations\\Core"
+    "~\\.vscode\\extensions\\ketho.wow-api-0.21.0\\Annotations\\Core"
   ]
 }

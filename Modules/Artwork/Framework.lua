@@ -205,8 +205,8 @@ function module:updateOffset()
 	if InCombatLockdown() then return end
 
 	local Top, Bottom = 0, 0
-	local Tfubar, TChocolateBar, Ttitan = 0, 0, 0
-	local Bfubar, BChocolateBar, Btitan = 0, 0, 0
+	local Tfubar, TChocolateBar, Ttitan, TLibsDataBar = 0, 0, 0, 0
+	local Bfubar, BChocolateBar, Btitan, BLibsDataBar = 0, 0, 0, 0
 
 	if SUI.DB.Artwork.Offset.TopAuto or SUI.DB.Artwork.Offset.BottomAuto then
 		-- FuBar Offset
@@ -242,16 +242,25 @@ function module:updateOffset()
 			end
 		end
 
+		-- LibsDataBar Detection
+		if _G.LibsDataBar_GetBarOffsets then
+			local ldbOffsets = _G.LibsDataBar_GetBarOffsets()
+			if ldbOffsets then
+				TLibsDataBar = ldbOffsets.top or 0
+				BLibsDataBar = ldbOffsets.bottom or 0
+			end
+		end
+
 		-- Blizz Legion Order Hall
 		if OrderHallCommandBar and OrderHallCommandBar:IsVisible() then Top = Top + OrderHallCommandBar:GetHeight() end
 
 		-- Update DB if set to auto
 		if SUI.DB.Artwork.Offset.TopAuto then
-			Top = max(Top + Tfubar + Ttitan + TChocolateBar, 0)
+			Top = max(Top + Tfubar + Ttitan + TChocolateBar + TLibsDataBar, 0)
 			SUI.DB.Artwork.Offset.Top = Top
 		end
 		if SUI.DB.Artwork.Offset.BottomAuto then
-			Bottom = max(Bottom + Bfubar + Btitan + BChocolateBar, 0)
+			Bottom = max(Bottom + Bfubar + Btitan + BChocolateBar + BLibsDataBar, 0)
 			SUI.DB.Artwork.Offset.Bottom = Bottom
 		end
 	end
@@ -266,6 +275,16 @@ function module:updateOffset()
 		SpartanUI:SetPoint('BOTTOMLEFT', _G['TitanPanelBottomAnchor'], 'BOTTOMLEFT', 0, 0)
 	else
 		SpartanUI:SetPoint('BOTTOMLEFT', UIParent, 'BOTTOMLEFT', 0, SUI.DB.Artwork.Offset.Bottom)
+	end
+	
+	-- Notify LibsDataBar API of offset changes if available
+	if _G.LibsDataBar_NotifyOffsetChange then
+		_G.LibsDataBar_NotifyOffsetChange('spartanui', {
+			top = SUI.DB.Artwork.Offset.Top,
+			bottom = SUI.DB.Artwork.Offset.Bottom,
+			left = 0,
+			right = 0
+		})
 	end
 end
 
@@ -331,6 +350,66 @@ function module:OnEnable()
 	StyleUpdate()
 	module:RegisterEvent('ADDON_LOADED', StyleUpdate)
 	module:RegisterEvent('PLAYER_ENTERING_WORLD', StyleUpdate)
+	
+	-- Register with LibsDataBar API if available
+	local function tryRegisterIntegration()
+		if _G.LibsDataBar_RegisterIntegration then
+			local success = _G.LibsDataBar_RegisterIntegration({
+				id = 'spartanui',
+				name = 'SpartanUI Artwork Integration',
+				version = '1.0.0',
+				addon = 'SpartanUI',
+				
+				-- Called when LibsDataBar bar positions change
+				onBarPositionChanged = function(data)
+					if data.changeType == "move" or data.changeType == "resize" then
+						module:updateOffset()
+					end
+				end,
+				
+				-- Called when bars are created/destroyed
+				onBarCreated = function(barId, bar)
+					module:updateOffset()
+				end,
+				
+				onBarDestroyed = function(barId, bar)
+					module:updateOffset()
+				end,
+				
+				-- Called when bars are shown/hidden
+				onBarShown = function(barId)
+					module:updateOffset()
+				end,
+				
+				onBarHidden = function(barId)
+					module:updateOffset()
+				end,
+				
+				-- Function LibsDataBar can call to get current SpartanUI offsets
+				getOffsets = function()
+					return {
+						top = SUI.DB.Artwork.Offset.Top or 0,
+						bottom = SUI.DB.Artwork.Offset.Bottom or 0,
+						left = 0,
+						right = 0
+					}
+				end
+			})
+			
+			if success then
+				SUI.Debug('LibsDataBar integration registered successfully', 'Artwork')
+			else
+				SUI.Debug('Failed to register LibsDataBar integration, retrying in 2 seconds', 'Artwork')
+				C_Timer.After(2, tryRegisterIntegration)
+			end
+		else
+			-- LibsDataBar not available yet, retry
+			C_Timer.After(1, tryRegisterIntegration)
+		end
+	end
+	
+	-- Start registration attempts after a delay
+	C_Timer.After(2, tryRegisterIntegration)
 end
 
 function module:UpdateBarBG()

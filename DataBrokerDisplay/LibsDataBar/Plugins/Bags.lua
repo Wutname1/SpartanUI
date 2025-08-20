@@ -149,16 +149,15 @@ end
 ---@param button string Mouse button
 function BagsPlugin:OnClick(button)
 	if button == 'LeftButton' then
-		-- Toggle free space display
-		local showFree = not self:GetConfig('showFree')
-		self:SetConfig('showFree', showFree)
-		-- If showing free, hide used display to avoid confusion
-		if showFree then
-			self:SetConfig('showUsed', false)
+		-- Open/close bags
+		if IsShiftKeyDown() then
+			-- Shift+click opens all bags
+			ToggleAllBags()
 		else
-			self:SetConfig('showUsed', true)
+			-- Regular click toggles backpack
+			ToggleBag(0)
 		end
-		LibsDataBar:DebugLog('info', 'Bags free space display ' .. (showFree and 'enabled' or 'disabled'))
+		LibsDataBar:DebugLog('info', 'Bags plugin toggled bags')
 	elseif button == 'RightButton' then
 		-- Show configuration menu (placeholder)
 		LibsDataBar:DebugLog('info', 'Bags configuration menu (coming in Phase 2)')
