@@ -835,9 +835,34 @@ function Options:AddDynamicText(frameName, OptionSet, element)
 						UF.DB.UserSettings[UF.DB.Style][frameName].elements[element].text[count].enabled = val
 						--Update the screen
 						if val then
+							-- Safety check: ensure unit frame and element exist
+							if not UF.Unit[frameName] or not UF.Unit[frameName][element] then
+								return
+							end
+							-- Ensure TextElements table exists
+							if not UF.Unit[frameName][element].TextElements then
+								UF.Unit[frameName][element].TextElements = {}
+							end
+							-- Check if TextElement exists, create if it doesn't
+							if not UF.Unit[frameName][element].TextElements[count] then
+								local textConfig = UF.CurrentSettings[frameName].elements[element].text[count]
+								local elementFrame = UF.Unit[frameName][element]
+								local NewString = elementFrame:CreateFontString(nil, 'OVERLAY')
+								SUI.Font:Format(NewString, textConfig.size, 'UnitFrames')
+								NewString:SetJustifyH(textConfig.SetJustifyH)
+								NewString:SetJustifyV(textConfig.SetJustifyV)
+								NewString:SetPoint(textConfig.position.anchor, elementFrame, textConfig.position.anchor, textConfig.position.x, textConfig.position.y)
+								UF.Unit[frameName]:Tag(NewString, textConfig.text or '')
+								UF.Unit[frameName][element].TextElements[count] = NewString
+							end
 							UF.Unit[frameName][element].TextElements[count]:Show()
 						else
-							UF.Unit[frameName][element].TextElements[count]:Hide()
+							-- Safety check: ensure unit frame and element exist
+							if UF.Unit[frameName] and UF.Unit[frameName][element] and 
+							   UF.Unit[frameName][element].TextElements and 
+							   UF.Unit[frameName][element].TextElements[count] then
+								UF.Unit[frameName][element].TextElements[count]:Hide()
+							end
 						end
 					end,
 				},

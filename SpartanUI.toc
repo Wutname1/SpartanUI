@@ -50,6 +50,7 @@ libs\AceGUI-3.0-SharedMediaWidgets\widget.xml
 libs\LibQTip-1.0\LibQTip-1.0.lua
 
 # Unit Frame libraries
+libs\LibDispel\LibDispel.lua
 libs\oUF\oUF.xml
 libs\oUF_Plugins\Loader.xml
 
@@ -60,4 +61,4 @@ modules\LoadAll.xml
 core\Framework.xml
 Themes\Themes.xml
 
-DataBrokerDisplay\LibsDataBar\Loader.xml
+FutureExternalAddons\LibsDataBar\Loader.xml

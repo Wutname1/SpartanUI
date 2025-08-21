@@ -219,13 +219,29 @@ function module:Options()
 					end
 				end,
 			},
+			UseClassColors = {
+				name = L['Use Class Colors'],
+				type = 'toggle',
+				order = 6,
+				desc = L['Use your class colors for artwork instead of custom colors'],
+				get = function(info)
+					return SUI.DB.Styles.Minimal.UseClassColors
+				end,
+				set = function(info, val)
+					SUI.DB.Styles.Minimal.UseClassColors = val
+					module:SetColor()
+				end,
+			},
 			alpha = {
 				name = L['Artwork Color'],
 				type = 'color',
 				hasAlpha = true,
-				order = 6,
+				order = 7,
 				width = 'full',
 				desc = L['XP and Rep Bars are known issues and need a redesign to look right'],
+				hidden = function(info)
+					return SUI.DB.Styles.Minimal.UseClassColors
+				end,
 				get = function(info)
 					return unpack(SUI.DB.Styles.Minimal.Color.Art)
 				end,
@@ -252,14 +268,29 @@ function module:SlidingTrays()
 end
 
 function module:SetColor()
-	local r, b, g, a = unpack(SUI.DB.Styles.Minimal.Color.Art)
+	local r, b, g, a
+	
+	if SUI.DB.Styles.Minimal.UseClassColors then
+		-- Get player class colors
+		local _, class = UnitClass('player')
+		local classColor = RAID_CLASS_COLORS[class]
+		if classColor then
+			r, g, b, a = classColor.r, classColor.g, classColor.b, 1
+		else
+			-- Fallback to default if class color not found
+			r, b, g, a = unpack(SUI.DB.Styles.Minimal.Color.Art)
+		end
+	else
+		-- Use custom colors
+		r, b, g, a = unpack(SUI.DB.Styles.Minimal.Color.Art)
+	end
 
 	for i = 1, 5 do
-		if _G['SUI_Art_Minimal_Base' .. i] then _G['SUI_Art_Minimal_Base' .. i]:SetVertexColor(r, b, g, a) end
+		if _G['SUI_Art_Minimal_Base' .. i] then _G['SUI_Art_Minimal_Base' .. i]:SetVertexColor(r, g, b, a) end
 	end
 
 	for _, v in pairs(Artwork_Core.Trays) do
-		v.expanded.bg:SetVertexColor(r, b, g, a)
-		v.collapsed.bg:SetVertexColor(r, b, g, a)
+		v.expanded.bg:SetVertexColor(r, g, b, a)
+		v.collapsed.bg:SetVertexColor(r, g, b, a)
 	end
 end

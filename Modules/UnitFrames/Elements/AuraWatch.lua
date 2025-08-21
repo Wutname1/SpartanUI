@@ -7,7 +7,7 @@ local function Build(frame, DB)
 	element.PostUpdateIcon = function(_, unit, button, index, position, duration, expiration, debuffType, isStealable)
 		if not button.spellID then return end
 		local settings = button.setting
-		local SpellKnown = IsSpellKnown(button.spellID)
+		local SpellKnown = C_SpellBook.IsSpellInSpellBook(button.spellID)
 		if settings.onlyIfCastable and not SpellKnown then button:Hide() end
 		if InCombatLockdown() and not settings.displayInCombat then button:Hide() end
 	end

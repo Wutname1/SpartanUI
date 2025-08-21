@@ -74,7 +74,7 @@ local function printFormattedString(who, target, sid, failed)
 			end
 		end
 
-		SendChatMessage(msg, ChatChannel)
+		C_ChatInfo.SendChatMessage(msg, ChatChannel)
 	end
 end
 

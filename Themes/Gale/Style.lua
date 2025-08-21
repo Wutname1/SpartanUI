@@ -12,20 +12,20 @@ function module:OnInitialize()
 	-- Pet Bar above Bar 1, Bar 6 vertical on right side
 	-- Bar 5 positioned to left side but disabled by default
 	BarHandler.BarPosition.BT4.Gale = {
-		['BT4Bar1'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,0,90',  -- Top of main stack
-		['BT4Bar2'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,0,45',  -- Bottom of main stack
+		['BT4Bar1'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,0,90', -- Top of main stack
+		['BT4Bar2'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,0,45', -- Bottom of main stack
 		--
-		['BT4Bar3'] = 'BOTTOMRIGHT,BT4Bar1,BOTTOMRIGHT,260,0',  -- To the right
-		['BT4Bar4'] = 'BOTTOMLEFT,BT4Bar1,BOTTOMLEFT,-260,0',  -- To the left
+		['BT4Bar3'] = 'BOTTOMRIGHT,BT4Bar1,BOTTOMRIGHT,260,0', -- To the right
+		['BT4Bar4'] = 'BOTTOMLEFT,BT4Bar1,BOTTOMLEFT,-260,0', -- To the left
 		--
-		['BT4Bar5'] = 'LEFT,SUI_BottomAnchor,LEFT,10,0',  -- Left side, disabled by default
-		['BT4Bar6'] = 'RIGHT,SpartanUI,RIGHT,-10,0',  -- Vertical on right side
+		['BT4Bar5'] = 'LEFT,SUI_BottomAnchor,LEFT,10,0', -- Left side, disabled by default
+		['BT4Bar6'] = 'RIGHT,SpartanUI,RIGHT,-10,0', -- Vertical on right side
 		--
 		['BT4BarExtraActionBar'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,0,130',
 		['BT4BarZoneAbilityBar'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,0,130',
 		--
 		['BT4BarStanceBar'] = 'TOP,SpartanUI,TOP,-301,0',
-		['BT4BarPetBar'] = 'BOTTOM,BT4Bar1,TOP,0,5',  -- Above Bar 1
+		['BT4BarPetBar'] = 'BOTTOM,BT4Bar1,TOP,0,5', -- Above Bar 1
 		['MultiCastActionBarFrame'] = 'BOTTOM,BT4Bar1,TOP,0,5',
 		--
 		['BT4BarMicroMenu'] = 'TOP,SpartanUI,TOP,322,0',
@@ -46,7 +46,7 @@ function module:OnInitialize()
 		['BT4BarBagBar'] = 0.6,
 		['BT4BarExtraActionBar'] = 0.8,
 		['BT4BarStanceBar'] = 0.6,
-		['BT4BarPetBar'] = 1.1,  -- Increased to match action bars
+		['BT4BarPetBar'] = 1.1, -- Increased to match action bars
 		['MultiCastActionBarFrame'] = 1.1,
 		['BT4BarMicroMenu'] = 0.6,
 	}
@@ -62,7 +62,7 @@ function module:OnInitialize()
 	SUI.Minimap:Register('Gale', minimapSettings)
 
 	-- Register UnitFrame style for Gale
-	SUI.UF.Style:Register('Gale', { 
+	SUI.UF.Style:Register('Gale', {
 		displayName = 'Gale',
 		setup = {
 			image = 'Interface\\AddOns\\SpartanUI\\images\\setup\\Style_Frames_Gale',
@@ -77,9 +77,7 @@ function module:OnEnable()
 		module:Options()
 
 		-- Configure default bar visibility - only bars 1-4 & 6 enabled, 5 disabled
-		if BT4BarBar5 then
-			BT4BarBar5:SetAttribute('state-visibility', 'hide')
-		end
+		if BT4BarBar5 then BT4BarBar5:SetAttribute('state-visibility', 'hide') end
 
 		hooksecurefunc('UIParent_ManageFramePositions', function()
 			if TutorialFrameAlertButton then
@@ -115,31 +113,31 @@ function module:ConfigureUnitFrames()
 	-- Solid black background with 1px border between health and power bars
 	if SUI.UF and SUI.UF.db then
 		local db = SUI.UF.db.profile
-		
+
 		-- Party Frame configuration
 		if db.party then
 			db.party.width = 110
 			db.party.health.height = 40
 			db.party.power.height = 10
 			db.party.name.position = 'CENTER'
-			db.party.health.backgroundColor = {0, 0, 0, 1}  -- Solid black
-			db.party.power.backgroundColor = {0, 0, 0, 1}   -- Solid black
-			db.party.health.border = {1, 1, 1, 1}           -- 1px white border
-			db.party.power.border = {1, 1, 1, 1}            -- 1px white border
+			db.party.health.backgroundColor = { 0, 0, 0, 1 } -- Solid black
+			db.party.power.backgroundColor = { 0, 0, 0, 1 } -- Solid black
+			db.party.health.border = { 1, 1, 1, 1 } -- 1px white border
+			db.party.power.border = { 1, 1, 1, 1 } -- 1px white border
 		end
-		
+
 		-- Raid Frame configuration
 		if db.raid then
 			db.raid.width = 110
 			db.raid.health.height = 40
 			db.raid.power.height = 10
 			db.raid.name.position = 'CENTER'
-			db.raid.health.backgroundColor = {0, 0, 0, 1}   -- Solid black
-			db.raid.power.backgroundColor = {0, 0, 0, 1}    -- Solid black
-			db.raid.health.border = {1, 1, 1, 1}            -- 1px white border
-			db.raid.power.border = {1, 1, 1, 1}             -- 1px white border
+			db.raid.health.backgroundColor = { 0, 0, 0, 1 } -- Solid black
+			db.raid.power.backgroundColor = { 0, 0, 0, 1 } -- Solid black
+			db.raid.health.border = { 1, 1, 1, 1 } -- 1px white border
+			db.raid.power.border = { 1, 1, 1, 1 } -- 1px white border
 		end
-		
+
 		-- Player Frame configuration
 		-- Width 220, health height 25, disable power text, inverted bar order
 		-- Player name on left, total health (no abbreviation) on right
@@ -149,28 +147,28 @@ function module:ConfigureUnitFrames()
 			db.player.power.text.enabled = false
 			db.player.name.position = 'LEFT'
 			db.player.health.text.position = 'RIGHT'
-			db.player.health.text.format = '[health:current]'  -- No abbreviation
-			db.player.health.backgroundColor = {0, 0, 0, 1}     -- Solid black
-			db.player.power.backgroundColor = {0, 0, 0, 1}      -- Solid black
-			db.player.threatglow.enabled = true                 -- Enable threat glow
+			db.player.health.text.format = '[health:current]' -- No abbreviation
+			db.player.health.backgroundColor = { 0, 0, 0, 1 } -- Solid black
+			db.player.power.backgroundColor = { 0, 0, 0, 1 } -- Solid black
+			db.player.threatglow.enabled = true -- Enable threat glow
 			-- Inverted order: power on top, health below, castbar bottom
 			db.player.power.position = 'TOP'
 			db.player.health.position = 'CENTER'
 			db.player.castbar.position = 'BOTTOM'
 		end
-		
-		-- Target Frame configuration  
+
+		-- Target Frame configuration
 		-- Same as player but opposite text positioning
 		if db.target then
 			db.target.width = 220
 			db.target.health.height = 25
 			db.target.power.text.enabled = false
-			db.target.name.position = 'RIGHT'  -- Opposite of player
-			db.target.health.text.position = 'LEFT'  -- Opposite of player
-			db.target.health.text.format = '[health:current]'   -- No abbreviation
-			db.target.health.backgroundColor = {0, 0, 0, 1}     -- Solid black
-			db.target.power.backgroundColor = {0, 0, 0, 1}      -- Solid black
-			db.target.threatglow.enabled = true                 -- Enable threat glow
+			db.target.name.position = 'RIGHT' -- Opposite of player
+			db.target.health.text.position = 'LEFT' -- Opposite of player
+			db.target.health.text.format = '[health:current]' -- No abbreviation
+			db.target.health.backgroundColor = { 0, 0, 0, 1 } -- Solid black
+			db.target.power.backgroundColor = { 0, 0, 0, 1 } -- Solid black
+			db.target.threatglow.enabled = true -- Enable threat glow
 			-- Inverted order: power on top, health below, castbar bottom
 			db.target.power.position = 'TOP'
 			db.target.health.position = 'CENTER'
@@ -192,13 +190,29 @@ function module:Options()
 		type = 'group',
 		order = 10,
 		args = {
+			UseClassColors = {
+				name = L['Use Class Colors'],
+				type = 'toggle',
+				order = 1,
+				desc = L['Use your class colors for artwork instead of custom colors'],
+				get = function(info)
+					return SUI.DB.Styles.Gale.UseClassColors
+				end,
+				set = function(info, val)
+					SUI.DB.Styles.Gale.UseClassColors = val
+					module:SetColor()
+				end,
+			},
 			alpha = {
 				name = L['Artwork Color'],
 				type = 'color',
 				hasAlpha = true,
-				order = 1,
+				order = 2,
 				width = 'full',
 				desc = 'Gale theme uses solid black backgrounds with class-colored borders',
+				hidden = function(info)
+					return SUI.DB.Styles.Gale.UseClassColors
+				end,
 				get = function(info)
 					return unpack(SUI.DB.Styles.Gale.Color.Art)
 				end,
@@ -225,15 +239,29 @@ function module:SlidingTrays()
 end
 
 function module:SetColor()
-	-- Gale uses solid black backgrounds with class-colored elements
-	local r, b, g, a = unpack(SUI.DB.Styles.Gale.Color.Art or {0, 0, 0, 1})
+	local r, b, g, a
+	
+	if SUI.DB.Styles.Gale.UseClassColors then
+		-- Get player class colors
+		local _, class = UnitClass('player')
+		local classColor = RAID_CLASS_COLORS[class]
+		if classColor then
+			r, g, b, a = classColor.r, classColor.g, classColor.b, 1
+		else
+			-- Fallback to default if class color not found
+			r, b, g, a = unpack(SUI.DB.Styles.Gale.Color.Art or { 0, 0, 0, 1 })
+		end
+	else
+		-- Use custom colors - Gale uses solid black backgrounds with class-colored elements
+		r, b, g, a = unpack(SUI.DB.Styles.Gale.Color.Art or { 0, 0, 0, 1 })
+	end
 
 	-- Apply coloring to main artwork elements
-	if SUI_Art_Gale_Base1 then SUI_Art_Gale_Base1:SetVertexColor(r, b, g, a) end
+	if SUI_Art_Gale_Base1 then SUI_Art_Gale_Base1:SetVertexColor(r, g, b, a) end
 
 	-- Apply to sliding trays
 	for _, v in pairs(Artwork_Core.Trays) do
-		v.expanded.bg:SetVertexColor(r, b, g, a)
-		v.collapsed.bg:SetVertexColor(r, b, g, a)
+		v.expanded.bg:SetVertexColor(r, g, b, a)
+		v.collapsed.bg:SetVertexColor(r, g, b, a)
 	end
 end
