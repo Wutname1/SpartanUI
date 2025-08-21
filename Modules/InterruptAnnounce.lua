@@ -13,28 +13,28 @@ local function printFormattedString(t, sid, spell, ss, ssid, inputstring)
 	if DBChannel ~= 'SELF' then
 		if DBChannel == 'SMART' then
 			if IsInGroup(2) then
-				SendChatMessage(msg, 'INSTANCE_CHAT')
+				C_ChatInfo.SendChatMessage(msg, 'INSTANCE_CHAT')
 				return
 			elseif IsInRaid() then
-				SendChatMessage(msg, 'RAID')
+				C_ChatInfo.SendChatMessage(msg, 'RAID')
 				return
 			elseif IsInGroup(1) then
-				SendChatMessage(msg, 'PARTY')
+				C_ChatInfo.SendChatMessage(msg, 'PARTY')
 				return
 			end
 		else
 			if DBChannel == 'RAID' or DBChannel == 'INSTANCE_CHAT' then
 				if IsInGroup(2) then
 					-- We are in a raid with instance chat
-					SendChatMessage(msg, 'INSTANCE_CHAT')
+					C_ChatInfo.SendChatMessage(msg, 'INSTANCE_CHAT')
 					return
 				elseif IsInRaid() then
 					-- We are in a manual Raid
-					SendChatMessage(msg, 'RAID')
+					C_ChatInfo.SendChatMessage(msg, 'RAID')
 					return
 				end
 			elseif DBChannel == 'PARTY' and IsInGroup(1) then
-				SendChatMessage(msg, 'PARTY')
+				C_ChatInfo.SendChatMessage(msg, 'PARTY')
 				return
 			end
 		end

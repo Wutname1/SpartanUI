@@ -208,7 +208,7 @@ local ModifyMessage = function(self)
 			--Print the number of leavers
 			SUI:Print('Leavers: ' .. LeaveCount)
 			--Output to Instance chat if over 15 leavers
-			if LeaveCount > 15 and module.DB.autoLeaverOutput then SendChatMessage('SpartanUI: BG Leavers counter: ' .. LeaveCount, 'INSTANCE_CHAT') end
+			if LeaveCount > 15 and module.DB.autoLeaverOutput then C_ChatInfo.SendChatMessage('SpartanUI: BG Leavers counter: ' .. LeaveCount, 'INSTANCE_CHAT') end
 			battleOver = true
 		end
 
@@ -368,7 +368,7 @@ function module:OnEnable()
 	--Add a chat command to print the number of leavers
 	SUI:AddChatCommand('leavers', function(output)
 		--If output is true then tell the instance chat
-		if output then SendChatMessage('SpartanUI: BG Leavers counter: ' .. LeaveCount, 'INSTANCE_CHAT') end
+		if output then C_ChatInfo.SendChatMessage('SpartanUI: BG Leavers counter: ' .. LeaveCount, 'INSTANCE_CHAT') end
 		SUI:Print('Leavers: ' .. LeaveCount)
 	end, 'Prints the number of leavers in the current battleground, addings anything after leavers will output to instance chat')
 	--Detect when we leave the battleground and reset the counter
