@@ -979,6 +979,93 @@ function lib:DebugLog(level, message, category)
 end
 
 ----------------------------------------------------------------------------------------------------
+-- Database Defaults
+----------------------------------------------------------------------------------------------------
+
+---Default database structure for AceDB-3.0
+local databaseDefaults = {
+	profile = {
+		displays = {
+			bars = {},
+			containers = {}
+		},
+		plugins = {
+			Clock = {
+				enabled = true,
+				format = 'short',
+				showSeconds = false,
+				showDate = true,
+				use24Hour = false,
+				timezone = 'local'
+			},
+			Currency = {
+				enabled = true,
+				showIcons = true,
+				colorByQuality = true,
+				trackAcrossCharacters = false
+			},
+			Performance = {
+				enabled = true,
+				showFPS = true,
+				showLatency = true,
+				showMemory = true,
+				updateInterval = 1.0
+			},
+			Location = {
+				enabled = true,
+				showCoordinates = true,
+				showPvPStatus = true,
+				showRestingState = true
+			},
+			Bags = {
+				enabled = true,
+				showFreeSlots = true,
+				colorBySpace = true,
+				includeReagentBag = true
+			},
+			Volume = {
+				enabled = true,
+				showIcons = true,
+				compactMode = false
+			},
+			Experience = {
+				enabled = true,
+				showPercentage = true,
+				showRested = true,
+				autoHideAtMaxLevel = true
+			},
+			Repair = {
+				enabled = true,
+				showPercentage = true,
+				warnThreshold = 50,
+				showRepairCost = true
+			},
+			PlayedTime = {
+				enabled = true,
+				showTotal = true,
+				showSession = true,
+				format = 'short'
+			},
+			Reputation = {
+				enabled = true,
+				showPercentage = true,
+				autoTrack = true,
+				showParagon = true
+			}
+		},
+		appearance = {
+			theme = 'default',
+			animation = 'fade',
+			updateInterval = 1.0
+		},
+		performance = {
+			enableProfiling = false,
+			maxUpdateFrequency = 0.1
+		}
+	}
+}
+
+----------------------------------------------------------------------------------------------------
 -- AceAddon-3.0 Lifecycle Callbacks
 ----------------------------------------------------------------------------------------------------
 
@@ -986,14 +1073,26 @@ end
 function LibsDataBar:OnInitialize()
 	self:DebugLog('info', 'LibsDataBar OnInitialize() called')
 	
+	-- Phase 2: Initialize AceDB-3.0 database
+	local AceDB = LibStub('AceDB-3.0')
+	self.db = AceDB:New('LibsDataBarDB', databaseDefaults, true)
+	
+	-- Create database change callbacks
+	self.db.RegisterCallback(self, 'OnProfileChanged', 'OnProfileChanged')
+	self.db.RegisterCallback(self, 'OnProfileCopied', 'OnProfileChanged')
+	self.db.RegisterCallback(self, 'OnProfileReset', 'OnProfileChanged')
+	
 	-- Initialize core systems
 	self:InitializeSystems()
+	
+	-- Phase 2: Setup AceConfig-3.0 options
+	self:SetupConfigOptions()
 	
 	-- Fire library initialization event for backward compatibility
 	self.callbacks:Fire('LibsDataBar_Initialized', self)
 	
 	if LIBSDATABAR_DEBUG then 
-		self:DebugLog('info', 'LibsDataBar-1.0 initialized successfully') 
+		self:DebugLog('info', 'LibsDataBar-1.0 initialized with AceDB-3.0 and AceConfig-3.0') 
 	end
 end
 
@@ -1253,6 +1352,12 @@ end
 ---@param path string Dot-separated path to config value
 ---@param value any The value to set
 function LibsDataBar:SetConfig(path, value)
+	-- Handle case where database isn't initialized yet
+	if not self.db or not self.db.profile then
+		self:DebugLog('warning', 'SetConfig called before database initialization: ' .. tostring(path))
+		return
+	end
+	
 	local keys = { strsplit('.', path) }
 	local config = self.db.profile
 	
