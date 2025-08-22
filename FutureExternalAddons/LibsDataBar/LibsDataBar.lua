@@ -329,14 +329,13 @@ lib.config = lib.config or setmetatable({
 }, ConfigManager)
 
 function ConfigManager:Initialize()
-	-- Initialize AceDB when available
-	if LibStub:GetLibrary('AceDB-3.0', true) then
-		local AceDB = LibStub('AceDB-3.0')
-		self.db = AceDB:New('LibsDataBarDB', configDefaults, true)
-	else
-		-- Fallback to simple table
-		self.db = { profile = configDefaults.profile }
+	-- Link to the main addon's database instead of creating our own
+	self.db = LibsDataBar.db
+	if not self.db then
+		LibsDataBar:DebugLog('error', 'ConfigManager Initialize called before LibsDataBar database initialization')
+		return
 	end
+	LibsDataBar:DebugLog('info', 'ConfigManager linked to main addon database')
 end
 
 ---Get configuration value by path
@@ -344,6 +343,11 @@ end
 ---@return any value Configuration value
 function ConfigManager:GetConfig(path)
 	if self.cache[path] then return self.cache[path] end
+	
+	if not self.db or not self.db.profile then
+		LibsDataBar:DebugLog('warning', 'ConfigManager GetConfig called before database initialization: ' .. tostring(path))
+		return nil
+	end
 
 	local keys = { strsplit('.', path) }
 	local value = self.db.profile
@@ -364,6 +368,11 @@ end
 ---@param path string Dot-separated configuration path
 ---@param value any Value to set
 function ConfigManager:SetConfig(path, value)
+	if not self.db or not self.db.profile then
+		LibsDataBar:DebugLog('warning', 'ConfigManager SetConfig called before database initialization: ' .. tostring(path))
+		return
+	end
+	
 	local keys = { strsplit('.', path) }
 	local current = self.db.profile
 
