@@ -9,7 +9,7 @@ local LibsDataBar = LibStub:GetLibrary('LibsDataBar-1.0')
 if not LibsDataBar then return end
 
 -- Plugin Definition
----@class ReputationPlugin : Plugin
+---@class ReputationPlugin : LibDataBroker.DataObject
 local ReputationPlugin = {
 	-- Required metadata
 	id = 'LibsDataBar_Reputation',
@@ -290,7 +290,7 @@ function ReputationPlugin:GetWatchedFactionData()
 		local factionData = C_Reputation.GetWatchedFactionData()
 		if factionData then
 			return {
-				index = factionData.watchedFactionIndex,
+				index = 0, -- GetWatchedFactionData doesn't provide index, will be found in fallback if needed
 				name = factionData.name,
 				standingId = factionData.reaction,
 				current = factionData.currentStanding - factionData.currentReactionThreshold,
@@ -303,10 +303,16 @@ function ReputationPlugin:GetWatchedFactionData()
 		end
 	else
 		-- Legacy API fallback
-		local numFactions = GetNumFactions and GetNumFactions() or 0
+		local numFactions = C_Reputation.GetNumFactions and C_Reputation.GetNumFactions() or 0
 
 		for i = 1, numFactions do
-			local name, description, standingId, barMin, barMax, barValue, atWarWith, canToggleAtWar, isHeader, isCollapsed, hasRep, isWatched, isChild, factionId = GetFactionInfo(i)
+			local factionData = C_Reputation.GetFactionDataByIndex(i)
+			if not factionData then break end
+			
+			local name, standingId, barMin, barMax, barValue, isHeader, isWatched, factionId = 
+				factionData.name, factionData.reaction, factionData.currentReactionThreshold, 
+				factionData.nextReactionThreshold, factionData.currentStanding, factionData.isHeader, 
+				factionData.isWatched, factionData.factionID
 
 			if isWatched and not isHeader then
 				return {
@@ -358,10 +364,13 @@ function ReputationPlugin:GetParagonRewardStatus()
 	if not C_Reputation.IsFactionParagon then return {} end
 
 	local paragonRewards = {}
-	local numFactions = GetNumFactions()
+	local numFactions = C_Reputation.GetNumFactions()
 
 	for i = 1, numFactions do
-		local name, description, standingId, barMin, barMax, barValue, atWarWith, canToggleAtWar, isHeader, isCollapsed, hasRep, isWatched, isChild, factionId = GetFactionInfo(i)
+		local factionData = C_Reputation.GetFactionDataByIndex(i)
+		if not factionData then break end
+		
+		local name, standingId, isHeader, factionId = factionData.name, factionData.reaction, factionData.isHeader, factionData.factionID
 
 		if not isHeader and factionId and standingId == 8 then -- Exalted factions only
 			local paragonData = self:GetParagonData(factionId)
@@ -427,10 +436,15 @@ end
 ---@param factionId number Faction ID to look up
 ---@return table? factionData Faction data or nil
 function ReputationPlugin:GetFactionDataById(factionId)
-	local numFactions = GetNumFactions()
+	local numFactions = C_Reputation.GetNumFactions()
 
 	for i = 1, numFactions do
-		local name, description, standingId, barMin, barMax, barValue, atWarWith, canToggleAtWar, isHeader, isCollapsed, hasRep, isWatched, isChild, id = GetFactionInfo(i)
+		local factionData = C_Reputation.GetFactionDataByIndex(i)
+		if not factionData then break end
+		
+		local name, standingId, barMin, barMax, barValue, isHeader, id = 
+			factionData.name, factionData.reaction, factionData.currentReactionThreshold,
+			factionData.nextReactionThreshold, factionData.currentStanding, factionData.isHeader, factionData.factionID
 
 		if id == factionId and not isHeader then return {
 			index = i,
@@ -680,10 +694,13 @@ end
 ---@param name string Faction name
 ---@return number? factionId Faction ID or nil
 function ReputationPlugin:GetFactionIdByName(name)
-	local numFactions = GetNumFactions()
+	local numFactions = C_Reputation.GetNumFactions() or 0
 
 	for i = 1, numFactions do
-		local factionName, _, _, _, _, _, _, _, isHeader, _, _, _, _, factionId = GetFactionInfo(i)
+		local factionData = C_Reputation.GetFactionDataByIndex(i)
+		if not factionData then break end
+		
+		local factionName, isHeader, factionId = factionData.name, factionData.isHeader, factionData.factionID
 
 		if factionName == name and not isHeader then return factionId end
 	end
@@ -719,14 +736,40 @@ function ReputationPlugin:SetConfig(key, value)
 	return LibsDataBar.config:SetConfig('plugins.' .. self.id .. '.pluginSettings.' .. key, value)
 end
 
--- Initialize and register the plugin
+-- Initialize the plugin
 ReputationPlugin:OnInitialize()
 
--- Register with LibsDataBar
-if LibsDataBar:RegisterPlugin(ReputationPlugin) then
-	LibsDataBar:DebugLog('info', 'Reputation plugin registered successfully')
+-- Register as LibDataBroker object for standardized plugin system
+local LDB = LibStub:GetLibrary('LibDataBroker-1.1', true)
+if LDB then
+	local reputationLDBObject = LDB:NewDataObject('LibsDataBar_Reputation', {
+		type = 'data source',
+		text = ReputationPlugin:GetText(),
+		icon = ReputationPlugin:GetIcon(),
+		label = ReputationPlugin.name,
+
+		-- Forward methods to ReputationPlugin with database access preserved
+		OnClick = function(self, button)
+			ReputationPlugin:OnClick(button)
+		end,
+
+		OnTooltipShow = function(tooltip)
+			tooltip:SetText(ReputationPlugin:GetTooltip())
+		end,
+
+		-- Update method to refresh LDB object
+		UpdateLDB = function(self)
+			self.text = ReputationPlugin:GetText()
+			self.icon = ReputationPlugin:GetIcon()
+		end,
+	})
+
+	-- Store reference for updates
+	ReputationPlugin._ldbObject = reputationLDBObject
+
+	LibsDataBar:DebugLog('info', 'Reputation plugin registered as LibDataBroker object')
 else
-	LibsDataBar:DebugLog('error', 'Failed to register Reputation plugin')
+	LibsDataBar:DebugLog('error', 'LibDataBroker not available for Reputation plugin')
 end
 
 -- Return plugin for external access

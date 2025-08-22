@@ -438,14 +438,40 @@ function VolumePlugin:SetConfig(key, value)
 	return LibsDataBar.config:SetConfig('plugins.' .. self.id .. '.pluginSettings.' .. key, value)
 end
 
--- Initialize and register the plugin
+-- Initialize the plugin
 VolumePlugin:OnInitialize()
 
--- Register with LibsDataBar
-if LibsDataBar:RegisterPlugin(VolumePlugin) then
-	LibsDataBar:DebugLog('info', 'Volume plugin registered successfully')
+-- Register as LibDataBroker object for standardized plugin system
+local LDB = LibStub:GetLibrary('LibDataBroker-1.1', true)
+if LDB then
+	local volumeLDBObject = LDB:NewDataObject('LibsDataBar_Volume', {
+		type = 'data source',
+		text = VolumePlugin:GetText(),
+		icon = VolumePlugin:GetIcon(),
+		label = VolumePlugin.name,
+
+		-- Forward methods to VolumePlugin with database access preserved
+		OnClick = function(self, button)
+			VolumePlugin:OnClick(button)
+		end,
+
+		OnTooltipShow = function(tooltip)
+			tooltip:SetText(VolumePlugin:GetTooltip())
+		end,
+
+		-- Update method to refresh LDB object
+		UpdateLDB = function(self)
+			self.text = VolumePlugin:GetText()
+			self.icon = VolumePlugin:GetIcon()
+		end,
+	})
+
+	-- Store reference for updates
+	VolumePlugin._ldbObject = volumeLDBObject
+
+	LibsDataBar:DebugLog('info', 'Volume plugin registered as LibDataBroker object')
 else
-	LibsDataBar:DebugLog('error', 'Failed to register Volume plugin')
+	LibsDataBar:DebugLog('error', 'LibDataBroker not available for Volume plugin')
 end
 
 -- Return plugin for external access
