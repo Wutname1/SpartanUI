@@ -120,8 +120,8 @@ function LDBAdapter:RegisterLDBObject(name, dataObject)
 		return false
 	end
 
-	-- Register with LibsDataBar
-	local success = LibsDataBar:RegisterPlugin(wrapper.plugin)
+	-- Register with LibsDataBar internal registry (bypass deprecation warning)
+	local success = LibsDataBar:_RegisterPlugin(wrapper.plugin)
 	if success then
 		self.registeredObjects[name] = wrapper
 		LibsDataBar:DebugLog('info', 'Registered LDB object: ' .. name)

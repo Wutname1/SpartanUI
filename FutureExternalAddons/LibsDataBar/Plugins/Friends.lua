@@ -624,7 +624,7 @@ if LDB then
 		end,
 
 		OnTooltipShow = function(tooltip)
-			tooltip:SetText(FriendsPlugin:GetTooltip())
+			FriendsPlugin:UpdateTooltip(tooltip)
 		end,
 
 		-- Update method to refresh LDB object
