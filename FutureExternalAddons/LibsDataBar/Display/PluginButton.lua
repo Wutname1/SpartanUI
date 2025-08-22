@@ -426,18 +426,24 @@ function PluginButton:UpdateIconTexture()
 
 	local iconPath = nil
 
-	-- Try GetIcon() method first (preferred method)
-	if self.plugin.GetIcon and type(self.plugin.GetIcon) == 'function' then
-		local success, result = pcall(self.plugin.GetIcon, self.plugin)
-		if success and result then
-			iconPath = result
-		else
-			if not success then LibsDataBar:DebugLog('error', 'Plugin ' .. self.plugin.id .. ' GetIcon error: ' .. tostring(result)) end
+	-- Handle LDB objects vs native plugins
+	if self.plugin.type == 'ldb' and self.plugin.ldbObject then
+		-- Direct LDB object access
+		iconPath = self.plugin.ldbObject.icon
+	else
+		-- Native plugin - try GetIcon() method first
+		if self.plugin.GetIcon and type(self.plugin.GetIcon) == 'function' then
+			local success, result = pcall(self.plugin.GetIcon, self.plugin)
+			if success and result then
+				iconPath = result
+			else
+				if not success then LibsDataBar:DebugLog('error', 'Plugin ' .. self.plugin.id .. ' GetIcon error: ' .. tostring(result)) end
+			end
 		end
-	end
 
-	-- Fallback to icon property if GetIcon() didn't work
-	if not iconPath and self.plugin.icon then iconPath = self.plugin.icon end
+		-- Fallback to icon property if GetIcon() didn't work
+		if not iconPath and self.plugin.icon then iconPath = self.plugin.icon end
+	end
 
 	-- Set the icon texture if we found one
 	if iconPath then
@@ -454,30 +460,58 @@ function PluginButton:Update()
 	local now = GetTime()
 	self.lastUpdate = now
 
-	-- Update text from plugin
-	if self.plugin.GetText and type(self.plugin.GetText) == 'function' then
-		local success, newText = pcall(self.plugin.GetText, self.plugin)
-		if success and newText and newText ~= '' then
+	-- Update text from plugin - handle LDB vs native
+	local newText = nil
+	
+	if self.plugin.type == 'ldb' and self.plugin.ldbObject then
+		-- Direct LDB object access
+		local ldb = self.plugin.ldbObject
+		newText = ldb.text or ldb.label
+		
+		-- Handle suffix
+		if newText and ldb.suffix then
+			newText = newText .. ' ' .. ldb.suffix
+		end
+		
+		if newText and newText ~= '' then
 			self.text:SetText(newText)
 			self.text:Show()
-		elseif success and (not newText or newText == '') then
-			-- Plugin intentionally provides no text (icon-only plugin)
-			self.text:SetText('')
-			self.text:Hide()
 		else
-			self.text:SetText('Error')
-			self.text:Show()
-			if not success then LibsDataBar:DebugLog('error', 'Plugin ' .. self.plugin.id .. ' GetText error: ' .. tostring(newText)) end
+			-- No text - check for icon-only
+			if self.icon and self.icon:IsShown() then
+				self.text:SetText('')
+				self.text:Hide()
+			else
+				self.text:SetText(self.plugin.name or self.plugin.id or 'Unknown')
+				self.text:Show()
+			end
 		end
 	else
-		-- No GetText method - check if this is an icon-only plugin
-		if self.icon and self.icon:IsShown() then
-			self.text:SetText('')
-			self.text:Hide()
+		-- Native plugin - use GetText method
+		if self.plugin.GetText and type(self.plugin.GetText) == 'function' then
+			local success, result = pcall(self.plugin.GetText, self.plugin)
+			if success and result and result ~= '' then
+				self.text:SetText(result)
+				self.text:Show()
+			elseif success and (not result or result == '') then
+				-- Plugin intentionally provides no text (icon-only plugin)
+				self.text:SetText('')
+				self.text:Hide()
+			else
+				self.text:SetText('Error')
+				self.text:Show()
+				if not success then LibsDataBar:DebugLog('error', 'Plugin ' .. self.plugin.id .. ' GetText error: ' .. tostring(result)) end
+			end
 		else
-			-- Neither icon nor text available - show plugin name as fallback
-			self.text:SetText(self.plugin.name or self.plugin.id or 'Unknown')
-			self.text:Show()
+			-- No GetText method - check if this is an icon-only plugin
+			if self.icon and self.icon:IsShown() then
+				self.text:SetText('')
+				self.text:Hide()
+			else
+				-- Neither icon nor text available - show plugin name as fallback
+				self.text:SetText(self.plugin.name or self.plugin.id or 'Unknown')
+				self.text:Show()
+			end
 		end
 	end
 
@@ -545,10 +579,19 @@ end
 function PluginButton:OnClick(mouseButton, down)
 	if InCombatLockdown() or down then return end
 
-	-- Call plugin click handler if available
-	if self.plugin.OnClick and type(self.plugin.OnClick) == 'function' then
-		local success, result = pcall(self.plugin.OnClick, self.plugin, mouseButton)
-		if not success then LibsDataBar:DebugLog('error', 'Plugin ' .. self.plugin.id .. ' OnClick error: ' .. tostring(result)) end
+	-- Call plugin click handler - handle LDB vs native
+	if self.plugin.type == 'ldb' and self.plugin.ldbObject then
+		-- Direct LDB object OnClick
+		if self.plugin.ldbObject.OnClick and type(self.plugin.ldbObject.OnClick) == 'function' then
+			local success, result = pcall(self.plugin.ldbObject.OnClick, nil, mouseButton)
+			if not success then LibsDataBar:DebugLog('error', 'LDB Plugin ' .. self.plugin.id .. ' OnClick error: ' .. tostring(result)) end
+		end
+	else
+		-- Native plugin OnClick
+		if self.plugin.OnClick and type(self.plugin.OnClick) == 'function' then
+			local success, result = pcall(self.plugin.OnClick, self.plugin, mouseButton)
+			if not success then LibsDataBar:DebugLog('error', 'Plugin ' .. self.plugin.id .. ' OnClick error: ' .. tostring(result)) end
+		end
 	end
 
 	-- Fire bar event
@@ -588,8 +631,24 @@ function PluginButton:ShowTooltip()
 
 	GameTooltip:SetOwner(self.frame, 'ANCHOR_TOP')
 
-	-- Use plugin's tooltip method if available
-	if self.plugin.UpdateTooltip and type(self.plugin.UpdateTooltip) == 'function' then
+	-- Use plugin's tooltip method - handle LDB vs native
+	if self.plugin.type == 'ldb' and self.plugin.ldbObject then
+		-- Direct LDB object OnTooltipShow
+		if self.plugin.ldbObject.OnTooltipShow and type(self.plugin.ldbObject.OnTooltipShow) == 'function' then
+			local success, result = pcall(self.plugin.ldbObject.OnTooltipShow, GameTooltip)
+			if not success then
+				GameTooltip:AddLine('Error loading LDB tooltip')
+				LibsDataBar:DebugLog('error', 'LDB Plugin ' .. self.plugin.id .. ' OnTooltipShow error: ' .. tostring(result))
+			end
+		else
+			-- Fallback LDB tooltip
+			GameTooltip:SetText(self.plugin.name or self.plugin.id)
+			if self.plugin.ldbObject.tooltiptext then
+				GameTooltip:AddLine(self.plugin.ldbObject.tooltiptext, 1, 1, 1, true)
+			end
+		end
+	elseif self.plugin.UpdateTooltip and type(self.plugin.UpdateTooltip) == 'function' then
+		-- Native plugin UpdateTooltip
 		local success, result = pcall(self.plugin.UpdateTooltip, self.plugin, GameTooltip)
 		if not success then
 			GameTooltip:AddLine('Error loading tooltip')

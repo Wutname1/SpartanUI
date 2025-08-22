@@ -775,21 +775,14 @@ function lib:MovePlugin(pluginId, fromBarId, toBarId)
 		return false
 	end
 
-	-- Find plugin through LDB adapter
-	local plugin = nil
-	if self.ldb and self.ldb.registeredObjects then
-		for name, wrapper in pairs(self.ldb.registeredObjects) do
-			if wrapper.plugin and wrapper.plugin.id == pluginId then
-				plugin = wrapper.plugin
-				break
-			end
-		end
-	end
-	
-	if not plugin then
-		self:DebugLog('error', 'LDB plugin not found: ' .. tostring(pluginId))
+	-- Find plugin in source bar
+	local pluginButton = fromBar.plugins[pluginId]
+	if not pluginButton or not pluginButton.plugin then
+		self:DebugLog('error', 'Plugin not found in source bar: ' .. tostring(pluginId))
 		return false
 	end
+	
+	local plugin = pluginButton.plugin
 
 	-- Remove from source bar
 	if not fromBar:RemovePlugin(pluginId) then
