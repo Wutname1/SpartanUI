@@ -32,7 +32,8 @@ local LIBSDATABAR_DEBUG = false -- Phase 1 debugging complete
 -- Architecture Notes:
 -- Pure LibDataBroker implementation following KISS principle
 -- All plugins register as LDB objects using LDB:NewDataObject()
--- No wrapper systems - direct LDB standard compliance
+-- LDBAdapter provides clean interface bridge between LDB and display system
+-- Single plugin interface for maximum maintainability
 
 ---@class LibsDataBar
 ---@field version string Library version

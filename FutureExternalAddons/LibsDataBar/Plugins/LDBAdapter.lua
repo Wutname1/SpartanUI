@@ -1,7 +1,8 @@
 ---@diagnostic disable: duplicate-set-field
 --[===[ File: Plugins/LDBAdapter.lua
-LibDataBroker 1.1 Compatibility Layer
-Provides full LDB plugin integration and automatic discovery
+LibDataBroker Standard Plugin Interface
+Provides clean bridge between LDB objects and LibsDataBar display system.
+This adapter is the STANDARD way plugins integrate with LibsDataBar.
 --]===]
 
 -- Get the LibsDataBar library
