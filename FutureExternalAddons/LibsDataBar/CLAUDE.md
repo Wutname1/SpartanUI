@@ -147,6 +147,21 @@ LibsDataBar integrates seamlessly with SpartanUI:
 - **Integration/** - SpartanUI.lua for seamless integration
 - **Options.lua** - AceConfig interface
 
+## Available Libraries
+
+**Core Framework** (see `Claude/libdocumentation/Ace3-Libraries.md`):
+- **AceAddon-3.0** - Addon lifecycle and module management
+- **AceTimer-3.0** - Efficient timer system (critical for text display fixes)
+- **AceEvent-3.0** - Event registration and handling
+- **AceDB-3.0** - Saved variables with profiles
+- **AceConfig-3.0** - Automatic configuration UI generation
+
+**UI Enhancement** (see `Claude/libdocumentation/Other-Libraries.md`):
+- **LibQTip-1.0** - Advanced multi-column tooltips
+- **LibSharedMedia-3.0** - Theme system media integration
+- **LibEditMode** - Modern positioning with Edit Mode integration
+- **LibDataBroker-1.1** - Plugin ecosystem compatibility
+
 ## Development Commands
 
 - `/libsdatabar` or `/ldb` - Open main options window

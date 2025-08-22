@@ -4,8 +4,8 @@ LibsDataBar Clock Plugin
 Basic time display plugin demonstrating the native plugin interface
 --]===]
 
--- Get the LibsDataBar library
-local LibsDataBar = LibStub:GetLibrary('LibsDataBar-1.0')
+-- Get the LibsDataBar addon
+local LibsDataBar = LibStub('AceAddon-3.0'):GetAddon('LibsDataBar', true)
 if not LibsDataBar then return end
 
 -- Plugin Definition
