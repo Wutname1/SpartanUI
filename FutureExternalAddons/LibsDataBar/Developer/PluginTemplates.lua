@@ -316,11 +316,47 @@ function {PLUGIN_CLASS}:SetConfig(key, value)
     return LibsDataBar.config:SetConfig('plugins.' .. self.id .. '.pluginSettings.' .. key, value)
 end
 
--- Register the plugin
-if LibsDataBar:RegisterPlugin({PLUGIN_CLASS}) then
-    LibsDataBar:DebugLog('info', '{PLUGIN_NAME} plugin registered successfully')
+-- Register as LibDataBroker object for standardized plugin system
+local LDB = LibStub:GetLibrary('LibDataBroker-1.1', true)
+if LDB then
+    local {PLUGIN_LOWER}LDBObject = LDB:NewDataObject('{PLUGIN_ID}', {
+        type = 'data source',
+        text = {PLUGIN_CLASS}:GetText(),
+        icon = {PLUGIN_CLASS}:GetIcon(),
+        label = {PLUGIN_CLASS}.name,
+        
+        -- Forward methods to {PLUGIN_CLASS} with database access preserved
+        OnClick = function(self, button)
+            {PLUGIN_CLASS}:OnClick(button)
+        end,
+        
+        OnTooltipShow = function(tooltip)
+            local tooltipText = {PLUGIN_CLASS}:GetTooltip()
+            -- Handle both \n and \\n newline formats
+            tooltipText = tooltipText:gsub('\\n', '\n')
+            local lines = {strsplit('\n', tooltipText)}
+            for i, line in ipairs(lines) do
+                if i == 1 then
+                    tooltip:SetText(line)
+                else
+                    tooltip:AddLine(line, 1, 1, 1, true)
+                end
+            end
+        end,
+        
+        -- Update method to refresh LDB object
+        UpdateLDB = function(self)
+            self.text = {PLUGIN_CLASS}:GetText()
+            self.icon = {PLUGIN_CLASS}:GetIcon()
+        end,
+    })
+    
+    -- Store reference for updates
+    {PLUGIN_CLASS}._ldbObject = {PLUGIN_LOWER}LDBObject
+    
+    LibsDataBar:DebugLog('info', '{PLUGIN_NAME} plugin registered as LibDataBroker object')
 else
-    LibsDataBar:DebugLog('error', 'Failed to register {PLUGIN_NAME} plugin')
+    LibsDataBar:DebugLog('error', 'LibDataBroker not available for {PLUGIN_NAME} plugin')
 end
 
 -- Return plugin for external access

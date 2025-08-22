@@ -29,10 +29,14 @@ local InCombatLockdown = InCombatLockdown
 local LIBSDATABAR_VERSION = '1.0.0'
 local LIBSDATABAR_DEBUG = false -- Phase 1 debugging complete
 
+-- Architecture Notes:
+-- Pure LibDataBroker implementation following KISS principle
+-- All plugins register as LDB objects using LDB:NewDataObject()
+-- No wrapper systems - direct LDB standard compliance
+
 ---@class LibsDataBar
 ---@field version string Library version
 ---@field bars table<string, DataBar> Active bars registry
----@field plugins table<string, LibDataBroker.DataObject> Plugin registry
 ---@field events EventManager Event management system
 ---@field config ConfigManager Configuration system
 ---@field performance PerformanceMonitor Performance tracking
@@ -40,7 +44,6 @@ local LIBSDATABAR_DEBUG = false -- Phase 1 debugging complete
 ---@field callbacks table CallbackHandler for event system
 lib.version = LIBSDATABAR_VERSION
 lib.bars = lib.bars or {}
-lib.plugins = lib.plugins or {}
 
 -- Initialize CallbackHandler for event system
 lib.callbacks = lib.callbacks or LibStub:GetLibrary('CallbackHandler-1.0'):New(lib)
@@ -535,48 +538,30 @@ function lib:SetupDefaults()
 	end
 end
 
----Register built-in plugins and add them to the specified bar
+---Register LDB plugins and add them to the specified bar
 ---@param bar DataBar Target bar for plugins
 function lib:RegisterBuiltinPlugins(bar)
-	-- List of essential plugins to auto-enable
-	local essentialPlugins = {
-		'LibsDataBar_Clock',
-		'LibsDataBar_Performance',
-		'LibsDataBar_Location',
-		'LibsDataBar_Currency',
-	}
-
+	-- Pure LDB implementation - all plugins are discovered through LibDataBroker
 	local registeredCount = 0
 
-	for _, pluginId in ipairs(essentialPlugins) do
-		local plugin = self.plugins[pluginId]
-		if plugin then
-			local button = bar:AddPlugin(plugin)
-			if button then
-				registeredCount = registeredCount + 1
-				self:DebugLog('debug', 'Added essential plugin to main bar: ' .. pluginId)
-			else
-				self:DebugLog('warning', 'Failed to add plugin to main bar: ' .. pluginId)
-			end
-		else
-			self:DebugLog('warning', 'Essential plugin not found: ' .. pluginId)
-		end
-	end
-
-	self:DebugLog('info', 'Registered ' .. registeredCount .. ' essential plugins to main bar')
-
-	-- Also check for any available LDB plugins if adapter is loaded
+	-- Add LDB plugins through auto-discovery
 	if self.ldb and self.ldb.autoDiscovery then
 		C_Timer.After(1, function()
-			local ldbCount = 0
 			for name, wrapper in pairs(self.ldb.registeredObjects or {}) do
 				if wrapper and wrapper.plugin then
 					local button = bar:AddPlugin(wrapper.plugin)
-					if button then ldbCount = ldbCount + 1 end
+					if button then 
+						registeredCount = registeredCount + 1
+						self:DebugLog('debug', 'Added LDB plugin to main bar: ' .. name)
+					end
 				end
 			end
-			if ldbCount > 0 then self:DebugLog('info', 'Added ' .. ldbCount .. ' LDB plugins to main bar') end
+			if registeredCount > 0 then 
+				self:DebugLog('info', 'Added ' .. registeredCount .. ' LDB plugins to main bar') 
+			end
 		end)
+	else
+		self:DebugLog('warning', 'LDB adapter not available for plugin discovery')
 	end
 end
 
@@ -781,9 +766,19 @@ function lib:MovePlugin(pluginId, fromBarId, toBarId)
 		return false
 	end
 
-	local plugin = self.plugins[pluginId]
+	-- Find plugin through LDB adapter
+	local plugin = nil
+	if self.ldb and self.ldb.registeredObjects then
+		for name, wrapper in pairs(self.ldb.registeredObjects) do
+			if wrapper.plugin and wrapper.plugin.id == pluginId then
+				plugin = wrapper.plugin
+				break
+			end
+		end
+	end
+	
 	if not plugin then
-		self:DebugLog('error', 'Plugin not found: ' .. tostring(pluginId))
+		self:DebugLog('error', 'LDB plugin not found: ' .. tostring(pluginId))
 		return false
 	end
 
@@ -908,46 +903,6 @@ function lib:GetBars()
 	return self.bars
 end
 
----Register a plugin
----@param plugin table Plugin object
----@return boolean success True if registration succeeded
-function lib:RegisterPlugin(plugin)
-	if not plugin or not plugin.id then
-		self:DebugLog('error', 'RegisterPlugin requires plugin with id')
-		return false
-	end
-
-	if self.plugins[plugin.id] then
-		self:DebugLog('warning', 'Plugin ' .. plugin.id .. ' already registered')
-		return false
-	end
-
-	self.plugins[plugin.id] = plugin
-	self.callbacks:Fire('LibsDataBar_PluginRegistered', plugin.id, plugin)
-
-	self:DebugLog('info', 'Plugin registered: ' .. plugin.id)
-	return true
-end
-
----Get a plugin by ID
----@param pluginId string Plugin identifier
----@return table? plugin Plugin object or nil
-function lib:GetPlugin(pluginId)
-	return self.plugins[pluginId]
-end
-
----Get all registered plugins
----@param category? string Optional category filter
----@return table<string, table> plugins Registered plugins
-function lib:GetPlugins(category)
-	if not category then return self.plugins end
-
-	local filtered = {}
-	for id, plugin in pairs(self.plugins) do
-		if plugin.category == category then filtered[id] = plugin end
-	end
-	return filtered
-end
 
 ---Debug logging function
 ---@param level string Log level (info, warning, error)

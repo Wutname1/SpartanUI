@@ -120,16 +120,10 @@ function LDBAdapter:RegisterLDBObject(name, dataObject)
 		return false
 	end
 
-	-- Register with LibsDataBar internal registry (bypass deprecation warning)
-	local success = LibsDataBar:_RegisterPlugin(wrapper.plugin)
-	if success then
-		self.registeredObjects[name] = wrapper
-		LibsDataBar:DebugLog('info', 'Registered LDB object: ' .. name)
-		return true
-	else
-		LibsDataBar:DebugLog('error', 'Failed to register LDB plugin: ' .. name)
-		return false
-	end
+	-- Store the wrapper for bar discovery
+	self.registeredObjects[name] = wrapper
+	LibsDataBar:DebugLog('info', 'Registered LDB object: ' .. name)
+	return true
 end
 
 ---Create a LibsDataBar plugin wrapper for an LDB object
@@ -389,9 +383,6 @@ end
 function LDBAdapter:UnregisterLDBObject(name)
 	local wrapper = self.registeredObjects[name]
 	if not wrapper then return false end
-
-	-- Unregister from LibsDataBar
-	LibsDataBar:UnregisterPlugin(wrapper.plugin.id)
 
 	-- Remove from registry
 	self.registeredObjects[name] = nil
