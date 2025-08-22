@@ -32,7 +32,7 @@ local LIBSDATABAR_DEBUG = false -- Phase 1 debugging complete
 ---@class LibsDataBar
 ---@field version string Library version
 ---@field bars table<string, DataBar> Active bars registry
----@field plugins table<string, Plugin> Plugin registry
+---@field plugins table<string, LibDataBroker.DataObject> Plugin registry
 ---@field events EventManager Event management system
 ---@field config ConfigManager Configuration system
 ---@field performance PerformanceMonitor Performance tracking
