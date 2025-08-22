@@ -599,7 +599,17 @@ if LDB then
 		end,
 
 		OnTooltipShow = function(tooltip)
-			tooltip:SetText(RepairPlugin:GetTooltip())
+			local tooltipText = RepairPlugin:GetTooltip()
+			-- Handle both \n and \\n newline formats
+			tooltipText = tooltipText:gsub('\\n', '\n')
+			local lines = {strsplit('\n', tooltipText)}
+			for i, line in ipairs(lines) do
+				if i == 1 then
+					tooltip:SetText(line)
+				else
+					tooltip:AddLine(line, 1, 1, 1, true)
+				end
+			end
 		end,
 
 		-- Update method to refresh LDB object
