@@ -50,13 +50,13 @@ function PlayedTimePlugin:GetText()
 	local displayFormat = self:GetConfig('displayFormat')
 	local timeFormat = self:GetConfig('timeFormat')
 	local colorByAge = self:GetConfig('colorByAge')
-	
+
 	self:UpdateSessionTime()
-	
+
 	local text = ''
 	local timeToDisplay = 0
 	local prefix = ''
-	
+
 	if displayFormat == 'total' then
 		timeToDisplay = self._totalTimePlayed
 		prefix = 'Total: '
@@ -71,26 +71,22 @@ function PlayedTimePlugin:GetText()
 		local totalText = self:FormatTime(self._totalTimePlayed, timeFormat)
 		local sessionText = self:FormatTime(self._sessionTime, timeFormat)
 		text = string.format('T:%s | S:%s', totalText, sessionText)
-		
+
 		-- Apply coloring if enabled
-		if colorByAge then
-			text = self:ApplyAgeColor(text, self._totalTimePlayed)
-		end
-		
+		if colorByAge then text = self:ApplyAgeColor(text, self._totalTimePlayed) end
+
 		return text
 	else
 		-- Default to total
 		timeToDisplay = self._totalTimePlayed
 		prefix = 'Played: '
 	end
-	
+
 	text = prefix .. self:FormatTime(timeToDisplay, timeFormat)
-	
+
 	-- Apply color coding based on total played time
-	if colorByAge then
-		text = self:ApplyAgeColor(text, self._totalTimePlayed)
-	end
-	
+	if colorByAge then text = self:ApplyAgeColor(text, self._totalTimePlayed) end
+
 	return text
 end
 
@@ -98,7 +94,7 @@ end
 ---@return string icon Icon texture path
 function PlayedTimePlugin:GetIcon()
 	local totalHours = self._totalTimePlayed / 3600
-	
+
 	if totalHours < 24 then
 		return 'Interface\\Icons\\INV_Misc_PocketWatch_01' -- New character
 	elseif totalHours < 240 then -- Less than 10 days
@@ -114,27 +110,23 @@ end
 ---@return string tooltip Tooltip text
 function PlayedTimePlugin:GetTooltip()
 	self:UpdateSessionTime()
-	
+
 	local tooltip = 'Character Play Time:\\n\\n'
-	
+
 	-- Total played time
 	tooltip = tooltip .. string.format('Total Played: %s\\n', self:FormatTime(self._totalTimePlayed, 'full'))
-	
+
 	-- Time played this level
-	if self._timePlayedThisLevel > 0 then
-		tooltip = tooltip .. string.format('This Level: %s\\n', self:FormatTime(self._timePlayedThisLevel, 'full'))
-	end
-	
+	if self._timePlayedThisLevel > 0 then tooltip = tooltip .. string.format('This Level: %s\\n', self:FormatTime(self._timePlayedThisLevel, 'full')) end
+
 	-- Session information
 	if self:GetConfig('showSessionInfo') then
 		tooltip = tooltip .. '\\nSession Statistics:\\n'
 		tooltip = tooltip .. string.format('Session Time: %s\\n', self:FormatTime(self._sessionTime, 'full'))
-		
+
 		local sessionStart = self._sessionStartTime
-		if sessionStart > 0 then
-			tooltip = tooltip .. string.format('Session Started: %s\\n', date('%H:%M:%S', sessionStart))
-		end
-		
+		if sessionStart > 0 then tooltip = tooltip .. string.format('Session Started: %s\\n', date('%H:%M:%S', sessionStart)) end
+
 		-- Calculate session statistics
 		local sessionHours = self._sessionTime / 3600
 		if sessionHours >= 1 then
@@ -142,17 +134,15 @@ function PlayedTimePlugin:GetTooltip()
 			tooltip = tooltip .. string.format('Avg Sessions/Day: %.1f\\n', sessionsPerDay)
 		end
 	end
-	
+
 	-- Playtime analysis
 	tooltip = tooltip .. '\\nPlaytime Analysis:\\n'
 	local totalDays = self._totalTimePlayed / 86400
 	local avgHoursPerDay = self._totalTimePlayed / 3600 / math.max(1, totalDays)
-	
+
 	tooltip = tooltip .. string.format('Total Days: %.1f\\n', totalDays)
-	if totalDays > 1 then
-		tooltip = tooltip .. string.format('Avg Hours/Day: %.1f\\n', avgHoursPerDay)
-	end
-	
+	if totalDays > 1 then tooltip = tooltip .. string.format('Avg Hours/Day: %.1f\\n', avgHoursPerDay) end
+
 	-- Playtime milestones
 	local milestones = self:GetPlaytimeMilestones()
 	if #milestones > 0 then
@@ -161,18 +151,18 @@ function PlayedTimePlugin:GetTooltip()
 			tooltip = tooltip .. '• ' .. milestone .. '\\n'
 		end
 	end
-	
+
 	-- Data freshness warning
 	if not self._playedDataReceived or (GetTime() - self._lastPlayedRequest) > 1800 then
 		tooltip = tooltip .. '\\n|cFFFFFF00Note: /played data may be outdated|r\\n'
 		tooltip = tooltip .. '|cFFFFFF00Click to refresh played time data|r\\n'
 	end
-	
+
 	tooltip = tooltip .. '\\nControls:\\n'
 	tooltip = tooltip .. 'Left-click: Request /played update\\n'
 	tooltip = tooltip .. 'Right-click: Change display format\\n'
 	tooltip = tooltip .. 'Middle-click: Reset session timer'
-	
+
 	return tooltip
 end
 
@@ -195,14 +185,12 @@ end
 ---Update session time tracking
 function PlayedTimePlugin:UpdateSessionTime()
 	if not self:GetConfig('trackSessionTime') then return end
-	
+
 	local currentTime = GetTime()
-	
+
 	-- Initialize session start time if needed
-	if self._sessionStartTime == 0 then
-		self._sessionStartTime = currentTime
-	end
-	
+	if self._sessionStartTime == 0 then self._sessionStartTime = currentTime end
+
 	-- Calculate current session time
 	self._sessionTime = currentTime - self._sessionStartTime
 end
@@ -210,13 +198,13 @@ end
 ---Request played time data from server
 function PlayedTimePlugin:RequestPlayedTime()
 	local currentTime = GetTime()
-	
+
 	-- Throttle requests to avoid spam
 	if (currentTime - self._lastPlayedRequest) < 5 then
 		LibsDataBar:DebugLog('info', 'PlayedTime request throttled (too frequent)')
 		return
 	end
-	
+
 	self._lastPlayedRequest = currentTime
 	RequestTimePlayed()
 	LibsDataBar:DebugLog('info', 'PlayedTime data requested')
@@ -228,12 +216,12 @@ end
 ---@return string formatted Formatted time string
 function PlayedTimePlugin:FormatTime(seconds, format)
 	if seconds <= 0 then return '0s' end
-	
+
 	local days = math.floor(seconds / 86400)
 	local hours = math.floor((seconds % 86400) / 3600)
 	local minutes = math.floor((seconds % 3600) / 60)
 	local secs = math.floor(seconds % 60)
-	
+
 	if format == 'hours' then
 		local totalHours = seconds / 3600
 		return string.format('%.1fh', totalHours)
@@ -251,7 +239,7 @@ function PlayedTimePlugin:FormatTime(seconds, format)
 		if hours > 0 then table.insert(parts, hours .. ' hour' .. (hours == 1 and '' or 's')) end
 		if minutes > 0 then table.insert(parts, minutes .. ' minute' .. (minutes == 1 and '' or 's')) end
 		if #parts == 0 and secs > 0 then table.insert(parts, secs .. ' second' .. (secs == 1 and '' or 's')) end
-		
+
 		return table.concat(parts, ', ')
 	else -- 'smart' format
 		if days > 7 then
@@ -276,7 +264,7 @@ end
 ---@return string coloredText Colored text
 function PlayedTimePlugin:ApplyAgeColor(text, totalTime)
 	local totalDays = totalTime / 86400
-	
+
 	if totalDays < 1 then
 		return '|cFF00FF00' .. text .. '|r' -- Green for new characters
 	elseif totalDays < 7 then
@@ -296,9 +284,9 @@ function PlayedTimePlugin:GetPlaytimeMilestones()
 	local milestones = {}
 	local totalHours = self._totalTimePlayed / 3600
 	local totalDays = self._totalTimePlayed / 86400
-	
+
 	-- Hour milestones
-	local hourMilestones = {10, 24, 48, 100, 200, 500, 1000, 2000, 5000}
+	local hourMilestones = { 10, 24, 48, 100, 200, 500, 1000, 2000, 5000 }
 	for _, milestone in ipairs(hourMilestones) do
 		if totalHours >= milestone then
 			if milestone == 24 then
@@ -312,9 +300,9 @@ function PlayedTimePlugin:GetPlaytimeMilestones()
 			end
 		end
 	end
-	
+
 	-- Day milestones
-	local dayMilestones = {7, 30, 90, 180, 365}
+	local dayMilestones = { 7, 30, 90, 180, 365 }
 	for _, milestone in ipairs(dayMilestones) do
 		if totalDays >= milestone then
 			if milestone == 7 then
@@ -328,7 +316,7 @@ function PlayedTimePlugin:GetPlaytimeMilestones()
 			end
 		end
 	end
-	
+
 	-- Keep only the most recent few milestones
 	if #milestones > 3 then
 		local recentMilestones = {}
@@ -337,7 +325,7 @@ function PlayedTimePlugin:GetPlaytimeMilestones()
 		end
 		return recentMilestones
 	end
-	
+
 	return milestones
 end
 
@@ -349,10 +337,10 @@ end
 
 ---Cycle through different display formats
 function PlayedTimePlugin:CycleDisplayFormat()
-	local formats = {'total', 'session', 'level', 'combined'}
+	local formats = { 'total', 'session', 'level', 'combined' }
 	local current = self:GetConfig('displayFormat')
 	local currentIndex = 1
-	
+
 	-- Find current format index
 	for i, format in ipairs(formats) do
 		if format == current then
@@ -360,11 +348,11 @@ function PlayedTimePlugin:CycleDisplayFormat()
 			break
 		end
 	end
-	
+
 	-- Move to next format (wrap around)
 	local nextIndex = currentIndex < #formats and currentIndex + 1 or 1
 	local nextFormat = formats[nextIndex]
-	
+
 	self:SetConfig('displayFormat', nextFormat)
 	LibsDataBar:DebugLog('info', 'PlayedTime display format changed to: ' .. nextFormat)
 end
@@ -477,10 +465,10 @@ end
 ---Lifecycle: Plugin initialization
 function PlayedTimePlugin:OnInitialize()
 	self._sessionStartTime = GetTime()
-	
+
 	-- Request initial played time data
 	self:RequestPlayedTime()
-	
+
 	LibsDataBar:DebugLog('info', 'PlayedTime plugin initialized')
 end
 
@@ -489,7 +477,7 @@ function PlayedTimePlugin:OnEnable()
 	-- Register for played time events
 	self:RegisterEvent('TIME_PLAYED_MSG', 'OnTimePlayedReceived')
 	self:RegisterEvent('PLAYER_ENTERING_WORLD', 'OnPlayerEnteringWorld')
-	
+
 	-- Setup auto-update timer if enabled
 	if self:GetConfig('autoRequestPlayed') then
 		local interval = self:GetConfig('requestInterval')
@@ -497,20 +485,20 @@ function PlayedTimePlugin:OnEnable()
 			self:RequestPlayedTime()
 		end)
 	end
-	
+
 	LibsDataBar:DebugLog('info', 'PlayedTime plugin enabled')
 end
 
 ---Lifecycle: Plugin disabled
 function PlayedTimePlugin:OnDisable()
 	self:UnregisterAllEvents()
-	
+
 	-- Cancel auto-update timer
 	if self.autoUpdateTimer then
 		self.autoUpdateTimer:Cancel()
 		self.autoUpdateTimer = nil
 	end
-	
+
 	LibsDataBar:DebugLog('info', 'PlayedTime plugin disabled')
 end
 
@@ -521,11 +509,12 @@ function PlayedTimePlugin:OnTimePlayedReceived(totalTime, levelTime)
 	self._totalTimePlayed = totalTime or 0
 	self._timePlayedThisLevel = levelTime or 0
 	self._playedDataReceived = true
-	
-	LibsDataBar:DebugLog('info', string.format('PlayedTime data updated: %s total, %s this level',
-		self:FormatTime(self._totalTimePlayed, 'compact'),
-		self:FormatTime(self._timePlayedThisLevel, 'compact')))
-	
+
+	LibsDataBar:DebugLog(
+		'info',
+		string.format('PlayedTime data updated: %s total, %s this level', self:FormatTime(self._totalTimePlayed, 'compact'), self:FormatTime(self._timePlayedThisLevel, 'compact'))
+	)
+
 	if LibsDataBar.callbacks then LibsDataBar.callbacks:Fire('LibsDataBar_PluginUpdate', self.id) end
 end
 
@@ -533,7 +522,7 @@ end
 function PlayedTimePlugin:OnPlayerEnteringWorld()
 	-- Reset session timer when entering world (login/reload)
 	self:ResetSessionTimer()
-	
+
 	-- Request fresh played time data
 	C_Timer.NewTimer(2, function()
 		self:RequestPlayedTime()

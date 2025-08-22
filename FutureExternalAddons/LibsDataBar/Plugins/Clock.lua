@@ -73,7 +73,7 @@ function ClockPlugin:GetTooltip()
 	-- Get server time
 	local serverTime = GetGameTime()
 	local serverHour, serverMinute = floor(serverTime), floor((serverTime - floor(serverTime)) * 60)
-	
+
 	-- Format server time
 	local serverTimeStr
 	if self._format24Hour then
@@ -83,11 +83,11 @@ function ClockPlugin:GetTooltip()
 		local ampm = serverHour < 12 and 'AM' or 'PM'
 		serverTimeStr = string.format('%d:%02d %s', displayHour, serverMinute, ampm)
 	end
-	
+
 	-- Get local time
 	local localTimeFormat = self._format24Hour and '%H:%M' or '%I:%M %p'
 	local localTimeStr = date(localTimeFormat)
-	
+
 	local tooltip = string.format('Realm Time: %s\nLocal Time: %s', serverTimeStr, localTimeStr)
 	tooltip = tooltip .. '\n\nLeft-click: Toggle 12/24 hour format'
 	tooltip = tooltip .. '\nRight-click: Configuration options'

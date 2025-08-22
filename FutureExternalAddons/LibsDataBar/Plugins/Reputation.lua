@@ -62,22 +62,20 @@ function ReputationPlugin:GetText()
 	local displayFormat = self:GetConfig('displayFormat')
 	local colorByStanding = self:GetConfig('colorByStanding')
 	local abbreviateValues = self:GetConfig('abbreviateValues')
-	
+
 	local watchedFactionData = self:GetWatchedFactionData()
-	
-	if not watchedFactionData then
-		return 'No Watched Faction'
-	end
-	
+
+	if not watchedFactionData then return 'No Watched Faction' end
+
 	local name = watchedFactionData.name
 	local standing = watchedFactionData.standingId
 	local current = watchedFactionData.current
 	local max = watchedFactionData.max
 	local percent = max > 0 and (current / max * 100) or 0
 	local standingInfo = STANDING_INFO[standing] or STANDING_INFO[4]
-	
+
 	local text = ''
-	
+
 	if displayFormat == 'standing' then
 		text = string.format('%s: %s', name, standingInfo.short)
 	elseif displayFormat == 'values' then
@@ -115,12 +113,10 @@ function ReputationPlugin:GetText()
 			text = string.format('%s: %.0f%% %s', name, percent, standingInfo.short)
 		end
 	end
-	
+
 	-- Apply standing color if enabled
-	if colorByStanding then
-		text = standingInfo.color .. text .. '|r'
-	end
-	
+	if colorByStanding then text = standingInfo.color .. text .. '|r' end
+
 	return text
 end
 
@@ -128,7 +124,7 @@ end
 ---@return string icon Icon texture path
 function ReputationPlugin:GetIcon()
 	local displayFormat = self:GetConfig('displayFormat')
-	
+
 	-- Check for paragon rewards first (highest priority)
 	if displayFormat == 'paragon_rewards' or self:GetConfig('paragonRewardPriority') then
 		local paragonRewards = self:GetParagonRewardStatus()
@@ -136,15 +132,13 @@ function ReputationPlugin:GetIcon()
 			return 'Interface\\Icons\\INV_Misc_Gift_02' -- Gift box for available rewards
 		end
 	end
-	
+
 	local watchedFactionData = self:GetWatchedFactionData()
-	
-	if not watchedFactionData then
-		return 'Interface\\Icons\\Achievement_Reputation_01'
-	end
-	
+
+	if not watchedFactionData then return 'Interface\\Icons\\Achievement_Reputation_01' end
+
 	local standing = watchedFactionData.standingId
-	
+
 	-- Check if watched faction has paragon reward
 	if standing == 8 and self:GetConfig('trackParagon') then
 		local paragonData = self:GetParagonData(watchedFactionData.factionId)
@@ -152,7 +146,7 @@ function ReputationPlugin:GetIcon()
 			return 'Interface\\Icons\\INV_Misc_Gift_02' -- Gift box for paragon reward
 		end
 	end
-	
+
 	-- Return appropriate reputation icon based on standing
 	if standing <= 2 then
 		return 'Interface\\Icons\\Achievement_Reputation_08' -- Hated/Hostile
@@ -177,7 +171,7 @@ end
 ---@return string tooltip Tooltip text
 function ReputationPlugin:GetTooltip()
 	local watchedFactionData = self:GetWatchedFactionData()
-	
+
 	if not watchedFactionData then
 		local tooltip = 'Reputation Tracker:\\n\\n'
 		tooltip = tooltip .. 'No faction is currently being watched.\\n'
@@ -187,32 +181,30 @@ function ReputationPlugin:GetTooltip()
 		tooltip = tooltip .. 'Right-click: Configuration options'
 		return tooltip
 	end
-	
+
 	local name = watchedFactionData.name
 	local standing = watchedFactionData.standingId
 	local current = watchedFactionData.current
 	local max = watchedFactionData.max
 	local percent = max > 0 and (current / max * 100) or 0
 	local standingInfo = STANDING_INFO[standing] or STANDING_INFO[4]
-	
+
 	local tooltip = string.format('Reputation: %s\\n\\n', name)
-	
+
 	-- Current standing information
 	tooltip = tooltip .. string.format('Standing: %s%s|r\\n', standingInfo.color, standingInfo.name)
-	
+
 	if standing < 8 then
 		tooltip = tooltip .. string.format('Progress: %d / %d (%.1f%%)\\n', current, max, percent)
 		tooltip = tooltip .. string.format('Remaining: %d points\\n', max - current)
-		
+
 		-- Estimate reputation needed for next standing
 		local nextStandingPoints = self:GetPointsToNextStanding(standing)
-		if nextStandingPoints > 0 then
-			tooltip = tooltip .. string.format('To Next Standing: %d points\\n', nextStandingPoints - current)
-		end
+		if nextStandingPoints > 0 then tooltip = tooltip .. string.format('To Next Standing: %d points\\n', nextStandingPoints - current) end
 	else
 		-- Exalted faction
 		tooltip = tooltip .. string.format('Points: %d\\n', current)
-		
+
 		-- Paragon information
 		if self:GetConfig('trackParagon') then
 			local paragonData = self:GetParagonData(watchedFactionData.factionId)
@@ -222,18 +214,18 @@ function ReputationPlugin:GetTooltip()
 			end
 		end
 	end
-	
+
 	-- Session gains information
 	if self:GetConfig('showSessionGains') then
 		local sessionGain = self._sessionGains[watchedFactionData.factionId] or 0
 		if sessionGain > 0 then
 			tooltip = tooltip .. string.format('\\nSession Gain: +%d reputation\\n', sessionGain)
-			
+
 			local sessionTime = GetTime() - self._sessionStartTime
 			if sessionTime > 0 then
 				local repPerHour = (sessionGain / sessionTime) * 3600
 				tooltip = tooltip .. string.format('Rep/Hour: %.0f\\n', repPerHour)
-				
+
 				if standing < 8 and max > current then
 					local hoursToMax = (max - current) / repPerHour
 					tooltip = tooltip .. string.format('Time to Next: %s\\n', self:FormatTime(hoursToMax * 3600))
@@ -243,7 +235,7 @@ function ReputationPlugin:GetTooltip()
 			tooltip = tooltip .. '\\nNo session gains yet\\n'
 		end
 	end
-	
+
 	-- Paragon reward information
 	local paragonRewards = self:GetParagonRewardStatus()
 	if paragonRewards and #paragonRewards > 0 then
@@ -252,7 +244,7 @@ function ReputationPlugin:GetTooltip()
 			tooltip = tooltip .. string.format('|cFFFFD700• %s (Paragon %d)|r\\n', reward.name, reward.paragonLevel)
 		end
 	end
-	
+
 	-- Multiple factions information
 	if self:GetConfig('showMultipleFactions') then
 		local topFactions = self:GetTopReputationChanges()
@@ -261,17 +253,16 @@ function ReputationPlugin:GetTooltip()
 			for i = 2, math.min(#topFactions, self:GetConfig('maxFactionsShown')) do
 				local faction = topFactions[i]
 				local factionStanding = STANDING_INFO[faction.standing] or STANDING_INFO[4]
-				tooltip = tooltip .. string.format('%s%s: +%d|r\\n', 
-					factionStanding.color, faction.name, faction.sessionGain)
+				tooltip = tooltip .. string.format('%s%s: +%d|r\\n', factionStanding.color, faction.name, faction.sessionGain)
 			end
 		end
 	end
-	
+
 	tooltip = tooltip .. '\\nControls:\\n'
 	tooltip = tooltip .. 'Left-click: Open Reputation panel\\n'
 	tooltip = tooltip .. 'Right-click: Change display format\\n'
 	tooltip = tooltip .. 'Middle-click: Reset session gains'
-	
+
 	return tooltip
 end
 
@@ -313,11 +304,10 @@ function ReputationPlugin:GetWatchedFactionData()
 	else
 		-- Legacy API fallback
 		local numFactions = GetNumFactions and GetNumFactions() or 0
-		
+
 		for i = 1, numFactions do
-			local name, description, standingId, barMin, barMax, barValue, atWarWith, canToggleAtWar, 
-				isHeader, isCollapsed, hasRep, isWatched, isChild, factionId = GetFactionInfo(i)
-				
+			local name, description, standingId, barMin, barMax, barValue, atWarWith, canToggleAtWar, isHeader, isCollapsed, hasRep, isWatched, isChild, factionId = GetFactionInfo(i)
+
 			if isWatched and not isHeader then
 				return {
 					index = i,
@@ -333,7 +323,7 @@ function ReputationPlugin:GetWatchedFactionData()
 			end
 		end
 	end
-	
+
 	return nil
 end
 
@@ -342,13 +332,13 @@ end
 ---@return table? paragonData Paragon data or nil
 function ReputationPlugin:GetParagonData(factionId)
 	if not C_Reputation.IsFactionParagon then return nil end
-	
+
 	local currentValue, threshold, rewardQuestId, hasRewardPending = C_Reputation.GetFactionParagonInfo(factionId)
-	
+
 	if currentValue and threshold then
 		local level = math.floor(currentValue / threshold)
 		local current = currentValue % threshold
-		
+
 		return {
 			level = level,
 			current = current,
@@ -357,7 +347,7 @@ function ReputationPlugin:GetParagonData(factionId)
 			questId = rewardQuestId,
 		}
 	end
-	
+
 	return nil
 end
 
@@ -366,14 +356,13 @@ end
 function ReputationPlugin:GetParagonRewardStatus()
 	if not self:GetConfig('showParagonRewards') then return {} end
 	if not C_Reputation.IsFactionParagon then return {} end
-	
+
 	local paragonRewards = {}
 	local numFactions = GetNumFactions()
-	
+
 	for i = 1, numFactions do
-		local name, description, standingId, barMin, barMax, barValue, atWarWith, canToggleAtWar, 
-			isHeader, isCollapsed, hasRep, isWatched, isChild, factionId = GetFactionInfo(i)
-			
+		local name, description, standingId, barMin, barMax, barValue, atWarWith, canToggleAtWar, isHeader, isCollapsed, hasRep, isWatched, isChild, factionId = GetFactionInfo(i)
+
 		if not isHeader and factionId and standingId == 8 then -- Exalted factions only
 			local paragonData = self:GetParagonData(factionId)
 			if paragonData and paragonData.hasReward then
@@ -386,7 +375,7 @@ function ReputationPlugin:GetParagonRewardStatus()
 			end
 		end
 	end
-	
+
 	return paragonRewards
 end
 
@@ -397,15 +386,15 @@ function ReputationPlugin:GetPointsToNextStanding(currentStanding)
 	-- Reputation thresholds for each standing level
 	local standingThresholds = {
 		[1] = 36000, -- Hated to Hostile
-		[2] = 3000,  -- Hostile to Unfriendly  
-		[3] = 3000,  -- Unfriendly to Neutral
-		[4] = 3000,  -- Neutral to Friendly
-		[5] = 6000,  -- Friendly to Honored
+		[2] = 3000, -- Hostile to Unfriendly
+		[3] = 3000, -- Unfriendly to Neutral
+		[4] = 3000, -- Neutral to Friendly
+		[5] = 6000, -- Friendly to Honored
 		[6] = 12000, -- Honored to Revered
 		[7] = 21000, -- Revered to Exalted
-		[8] = 0,     -- Exalted (max)
+		[8] = 0, -- Exalted (max)
 	}
-	
+
 	return standingThresholds[currentStanding] or 0
 end
 
@@ -413,26 +402,24 @@ end
 ---@return table factions Sorted list of factions by session gain
 function ReputationPlugin:GetTopReputationChanges()
 	local factions = {}
-	
+
 	for factionId, sessionGain in pairs(self._sessionGains) do
 		if sessionGain > 0 then
 			local factionData = self:GetFactionDataById(factionId)
-			if factionData then
-				table.insert(factions, {
-					id = factionId,
-					name = factionData.name,
-					standing = factionData.standingId,
-					sessionGain = sessionGain,
-				})
-			end
+			if factionData then table.insert(factions, {
+				id = factionId,
+				name = factionData.name,
+				standing = factionData.standingId,
+				sessionGain = sessionGain,
+			}) end
 		end
 	end
-	
+
 	-- Sort by session gains (highest first)
 	table.sort(factions, function(a, b)
 		return a.sessionGain > b.sessionGain
 	end)
-	
+
 	return factions
 end
 
@@ -441,21 +428,18 @@ end
 ---@return table? factionData Faction data or nil
 function ReputationPlugin:GetFactionDataById(factionId)
 	local numFactions = GetNumFactions()
-	
+
 	for i = 1, numFactions do
-		local name, description, standingId, barMin, barMax, barValue, atWarWith, canToggleAtWar, 
-			isHeader, isCollapsed, hasRep, isWatched, isChild, id = GetFactionInfo(i)
-			
-		if id == factionId and not isHeader then
-			return {
-				index = i,
-				name = name,
-				standingId = standingId,
-				factionId = id,
-			}
-		end
+		local name, description, standingId, barMin, barMax, barValue, atWarWith, canToggleAtWar, isHeader, isCollapsed, hasRep, isWatched, isChild, id = GetFactionInfo(i)
+
+		if id == factionId and not isHeader then return {
+			index = i,
+			name = name,
+			standingId = standingId,
+			factionId = id,
+		} end
 	end
-	
+
 	return nil
 end
 
@@ -477,10 +461,10 @@ end
 ---@return string formatted Formatted time string
 function ReputationPlugin:FormatTime(seconds)
 	if seconds <= 0 then return '0s' end
-	
+
 	local hours = math.floor(seconds / 3600)
 	local minutes = math.floor((seconds % 3600) / 60)
-	
+
 	if hours > 0 then
 		return string.format('%dh %dm', hours, minutes)
 	elseif minutes > 0 then
@@ -498,10 +482,10 @@ end
 
 ---Cycle through different display formats
 function ReputationPlugin:CycleDisplayFormat()
-	local formats = {'progress', 'standing', 'values', 'percent', 'paragon_rewards'}
+	local formats = { 'progress', 'standing', 'values', 'percent', 'paragon_rewards' }
 	local current = self:GetConfig('displayFormat')
 	local currentIndex = 1
-	
+
 	-- Find current format index
 	for i, format in ipairs(formats) do
 		if format == current then
@@ -509,11 +493,11 @@ function ReputationPlugin:CycleDisplayFormat()
 			break
 		end
 	end
-	
+
 	-- Move to next format (wrap around)
 	local nextIndex = currentIndex < #formats and currentIndex + 1 or 1
 	local nextFormat = formats[nextIndex]
-	
+
 	self:SetConfig('displayFormat', nextFormat)
 	LibsDataBar:DebugLog('info', 'Reputation display format changed to: ' .. nextFormat)
 end
@@ -678,17 +662,17 @@ end
 function ReputationPlugin:OnFactionChange(message)
 	-- Parse reputation gain from combat message
 	local factionName, amount = message:match('reputation with (.+) by (%d+)')
-	
+
 	if factionName and amount then
 		amount = tonumber(amount)
 		local factionId = self:GetFactionIdByName(factionName)
-		
+
 		if factionId then
 			self._sessionGains[factionId] = (self._sessionGains[factionId] or 0) + amount
 			LibsDataBar:DebugLog('info', string.format('Reputation gain: %s +%d', factionName, amount))
 		end
 	end
-	
+
 	self:OnReputationUpdate()
 end
 
@@ -697,15 +681,13 @@ end
 ---@return number? factionId Faction ID or nil
 function ReputationPlugin:GetFactionIdByName(name)
 	local numFactions = GetNumFactions()
-	
+
 	for i = 1, numFactions do
 		local factionName, _, _, _, _, _, _, _, isHeader, _, _, _, _, factionId = GetFactionInfo(i)
-		
-		if factionName == name and not isHeader then
-			return factionId
-		end
+
+		if factionName == name and not isHeader then return factionId end
 	end
-	
+
 	return nil
 end
 

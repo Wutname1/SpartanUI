@@ -47,10 +47,10 @@ local friendsDefaults = {
 }
 
 -- Status and mobile icons
-local MOBILE_HERE_ICON = "|TInterface\\ChatFrame\\UI-ChatIcon-ArmoryChat:0:0:0:0:16:16:0:16:0:16:73:177:73|t"
-local MOBILE_BUSY_ICON = "|TInterface\\ChatFrame\\UI-ChatIcon-ArmoryChat-BusyMobile:0:0:0:0:16:16:0:16:0:16|t"
-local MOBILE_AWAY_ICON = "|TInterface\\ChatFrame\\UI-ChatIcon-ArmoryChat-AwayMobile:0:0:0:0:16:16:0:16:0:16|t"
-local CHECK_ICON = "|TInterface\\Buttons\\UI-CheckBox-Check:0:0|t"
+local MOBILE_HERE_ICON = '|TInterface\\ChatFrame\\UI-ChatIcon-ArmoryChat:0:0:0:0:16:16:0:16:0:16:73:177:73|t'
+local MOBILE_BUSY_ICON = '|TInterface\\ChatFrame\\UI-ChatIcon-ArmoryChat-BusyMobile:0:0:0:0:16:16:0:16:0:16|t'
+local MOBILE_AWAY_ICON = '|TInterface\\ChatFrame\\UI-ChatIcon-ArmoryChat-AwayMobile:0:0:0:0:16:16:0:16:0:16|t'
+local CHECK_ICON = '|TInterface\\Buttons\\UI-CheckBox-Check:0:0|t'
 
 -- Color constants
 local COLORS = {
@@ -60,17 +60,17 @@ local COLORS = {
 	mobile = 'CCCCCC',
 	separator = 'FFD200',
 	offline = '808080',
-	online = '40FF40'
+	online = '40FF40',
 }
 
 -- Initialize plugin
 function FriendsPlugin:OnInitialize()
 	-- Cache player info for group member detection
 	self._playerRealm = GetRealmName()
-	
+
 	-- Set default configuration
 	self:SetDefaultConfig(friendsDefaults)
-	
+
 	-- Register for events
 	self:RegisterForEvents()
 end
@@ -90,11 +90,9 @@ end
 function FriendsPlugin:OnEvent(event, ...)
 	-- Throttle updates to prevent spam
 	local now = GetTime()
-	if now - self._lastUpdate < self._updateThrottle then
-		return
-	end
+	if now - self._lastUpdate < self._updateThrottle then return end
 	self._lastUpdate = now
-	
+
 	-- Update display
 	self:Update()
 end
@@ -104,12 +102,12 @@ end
 function FriendsPlugin:ParseRealID()
 	local friends, bnets = {}, {}
 	local _, numOnline = BNGetNumFriends()
-	
+
 	for i = 1, numOnline do
 		local accountInfo = C_BattleNet.GetFriendAccountInfo(i)
 		if accountInfo then
 			local toons, focus, bnet = {}, nil, nil
-			
+
 			for j = 1, C_BattleNet.GetFriendNumGameAccounts(i) do
 				local gameAccountInfo = C_BattleNet.GetFriendGameAccountInfo(i, j)
 				if gameAccountInfo then
@@ -122,10 +120,10 @@ function FriendsPlugin:ParseRealID()
 						class = gameAccountInfo.className,
 						zone = gameAccountInfo.areaName,
 						level = gameAccountInfo.characterLevel,
-						location = gameAccountInfo.areaName or gameAccountInfo.richPresence
+						location = gameAccountInfo.areaName or gameAccountInfo.richPresence,
 					}
-					
-					if gameAccountInfo.clientProgram == BNET_CLIENT_APP or gameAccountInfo.clientProgram == "BSAp" then
+
+					if gameAccountInfo.clientProgram == BNET_CLIENT_APP or gameAccountInfo.clientProgram == 'BSAp' then
 						if not bnet then bnet = toon end
 					elseif gameAccountInfo.hasFocus then
 						if focus then table.insert(toons, 1, focus) end
@@ -135,13 +133,13 @@ function FriendsPlugin:ParseRealID()
 					end
 				end
 			end
-			
+
 			-- Fallback if no focus character
 			if not focus and #toons > 0 then
 				focus = toons[1]
 				table.remove(toons, 1)
 			end
-			
+
 			if focus or bnet then
 				local friend = {
 					bnetAccountID = accountInfo.bnetAccountID,
@@ -153,15 +151,15 @@ function FriendsPlugin:ParseRealID()
 					note = accountInfo.note,
 					focus = focus,
 					alts = toons,
-					bnet = bnet
+					bnet = bnet,
 				}
-				
+
 				if focus then table.insert(friends, friend) end
 				if bnet then table.insert(bnets, friend) end
 			end
 		end
 	end
-	
+
 	return friends, bnets
 end
 
@@ -170,14 +168,12 @@ end
 function FriendsPlugin:GetFriendsData()
 	local friends = {}
 	local numOnline = C_FriendList.GetNumOnlineFriends()
-	
+
 	for i = 1, numOnline do
 		local info = C_FriendList.GetFriendInfoByIndex(i)
-		if info then
-			table.insert(friends, info)
-		end
+		if info then table.insert(friends, info) end
 	end
-	
+
 	return friends
 end
 
@@ -185,19 +181,17 @@ end
 ---@return table
 function FriendsPlugin:GetGuildData()
 	local members = {}
-	
-	if not IsInGuild() then
-		return members
-	end
-	
+
+	if not IsInGuild() then return members end
+
 	local numTotal, numOnline = GetNumGuildMembers()
-	
+
 	for i = 1, numOnline do
 		local name, rank, rankIndex, level, class, zone, note, officerNote, online, status, classFileName, achievementPoints, achievementRank, isMobile = GetGuildRosterInfo(i)
-		
+
 		if name and online then
 			table.insert(members, {
-				name = Ambiguate(name, "guild"),
+				name = Ambiguate(name, 'guild'),
 				fullName = name,
 				rank = rank,
 				rankIndex = rankIndex,
@@ -208,11 +202,11 @@ function FriendsPlugin:GetGuildData()
 				note = note,
 				officerNote = officerNote,
 				status = status,
-				isMobile = isMobile
+				isMobile = isMobile,
 			})
 		end
 	end
-	
+
 	return members
 end
 
@@ -222,12 +216,10 @@ end
 ---@return boolean
 function FriendsPlugin:IsInGroup(name, realmName)
 	if not IsInGroup() then return false end
-	
+
 	local fullName = name
-	if realmName and realmName ~= self._playerRealm then
-		fullName = name .. "-" .. realmName
-	end
-	
+	if realmName and realmName ~= self._playerRealm then fullName = name .. '-' .. realmName end
+
 	return UnitInParty(fullName) or UnitInRaid(fullName)
 end
 
@@ -236,13 +228,13 @@ end
 ---@return string
 function FriendsPlugin:GetStatusIcon(status)
 	if not self:GetConfig('showStatusIcons') then return '' end
-	
+
 	if status == CHAT_FLAG_AFK or status == 1 then
-		return "|T" .. FRIENDS_TEXTURE_AFK .. ":0|t"
+		return '|T' .. FRIENDS_TEXTURE_AFK .. ':0|t'
 	elseif status == CHAT_FLAG_DND or status == 2 then
-		return "|T" .. FRIENDS_TEXTURE_DND .. ":0|t"
+		return '|T' .. FRIENDS_TEXTURE_DND .. ':0|t'
 	end
-	
+
 	return ''
 end
 
@@ -252,12 +244,10 @@ end
 ---@return string
 function FriendsPlugin:ColorTextByClass(text, class)
 	if not class then return text end
-	
+
 	local color = RAID_CLASS_COLORS[class]
-	if color then
-		return string.format("|c%s%s|r", color.colorStr, text)
-	end
-	
+	if color then return string.format('|c%s%s|r', color.colorStr, text) end
+
 	return text
 end
 
@@ -267,185 +257,154 @@ function FriendsPlugin:GetText()
 	local displayFormat = self:GetConfig('displayFormat')
 	local showLabel = self:GetConfig('showLabel')
 	local separateGuildLabel = self:GetConfig('separateGuildLabel')
-	
+
 	-- Get all data
 	local realidFriends, bnetFriends = self:ParseRealID()
 	local characterFriends = self:GetFriendsData()
 	local guildMembers = self:GetGuildData()
-	
+
 	-- Count totals
 	local realidCount = #realidFriends
 	local bnetCount = #bnetFriends
 	local friendsCount = #characterFriends
 	local guildCount = #guildMembers
-	
-	local text = ""
+
+	local text = ''
 	local components = {}
-	
+
 	-- Add label if enabled
 	if showLabel then
 		if separateGuildLabel and IsInGuild() then
-			local guildName = GetGuildInfo("player") or "Guild"
-			text = guildName .. ": "
+			local guildName = GetGuildInfo('player') or 'Guild'
+			text = guildName .. ': '
 		else
-			text = "Friends: "
+			text = 'Friends: '
 		end
 	end
-	
+
 	-- Build display based on format
 	if displayFormat == 'combined' then
-		if realidCount > 0 then
-			table.insert(components, string.format("|cff%s%d|r", COLORS.realid, realidCount))
-		end
-		if friendsCount > 0 then
-			table.insert(components, string.format("|cff%s%d|r", COLORS.friends, friendsCount))
-		end
-		if guildCount > 0 then
-			table.insert(components, string.format("|cff%s%d|r", COLORS.guild, guildCount))
-		end
-		if self:GetConfig('showMobileIndicators') and bnetCount > 0 then
-			table.insert(components, string.format("|cff%s%d|r", COLORS.mobile, bnetCount))
-		end
-		
+		if realidCount > 0 then table.insert(components, string.format('|cff%s%d|r', COLORS.realid, realidCount)) end
+		if friendsCount > 0 then table.insert(components, string.format('|cff%s%d|r', COLORS.friends, friendsCount)) end
+		if guildCount > 0 then table.insert(components, string.format('|cff%s%d|r', COLORS.guild, guildCount)) end
+		if self:GetConfig('showMobileIndicators') and bnetCount > 0 then table.insert(components, string.format('|cff%s%d|r', COLORS.mobile, bnetCount)) end
 	elseif displayFormat == 'friends' then
-		table.insert(components, string.format("|cff%s%d|r", COLORS.friends, friendsCount))
-		
+		table.insert(components, string.format('|cff%s%d|r', COLORS.friends, friendsCount))
 	elseif displayFormat == 'guild' then
-		table.insert(components, string.format("|cff%s%d|r", COLORS.guild, guildCount))
-		
+		table.insert(components, string.format('|cff%s%d|r', COLORS.guild, guildCount))
 	elseif displayFormat == 'realid' then
-		table.insert(components, string.format("|cff%s%d|r", COLORS.realid, realidCount))
-		
+		table.insert(components, string.format('|cff%s%d|r', COLORS.realid, realidCount))
 	elseif displayFormat == 'detailed' then
 		local total = realidCount + friendsCount + guildCount
-		if self:GetConfig('showMobileIndicators') then
-			total = total + bnetCount
-		end
-		table.insert(components, string.format("|cff%s%d|r", COLORS.online, total))
+		if self:GetConfig('showMobileIndicators') then total = total + bnetCount end
+		table.insert(components, string.format('|cff%s%d|r', COLORS.online, total))
 	end
-	
-	if #components == 0 then
-		return text .. "|cff" .. COLORS.offline .. "0|r"
-	end
-	
-	return text .. table.concat(components, string.format(" |cff%s/|r ", COLORS.separator))
+
+	if #components == 0 then return text .. '|cff' .. COLORS.offline .. '0|r' end
+
+	return text .. table.concat(components, string.format(' |cff%s/|r ', COLORS.separator))
 end
 
 -- Required: Update tooltip content
 ---@param tooltip GameTooltip
 function FriendsPlugin:UpdateTooltip(tooltip)
 	if not self:GetConfig('enableTooltip') then return end
-	
+
 	-- Get all data
 	local realidFriends, bnetFriends = self:ParseRealID()
 	local characterFriends = self:GetFriendsData()
 	local guildMembers = self:GetGuildData()
-	
+
 	tooltip:AddLine(self.name, nil, 1, 1, 1)
-	tooltip:AddLine(" ")
-	
+	tooltip:AddLine(' ')
+
 	-- RealID Friends Section
 	if #realidFriends > 0 then
-		tooltip:AddLine(string.format("|cff%sRealID Friends (%d)|r", COLORS.realid, #realidFriends))
-		
+		tooltip:AddLine(string.format('|cff%sRealID Friends (%d)|r', COLORS.realid, #realidFriends))
+
 		for _, friend in ipairs(realidFriends) do
 			local focus = friend.focus
 			if focus then
-				local line = ""
-				
+				local line = ''
+
 				-- Group indicator
-				if self:GetConfig('showGroupMembers') and self:IsInGroup(focus.name, focus.realmName) then
-					line = line .. CHECK_ICON .. " "
-				end
-				
+				if self:GetConfig('showGroupMembers') and self:IsInGroup(focus.name, focus.realmName) then line = line .. CHECK_ICON .. ' ' end
+
 				-- Status icon
-				line = line .. self:GetStatusIcon(friend.isAFK and CHAT_FLAG_AFK or (friend.isDND and CHAT_FLAG_DND or ""))
-				
+				line = line .. self:GetStatusIcon(friend.isAFK and CHAT_FLAG_AFK or (friend.isDND and CHAT_FLAG_DND or ''))
+
 				-- Character name and level
 				if focus.client == BNET_CLIENT_WOW then
 					line = line .. self:ColorTextByClass(focus.name, focus.class)
-					if focus.level then
-						line = line .. string.format(" (%d)", focus.level)
-					end
+					if focus.level then line = line .. string.format(' (%d)', focus.level) end
 				else
-					line = line .. (focus.name or "Unknown")
+					line = line .. (focus.name or 'Unknown')
 				end
-				
+
 				-- Battle tag
-				line = line .. string.format(" [|cff%s%s|r]", COLORS.realid, friend.battleTag)
-				
+				line = line .. string.format(' [|cff%s%s|r]', COLORS.realid, friend.battleTag)
+
 				-- Location
-				local location = focus.location or ""
-				if location ~= "" then
-					location = " - " .. location
-				end
-				
+				local location = focus.location or ''
+				if location ~= '' then location = ' - ' .. location end
+
 				tooltip:AddDoubleLine(line, location)
-				
+
 				-- Note
-				if self:GetConfig('showNotes') and friend.note and friend.note ~= "" then
-					tooltip:AddLine("  Note: " .. friend.note, 0.8, 0.8, 0.8)
-				end
-				
+				if self:GetConfig('showNotes') and friend.note and friend.note ~= '' then tooltip:AddLine('  Note: ' .. friend.note, 0.8, 0.8, 0.8) end
+
 				-- Broadcast
-				if self:GetConfig('showBroadcasts') and friend.broadcastText and friend.broadcastText ~= "" then
-					tooltip:AddLine("  " .. friend.broadcastText, 0, 0.7, 1)
-				end
+				if self:GetConfig('showBroadcasts') and friend.broadcastText and friend.broadcastText ~= '' then tooltip:AddLine('  ' .. friend.broadcastText, 0, 0.7, 1) end
 			end
 		end
-		tooltip:AddLine(" ")
+		tooltip:AddLine(' ')
 	end
-	
+
 	-- Character Friends Section
 	if #characterFriends > 0 then
-		tooltip:AddLine(string.format("|cff%sFriends (%d)|r", COLORS.friends, #characterFriends))
-		
+		tooltip:AddLine(string.format('|cff%sFriends (%d)|r', COLORS.friends, #characterFriends))
+
 		for _, friend in ipairs(characterFriends) do
-			local line = ""
-			
+			local line = ''
+
 			-- Group indicator
-			if self:GetConfig('showGroupMembers') and self:IsInGroup(friend.name) then
-				line = line .. CHECK_ICON .. " "
-			end
-			
+			if self:GetConfig('showGroupMembers') and self:IsInGroup(friend.name) then line = line .. CHECK_ICON .. ' ' end
+
 			-- Status icon
-			local status = ""
-			if friend.afk then status = CHAT_FLAG_AFK
-			elseif friend.dnd then status = CHAT_FLAG_DND end
+			local status = ''
+			if friend.afk then
+				status = CHAT_FLAG_AFK
+			elseif friend.dnd then
+				status = CHAT_FLAG_DND
+			end
 			line = line .. self:GetStatusIcon(status)
-			
+
 			-- Name and level
 			line = line .. self:ColorTextByClass(friend.name, friend.className)
-			if friend.level then
-				line = line .. string.format(" (%d)", friend.level)
-			end
-			
+			if friend.level then line = line .. string.format(' (%d)', friend.level) end
+
 			-- Location
-			local location = friend.area or ""
-			
+			local location = friend.area or ''
+
 			tooltip:AddDoubleLine(line, location)
-			
+
 			-- Note
-			if self:GetConfig('showNotes') and friend.notes and friend.notes ~= "" then
-				tooltip:AddLine("  Note: " .. friend.notes, 0.8, 0.8, 0.8)
-			end
+			if self:GetConfig('showNotes') and friend.notes and friend.notes ~= '' then tooltip:AddLine('  Note: ' .. friend.notes, 0.8, 0.8, 0.8) end
 		end
-		tooltip:AddLine(" ")
+		tooltip:AddLine(' ')
 	end
-	
+
 	-- Guild Members Section
 	if #guildMembers > 0 then
-		local guildName = GetGuildInfo("player") or "Guild"
-		tooltip:AddLine(string.format("|cff%s%s (%d)|r", COLORS.guild, guildName, #guildMembers))
-		
+		local guildName = GetGuildInfo('player') or 'Guild'
+		tooltip:AddLine(string.format('|cff%s%s (%d)|r', COLORS.guild, guildName, #guildMembers))
+
 		for _, member in ipairs(guildMembers) do
-			local line = ""
-			
+			local line = ''
+
 			-- Group indicator
-			if self:GetConfig('showGroupMembers') and self:IsInGroup(member.name) then
-				line = line .. CHECK_ICON .. " "
-			end
-			
+			if self:GetConfig('showGroupMembers') and self:IsInGroup(member.name) then line = line .. CHECK_ICON .. ' ' end
+
 			-- Mobile/Status icon
 			if member.isMobile then
 				if member.status == 2 then
@@ -458,76 +417,68 @@ function FriendsPlugin:UpdateTooltip(tooltip)
 			else
 				line = line .. self:GetStatusIcon(member.status)
 			end
-			
+
 			-- Name and level
 			line = line .. self:ColorTextByClass(member.name, member.classFileName)
-			if member.level then
-				line = line .. string.format(" (%d)", member.level)
-			end
-			
+			if member.level then line = line .. string.format(' (%d)', member.level) end
+
 			-- Rank
-			line = line .. " - " .. (member.rank or "")
-			
+			line = line .. ' - ' .. (member.rank or '')
+
 			-- Location
-			local location = member.zone or ""
-			
+			local location = member.zone or ''
+
 			tooltip:AddDoubleLine(line, location)
-			
+
 			-- Note
-			if self:GetConfig('showNotes') and member.note and member.note ~= "" then
-				tooltip:AddLine("  Note: " .. member.note, 0.8, 0.8, 0.8)
-			end
-			
+			if self:GetConfig('showNotes') and member.note and member.note ~= '' then tooltip:AddLine('  Note: ' .. member.note, 0.8, 0.8, 0.8) end
+
 			-- Officer note (if visible)
-			if C_GuildInfo.CanViewOfficerNote() and member.officerNote and member.officerNote ~= "" then
-				tooltip:AddLine("  Officer Note: " .. member.officerNote, 0.7, 1, 0.7)
-			end
+			if C_GuildInfo.CanViewOfficerNote() and member.officerNote and member.officerNote ~= '' then tooltip:AddLine('  Officer Note: ' .. member.officerNote, 0.7, 1, 0.7) end
 		end
-		tooltip:AddLine(" ")
+		tooltip:AddLine(' ')
 	end
-	
+
 	-- Mobile Battle.net Friends Section
 	if self:GetConfig('showMobileIndicators') and #bnetFriends > 0 then
-		tooltip:AddLine(string.format("|cff%sBattle.net App (%d)|r", COLORS.mobile, #bnetFriends))
-		
+		tooltip:AddLine(string.format('|cff%sBattle.net App (%d)|r', COLORS.mobile, #bnetFriends))
+
 		for _, friend in ipairs(bnetFriends) do
 			local bnet = friend.bnet
 			if bnet then
-				local line = ""
-				
+				local line = ''
+
 				-- Status icon
-				line = line .. self:GetStatusIcon(friend.isAFK and CHAT_FLAG_AFK or (friend.isDND and CHAT_FLAG_DND or ""))
-				
+				line = line .. self:GetStatusIcon(friend.isAFK and CHAT_FLAG_AFK or (friend.isDND and CHAT_FLAG_DND or ''))
+
 				-- Battle tag
-				line = line .. string.format("|cff%s%s|r", COLORS.realid, friend.battleTag)
-				
+				line = line .. string.format('|cff%s%s|r', COLORS.realid, friend.battleTag)
+
 				tooltip:AddLine(line)
-				
+
 				-- Note
-				if self:GetConfig('showNotes') and friend.note and friend.note ~= "" then
-					tooltip:AddLine("  Note: " .. friend.note, 0.8, 0.8, 0.8)
-				end
+				if self:GetConfig('showNotes') and friend.note and friend.note ~= '' then tooltip:AddLine('  Note: ' .. friend.note, 0.8, 0.8, 0.8) end
 			end
 		end
-		tooltip:AddLine(" ")
+		tooltip:AddLine(' ')
 	end
-	
+
 	-- Usage instructions
-	tooltip:AddLine("|cffFFFFFFLeft-click:|r Open Friends Frame")
-	tooltip:AddLine("|cffFFFFFFRight-click:|r Plugin Options")
+	tooltip:AddLine('|cffFFFFFFLeft-click:|r Open Friends Frame')
+	tooltip:AddLine('|cffFFFFFFRight-click:|r Plugin Options')
 end
 
 -- Handle clicks
 function FriendsPlugin:OnClick(button)
 	local clickAction = self:GetConfig('clickAction')
-	
-	if button == "LeftButton" then
+
+	if button == 'LeftButton' then
 		if clickAction == 'friends_frame' then
 			ToggleFriendsFrame(1)
 		elseif clickAction == 'guild_frame' then
 			ToggleGuildFrame()
 		end
-	elseif button == "RightButton" then
+	elseif button == 'RightButton' then
 		self:OpenConfig()
 	end
 end
@@ -541,72 +492,72 @@ function FriendsPlugin:GetConfigOptions()
 			values = {
 				combined = 'Combined (RealID/Friends/Guild)',
 				friends = 'Character Friends Only',
-				guild = 'Guild Members Only', 
+				guild = 'Guild Members Only',
 				realid = 'RealID Friends Only',
-				detailed = 'Total Count'
+				detailed = 'Total Count',
 			},
 			desc = 'Choose what information to display in the data text',
-			order = 1
+			order = 1,
 		},
 		showLabel = {
 			name = 'Show Label',
 			type = 'toggle',
 			desc = 'Show "Friends:" or guild name label before the counts',
-			order = 2
+			order = 2,
 		},
 		separateGuildLabel = {
 			name = 'Show Guild Name as Label',
 			type = 'toggle',
 			desc = 'Show guild name instead of "Friends:" when in a guild',
-			order = 3
+			order = 3,
 		},
 		showIcon = {
 			name = 'Show Icon',
 			type = 'toggle',
 			desc = 'Show the friends icon in the data text',
-			order = 4
+			order = 4,
 		},
 		showMobileIndicators = {
 			name = 'Show Mobile Friends',
 			type = 'toggle',
 			desc = 'Include Battle.net app friends in display and tooltip',
-			order = 5
+			order = 5,
 		},
 		showStatusIcons = {
 			name = 'Show Status Icons',
 			type = 'toggle',
 			desc = 'Display AFK/DND status icons in tooltip',
-			order = 6
+			order = 6,
 		},
 		showGroupMembers = {
 			name = 'Show Group Members',
 			type = 'toggle',
 			desc = 'Indicate friends who are in your party/raid with a checkmark',
-			order = 7
+			order = 7,
 		},
 		showNotes = {
 			name = 'Show Notes',
 			type = 'toggle',
 			desc = 'Display friend and guild member notes in tooltip',
-			order = 8
+			order = 8,
 		},
 		showBroadcasts = {
 			name = 'Show Broadcasts',
 			type = 'toggle',
 			desc = 'Display RealID broadcast messages in tooltip',
-			order = 9
+			order = 9,
 		},
 		enableTooltip = {
 			name = 'Enable Tooltip',
 			type = 'toggle',
 			desc = 'Show detailed information when hovering over the data text',
-			order = 10
+			order = 10,
 		},
 		colorByStatus = {
 			name = 'Color by Status',
 			type = 'toggle',
 			desc = 'Color the text based on online/offline status',
-			order = 11
+			order = 11,
 		},
 		clickAction = {
 			name = 'Click Action',
@@ -614,11 +565,11 @@ function FriendsPlugin:GetConfigOptions()
 			values = {
 				friends_frame = 'Open Friends Frame',
 				guild_frame = 'Open Guild Frame',
-				none = 'No Action'
+				none = 'No Action',
 			},
 			desc = 'Action to perform when left-clicking the data text',
-			order = 12
-		}
+			order = 12,
+		},
 	}
 end
 
@@ -635,7 +586,7 @@ function FriendsPlugin:GetConfig(key)
 	return LibsDataBar.config:GetConfig('plugins.' .. self.id .. '.pluginSettings.' .. key) or friendsDefaults[key]
 end
 
----Helper: Set plugin configuration value  
+---Helper: Set plugin configuration value
 ---@param key string Configuration key
 ---@param value any Configuration value
 function FriendsPlugin:SetConfig(key, value)
