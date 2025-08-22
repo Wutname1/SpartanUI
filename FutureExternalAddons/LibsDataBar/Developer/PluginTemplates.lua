@@ -4,8 +4,8 @@ LibsDataBar Plugin Development Templates
 Comprehensive templates for creating native and LDB plugins
 --]===]
 
--- Get the LibsDataBar library
-local LibsDataBar = LibStub:GetLibrary('LibsDataBar-1.0')
+-- Get the LibsDataBar addon
+local LibsDataBar = LibStub('AceAddon-3.0'):GetAddon('LibsDataBar', true)
 if not LibsDataBar then return end
 
 ---@class PluginTemplates
@@ -27,8 +27,8 @@ Author: {PLUGIN_AUTHOR}
 Version: {PLUGIN_VERSION}
 --]===]
 
--- Get the LibsDataBar library
-local LibsDataBar = LibStub:GetLibrary("LibsDataBar-1.0")
+-- Get the LibsDataBar addon
+local LibsDataBar = LibStub('AceAddon-3.0'):GetAddon('LibsDataBar', true)
 if not LibsDataBar then return end
 
 -- Plugin Definition

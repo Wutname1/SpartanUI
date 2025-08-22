@@ -4,8 +4,8 @@ LibsDataBar Volume Plugin
 Displays and controls audio volume (Master, Music, Sound Effects)
 --]===]
 
--- Get the LibsDataBar library
-local LibsDataBar = LibStub:GetLibrary('LibsDataBar-1.0')
+-- Get the LibsDataBar addon
+local LibsDataBar = LibStub('AceAddon-3.0'):GetAddon('LibsDataBar', true)
 if not LibsDataBar then return end
 
 -- Plugin Definition

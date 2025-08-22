@@ -4,8 +4,8 @@ LibsDataBar Advanced Configuration Management System
 Real-time preview, templates, presets, and advanced configuration features
 --]===]
 
--- Get the LibsDataBar library
-local LibsDataBar = LibStub:GetLibrary('LibsDataBar-1.0')
+-- Get the LibsDataBar addon
+local LibsDataBar = LibStub('AceAddon-3.0'):GetAddon('LibsDataBar', true)
 if not LibsDataBar then return end
 
 -- AceGUI for interface elements
