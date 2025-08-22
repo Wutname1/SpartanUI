@@ -15,15 +15,18 @@ This document outlines the phased refactor plan to convert LibsDataBar from a Li
 **Goal**: Convert from library to addon pattern with minimal functional changes
 
 ### Tasks:
-- [ ] **Convert LibsDataBar.lua from library to addon pattern**
+
+- [x] **Convert LibsDataBar.lua from library to addon pattern**
+
   - Replace `LibStub:NewLibrary('LibsDataBar-1.0', 1)` with `LibStub("AceAddon-3.0"):NewAddon("LibsDataBar")`
   - Add AceEvent-3.0, AceTimer-3.0 embeds (minimal for now)
   - Implement OnInitialize(), OnEnable(), OnDisable() callbacks
   - Migrate existing initialization code to proper callbacks
 
 - [ ] **Update plugin loading and initialization order**
+
   - Ensure plugins load after main addon initialization
-  - Fix plugin registration timing to use OnEnable() 
+  - Fix plugin registration timing to use OnEnable()
   - Preserve existing functionality during migration
 
 - [ ] **Migrate basic event handling to AceEvent-3.0**
@@ -32,6 +35,7 @@ This document outlines the phased refactor plan to convert LibsDataBar from a Li
   - Implement proper event cleanup on disable
 
 ### Testing Checkpoints:
+
 - [ ] Addon loads without Lua errors
 - [ ] All 11 built-in plugins register correctly
 - [ ] Basic functionality preserved (even if text display still broken)
@@ -46,17 +50,21 @@ This document outlines the phased refactor plan to convert LibsDataBar from a Li
 **Goal**: Fix text display timing issues using AceTimer-3.0
 
 ### Tasks:
+
 - [ ] **Implement proper initialization timing with AceTimer-3.0**
+
   - Schedule initial bar updates after game data is fully loaded
   - Use `ScheduleTimer("UpdateAllBars", 1.0)` in OnEnable()
   - Add delayed initialization for data-dependent plugins
 
 - [ ] **Add periodic refresh system**
+
   - Replace immediate updates with timer-based updates
   - Add periodic refresh timers for all data bars
   - Implement configurable update intervals (default 5 seconds)
 
 - [ ] **Implement update throttling**
+
   - Prevent spam updates during rapid events
   - Add intelligent refresh triggers
   - Optimize update frequency per plugin type
@@ -67,6 +75,7 @@ This document outlines the phased refactor plan to convert LibsDataBar from a Li
   - Ensure data updates properly in real-time
 
 ### Testing Checkpoints:
+
 - [ ] **All DataBar text displays correctly on login**
 - [ ] **Plugins update properly with live data**
 - [ ] No timer conflicts or excessive updates
@@ -81,13 +90,16 @@ This document outlines the phased refactor plan to convert LibsDataBar from a Li
 **Goal**: Implement robust configuration with profiles and automatic UI
 
 ### Tasks:
+
 - [ ] **Integrate AceDB-3.0 for saved variables**
+
   - Replace manual SavedVariables with AceDB database
   - Implement profile system (per-character, realm, global)
   - Add automatic defaults merging
   - Setup database callbacks for live config updates
 
 - [ ] **Enhance AceConfig-3.0 integration**
+
   - Convert manual option tables to proper AceConfig format
   - Add automatic Settings panel integration
   - Implement hierarchical plugin configuration
@@ -99,6 +111,7 @@ This document outlines the phased refactor plan to convert LibsDataBar from a Li
   - Integration with main configuration panels
 
 ### Testing Checkpoints:
+
 - [ ] Configuration persists across sessions
 - [ ] Profile switching works correctly
 - [ ] Plugin settings are properly categorized
@@ -113,13 +126,16 @@ This document outlines the phased refactor plan to convert LibsDataBar from a Li
 **Goal**: Optimize performance and enhance user experience
 
 ### Tasks:
+
 - [ ] **Implement AceBucket-3.0 for event throttling**
+
   - Replace rapid-fire event handling with buckets
   - Throttle bag updates, currency changes, etc.
   - Batch UI updates for better performance
   - Add configurable update intervals
 
 - [ ] **Add AceConsole-3.0 for command system**
+
   - Replace basic slash commands with AceConsole
   - Add help text generation
   - Implement command-line configuration options
@@ -132,6 +148,7 @@ This document outlines the phased refactor plan to convert LibsDataBar from a Li
   - Add tabular data display for complex plugins
 
 ### Testing Checkpoints:
+
 - [ ] Event throttling improves performance
 - [ ] Commands work correctly with help text
 - [ ] Tooltips display rich data properly
@@ -146,13 +163,16 @@ This document outlines the phased refactor plan to convert LibsDataBar from a Li
 **Goal**: Modern positioning and theme integration
 
 ### Tasks:
+
 - [ ] **Integrate LibEditMode for modern positioning**
+
   - Register bars/containers in Edit Mode
   - Add snap-to-grid and alignment helpers
   - Implement intuitive drag-and-drop positioning
   - Ensure persistent position saving
 
 - [ ] **Enhance LibSharedMedia-3.0 integration**
+
   - Expand theme system with shared media
   - Add user-configurable fonts and textures
   - Integrate with SpartanUI theme system
@@ -165,8 +185,9 @@ This document outlines the phased refactor plan to convert LibsDataBar from a Li
   - Enable community preset sharing
 
 ### Testing Checkpoints:
+
 - [ ] Edit Mode integration works seamlessly
-- [ ] Shared media selection works correctly  
+- [ ] Shared media selection works correctly
 - [ ] Configuration sharing functions properly
 - [ ] Theme synchronization with SpartanUI
 
@@ -179,13 +200,16 @@ This document outlines the phased refactor plan to convert LibsDataBar from a Li
 **Goal**: Enhanced developer tools and final polish
 
 ### Tasks:
+
 - [ ] **Enhance developer tools with Ace3**
+
   - Integrate AceGUI-3.0 for plugin wizard UI
   - Add advanced configuration panel creation
   - Implement live plugin validation with feedback
   - Create comprehensive developer documentation
 
 - [ ] **Add optional advanced features**
+
   - Implement AceLocale-3.0 for internationalization
   - Add AceHook-3.0 for Blizzard UI integration
   - Consider LibDualSpec-1.0 for spec-specific configs
@@ -198,6 +222,7 @@ This document outlines the phased refactor plan to convert LibsDataBar from a Li
   - Complete testing across all features
 
 ### Testing Checkpoints:
+
 - [ ] All developer tools function correctly
 - [ ] No deprecated patterns remain
 - [ ] Performance meets target goals
