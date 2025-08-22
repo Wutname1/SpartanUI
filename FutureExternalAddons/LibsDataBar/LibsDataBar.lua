@@ -1,20 +1,25 @@
 ---@diagnostic disable: duplicate-set-field
 --[===[ File: LibsDataBar.lua
 LibsDataBar - Next-generation data broker display addon
-Core library implementation based on the architecture design document
+Core addon implementation using AceAddon-3.0 framework
 
 Combines TitanPanel's ecosystem depth with modern architectural patterns
 and performance optimizations for World of Warcraft addons.
 --]===]
 
--- Library Dependencies
-assert(LibStub, 'LibsDataBar-1.0 requires LibStub')
-assert(LibStub:GetLibrary('CallbackHandler-1.0', true), 'LibsDataBar-1.0 requires CallbackHandler-1.0')
+-- Addon Dependencies
+assert(LibStub, 'LibsDataBar requires LibStub')
+assert(LibStub:GetLibrary('AceAddon-3.0', true), 'LibsDataBar requires AceAddon-3.0')
+assert(LibStub:GetLibrary('AceEvent-3.0', true), 'LibsDataBar requires AceEvent-3.0')
+assert(LibStub:GetLibrary('AceTimer-3.0', true), 'LibsDataBar requires AceTimer-3.0')
+assert(LibStub:GetLibrary('CallbackHandler-1.0', true), 'LibsDataBar requires CallbackHandler-1.0')
 
--- Library Registration with LibStub
-local lib, oldminor = LibStub:NewLibrary('LibsDataBar-1.0', 1)
-if not lib then return end
-oldminor = oldminor or 0
+-- Addon Registration with AceAddon-3.0
+local LibsDataBar = LibStub('AceAddon-3.0'):NewAddon('LibsDataBar', 'AceEvent-3.0', 'AceTimer-3.0')
+if not LibsDataBar then return end
+
+-- For backward compatibility, expose as library for existing code
+local lib = LibsDataBar
 
 -- Local References for Performance
 local _G = _G
@@ -35,8 +40,8 @@ local LIBSDATABAR_DEBUG = false -- Phase 1 debugging complete
 -- LDBAdapter provides clean interface bridge between LDB and display system
 -- Single plugin interface for maximum maintainability
 
----@class LibsDataBar
----@field version string Library version
+---@class LibsDataBar : AceAddon
+---@field version string Addon version
 ---@field bars table<string, DataBar> Active bars registry
 ---@field events EventManager Event management system
 ---@field config ConfigManager Configuration system
@@ -467,15 +472,10 @@ end
 -- Core Library API
 ----------------------------------------------------------------------------------------------------
 
----Initialize the LibsDataBar library
-function lib:Initialize()
+---Initialize core systems (called from OnInitialize)
+function lib:InitializeSystems()
 	lib.events:Initialize()
 	lib.config:Initialize()
-
-	-- Fire library initialization event
-	lib.callbacks:Fire('LibsDataBar_Initialized', self)
-
-	if LIBSDATABAR_DEBUG then self:DebugLog('info', 'LibsDataBar-1.0 initialized successfully') end
 end
 
 ---Setup default bars and plugins for first-time use
@@ -978,27 +978,65 @@ function lib:DebugLog(level, message, category)
 	print(prefix .. ' ' .. levelColor .. '[' .. level:upper() .. ']|r ' .. categoryText .. message)
 end
 
--- Initialize library on load
-lib:Initialize()
+----------------------------------------------------------------------------------------------------
+-- AceAddon-3.0 Lifecycle Callbacks
+----------------------------------------------------------------------------------------------------
 
--- Setup startup event handling
-local startupFrame = CreateFrame('Frame')
-startupFrame:RegisterEvent('ADDON_LOADED')
-startupFrame:RegisterEvent('PLAYER_LOGIN')
-
-startupFrame:SetScript('OnEvent', function(self, event, ...)
-	if event == 'ADDON_LOADED' then
-		local addonName = ...
-		-- Wait for all addons to load, then setup on player login
-		return
-	elseif event == 'PLAYER_LOGIN' then
-		-- Small delay to ensure everything is ready
-		C_Timer.After(0.5, function()
-			lib:SetupDefaults()
-		end)
-		self:UnregisterAllEvents()
+---Called when the addon is first loaded
+function LibsDataBar:OnInitialize()
+	self:DebugLog('info', 'LibsDataBar OnInitialize() called')
+	
+	-- Initialize core systems
+	self:InitializeSystems()
+	
+	-- Fire library initialization event for backward compatibility
+	self.callbacks:Fire('LibsDataBar_Initialized', self)
+	
+	if LIBSDATABAR_DEBUG then 
+		self:DebugLog('info', 'LibsDataBar-1.0 initialized successfully') 
 	end
-end)
+end
 
--- Export library
-return lib
+---Called when the addon is enabled (PLAYER_LOGIN equivalent)
+function LibsDataBar:OnEnable()
+	self:DebugLog('info', 'LibsDataBar OnEnable() called')
+	
+	-- Register events using AceEvent-3.0
+	self:RegisterEvent('ADDON_LOADED')
+	self:RegisterEvent('PLAYER_ENTERING_WORLD')
+	
+	-- Setup defaults after a small delay to ensure game data is ready
+	-- Note: This will be enhanced in Phase 1B with proper timer system
+	C_Timer.After(0.5, function()
+		self:SetupDefaults()
+	end)
+end
+
+---Called when the addon is disabled
+function LibsDataBar:OnDisable()
+	self:DebugLog('info', 'LibsDataBar OnDisable() called')
+	
+	-- AceEvent-3.0 automatically unregisters events
+	-- Additional cleanup can be added here if needed
+end
+
+----------------------------------------------------------------------------------------------------
+-- Event Handlers (AceEvent-3.0)
+----------------------------------------------------------------------------------------------------
+
+---Handle ADDON_LOADED event
+function LibsDataBar:ADDON_LOADED(event, addonName)
+	-- Currently unused, but ready for future addon-specific handling
+	self:DebugLog('info', 'Addon loaded: ' .. tostring(addonName))
+end
+
+---Handle PLAYER_ENTERING_WORLD event
+function LibsDataBar:PLAYER_ENTERING_WORLD(event)
+	-- This can be used for world-specific initialization
+	self:DebugLog('info', 'Player entering world')
+end
+
+-- For backward compatibility, maintain library interface
+-- This allows existing code to continue working while we migrate
+_G.LibsDataBar = LibsDataBar
+return LibsDataBar
