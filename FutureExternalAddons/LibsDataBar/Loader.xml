@@ -17,7 +17,7 @@
 
 	<!-- Plugin System (Phase 1/2) -->
 	<!-- <Script file="Plugins\PluginManager.lua" /> -->
-	<Script file="Plugins\LDBAdapter.lua" />
+	<!-- LDBAdapter.lua removed - direct LDB handling in PluginButton -->
 	<!-- <Script file="Plugins\TitanAdapter.lua" /> -->
 
 	<!-- Built-in Plugins (Phase 1) -->
