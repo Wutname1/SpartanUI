@@ -309,8 +309,8 @@ function CurrencyPlugin:SaveTrackingData()
 	-- Save to LibsDataBar config system
 	local characterKey = UnitName('player') .. '-' .. GetRealmName()
 
-	LibsDataBar.config:SetConfig('plugins.' .. self.id .. '.trackingData.' .. characterKey .. '.goldHistory', self._goldHistory)
-	LibsDataBar.config:SetConfig('plugins.' .. self.id .. '.trackingData.' .. characterKey .. '.sessionStart', {
+	LibsDataBar:SetConfig('plugins.' .. self.id .. '.trackingData.' .. characterKey .. '.goldHistory', self._goldHistory)
+	LibsDataBar:SetConfig('plugins.' .. self.id .. '.trackingData.' .. characterKey .. '.sessionStart', {
 		gold = self._sessionStartGold,
 		time = self._sessionStartTime,
 	})
@@ -321,11 +321,11 @@ function CurrencyPlugin:LoadTrackingData()
 	local characterKey = UnitName('player') .. '-' .. GetRealmName()
 
 	-- Load gold history
-	local savedHistory = LibsDataBar.config:GetConfig('plugins.' .. self.id .. '.trackingData.' .. characterKey .. '.goldHistory')
+	local savedHistory = LibsDataBar:GetConfig('plugins.' .. self.id .. '.trackingData.' .. characterKey .. '.goldHistory')
 	if savedHistory then self._goldHistory = savedHistory end
 
 	-- Load session data (only if from today)
-	local savedSession = LibsDataBar.config:GetConfig('plugins.' .. self.id .. '.trackingData.' .. characterKey .. '.sessionStart')
+	local savedSession = LibsDataBar:GetConfig('plugins.' .. self.id .. '.trackingData.' .. characterKey .. '.sessionStart')
 	if savedSession then
 		local sessionDate = date('%Y-%m-%d', savedSession.time)
 		local today = self:GetDateKey()
@@ -858,14 +858,14 @@ end
 ---@param key string Configuration key
 ---@return any value Configuration value
 function CurrencyPlugin:GetConfig(key)
-	return LibsDataBar.config:GetConfig('plugins.' .. self.id .. '.pluginSettings.' .. key) or currencyDefaults[key]
+	return LibsDataBar:GetConfig('plugins.' .. self.id .. '.pluginSettings.' .. key) or currencyDefaults[key]
 end
 
 ---Helper: Set plugin configuration value
 ---@param key string Configuration key
 ---@param value any Configuration value
 function CurrencyPlugin:SetConfig(key, value)
-	return LibsDataBar.config:SetConfig('plugins.' .. self.id .. '.pluginSettings.' .. key, value)
+	return LibsDataBar:SetConfig('plugins.' .. self.id .. '.pluginSettings.' .. key, value)
 end
 
 -- Initialize the plugin

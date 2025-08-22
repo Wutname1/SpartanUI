@@ -547,14 +547,14 @@ end
 ---@param key string Configuration key
 ---@return any value Configuration value
 function PlayedTimePlugin:GetConfig(key)
-	return LibsDataBar.config:GetConfig('plugins.' .. self.id .. '.pluginSettings.' .. key) or playedTimeDefaults[key]
+	return LibsDataBar:GetConfig('plugins.' .. self.id .. '.pluginSettings.' .. key) or playedTimeDefaults[key]
 end
 
 ---Helper: Set plugin configuration value
 ---@param key string Configuration key
 ---@param value any Configuration value
 function PlayedTimePlugin:SetConfig(key, value)
-	return LibsDataBar.config:SetConfig('plugins.' .. self.id .. '.pluginSettings.' .. key, value)
+	return LibsDataBar:SetConfig('plugins.' .. self.id .. '.pluginSettings.' .. key, value)
 end
 
 -- Initialize the plugin
