@@ -403,7 +403,7 @@ local configSchema = {
 **This flexible positioning system allows users to create highly customized layouts that are impossible with competing addons:**
 
 - **3-item horizontal container** above chat box
-- **Vertical sidebar container** with 5 plugins on screen edge  
+- **Vertical sidebar container** with 5 plugins on screen edge
 - **Corner mini-containers** for critical info near action bars
 - **Floating containers** that follow screen real estate usage
 - **Mixed layouts** with both bars and containers simultaneously
@@ -424,7 +424,7 @@ local Container = setmetatable({}, {__index = DataBar})
 function Container:Create(config)
     local container = DataBar:Create(config)
     setmetatable(container, {__index = Container})
-    
+
     -- Container-specific properties
     container.containerType = config.containerType or "floating"
     container.dimensions = {
@@ -434,12 +434,12 @@ function Container:Create(config)
         maxHeight = config.maxHeight or 200,
         aspectRatio = config.aspectRatio or nil
     }
-    
+
     -- Create container-specific UI elements
     container:CreateDragHandle()
     container:CreateResizeHandle()
     container:SetupSnapping()
-    
+
     return container
 end
 
@@ -448,13 +448,13 @@ function Container:CreateDragHandle()
     self.dragHandle:SetAllPoints(self.frame)
     self.dragHandle:EnableMouse(true)
     self.dragHandle:RegisterForDrag("LeftButton")
-    
+
     self.dragHandle:SetScript("OnDragStart", function()
         if not self.config.behavior.locked then
             self:StartDrag()
         end
     end)
-    
+
     self.dragHandle:SetScript("OnDragStop", function()
         self:StopDrag()
     end)
@@ -462,23 +462,23 @@ end
 
 function Container:CreateResizeHandle()
     if not self.config.behavior.resizable then return end
-    
+
     self.resizeHandle = CreateFrame("Frame", nil, self.frame)
     self.resizeHandle:SetSize(16, 16)
     self.resizeHandle:SetPoint("BOTTOMRIGHT", self.frame, "BOTTOMRIGHT", -2, 2)
-    
+
     -- Visual resize indicator
     local texture = self.resizeHandle:CreateTexture(nil, "OVERLAY")
     texture:SetAllPoints()
     texture:SetTexture("Interface\\ChatFrame\\UI-ChatIM-SizeGrabber-Up")
-    
+
     self.resizeHandle:EnableMouse(true)
     self.resizeHandle:RegisterForDrag("LeftButton")
-    
+
     self.resizeHandle:SetScript("OnDragStart", function()
         self:StartResize()
     end)
-    
+
     self.resizeHandle:SetScript("OnDragStop", function()
         self:StopResize()
     end)
@@ -491,10 +491,10 @@ function Container:SetupSnapping()
         {type = "screen", edge = "bottom", threshold = 50},
         {type = "screen", edge = "left", threshold = 50},
         {type = "screen", edge = "right", threshold = 50},
-        
+
         -- Other containers
         {type = "container", mode = "adjacent", threshold = 20},
-        
+
         -- Custom anchor points (chat frame, minimap, etc.)
         {type = "anchor", frame = "ChatFrame1", threshold = 30},
         {type = "anchor", frame = "Minimap", threshold = 30},

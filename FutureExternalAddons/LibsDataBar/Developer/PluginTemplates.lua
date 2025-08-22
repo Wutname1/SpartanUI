@@ -5,7 +5,7 @@ Comprehensive templates for creating native and LDB plugins
 --]===]
 
 -- Get the LibsDataBar library
-local LibsDataBar = LibStub:GetLibrary("LibsDataBar-1.0")
+local LibsDataBar = LibStub:GetLibrary('LibsDataBar-1.0')
 if not LibsDataBar then return end
 
 ---@class PluginTemplates
@@ -70,7 +70,7 @@ function {PLUGIN_CLASS}:GetText()
         self:UpdateData()
         self._lastUpdate = GetTime()
     end
-    
+
     -- Format and return display text
     return self:FormatDisplayText()
 end
@@ -88,14 +88,14 @@ end
 ---@param tooltip GameTooltip Tooltip frame
 function {PLUGIN_CLASS}:UpdateTooltip(tooltip)
     if not tooltip then return end
-    
+
     tooltip:AddLine(self.name, 1, 1, 1)
     tooltip:AddLine(self.description, 0.7, 0.7, 0.7, true)
     tooltip:AddLine(" ")
-    
+
     -- Add plugin-specific tooltip content
     self:AddTooltipContent(tooltip)
-    
+
     -- Add click instructions
     tooltip:AddLine(" ")
     tooltip:AddLine("Click: Open options", 0.5, 0.5, 1)
@@ -174,19 +174,19 @@ function {PLUGIN_CLASS}:GetConfigOptions()
                 name = self.name,
                 order = 1
             },
-            
+
             description = {
                 type = "description",
                 name = self.description,
                 order = 2
             },
-            
+
             enabled = {
                 type = "toggle",
                 name = "Enable",
                 desc = "Enable/disable this plugin",
                 get = function() return self:GetConfig('enabled') end,
-                set = function(_, value) 
+                set = function(_, value)
                     self:SetConfig('enabled', value)
                     if value then
                         self:OnEnable()
@@ -196,7 +196,7 @@ function {PLUGIN_CLASS}:GetConfigOptions()
                 end,
                 order = 3
             },
-            
+
             showIcon = {
                 type = "toggle",
                 name = "Show Icon",
@@ -205,7 +205,7 @@ function {PLUGIN_CLASS}:GetConfigOptions()
                 set = function(_, value) self:SetConfig('showIcon', value) end,
                 order = 4
             },
-            
+
             showText = {
                 type = "toggle",
                 name = "Show Text",
@@ -214,7 +214,7 @@ function {PLUGIN_CLASS}:GetConfigOptions()
                 set = function(_, value) self:SetConfig('showText', value) end,
                 order = 5
             },
-            
+
             updateInterval = {
                 type = "range",
                 name = "Update Interval",
@@ -223,13 +223,13 @@ function {PLUGIN_CLASS}:GetConfigOptions()
                 max = 10,
                 step = 0.1,
                 get = function() return self:GetConfig('updateInterval') end,
-                set = function(_, value) 
+                set = function(_, value)
                     self:SetConfig('updateInterval', value)
                     self._updateInterval = value
                 end,
                 order = 6
             },
-            
+
             {PLUGIN_CONFIG_OPTIONS}
         }
     }
@@ -245,10 +245,10 @@ end
 function {PLUGIN_CLASS}:OnInitialize()
     -- Load configuration
     self._updateInterval = self:GetConfig('updateInterval')
-    
+
     -- Initialize plugin-specific data
     self:InitializeData()
-    
+
     LibsDataBar:DebugLog('info', self.name .. ' plugin initialized')
 end
 
@@ -256,10 +256,10 @@ end
 function {PLUGIN_CLASS}:OnEnable()
     -- Register events if needed
     self:RegisterEvents()
-    
+
     -- Start any timers or background processes
     self:StartBackgroundProcesses()
-    
+
     LibsDataBar:DebugLog('info', self.name .. ' plugin enabled')
 end
 
@@ -267,10 +267,10 @@ end
 function {PLUGIN_CLASS}:OnDisable()
     -- Unregister events
     self:UnregisterEvents()
-    
+
     -- Stop any timers or background processes
     self:StopBackgroundProcesses()
-    
+
     LibsDataBar:DebugLog('info', self.name .. ' plugin disabled')
 end
 
@@ -354,7 +354,7 @@ local {PLUGIN_LOWER}LDB = {
     text = PLUGIN_NAME,
     label = PLUGIN_NAME,
     icon = "{PLUGIN_ICON_PATH}",
-    
+
     -- Plugin-specific data
     _updateInterval = 1.0,
     _lastUpdate = 0,
@@ -368,10 +368,10 @@ function {PLUGIN_LOWER}LDB:UpdateDisplay()
         self:UpdateData()
         self._lastUpdate = GetTime()
     end
-    
+
     -- Update text and icon
     self.text = self:FormatDisplayText()
-    
+
     -- Notify LibDataBroker of changes
     LDB:AttributeChanged(PLUGIN_NAME, "text", self.text)
 end
@@ -397,10 +397,10 @@ function {PLUGIN_LOWER}LDB:OnTooltipShow(tooltip)
     tooltip:AddLine(PLUGIN_NAME, 1, 1, 1)
     tooltip:AddLine("{PLUGIN_DESCRIPTION}", 0.7, 0.7, 0.7, true)
     tooltip:AddLine(" ")
-    
+
     -- Add plugin-specific tooltip content
     self:AddTooltipContent(tooltip)
-    
+
     -- Add click instructions
     tooltip:AddLine(" ")
     tooltip:AddLine("Click: Open options", 0.5, 0.5, 1)
@@ -469,10 +469,10 @@ end)
 function {PLUGIN_LOWER}LDB:Initialize()
     -- Initialize plugin-specific data
     self._data = {}
-    
+
     -- Register events
     self:RegisterEvents()
-    
+
     print(PLUGIN_NAME .. " v" .. PLUGIN_VERSION .. " loaded")
 end
 
@@ -482,7 +482,7 @@ function {PLUGIN_LOWER}LDB:StartUpdates()
     C_Timer.NewTicker(self._updateInterval, function()
         self:UpdateDisplay()
     end)
-    
+
     -- Initial update
     self:UpdateDisplay()
 end
@@ -505,71 +505,71 @@ LDB:NewDataObject(PLUGIN_NAME, {PLUGIN_LOWER}LDB)
 ---@param config table Plugin configuration
 ---@return string pluginCode Generated plugin code
 function PluginTemplates:GenerateNativePlugin(config)
-    local template = self.nativeTemplate
-    
-    -- Replace template variables
-    local replacements = {
-        ["{PLUGIN_NAME}"] = config.name or "MyPlugin",
-        ["{PLUGIN_DESCRIPTION}"] = config.description or "A LibsDataBar plugin",
-        ["{PLUGIN_AUTHOR}"] = config.author or "Plugin Developer",
-        ["{PLUGIN_VERSION}"] = config.version or "1.0.0",
-        ["{PLUGIN_CLASS}"] = config.className or (config.name and config.name:gsub("%s", "") .. "Plugin") or "MyPlugin",
-        ["{PLUGIN_ID}"] = config.id or ("LibsDataBar_" .. (config.name and config.name:gsub("%s", "") or "MyPlugin")),
-        ["{PLUGIN_CATEGORY}"] = config.category or "Information",
-        ["{PLUGIN_LOWER}"] = config.variableName or (config.name and config.name:lower():gsub("%s", "") or "myplugin"),
-        ["{PLUGIN_ICON_PATH}"] = config.iconPath or "Interface\\Icons\\INV_Misc_QuestionMark",
-        ["{PLUGIN_CONFIG_DEFAULTS}"] = config.configDefaults or "-- Add your config defaults here",
-        ["{PLUGIN_CONFIG_OPTIONS}"] = config.configOptions or "-- Add your config options here"
-    }
-    
-    for placeholder, replacement in pairs(replacements) do
-        template = template:gsub(placeholder, replacement)
-    end
-    
-    return template
+	local template = self.nativeTemplate
+
+	-- Replace template variables
+	local replacements = {
+		['{PLUGIN_NAME}'] = config.name or 'MyPlugin',
+		['{PLUGIN_DESCRIPTION}'] = config.description or 'A LibsDataBar plugin',
+		['{PLUGIN_AUTHOR}'] = config.author or 'Plugin Developer',
+		['{PLUGIN_VERSION}'] = config.version or '1.0.0',
+		['{PLUGIN_CLASS}'] = config.className or (config.name and config.name:gsub('%s', '') .. 'Plugin') or 'MyPlugin',
+		['{PLUGIN_ID}'] = config.id or ('LibsDataBar_' .. (config.name and config.name:gsub('%s', '') or 'MyPlugin')),
+		['{PLUGIN_CATEGORY}'] = config.category or 'Information',
+		['{PLUGIN_LOWER}'] = config.variableName or (config.name and config.name:lower():gsub('%s', '') or 'myplugin'),
+		['{PLUGIN_ICON_PATH}'] = config.iconPath or 'Interface\\Icons\\INV_Misc_QuestionMark',
+		['{PLUGIN_CONFIG_DEFAULTS}'] = config.configDefaults or '-- Add your config defaults here',
+		['{PLUGIN_CONFIG_OPTIONS}'] = config.configOptions or '-- Add your config options here',
+	}
+
+	for placeholder, replacement in pairs(replacements) do
+		template = template:gsub(placeholder, replacement)
+	end
+
+	return template
 end
 
 ---Generate a new LDB plugin
 ---@param config table Plugin configuration
 ---@return string pluginCode Generated plugin code
 function PluginTemplates:GenerateLDBPlugin(config)
-    local template = self.ldbTemplate
-    
-    -- Replace template variables
-    local replacements = {
-        ["{PLUGIN_NAME}"] = config.name or "MyPlugin",
-        ["{PLUGIN_DESCRIPTION}"] = config.description or "A LibDataBroker plugin",
-        ["{PLUGIN_AUTHOR}"] = config.author or "Plugin Developer", 
-        ["{PLUGIN_VERSION}"] = config.version or "1.0.0",
-        ["{PLUGIN_LOWER}"] = config.variableName or (config.name and config.name:lower():gsub("%s", "") or "myplugin"),
-        ["{PLUGIN_ICON_PATH}"] = config.iconPath or "Interface\\Icons\\INV_Misc_QuestionMark",
-        ["{PLUGIN_ADDON_NAME}"] = config.addonName or config.name or "MyPlugin"
-    }
-    
-    for placeholder, replacement in pairs(replacements) do
-        template = template:gsub(placeholder, replacement)
-    end
-    
-    return template
+	local template = self.ldbTemplate
+
+	-- Replace template variables
+	local replacements = {
+		['{PLUGIN_NAME}'] = config.name or 'MyPlugin',
+		['{PLUGIN_DESCRIPTION}'] = config.description or 'A LibDataBroker plugin',
+		['{PLUGIN_AUTHOR}'] = config.author or 'Plugin Developer',
+		['{PLUGIN_VERSION}'] = config.version or '1.0.0',
+		['{PLUGIN_LOWER}'] = config.variableName or (config.name and config.name:lower():gsub('%s', '') or 'myplugin'),
+		['{PLUGIN_ICON_PATH}'] = config.iconPath or 'Interface\\Icons\\INV_Misc_QuestionMark',
+		['{PLUGIN_ADDON_NAME}'] = config.addonName or config.name or 'MyPlugin',
+	}
+
+	for placeholder, replacement in pairs(replacements) do
+		template = template:gsub(placeholder, replacement)
+	end
+
+	return template
 end
 
 ---Get available templates
 ---@return table templates List of available templates
 function PluginTemplates:GetTemplateList()
-    return {
-        {
-            id = "native",
-            name = "Native LibsDataBar Plugin",
-            description = "Full-featured plugin with complete LibsDataBar integration",
-            recommended = true
-        },
-        {
-            id = "ldb", 
-            name = "LibDataBroker Plugin",
-            description = "Compatible with all LDB display addons",
-            compatibility = true
-        }
-    }
+	return {
+		{
+			id = 'native',
+			name = 'Native LibsDataBar Plugin',
+			description = 'Full-featured plugin with complete LibsDataBar integration',
+			recommended = true,
+		},
+		{
+			id = 'ldb',
+			name = 'LibDataBroker Plugin',
+			description = 'Compatible with all LDB display addons',
+			compatibility = true,
+		},
+	}
 end
 
-LibsDataBar:DebugLog("info", "PluginTemplates loaded successfully")
+LibsDataBar:DebugLog('info', 'PluginTemplates loaded successfully')

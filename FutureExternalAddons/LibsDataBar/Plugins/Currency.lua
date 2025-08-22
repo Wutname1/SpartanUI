@@ -28,7 +28,7 @@ local CurrencyPlugin = {
 	_currentGold = 0,
 	_showCopper = true,
 	_showServerGold = false,
-	
+
 	-- Session and time tracking
 	_sessionStartGold = 0,
 	_sessionStartTime = 0,
@@ -59,11 +59,11 @@ local currencyDefaults = {
 function CurrencyPlugin:GetText()
 	local displayFormat = self:GetConfig('displayFormat')
 	local colorText = self:GetConfig('colorText')
-	
+
 	local money = GetMoney()
 	self._currentGold = money
 	self:UpdateTracking()
-	
+
 	if displayFormat == 'session_gain' then
 		local sessionGain = money - self._sessionStartGold
 		return self:FormatGainLoss('Session', sessionGain, colorText)
@@ -86,10 +86,8 @@ function CurrencyPlugin:FormatNumber(num)
 	local formatted = tostring(num)
 	local k
 	while true do
-		formatted, k = string.gsub(formatted, "^(-?%d+)(%d%d%d)", '%1,%2')
-		if (k==0) then
-			break
-		end
+		formatted, k = string.gsub(formatted, '^(-?%d+)(%d%d%d)', '%1,%2')
+		if k == 0 then break end
 	end
 	return formatted
 end
@@ -144,15 +142,13 @@ end
 ---@param useColor boolean Whether to use colors
 ---@return string formatted Formatted gain/loss string
 function CurrencyPlugin:FormatGainLoss(period, amount, useColor)
-	if amount == 0 then
-		return period .. ': 0g'
-	end
-	
+	if amount == 0 then return period .. ': 0g' end
+
 	local prefix = period .. ': '
 	local sign = amount > 0 and '+' or ''
 	local color = ''
 	local colorEnd = ''
-	
+
 	if useColor then
 		if amount > 0 then
 			color = '|cFF00FF00' -- Green for gains
@@ -162,13 +158,13 @@ function CurrencyPlugin:FormatGainLoss(period, amount, useColor)
 			colorEnd = '|r'
 		end
 	end
-	
+
 	-- Format the absolute amount using the same logic as current money
 	local absAmount = math.abs(amount)
 	local formattedAmount = self:FormatCurrentMoney(absAmount)
 	-- Remove existing color codes to apply our own
 	formattedAmount = formattedAmount:gsub('|c%x%x%x%x%x%x%x%x', ''):gsub('|r', '')
-	
+
 	return prefix .. color .. sign .. formattedAmount .. colorEnd
 end
 
@@ -180,24 +176,22 @@ end
 
 ---Update tracking data
 function CurrencyPlugin:UpdateTracking()
-	if not self:GetConfig('trackSession') and not self:GetConfig('trackDaily') and not self:GetConfig('trackWeekly') then
-		return
-	end
-	
+	if not self:GetConfig('trackSession') and not self:GetConfig('trackDaily') and not self:GetConfig('trackWeekly') then return end
+
 	local currentTime = GetTime()
-	
+
 	-- Initialize session tracking if needed
 	if self._sessionStartTime == 0 then
 		self._sessionStartTime = currentTime
 		self._sessionStartGold = self._currentGold
 	end
-	
+
 	-- Auto-save tracking data periodically
 	if (currentTime - self._lastSaveTime) >= self:GetConfig('autoSaveInterval') then
 		self:SaveTrackingData()
 		self._lastSaveTime = currentTime
 	end
-	
+
 	-- Update daily tracking
 	self:UpdateDailyTracking()
 end
@@ -205,10 +199,10 @@ end
 ---Update daily tracking data
 function CurrencyPlugin:UpdateDailyTracking()
 	if not self:GetConfig('trackDaily') and not self:GetConfig('trackWeekly') then return end
-	
+
 	local today = self:GetDateKey()
 	local currentGold = self._currentGold
-	
+
 	-- Initialize today's data if needed
 	if not self._goldHistory[today] then
 		self._goldHistory[today] = {
@@ -220,7 +214,7 @@ function CurrencyPlugin:UpdateDailyTracking()
 		-- Update current amount
 		self._goldHistory[today].current = currentGold
 	end
-	
+
 	-- Clean up old data (keep last 14 days)
 	self:CleanupOldData()
 end
@@ -232,7 +226,7 @@ function CurrencyPlugin:GetDateKey()
 end
 
 ---Get yesterday's date key
----@return string dateKey Yesterday's date key  
+---@return string dateKey Yesterday's date key
 function CurrencyPlugin:GetYesterdayKey()
 	local yesterday = time() - 86400 -- 24 hours ago
 	return date('%Y-%m-%d', yesterday)
@@ -243,9 +237,9 @@ end
 function CurrencyPlugin:GetTodayGain()
 	local today = self:GetDateKey()
 	local todayData = self._goldHistory[today]
-	
+
 	if not todayData then return 0 end
-	
+
 	return todayData.current - todayData.start
 end
 
@@ -254,9 +248,9 @@ end
 function CurrencyPlugin:GetYesterdayGain()
 	local yesterday = self:GetYesterdayKey()
 	local yesterdayData = self._goldHistory[yesterday]
-	
+
 	if not yesterdayData then return 0 end
-	
+
 	return yesterdayData.current - yesterdayData.start
 end
 
@@ -266,14 +260,12 @@ function CurrencyPlugin:GetThisWeekGain()
 	local totalGain = 0
 	local currentTime = time()
 	local weekStart = currentTime - (86400 * 7) -- 7 days ago
-	
+
 	for dateKey, data in pairs(self._goldHistory) do
 		local dayTime = self:ParseDateKey(dateKey)
-		if dayTime and dayTime >= weekStart then
-			totalGain = totalGain + (data.current - data.start)
-		end
+		if dayTime and dayTime >= weekStart then totalGain = totalGain + (data.current - data.start) end
 	end
-	
+
 	return totalGain
 end
 
@@ -284,14 +276,12 @@ function CurrencyPlugin:GetLastWeekGain()
 	local currentTime = time()
 	local lastWeekStart = currentTime - (86400 * 14) -- 14 days ago
 	local lastWeekEnd = currentTime - (86400 * 7) -- 7 days ago
-	
+
 	for dateKey, data in pairs(self._goldHistory) do
 		local dayTime = self:ParseDateKey(dateKey)
-		if dayTime and dayTime >= lastWeekStart and dayTime < lastWeekEnd then
-			totalGain = totalGain + (data.current - data.start)
-		end
+		if dayTime and dayTime >= lastWeekStart and dayTime < lastWeekEnd then totalGain = totalGain + (data.current - data.start) end
 	end
-	
+
 	return totalGain
 end
 
@@ -300,21 +290,17 @@ end
 ---@return number? timestamp Timestamp or nil if invalid
 function CurrencyPlugin:ParseDateKey(dateKey)
 	local year, month, day = dateKey:match('(%d+)-(%d+)-(%d+)')
-	if year and month and day then
-		return time({year = tonumber(year), month = tonumber(month), day = tonumber(day)})
-	end
+	if year and month and day then return time({ year = tonumber(year), month = tonumber(month), day = tonumber(day) }) end
 	return nil
 end
 
 ---Clean up old tracking data
 function CurrencyPlugin:CleanupOldData()
 	local cutoffTime = time() - (86400 * 14) -- Keep 14 days
-	
+
 	for dateKey, data in pairs(self._goldHistory) do
 		local dayTime = self:ParseDateKey(dateKey)
-		if dayTime and dayTime < cutoffTime then
-			self._goldHistory[dateKey] = nil
-		end
+		if dayTime and dayTime < cutoffTime then self._goldHistory[dateKey] = nil end
 	end
 end
 
@@ -322,30 +308,28 @@ end
 function CurrencyPlugin:SaveTrackingData()
 	-- Save to LibsDataBar config system
 	local characterKey = UnitName('player') .. '-' .. GetRealmName()
-	
+
 	LibsDataBar.config:SetConfig('plugins.' .. self.id .. '.trackingData.' .. characterKey .. '.goldHistory', self._goldHistory)
 	LibsDataBar.config:SetConfig('plugins.' .. self.id .. '.trackingData.' .. characterKey .. '.sessionStart', {
 		gold = self._sessionStartGold,
-		time = self._sessionStartTime
+		time = self._sessionStartTime,
 	})
 end
 
 ---Load tracking data from character settings
 function CurrencyPlugin:LoadTrackingData()
 	local characterKey = UnitName('player') .. '-' .. GetRealmName()
-	
+
 	-- Load gold history
 	local savedHistory = LibsDataBar.config:GetConfig('plugins.' .. self.id .. '.trackingData.' .. characterKey .. '.goldHistory')
-	if savedHistory then
-		self._goldHistory = savedHistory
-	end
-	
+	if savedHistory then self._goldHistory = savedHistory end
+
 	-- Load session data (only if from today)
 	local savedSession = LibsDataBar.config:GetConfig('plugins.' .. self.id .. '.trackingData.' .. characterKey .. '.sessionStart')
 	if savedSession then
 		local sessionDate = date('%Y-%m-%d', savedSession.time)
 		local today = self:GetDateKey()
-		
+
 		if sessionDate == today then
 			-- Continue existing session
 			self._sessionStartGold = savedSession.gold
@@ -383,12 +367,12 @@ function CurrencyPlugin:GetTooltip()
 	local copper = money - (gold * 10000) - (silver * 100)
 
 	local tooltip = 'Currency Tracker\\n\\n'
-	
+
 	-- Current character money
 	tooltip = tooltip .. 'Current Character:\\n'
 	tooltip = tooltip .. string.format('|cFFFFD700%d|r gold |cFFC0C0C0%d|r silver |cFFCD7F32%d|r copper\\n', gold, silver, copper)
 	tooltip = tooltip .. string.format('Total: %s\\n', self:FormatCurrentMoney(money))
-	
+
 	-- Session tracking
 	if self:GetConfig('trackSession') then
 		local sessionGain = money - self._sessionStartGold
@@ -396,36 +380,32 @@ function CurrencyPlugin:GetTooltip()
 		tooltip = tooltip .. '\\nSession Statistics:\\n'
 		tooltip = tooltip .. self:FormatTooltipGainLoss('Session Gain', sessionGain)
 		tooltip = tooltip .. string.format('Session Time: %s\\n', self:FormatDuration(sessionTime))
-		
+
 		if sessionTime > 0 and sessionGain ~= 0 then
 			local goldPerHour = (sessionGain / sessionTime) * 3600
 			tooltip = tooltip .. self:FormatTooltipGainLoss('Gold/Hour', goldPerHour)
 		end
 	end
-	
+
 	-- Daily/weekly tracking
 	if self:GetConfig('trackDaily') or self:GetConfig('trackWeekly') then
 		tooltip = tooltip .. '\\nTime Period Statistics:\\n'
-		
+
 		if self:GetConfig('trackDaily') then
 			local todayGain = self:GetTodayGain()
 			local yesterdayGain = self:GetYesterdayGain()
 			tooltip = tooltip .. self:FormatTooltipGainLoss('Today', todayGain)
-			if yesterdayGain ~= 0 then
-				tooltip = tooltip .. self:FormatTooltipGainLoss('Yesterday', yesterdayGain)
-			end
+			if yesterdayGain ~= 0 then tooltip = tooltip .. self:FormatTooltipGainLoss('Yesterday', yesterdayGain) end
 		end
-		
+
 		if self:GetConfig('trackWeekly') then
 			local thisWeekGain = self:GetThisWeekGain()
 			local lastWeekGain = self:GetLastWeekGain()
 			tooltip = tooltip .. self:FormatTooltipGainLoss('This Week', thisWeekGain)
-			if lastWeekGain ~= 0 then
-				tooltip = tooltip .. self:FormatTooltipGainLoss('Last Week', lastWeekGain)
-			end
+			if lastWeekGain ~= 0 then tooltip = tooltip .. self:FormatTooltipGainLoss('Last Week', lastWeekGain) end
 		end
 	end
-	
+
 	-- Currency information
 	if self:GetConfig('showCurrencies') then
 		local currencyInfo = self:GetCurrencyInfo()
@@ -438,7 +418,7 @@ function CurrencyPlugin:GetTooltip()
 			end
 		end
 	end
-	
+
 	-- Server totals (if enabled)
 	if self:GetConfig('showServerGold') then
 		local serverInfo = self:GetServerInfo()
@@ -446,7 +426,7 @@ function CurrencyPlugin:GetTooltip()
 		tooltip = tooltip .. string.format('Total Gold: %s\\n', self:FormatCurrentMoney(serverInfo.totalGold))
 		tooltip = tooltip .. string.format('Characters: %d\\n', serverInfo.totalCharacters)
 	end
-	
+
 	-- Controls
 	tooltip = tooltip .. '\\nControls:\\n'
 	tooltip = tooltip .. 'Left-click: Change display format\\n'
@@ -461,17 +441,15 @@ end
 ---@param amount number Amount gained/lost
 ---@return string formatted Formatted tooltip line
 function CurrencyPlugin:FormatTooltipGainLoss(label, amount)
-	if amount == 0 then
-		return string.format('%s: 0g\\n', label)
-	end
-	
+	if amount == 0 then return string.format('%s: 0g\\n', label) end
+
 	local sign = amount > 0 and '+' or ''
 	local color = amount > 0 and '|cFF00FF00' or '|cFFFF0000'
 	local absAmount = math.abs(amount)
 	local formattedAmount = self:FormatCurrentMoney(absAmount)
 	-- Remove existing colors
 	formattedAmount = formattedAmount:gsub('|c%x%x%x%x%x%x%x%x', ''):gsub('|r', '')
-	
+
 	return string.format('%s: %s%s%s|r\\n', label, color, sign, formattedAmount)
 end
 
@@ -495,19 +473,19 @@ end
 ---@return table currencyList List of important currencies
 function CurrencyPlugin:GetCurrencyInfo()
 	local currencies = {}
-	
+
 	-- Important currency IDs (these may vary by expansion)
 	local importantCurrencies = {
-		{id = 1813, name = 'Reservoir Anima'}, -- Shadowlands
-		{id = 1820, name = 'Infused Ruby'}, -- Shadowlands
-		{id = 1810, name = 'Bloody Tokens'}, -- Shadowlands  
-		{id = 1767, name = 'Stygia'}, -- Shadowlands
-		{id = 1191, name = 'Valor Points'}, -- Generic
-		{id = 1602, name = 'Conquest'}, -- PvP
-		{id = 1533, name = 'Wakening Essence'}, -- Legion
-		{id = 1560, name = 'War Resources'}, -- BfA
+		{ id = 1813, name = 'Reservoir Anima' }, -- Shadowlands
+		{ id = 1820, name = 'Infused Ruby' }, -- Shadowlands
+		{ id = 1810, name = 'Bloody Tokens' }, -- Shadowlands
+		{ id = 1767, name = 'Stygia' }, -- Shadowlands
+		{ id = 1191, name = 'Valor Points' }, -- Generic
+		{ id = 1602, name = 'Conquest' }, -- PvP
+		{ id = 1533, name = 'Wakening Essence' }, -- Legion
+		{ id = 1560, name = 'War Resources' }, -- BfA
 	}
-	
+
 	for _, currencyData in ipairs(importantCurrencies) do
 		local currencyInfo = C_CurrencyInfo.GetCurrencyInfo(currencyData.id)
 		if currencyInfo and currencyInfo.quantity > 0 then
@@ -520,12 +498,12 @@ function CurrencyPlugin:GetCurrencyInfo()
 			})
 		end
 	end
-	
+
 	-- Sort by amount (highest first)
 	table.sort(currencies, function(a, b)
 		return a.amount > b.amount
 	end)
-	
+
 	return currencies
 end
 
@@ -547,10 +525,10 @@ end
 
 ---Cycle through display formats
 function CurrencyPlugin:CycleDisplayFormat()
-	local formats = {'current', 'session_gain', 'daily_gain', 'weekly_gain'}
+	local formats = { 'current', 'session_gain', 'daily_gain', 'weekly_gain' }
 	local current = self:GetConfig('displayFormat')
 	local currentIndex = 1
-	
+
 	-- Find current format index
 	for i, format in ipairs(formats) do
 		if format == current then
@@ -558,11 +536,11 @@ function CurrencyPlugin:CycleDisplayFormat()
 			break
 		end
 	end
-	
+
 	-- Move to next format (wrap around)
 	local nextIndex = currentIndex < #formats and currentIndex + 1 or 1
 	local nextFormat = formats[nextIndex]
-	
+
 	self:SetConfig('displayFormat', nextFormat)
 	LibsDataBar:DebugLog('info', 'Currency display format changed to: ' .. nextFormat)
 end
@@ -797,7 +775,7 @@ function CurrencyPlugin:OnEnable()
 	-- Register for money-related events
 	self:RegisterEvent('PLAYER_MONEY', 'OnMoneyChanged')
 	self:RegisterEvent('PLAYER_ENTERING_WORLD', 'OnPlayerEnteringWorld')
-	
+
 	-- Setup auto-save timer
 	if self:GetConfig('trackSession') or self:GetConfig('trackDaily') or self:GetConfig('trackWeekly') then
 		local interval = self:GetConfig('autoSaveInterval')
@@ -805,23 +783,23 @@ function CurrencyPlugin:OnEnable()
 			self:SaveTrackingData()
 		end)
 	end
-	
+
 	LibsDataBar:DebugLog('info', 'Currency plugin enabled')
 end
 
 ---Lifecycle: Plugin disabled
 function CurrencyPlugin:OnDisable()
 	self:UnregisterAllEvents()
-	
+
 	-- Cancel auto-save timer
 	if self.autoSaveTimer then
 		self.autoSaveTimer:Cancel()
 		self.autoSaveTimer = nil
 	end
-	
+
 	-- Final save
 	self:SaveTrackingData()
-	
+
 	LibsDataBar:DebugLog('info', 'Currency plugin disabled')
 end
 
@@ -831,17 +809,17 @@ function CurrencyPlugin:OnMoneyChanged()
 	if newMoney ~= self._currentGold then
 		local oldMoney = self._currentGold
 		self._currentGold = newMoney
-		
+
 		-- Update tracking
 		self:UpdateTracking()
-		
+
 		-- Log significant changes
 		local change = newMoney - oldMoney
 		if math.abs(change) >= 10000 then -- Log changes >= 1 gold
 			local changeText = change > 0 and ('+' .. self:FormatCurrentMoney(change)) or ('-' .. self:FormatCurrentMoney(math.abs(change)))
 			LibsDataBar:DebugLog('info', 'Currency change: ' .. changeText)
 		end
-		
+
 		-- Trigger plugin update
 		if LibsDataBar.callbacks then LibsDataBar.callbacks:Fire('LibsDataBar_PluginUpdate', self.id) end
 	end

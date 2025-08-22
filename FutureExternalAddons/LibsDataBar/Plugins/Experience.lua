@@ -56,24 +56,22 @@ function ExperiencePlugin:GetText()
 	local displayFormat = self:GetConfig('displayFormat')
 	local showLevel = self:GetConfig('showLevel')
 	local colorByRested = self:GetConfig('colorByRested')
-	
+
 	self:UpdateExperienceData()
-	
+
 	if self._isMaxLevel then
 		if self:GetConfig('showMaxLevel') then
 			local text = 'Max Level'
-			if showLevel then
-				text = string.format('Level %d (Max)', self._level)
-			end
+			if showLevel then text = string.format('Level %d (Max)', self._level) end
 			return '|cFFFFD700' .. text .. '|r' -- Gold color for max level
 		else
 			return '' -- Hide at max level
 		end
 	end
-	
+
 	local text = ''
 	local prefix = showLevel and ('L' .. self._level .. ': ') or ''
-	
+
 	if displayFormat == 'percent' then
 		text = string.format('%s%.1f%%', prefix, self._percentComplete)
 	elseif displayFormat == 'current' then
@@ -95,7 +93,7 @@ function ExperiencePlugin:GetText()
 		-- Default to percent
 		text = string.format('%s%.1f%%', prefix, self._percentComplete)
 	end
-	
+
 	-- Apply color coding based on rested XP
 	if colorByRested and not self._isMaxLevel then
 		if self._restXP > 0 then
@@ -104,7 +102,7 @@ function ExperiencePlugin:GetText()
 			text = '|cFFFFFFFF' .. text .. '|r' -- White for normal
 		end
 	end
-	
+
 	return text
 end
 
@@ -124,9 +122,9 @@ end
 ---@return string tooltip Tooltip text
 function ExperiencePlugin:GetTooltip()
 	self:UpdateExperienceData()
-	
+
 	local tooltip = string.format('Character Experience - Level %d\\n\\n', self._level)
-	
+
 	if self._isMaxLevel then
 		tooltip = tooltip .. 'You have reached the maximum level!\\n'
 		tooltip = tooltip .. string.format('Total Experience: %s\\n', self:AbbreviateNumber(self._currentXP))
@@ -135,18 +133,17 @@ function ExperiencePlugin:GetTooltip()
 		tooltip = tooltip .. string.format('Required XP: %s\\n', self:AbbreviateNumber(self._maxXP))
 		tooltip = tooltip .. string.format('Remaining XP: %s\\n', self:AbbreviateNumber(self._maxXP - self._currentXP))
 		tooltip = tooltip .. string.format('Progress: %.2f%%\\n', self._percentComplete)
-		
+
 		-- Rested XP information
 		if self._restXP > 0 then
 			local restedPercent = (self._restXP / self._maxXP) * 100
-			tooltip = tooltip .. string.format('\\n|cFF00D4FFRested XP: %s (%.1f%%)|r\\n', 
-				self:AbbreviateNumber(self._restXP), restedPercent)
+			tooltip = tooltip .. string.format('\\n|cFF00D4FFRested XP: %s (%.1f%%)|r\\n', self:AbbreviateNumber(self._restXP), restedPercent)
 			local bubblesRested = math.floor(self._restXP / (self._maxXP * 0.05)) -- Each bubble is 5%
 			tooltip = tooltip .. string.format('|cFF00D4FFRested Bubbles: %d|r\\n', bubblesRested)
 		else
 			tooltip = tooltip .. '\\nNo rested XP\\n'
 		end
-		
+
 		-- Session information
 		if self:GetConfig('showSessionGains') then
 			tooltip = tooltip .. '\\nSession Statistics:\\n'
@@ -157,20 +154,19 @@ function ExperiencePlugin:GetTooltip()
 				tooltip = tooltip .. string.format('Time to Level: %s\\n', self:FormatTime(hoursToLevel * 3600))
 			end
 		end
-		
+
 		-- Kill information (if available)
 		local xpPerKill = self:EstimateXPPerKill()
 		if xpPerKill > 0 then
 			local killsToLevel = math.ceil((self._maxXP - self._currentXP) / xpPerKill)
-			tooltip = tooltip .. string.format('\\nEst. kills to level: %d (avg %s XP/kill)\\n', 
-				killsToLevel, self:AbbreviateNumber(xpPerKill))
+			tooltip = tooltip .. string.format('\\nEst. kills to level: %d (avg %s XP/kill)\\n', killsToLevel, self:AbbreviateNumber(xpPerKill))
 		end
 	end
-	
+
 	tooltip = tooltip .. '\\nLeft-click: Change display format\\n'
 	tooltip = tooltip .. 'Right-click: Configuration options\\n'
 	tooltip = tooltip .. 'Middle-click: Reset session statistics'
-	
+
 	return tooltip
 end
 
@@ -194,13 +190,13 @@ end
 function ExperiencePlugin:UpdateExperienceData()
 	self._level = UnitLevel('player')
 	self._isMaxLevel = UnitLevel('player') == GetMaxPlayerLevel()
-	
+
 	if not self._isMaxLevel then
 		self._currentXP = UnitXP('player')
 		self._maxXP = UnitXPMax('player')
 		self._restXP = GetXPExhaustion() or 0
 		self._percentComplete = (self._currentXP / self._maxXP) * 100
-		
+
 		-- Update session tracking
 		self:UpdateSessionTracking()
 	else
@@ -215,22 +211,20 @@ end
 ---Update session tracking statistics
 function ExperiencePlugin:UpdateSessionTracking()
 	if not self:GetConfig('trackPlaytime') then return end
-	
+
 	local currentTime = GetTime()
-	
+
 	-- Initialize session start time if needed
 	if self._sessionStartTime == 0 then
 		self._sessionStartTime = currentTime
 		self._sessionStartXP = self._currentXP
 	end
-	
+
 	-- Calculate session XP and XP per hour
 	local sessionDuration = currentTime - self._sessionStartTime
 	self._sessionXP = self._currentXP - (self._sessionStartXP or self._currentXP)
-	
-	if sessionDuration > 0 then
-		self._xpPerHour = (self._sessionXP / sessionDuration) * 3600
-	end
+
+	if sessionDuration > 0 then self._xpPerHour = (self._sessionXP / sessionDuration) * 3600 end
 end
 
 ---Abbreviate large numbers for display
@@ -253,11 +247,11 @@ end
 ---@return string formatted Formatted time string
 function ExperiencePlugin:FormatTime(seconds)
 	if seconds <= 0 then return '0s' end
-	
+
 	local hours = math.floor(seconds / 3600)
 	local minutes = math.floor((seconds % 3600) / 60)
 	local secs = math.floor(seconds % 60)
-	
+
 	if hours > 0 then
 		return string.format('%dh %dm', hours, minutes)
 	elseif minutes > 0 then
@@ -273,7 +267,7 @@ function ExperiencePlugin:EstimateXPPerKill()
 	-- This is a rough estimate based on mob levels relative to player level
 	-- In a real implementation, you'd track actual kills and XP gains
 	local level = self._level
-	
+
 	if level <= 10 then
 		return math.floor(self._maxXP * 0.05) -- ~5% per kill at low levels
 	elseif level <= 30 then
@@ -287,10 +281,10 @@ end
 
 ---Cycle through different display formats
 function ExperiencePlugin:CycleDisplayFormat()
-	local formats = {'percent', 'current', 'remaining', 'time'}
+	local formats = { 'percent', 'current', 'remaining', 'time' }
 	local current = self:GetConfig('displayFormat')
 	local currentIndex = 1
-	
+
 	-- Find current format index
 	for i, format in ipairs(formats) do
 		if format == current then
@@ -298,11 +292,11 @@ function ExperiencePlugin:CycleDisplayFormat()
 			break
 		end
 	end
-	
+
 	-- Move to next format (wrap around)
 	local nextIndex = currentIndex < #formats and currentIndex + 1 or 1
 	local nextFormat = formats[nextIndex]
-	
+
 	self:SetConfig('displayFormat', nextFormat)
 	LibsDataBar:DebugLog('info', 'Experience display format changed to: ' .. nextFormat)
 end

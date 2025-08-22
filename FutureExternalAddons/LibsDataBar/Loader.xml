@@ -3,10 +3,10 @@
 ..\..\FrameXML\UI.xsd">
 	<!-- LibsDataBar Core Library Loader -->
 	<!-- Load order is important for dependencies -->
-	
+
 	<!-- Core Library -->
 	<Script file="LibsDataBar.lua" />
-	
+
 	<!-- Display Engine (Phase 2) -->
 	<Script file="Display\DataBar.lua" />
 	<Script file="Display\Container.lua" />
@@ -14,12 +14,12 @@
 	<Script file="Display\AnimationManager.lua" />
 	<!-- <Script file="Display\LayoutManager.lua" /> -->
 	<Script file="Display\ThemeManager.lua" />
-	
+
 	<!-- Plugin System (Phase 1/2) -->
 	<!-- <Script file="Plugins\PluginManager.lua" /> -->
 	<Script file="Plugins\LDBAdapter.lua" />
 	<!-- <Script file="Plugins\TitanAdapter.lua" /> -->
-	
+
 	<!-- Built-in Plugins (Phase 1) -->
 	<Script file="Plugins\Clock.lua" />
 	<Script file="Plugins\Currency.lua" />
@@ -32,17 +32,17 @@
 	<Script file="Plugins\PlayedTime.lua" />
 	<Script file="Plugins\Reputation.lua" />
 	<Script file="Plugins\Friends.lua" />
-	
+
 	<!-- Configuration UI -->
 	<Script file="Options.lua" />
-	
+
 	<!-- Advanced Configuration System (Phase 3) -->
 	<Script file="Configuration\ConfigManager.lua" />
 	<Script file="Configuration\PluginManager.lua" />
-	
+
 	<!-- Integration API -->
 	<Script file="Integration\API.lua" />
-	
+
 	<!-- Developer Tools (Phase 2) -->
 	<Script file="Developer\PluginTemplates.lua" />
 	<Script file="Developer\PluginValidator.lua" />

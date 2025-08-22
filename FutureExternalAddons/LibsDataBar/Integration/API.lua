@@ -14,14 +14,12 @@ if not LibsDataBar then return end
 local API = {}
 
 -- Ensure LibsDataBar has callback system initialized
-if not LibsDataBar.callbacks then
-	LibsDataBar.callbacks = LibStub('CallbackHandler-1.0'):New(LibsDataBar)
-end
+if not LibsDataBar.callbacks then LibsDataBar.callbacks = LibStub('CallbackHandler-1.0'):New(LibsDataBar) end
 
 -- Initialize API for LibsDataBar
 LibsDataBar.API = LibsDataBar.API or setmetatable({
 	registeredIntegrations = {},
-	callbacks = LibsDataBar.callbacks
+	callbacks = LibsDataBar.callbacks,
 }, { __index = API })
 
 ---@class Integration
@@ -48,7 +46,7 @@ LibsDataBar.API = LibsDataBar.API or setmetatable({
 ---@class BarOffsets
 ---@field top number Total height of top-positioned bars
 ---@field bottom number Total height of bottom-positioned bars
----@field left number Total width of left-positioned bars  
+---@field left number Total width of left-positioned bars
 ---@field right number Total width of right-positioned bars
 
 ---Register an addon integration with LibsDataBar
@@ -59,62 +57,48 @@ function API:RegisterIntegration(integration)
 		LibsDataBar:DebugLog('error', 'API: Integration registration failed - missing required fields')
 		return false
 	end
-	
-	if self.registeredIntegrations[integration.id] then
-		LibsDataBar:DebugLog('warning', 'API: Integration ' .. integration.id .. ' already registered, updating')
-	end
-	
+
+	if self.registeredIntegrations[integration.id] then LibsDataBar:DebugLog('warning', 'API: Integration ' .. integration.id .. ' already registered, updating') end
+
 	-- Store the integration
 	self.registeredIntegrations[integration.id] = integration
-	
+
 	-- Ensure callback system is available
 	if not self.callbacks or not self.callbacks.RegisterCallback then
-		LibsDataBar:DebugLog("error", "Callback system not available for integration: " .. integration.id)
+		LibsDataBar:DebugLog('error', 'Callback system not available for integration: ' .. integration.id)
 		return false
 	end
-	
+
 	-- Register callbacks if provided
-	if integration.onBarPositionChanged then
-		self.callbacks:RegisterCallback('LibsDataBar_BarPositionChanged', function(event, data)
-			integration.onBarPositionChanged(data)
-		end)
-	end
-	
-	if integration.onBarCreated then
-		self.callbacks:RegisterCallback('LibsDataBar_BarCreated', function(event, barId, bar)
-			integration.onBarCreated(barId, bar)
-		end)
-	end
-	
-	if integration.onBarDestroyed then
-		self.callbacks:RegisterCallback('LibsDataBar_BarDeleted', function(event, barId, bar)
-			integration.onBarDestroyed(barId, bar)
-		end)
-	end
-	
-	if integration.onBarShown then
-		self.callbacks:RegisterCallback('LibsDataBar_BarShown', function(event, barId)
-			integration.onBarShown(barId)
-		end)
-	end
-	
-	if integration.onBarHidden then
-		self.callbacks:RegisterCallback('LibsDataBar_BarHidden', function(event, barId)
-			integration.onBarHidden(barId)
-		end)
-	end
-	
-	if integration.onBarSizeChanged then
-		self.callbacks:RegisterCallback('LibsDataBar_BarSizeChanged', function(event, barId, newSize)
-			integration.onBarSizeChanged(barId, newSize)
-		end)
-	end
-	
+	if integration.onBarPositionChanged then self.callbacks:RegisterCallback('LibsDataBar_BarPositionChanged', function(event, data)
+		integration.onBarPositionChanged(data)
+	end) end
+
+	if integration.onBarCreated then self.callbacks:RegisterCallback('LibsDataBar_BarCreated', function(event, barId, bar)
+		integration.onBarCreated(barId, bar)
+	end) end
+
+	if integration.onBarDestroyed then self.callbacks:RegisterCallback('LibsDataBar_BarDeleted', function(event, barId, bar)
+		integration.onBarDestroyed(barId, bar)
+	end) end
+
+	if integration.onBarShown then self.callbacks:RegisterCallback('LibsDataBar_BarShown', function(event, barId)
+		integration.onBarShown(barId)
+	end) end
+
+	if integration.onBarHidden then self.callbacks:RegisterCallback('LibsDataBar_BarHidden', function(event, barId)
+		integration.onBarHidden(barId)
+	end) end
+
+	if integration.onBarSizeChanged then self.callbacks:RegisterCallback('LibsDataBar_BarSizeChanged', function(event, barId, newSize)
+		integration.onBarSizeChanged(barId, newSize)
+	end) end
+
 	LibsDataBar:DebugLog('info', 'API: Registered integration for ' .. integration.addon .. ' (' .. integration.id .. ')')
-	
+
 	-- Fire integration registered event
 	self.callbacks:Fire('LibsDataBar_IntegrationRegistered', integration.id, integration)
-	
+
 	return true
 end
 
@@ -126,15 +110,15 @@ function API:UnregisterIntegration(integrationId)
 		LibsDataBar:DebugLog('warning', 'API: Cannot unregister unknown integration: ' .. integrationId)
 		return false
 	end
-	
+
 	local integration = self.registeredIntegrations[integrationId]
 	self.registeredIntegrations[integrationId] = nil
-	
+
 	LibsDataBar:DebugLog('info', 'API: Unregistered integration: ' .. integrationId)
-	
+
 	-- Fire integration unregistered event
 	self.callbacks:Fire('LibsDataBar_IntegrationUnregistered', integrationId, integration)
-	
+
 	return true
 end
 
@@ -150,9 +134,7 @@ end
 ---@return Integration? integration The integration if found
 function API:HasIntegration(addonName)
 	for _, integration in pairs(self.registeredIntegrations) do
-		if integration.addon == addonName then
-			return true, integration
-		end
+		if integration.addon == addonName then return true, integration end
 	end
 	return false
 end
@@ -164,16 +146,16 @@ function API:GetBarOffsets()
 		top = 0,
 		bottom = 0,
 		left = 0,
-		right = 0
+		right = 0,
 	}
-	
+
 	-- Calculate offsets from all visible bars
 	for barId, bar in pairs(LibsDataBar.bars or {}) do
 		if bar and bar.frame and bar.frame:IsVisible() then
 			local position = bar.config and bar.config.position or 'bottom'
 			local height = bar.frame:GetHeight() or 0
 			local width = bar.frame:GetWidth() or 0
-			
+
 			if position == 'top' or position:find('^top') then
 				offsets.top = offsets.top + height
 			elseif position == 'bottom' or position:find('^bottom') then
@@ -185,7 +167,7 @@ function API:GetBarOffsets()
 			end
 		end
 	end
-	
+
 	return offsets
 end
 
@@ -195,17 +177,17 @@ end
 function API:GetBarData(barId)
 	local bar = LibsDataBar.bars and LibsDataBar.bars[barId]
 	if not bar then return nil end
-	
+
 	return {
 		barId = barId,
 		position = bar.config and bar.config.position or 'bottom',
-		anchor = bar.config and bar.config.anchor or {x = 0, y = 0},
+		anchor = bar.config and bar.config.anchor or { x = 0, y = 0 },
 		size = {
 			width = bar.frame and bar.frame:GetWidth() or 0,
-			height = bar.frame and bar.frame:GetHeight() or 0
+			height = bar.frame and bar.frame:GetHeight() or 0,
 		},
 		visible = bar.frame and bar.frame:IsVisible() or false,
-		timestamp = GetTime()
+		timestamp = GetTime(),
 	}
 end
 
@@ -228,20 +210,20 @@ function API:NotifyPositionChange(barId, changeType)
 		LibsDataBar:DebugLog('warning', 'API: Cannot notify position change for unknown bar: ' .. barId)
 		return
 	end
-	
+
 	data.changeType = changeType
 	data.offsets = self:GetBarOffsets()
-	
+
 	-- Fire the callback
 	self.callbacks:Fire('LibsDataBar_BarPositionChanged', data)
-	
+
 	LibsDataBar:DebugLog('debug', 'API: Notified position change for ' .. barId .. ' (' .. changeType .. ')')
 end
 
 ---Initialize the API system
 function API:Initialize()
 	LibsDataBar:DebugLog('info', 'API: LibsDataBar Integration API initialized')
-	
+
 	-- Fire API ready event
 	self.callbacks:Fire('LibsDataBar_APIReady')
 end
@@ -252,9 +234,7 @@ if LibsDataBar.callbacks then
 else
 	-- Delay initialization if callbacks not ready
 	C_Timer.After(1, function()
-		if LibsDataBar.API then
-			LibsDataBar.API:Initialize()
-		end
+		if LibsDataBar.API then LibsDataBar.API:Initialize() end
 	end)
 end
 
@@ -262,30 +242,22 @@ end
 
 -- Provide global functions that other addons can easily access
 _G.LibsDataBar_RegisterIntegration = function(integration)
-	if LibsDataBar and LibsDataBar.API then
-		return LibsDataBar.API:RegisterIntegration(integration)
-	end
+	if LibsDataBar and LibsDataBar.API then return LibsDataBar.API:RegisterIntegration(integration) end
 	return false
 end
 
 _G.LibsDataBar_GetBarOffsets = function()
-	if LibsDataBar and LibsDataBar.API then
-		return LibsDataBar.API:GetBarOffsets()
-	end
-	return {top = 0, bottom = 0, left = 0, right = 0}
+	if LibsDataBar and LibsDataBar.API then return LibsDataBar.API:GetBarOffsets() end
+	return { top = 0, bottom = 0, left = 0, right = 0 }
 end
 
 _G.LibsDataBar_GetBarData = function(barId)
-	if LibsDataBar and LibsDataBar.API then
-		return LibsDataBar.API:GetBarData(barId)
-	end
+	if LibsDataBar and LibsDataBar.API then return LibsDataBar.API:GetBarData(barId) end
 	return nil
 end
 
 _G.LibsDataBar_HasIntegration = function(addonName)
-	if LibsDataBar and LibsDataBar.API then
-		return LibsDataBar.API:HasIntegration(addonName)
-	end
+	if LibsDataBar and LibsDataBar.API then return LibsDataBar.API:HasIntegration(addonName) end
 	return false
 end
 

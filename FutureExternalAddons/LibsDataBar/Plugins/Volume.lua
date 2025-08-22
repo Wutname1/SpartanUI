@@ -59,11 +59,11 @@ function VolumePlugin:GetText()
 	local displayType = self:GetConfig('displayType')
 	local showPercent = self:GetConfig('showPercent')
 	local colorByLevel = self:GetConfig('colorByLevel')
-	
+
 	self:UpdateVolumeData()
-	
+
 	local volume, volumeName
-	
+
 	if displayType == 'master' then
 		volume = self._masterVolume
 		volumeName = 'Master'
@@ -75,31 +75,26 @@ function VolumePlugin:GetText()
 		volumeName = 'SFX'
 	elseif displayType == 'all' then
 		-- Show all three main volumes
-		local text = string.format('M:%d%% | Mu:%d%% | S:%d%%', 
-			self._masterVolume * 100,
-			self._musicVolume * 100,
-			self._soundVolume * 100)
+		local text = string.format('M:%d%% | Mu:%d%% | S:%d%%', self._masterVolume * 100, self._musicVolume * 100, self._soundVolume * 100)
 		return colorByLevel and self:ApplyVolumeColor(text, self._masterVolume) or text
 	else
 		-- Default to master
 		volume = self._masterVolume
 		volumeName = 'Vol'
 	end
-	
+
 	local percent = math.floor(volume * 100)
 	local text
-	
+
 	if showPercent then
 		text = string.format('%s: %d%%', volumeName, percent)
 	else
 		text = volumeName
 	end
-	
+
 	-- Apply color coding based on volume level
-	if colorByLevel then
-		text = self:ApplyVolumeColor(text, volume)
-	end
-	
+	if colorByLevel then text = self:ApplyVolumeColor(text, volume) end
+
 	return text
 end
 
@@ -108,7 +103,7 @@ end
 function VolumePlugin:GetIcon()
 	local displayType = self:GetConfig('displayType')
 	local volume
-	
+
 	if displayType == 'music' then
 		volume = self._musicVolume
 		if volume == 0 then
@@ -121,14 +116,14 @@ function VolumePlugin:GetIcon()
 	else
 		volume = self._masterVolume
 	end
-	
+
 	-- Return appropriate volume icon based on level
 	if volume == 0 then
 		return 'Interface\\Icons\\Spell_Shadow_Silence' -- Muted
 	elseif volume < 0.33 then
 		return 'Interface\\Icons\\Spell_Nature_Purge' -- Low volume
 	elseif volume < 0.66 then
-		return 'Interface\\Icons\\Spell_Holy_Silence' -- Medium volume  
+		return 'Interface\\Icons\\Spell_Holy_Silence' -- Medium volume
 	else
 		return 'Interface\\Icons\\Spell_Frost_WindWalk' -- High volume
 	end
@@ -138,9 +133,9 @@ end
 ---@return string tooltip Tooltip text
 function VolumePlugin:GetTooltip()
 	self:UpdateVolumeData()
-	
+
 	local tooltip = 'Audio Volume Settings:\\n\\n'
-	
+
 	-- Show all volume types if enabled
 	if self:GetConfig('showAllInTooltip') then
 		tooltip = tooltip .. string.format('Master Volume: %d%%\\n', self._masterVolume * 100)
@@ -152,12 +147,12 @@ function VolumePlugin:GetTooltip()
 		-- Show only the selected type
 		local displayType = self:GetConfig('displayType')
 		local volume, name
-		
+
 		if displayType == 'master' then
 			volume = self._masterVolume
 			name = 'Master Volume'
 		elseif displayType == 'music' then
-			volume = self._musicVolume  
+			volume = self._musicVolume
 			name = 'Music Volume'
 		elseif displayType == 'sound' then
 			volume = self._soundVolume
@@ -166,19 +161,17 @@ function VolumePlugin:GetTooltip()
 			volume = self._masterVolume
 			name = 'Master Volume'
 		end
-		
+
 		tooltip = tooltip .. string.format('%s: %d%%\\n', name, volume * 100)
 	end
-	
+
 	tooltip = tooltip .. '\\nControls:\\n'
 	tooltip = tooltip .. 'Left-click: Toggle mute\\n'
 	tooltip = tooltip .. 'Right-click: Configuration options\\n'
 	tooltip = tooltip .. 'Middle-click: Cycle display mode\\n'
-	
-	if self:GetConfig('enableMouseWheel') then
-		tooltip = tooltip .. string.format('Scroll wheel: Adjust volume (±%d%%)\\n', self:GetConfig('wheelStep'))
-	end
-	
+
+	if self:GetConfig('enableMouseWheel') then tooltip = tooltip .. string.format('Scroll wheel: Adjust volume (±%d%%)\\n', self:GetConfig('wheelStep')) end
+
 	return tooltip
 end
 
@@ -186,7 +179,7 @@ end
 ---@param button string Mouse button
 function VolumePlugin:OnClick(button)
 	local displayType = self:GetConfig('displayType')
-	
+
 	if button == 'LeftButton' then
 		-- Toggle mute for the displayed volume type
 		self:ToggleMute(displayType)
@@ -203,10 +196,10 @@ end
 ---@param delta number Scroll direction (+1 up, -1 down)
 function VolumePlugin:OnMouseWheel(delta)
 	if not self:GetConfig('enableMouseWheel') then return end
-	
+
 	local displayType = self:GetConfig('displayType')
 	local step = self:GetConfig('wheelStep') / 100 -- Convert to decimal
-	
+
 	if delta > 0 then
 		self:AdjustVolume(displayType, step)
 	else
@@ -246,7 +239,7 @@ end
 function VolumePlugin:ToggleMute(volumeType)
 	local volumeInfo = VOLUME_TYPES[volumeType] or VOLUME_TYPES.master
 	local currentVolume = tonumber(GetCVar(volumeInfo.cvar)) or 1.0
-	
+
 	if currentVolume > 0 then
 		-- Store current volume and mute
 		self:SetConfig('saved_' .. volumeType, currentVolume)
@@ -258,7 +251,7 @@ function VolumePlugin:ToggleMute(volumeType)
 		SetCVar(volumeInfo.cvar, savedVolume)
 		LibsDataBar:DebugLog('info', volumeInfo.name .. ' volume restored to ' .. (savedVolume * 100) .. '%')
 	end
-	
+
 	self:UpdateVolumeData()
 end
 
@@ -269,20 +262,19 @@ function VolumePlugin:AdjustVolume(volumeType, delta)
 	local volumeInfo = VOLUME_TYPES[volumeType] or VOLUME_TYPES.master
 	local currentVolume = tonumber(GetCVar(volumeInfo.cvar)) or 1.0
 	local newVolume = math.max(0, math.min(1, currentVolume + delta))
-	
+
 	SetCVar(volumeInfo.cvar, newVolume)
 	self:UpdateVolumeData()
-	
-	LibsDataBar:DebugLog('info', string.format('%s volume adjusted to %d%%', 
-		volumeInfo.name, newVolume * 100))
+
+	LibsDataBar:DebugLog('info', string.format('%s volume adjusted to %d%%', volumeInfo.name, newVolume * 100))
 end
 
 ---Cycle through different display modes
 function VolumePlugin:CycleDisplayMode()
-	local modes = {'master', 'music', 'sound', 'all'}
+	local modes = { 'master', 'music', 'sound', 'all' }
 	local current = self:GetConfig('displayType')
 	local currentIndex = 1
-	
+
 	-- Find current mode index
 	for i, mode in ipairs(modes) do
 		if mode == current then
@@ -290,11 +282,11 @@ function VolumePlugin:CycleDisplayMode()
 			break
 		end
 	end
-	
+
 	-- Move to next mode (wrap around)
 	local nextIndex = currentIndex < #modes and currentIndex + 1 or 1
 	local nextMode = modes[nextIndex]
-	
+
 	self:SetConfig('displayType', nextMode)
 	LibsDataBar:DebugLog('info', 'Volume display mode changed to: ' .. nextMode)
 end
@@ -412,9 +404,7 @@ function VolumePlugin:OnCVarUpdate(cvarName)
 	for _, volumeInfo in pairs(VOLUME_TYPES) do
 		if cvarName == volumeInfo.cvar then
 			self:UpdateVolumeData()
-			if LibsDataBar.callbacks then 
-				LibsDataBar.callbacks:Fire('LibsDataBar_PluginUpdate', self.id) 
-			end
+			if LibsDataBar.callbacks then LibsDataBar.callbacks:Fire('LibsDataBar_PluginUpdate', self.id) end
 			break
 		end
 	end

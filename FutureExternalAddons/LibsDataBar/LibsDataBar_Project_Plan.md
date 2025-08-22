@@ -15,7 +15,7 @@ LibsDataBar aims to become the next-generation data broker display addon, challe
 **Phase 1: Foundation - 100% Complete** ✅
 
 - ✅ **Core Library**: LibsDataBar-1.0 fully implemented with LibStub registration
-- ✅ **Event System**: Advanced event management with batching and performance optimization  
+- ✅ **Event System**: Advanced event management with batching and performance optimization
 - ✅ **Configuration**: Hierarchical config system with AceDB integration and caching
 - ✅ **Performance Monitoring**: Built-in profiling and metrics collection framework
 - ✅ **Plugin System**: Native plugin interface with lifecycle management
