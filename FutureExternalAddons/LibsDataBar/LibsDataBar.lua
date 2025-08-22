@@ -542,36 +542,94 @@ end
 ---Register LDB plugins and add them to the specified bar
 ---@param bar DataBar Target bar for plugins
 function lib:RegisterBuiltinPlugins(bar)
-	-- Pure LDB implementation - all plugins are discovered through LibDataBroker
+	-- Pure LDB implementation - direct object handling without adapter
 	local registeredCount = 0
 
-	-- Add LDB plugins through discovery
-	if self.ldb then
-		self:DebugLog('info', 'Starting LDB plugin discovery for main bar')
-		C_Timer.After(2, function()
-			-- Force discovery of all current LDB objects to catch any we missed
-			self.ldb:DiscoverExistingObjects()
+	-- Check for LibDataBroker
+	local LDB = LibStub:GetLibrary('LibDataBroker-1.1', true)
+	if not LDB then
+		self:DebugLog('warning', 'LibDataBroker-1.1 not found - no LDB plugins available')
+		return
+	end
+
+	-- Register callback for new LDB objects
+	LDB.RegisterCallback(self, 'LibDataBroker_DataObjectCreated', function(event, name, dataObject)
+		self:DebugLog('info', 'New LDB object created: ' .. name)
+		if self:IsValidLDBObject(dataObject) then
+			-- Create direct LDB plugin object
+			local plugin = {
+				id = 'LDB_' .. name,
+				name = dataObject.label or name,
+				version = '1.0.0',
+				author = 'LibDataBroker',
+				category = 'LibDataBroker',
+				description = 'LibDataBroker plugin: ' .. name,
+				type = 'ldb', -- Mark as LDB plugin for PluginButton
+				ldbObject = dataObject, -- Direct reference to LDB object
+				ldbName = name,
+			}
 			
-			local available = 0
-			for name, wrapper in pairs(self.ldb.registeredObjects or {}) do
+			-- Add to bar
+			local button = bar:AddPlugin(plugin)
+			if button then 
+				self:DebugLog('info', 'Auto-added new LDB plugin to main bar: ' .. name)
+			else
+				self:DebugLog('warning', 'Failed to auto-add new LDB plugin to main bar: ' .. name)
+			end
+		end
+	end)
+
+	-- Discover and register existing LDB objects directly
+	self:DebugLog('info', 'Starting direct LDB plugin discovery for main bar')
+	C_Timer.After(5, function()
+		local available = 0
+		
+		-- Iterate through all LDB objects
+		for name, dataObject in LDB:DataObjectIterator() do
+			if self:IsValidLDBObject(dataObject) then
 				available = available + 1
-				if wrapper and wrapper.plugin then
-					local button = bar:AddPlugin(wrapper.plugin)
-					if button then 
-						registeredCount = registeredCount + 1
-						self:DebugLog('info', 'Added LDB plugin to main bar: ' .. name)
-					else
-						self:DebugLog('warning', 'Failed to add LDB plugin to main bar: ' .. name)
-					end
+				
+				-- Create direct LDB plugin object
+				local plugin = {
+					id = 'LDB_' .. name,
+					name = dataObject.label or name,
+					version = '1.0.0',
+					author = 'LibDataBroker',
+					category = 'LibDataBroker',
+					description = 'LibDataBroker plugin: ' .. name,
+					type = 'ldb', -- Mark as LDB plugin for PluginButton
+					ldbObject = dataObject, -- Direct reference to LDB object
+					ldbName = name,
+				}
+				
+				-- Add to bar
+				local button = bar:AddPlugin(plugin)
+				if button then 
+					registeredCount = registeredCount + 1
+					self:DebugLog('info', 'Added LDB plugin directly to main bar: ' .. name)
 				else
-					self:DebugLog('warning', 'LDB wrapper invalid for: ' .. name)
+					self:DebugLog('warning', 'Failed to add LDB plugin to main bar: ' .. name)
 				end
 			end
-			self:DebugLog('info', 'LDB Discovery complete: ' .. available .. ' available, ' .. registeredCount .. ' added to main bar')
-		end)
-	else
-		self:DebugLog('warning', 'LDB adapter not available for plugin discovery')
-	end
+		end
+		
+		self:DebugLog('info', 'Direct LDB Discovery complete: ' .. available .. ' available, ' .. registeredCount .. ' added to main bar')
+	end)
+end
+
+---Check if an LDB object is valid for registration
+---@param dataObject table LDB data object
+---@return boolean valid Whether the object is valid
+function lib:IsValidLDBObject(dataObject)
+	if not dataObject or type(dataObject) ~= 'table' then return false end
+
+	-- Must have either text or label
+	if not dataObject.text and not dataObject.label then return false end
+
+	-- Must be a data source
+	if dataObject.type ~= 'data source' then return false end
+
+	return true
 end
 
 ---Create a new data bar
