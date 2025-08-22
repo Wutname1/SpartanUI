@@ -316,14 +316,40 @@ function PerformancePlugin:SetConfig(key, value)
 	return LibsDataBar.config:SetConfig('plugins.' .. self.id .. '.pluginSettings.' .. key, value)
 end
 
--- Initialize and register the plugin
+-- Initialize the plugin
 PerformancePlugin:OnInitialize()
 
--- Register with LibsDataBar
-if LibsDataBar:RegisterPlugin(PerformancePlugin) then
-	LibsDataBar:DebugLog('info', 'Performance plugin registered successfully')
+-- Register as LibDataBroker object for standardized plugin system
+local LDB = LibStub:GetLibrary('LibDataBroker-1.1', true)
+if LDB then
+	local performanceLDBObject = LDB:NewDataObject('LibsDataBar_Performance', {
+		type = 'data source',
+		text = PerformancePlugin:GetText(),
+		icon = PerformancePlugin:GetIcon(),
+		label = PerformancePlugin.name,
+
+		-- Forward methods to PerformancePlugin with database access preserved
+		OnClick = function(self, button)
+			PerformancePlugin:OnClick(button)
+		end,
+
+		OnTooltipShow = function(tooltip)
+			tooltip:SetText(PerformancePlugin:GetTooltip())
+		end,
+
+		-- Update method to refresh LDB object
+		UpdateLDB = function(self)
+			self.text = PerformancePlugin:GetText()
+			self.icon = PerformancePlugin:GetIcon()
+		end,
+	})
+
+	-- Store reference for updates
+	PerformancePlugin._ldbObject = performanceLDBObject
+
+	LibsDataBar:DebugLog('info', 'Performance plugin registered as LibDataBroker object')
 else
-	LibsDataBar:DebugLog('error', 'Failed to register Performance plugin')
+	LibsDataBar:DebugLog('error', 'LibDataBroker not available for Performance plugin')
 end
 
 -- Return plugin for external access

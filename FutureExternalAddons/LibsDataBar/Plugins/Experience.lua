@@ -484,14 +484,40 @@ function ExperiencePlugin:SetConfig(key, value)
 	return LibsDataBar.config:SetConfig('plugins.' .. self.id .. '.pluginSettings.' .. key, value)
 end
 
--- Initialize and register the plugin
+-- Initialize the plugin
 ExperiencePlugin:OnInitialize()
 
--- Register with LibsDataBar
-if LibsDataBar:RegisterPlugin(ExperiencePlugin) then
-	LibsDataBar:DebugLog('info', 'Experience plugin registered successfully')
+-- Register as LibDataBroker object for standardized plugin system
+local LDB = LibStub:GetLibrary('LibDataBroker-1.1', true)
+if LDB then
+	local experienceLDBObject = LDB:NewDataObject('LibsDataBar_Experience', {
+		type = 'data source',
+		text = ExperiencePlugin:GetText(),
+		icon = ExperiencePlugin:GetIcon(),
+		label = ExperiencePlugin.name,
+
+		-- Forward methods to ExperiencePlugin with database access preserved
+		OnClick = function(self, button)
+			ExperiencePlugin:OnClick(button)
+		end,
+
+		OnTooltipShow = function(tooltip)
+			tooltip:SetText(ExperiencePlugin:GetTooltip())
+		end,
+
+		-- Update method to refresh LDB object
+		UpdateLDB = function(self)
+			self.text = ExperiencePlugin:GetText()
+			self.icon = ExperiencePlugin:GetIcon()
+		end,
+	})
+
+	-- Store reference for updates
+	ExperiencePlugin._ldbObject = experienceLDBObject
+
+	LibsDataBar:DebugLog('info', 'Experience plugin registered as LibDataBroker object')
 else
-	LibsDataBar:DebugLog('error', 'Failed to register Experience plugin')
+	LibsDataBar:DebugLog('error', 'LibDataBroker not available for Experience plugin')
 end
 
 -- Return plugin for external access

@@ -557,14 +557,40 @@ function PlayedTimePlugin:SetConfig(key, value)
 	return LibsDataBar.config:SetConfig('plugins.' .. self.id .. '.pluginSettings.' .. key, value)
 end
 
--- Initialize and register the plugin
+-- Initialize the plugin
 PlayedTimePlugin:OnInitialize()
 
--- Register with LibsDataBar
-if LibsDataBar:RegisterPlugin(PlayedTimePlugin) then
-	LibsDataBar:DebugLog('info', 'PlayedTime plugin registered successfully')
+-- Register as LibDataBroker object for standardized plugin system
+local LDB = LibStub:GetLibrary('LibDataBroker-1.1', true)
+if LDB then
+	local playedTimeLDBObject = LDB:NewDataObject('LibsDataBar_PlayedTime', {
+		type = 'data source',
+		text = PlayedTimePlugin:GetText(),
+		icon = PlayedTimePlugin:GetIcon(),
+		label = PlayedTimePlugin.name,
+
+		-- Forward methods to PlayedTimePlugin with database access preserved
+		OnClick = function(self, button)
+			PlayedTimePlugin:OnClick(button)
+		end,
+
+		OnTooltipShow = function(tooltip)
+			tooltip:SetText(PlayedTimePlugin:GetTooltip())
+		end,
+
+		-- Update method to refresh LDB object
+		UpdateLDB = function(self)
+			self.text = PlayedTimePlugin:GetText()
+			self.icon = PlayedTimePlugin:GetIcon()
+		end,
+	})
+
+	-- Store reference for updates
+	PlayedTimePlugin._ldbObject = playedTimeLDBObject
+
+	LibsDataBar:DebugLog('info', 'PlayedTime plugin registered as LibDataBroker object')
 else
-	LibsDataBar:DebugLog('error', 'Failed to register PlayedTime plugin')
+	LibsDataBar:DebugLog('error', 'LibDataBroker not available for PlayedTime plugin')
 end
 
 -- Return plugin for external access

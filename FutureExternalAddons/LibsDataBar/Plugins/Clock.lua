@@ -120,11 +120,12 @@ end
 function ClockPlugin:OnUpdate(elapsed)
 	self._lastUpdate = self._lastUpdate + elapsed
 	if self._lastUpdate >= self._updateInterval then
-		-- Time to update - this will trigger a text refresh
-		-- The actual text update is handled by the display system
 		self._lastUpdate = 0
 
-		-- Fire update event if needed
+		-- Update LDB object if available
+		if self._ldbObject and self._ldbObject.UpdateLDB then self._ldbObject:UpdateLDB() end
+
+		-- Fire update event if needed (for legacy compatibility)
 		if LibsDataBar.callbacks then LibsDataBar.callbacks:Fire('LibsDataBar_PluginUpdate', self.id) end
 	end
 end
@@ -239,14 +240,40 @@ function ClockPlugin:SetConfig(key, value)
 	return LibsDataBar.config:SetConfig('plugins.' .. self.id .. '.pluginSettings.' .. key, value)
 end
 
--- Initialize and register the plugin
+-- Initialize the plugin
 ClockPlugin:OnInitialize()
 
--- Register with LibsDataBar
-if LibsDataBar:RegisterPlugin(ClockPlugin) then
-	LibsDataBar:DebugLog('info', 'Clock plugin registered successfully')
+-- Register as LibDataBroker object for standardized plugin system
+local LDB = LibStub:GetLibrary('LibDataBroker-1.1', true)
+if LDB then
+	local clockLDBObject = LDB:NewDataObject('LibsDataBar_Clock', {
+		type = 'data source',
+		text = ClockPlugin:GetText(),
+		icon = ClockPlugin:GetIcon(),
+		label = ClockPlugin.name,
+
+		-- Forward methods to ClockPlugin with database access preserved
+		OnClick = function(self, button)
+			ClockPlugin:OnClick(button)
+		end,
+
+		OnTooltipShow = function(tooltip)
+			tooltip:SetText(ClockPlugin:GetTooltip())
+		end,
+
+		-- Update method to refresh LDB object
+		UpdateLDB = function(self)
+			self.text = ClockPlugin:GetText()
+			self.icon = ClockPlugin:GetIcon()
+		end,
+	})
+
+	-- Store reference for updates
+	ClockPlugin._ldbObject = clockLDBObject
+
+	LibsDataBar:DebugLog('info', 'Clock plugin registered as LibDataBroker object')
 else
-	LibsDataBar:DebugLog('error', 'Failed to register Clock plugin')
+	LibsDataBar:DebugLog('error', 'LibDataBroker not available for Clock plugin')
 end
 
 -- Return plugin for external access

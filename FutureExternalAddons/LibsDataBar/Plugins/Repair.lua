@@ -581,14 +581,40 @@ function RepairPlugin:SetConfig(key, value)
 	return LibsDataBar.config:SetConfig('plugins.' .. self.id .. '.pluginSettings.' .. key, value)
 end
 
--- Initialize and register the plugin
+-- Initialize the plugin
 RepairPlugin:OnInitialize()
 
--- Register with LibsDataBar
-if LibsDataBar:RegisterPlugin(RepairPlugin) then
-	LibsDataBar:DebugLog('info', 'Repair plugin registered successfully')
+-- Register as LibDataBroker object for standardized plugin system
+local LDB = LibStub:GetLibrary('LibDataBroker-1.1', true)
+if LDB then
+	local repairLDBObject = LDB:NewDataObject('LibsDataBar_Repair', {
+		type = 'data source',
+		text = RepairPlugin:GetText(),
+		icon = RepairPlugin:GetIcon(),
+		label = RepairPlugin.name,
+
+		-- Forward methods to RepairPlugin with database access preserved
+		OnClick = function(self, button)
+			RepairPlugin:OnClick(button)
+		end,
+
+		OnTooltipShow = function(tooltip)
+			tooltip:SetText(RepairPlugin:GetTooltip())
+		end,
+
+		-- Update method to refresh LDB object
+		UpdateLDB = function(self)
+			self.text = RepairPlugin:GetText()
+			self.icon = RepairPlugin:GetIcon()
+		end,
+	})
+
+	-- Store reference for updates
+	RepairPlugin._ldbObject = repairLDBObject
+
+	LibsDataBar:DebugLog('info', 'Repair plugin registered as LibDataBroker object')
 else
-	LibsDataBar:DebugLog('error', 'Failed to register Repair plugin')
+	LibsDataBar:DebugLog('error', 'LibDataBroker not available for Repair plugin')
 end
 
 -- Return plugin for external access

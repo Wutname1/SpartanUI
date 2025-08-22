@@ -305,6 +305,12 @@ function FriendsPlugin:GetText()
 	return text .. table.concat(components, string.format(' |cff%s/|r ', COLORS.separator))
 end
 
+---Optional: Get the icon for this plugin
+---@return string icon Icon texture path
+function FriendsPlugin:GetIcon()
+	return 'Interface\\FriendsFrame\\UI-Toast-FriendOnlineIcon'
+end
+
 -- Required: Update tooltip content
 ---@param tooltip GameTooltip
 function FriendsPlugin:UpdateTooltip(tooltip)
@@ -603,9 +609,35 @@ function FriendsPlugin:OnDisable()
 	LibsDataBar:DebugLog('info', 'Friends plugin disabled')
 end
 
--- Register the plugin
-if LibsDataBar:RegisterPlugin(FriendsPlugin) then
-	LibsDataBar:DebugLog('info', 'Friends plugin registered successfully')
+-- Register as LibDataBroker object for standardized plugin system
+local LDB = LibStub:GetLibrary('LibDataBroker-1.1', true)
+if LDB then
+	local friendsLDBObject = LDB:NewDataObject('LibsDataBar_Friends', {
+		type = 'data source',
+		text = FriendsPlugin:GetText(),
+		icon = FriendsPlugin:GetIcon(),
+		label = FriendsPlugin.name,
+
+		-- Forward methods to FriendsPlugin with database access preserved
+		OnClick = function(self, button)
+			FriendsPlugin:OnClick(button)
+		end,
+
+		OnTooltipShow = function(tooltip)
+			tooltip:SetText(FriendsPlugin:GetTooltip())
+		end,
+
+		-- Update method to refresh LDB object
+		UpdateLDB = function(self)
+			self.text = FriendsPlugin:GetText()
+			self.icon = FriendsPlugin:GetIcon()
+		end,
+	})
+
+	-- Store reference for updates
+	FriendsPlugin._ldbObject = friendsLDBObject
+
+	LibsDataBar:DebugLog('info', 'Friends plugin registered as LibDataBroker object')
 else
-	LibsDataBar:DebugLog('error', 'Failed to register Friends plugin')
+	LibsDataBar:DebugLog('error', 'LibDataBroker not available for Friends plugin')
 end

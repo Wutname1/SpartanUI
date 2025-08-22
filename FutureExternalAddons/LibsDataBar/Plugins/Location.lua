@@ -193,7 +193,10 @@ function LocationPlugin:OnUpdate(elapsed)
 		self:UpdateLocationData()
 		self._lastUpdate = 0
 
-		-- Fire update event
+		-- Update LDB object if available
+		if self._ldbObject and self._ldbObject.UpdateLDB then self._ldbObject:UpdateLDB() end
+
+		-- Fire update event (for legacy compatibility)
 		if LibsDataBar.callbacks then LibsDataBar.callbacks:Fire('LibsDataBar_PluginUpdate', self.id) end
 	end
 end
@@ -363,6 +366,10 @@ end
 ---Event handler for zone changes
 function LocationPlugin:OnZoneChanged()
 	self:UpdateLocationData()
+
+	-- Update LDB object if available
+	if self._ldbObject and self._ldbObject.UpdateLDB then self._ldbObject:UpdateLDB() end
+
 	if LibsDataBar.callbacks then LibsDataBar.callbacks:Fire('LibsDataBar_PluginUpdate', self.id) end
 end
 
@@ -394,14 +401,40 @@ function LocationPlugin:SetConfig(key, value)
 	return LibsDataBar.config:SetConfig('plugins.' .. self.id .. '.pluginSettings.' .. key, value)
 end
 
--- Initialize and register the plugin
+-- Initialize the plugin
 LocationPlugin:OnInitialize()
 
--- Register with LibsDataBar
-if LibsDataBar:RegisterPlugin(LocationPlugin) then
-	LibsDataBar:DebugLog('info', 'Location plugin registered successfully')
+-- Register as LibDataBroker object for standardized plugin system
+local LDB = LibStub:GetLibrary('LibDataBroker-1.1', true)
+if LDB then
+	local locationLDBObject = LDB:NewDataObject('LibsDataBar_Location', {
+		type = 'data source',
+		text = LocationPlugin:GetText(),
+		icon = LocationPlugin:GetIcon(),
+		label = LocationPlugin.name,
+
+		-- Forward methods to LocationPlugin with database access preserved
+		OnClick = function(self, button)
+			LocationPlugin:OnClick(button)
+		end,
+
+		OnTooltipShow = function(tooltip)
+			tooltip:SetText(LocationPlugin:GetTooltip())
+		end,
+
+		-- Update method to refresh LDB object
+		UpdateLDB = function(self)
+			self.text = LocationPlugin:GetText()
+			self.icon = LocationPlugin:GetIcon()
+		end,
+	})
+
+	-- Store reference for updates
+	LocationPlugin._ldbObject = locationLDBObject
+
+	LibsDataBar:DebugLog('info', 'Location plugin registered as LibDataBroker object')
 else
-	LibsDataBar:DebugLog('error', 'Failed to register Location plugin')
+	LibsDataBar:DebugLog('error', 'LibDataBroker not available for Location plugin')
 end
 
 -- Return plugin for external access

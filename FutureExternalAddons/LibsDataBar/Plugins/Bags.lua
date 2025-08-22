@@ -456,14 +456,40 @@ function BagsPlugin:SetConfig(key, value)
 	return LibsDataBar.config:SetConfig('plugins.' .. self.id .. '.pluginSettings.' .. key, value)
 end
 
--- Initialize and register the plugin
+-- Initialize the plugin
 BagsPlugin:OnInitialize()
 
--- Register with LibsDataBar
-if LibsDataBar:RegisterPlugin(BagsPlugin) then
-	LibsDataBar:DebugLog('info', 'Bags plugin registered successfully')
+-- Register as LibDataBroker object for standardized plugin system
+local LDB = LibStub:GetLibrary('LibDataBroker-1.1', true)
+if LDB then
+	local bagsLDBObject = LDB:NewDataObject('LibsDataBar_Bags', {
+		type = 'data source',
+		text = BagsPlugin:GetText(),
+		icon = BagsPlugin:GetIcon(),
+		label = BagsPlugin.name,
+
+		-- Forward methods to BagsPlugin with database access preserved
+		OnClick = function(self, button)
+			BagsPlugin:OnClick(button)
+		end,
+
+		OnTooltipShow = function(tooltip)
+			tooltip:SetText(BagsPlugin:GetTooltip())
+		end,
+
+		-- Update method to refresh LDB object
+		UpdateLDB = function(self)
+			self.text = BagsPlugin:GetText()
+			self.icon = BagsPlugin:GetIcon()
+		end,
+	})
+
+	-- Store reference for updates
+	BagsPlugin._ldbObject = bagsLDBObject
+
+	LibsDataBar:DebugLog('info', 'Bags plugin registered as LibDataBroker object')
 else
-	LibsDataBar:DebugLog('error', 'Failed to register Bags plugin')
+	LibsDataBar:DebugLog('error', 'LibDataBroker not available for Bags plugin')
 end
 
 -- Return plugin for external access

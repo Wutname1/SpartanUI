@@ -820,7 +820,10 @@ function CurrencyPlugin:OnMoneyChanged()
 			LibsDataBar:DebugLog('info', 'Currency change: ' .. changeText)
 		end
 
-		-- Trigger plugin update
+		-- Update LDB object if available
+		if self._ldbObject and self._ldbObject.UpdateLDB then self._ldbObject:UpdateLDB() end
+
+		-- Trigger plugin update (for legacy compatibility)
 		if LibsDataBar.callbacks then LibsDataBar.callbacks:Fire('LibsDataBar_PluginUpdate', self.id) end
 	end
 end
@@ -831,6 +834,9 @@ function CurrencyPlugin:OnPlayerEnteringWorld()
 	self:LoadTrackingData()
 	self._currentGold = GetMoney()
 	self:UpdateTracking()
+
+	-- Update LDB object if available
+	if self._ldbObject and self._ldbObject.UpdateLDB then self._ldbObject:UpdateLDB() end
 end
 
 ---Helper: Register for an event
@@ -862,14 +868,40 @@ function CurrencyPlugin:SetConfig(key, value)
 	return LibsDataBar.config:SetConfig('plugins.' .. self.id .. '.pluginSettings.' .. key, value)
 end
 
--- Initialize and register the plugin
+-- Initialize the plugin
 CurrencyPlugin:OnInitialize()
 
--- Register with LibsDataBar
-if LibsDataBar:RegisterPlugin(CurrencyPlugin) then
-	LibsDataBar:DebugLog('info', 'Currency plugin registered successfully')
+-- Register as LibDataBroker object for standardized plugin system
+local LDB = LibStub:GetLibrary('LibDataBroker-1.1', true)
+if LDB then
+	local currencyLDBObject = LDB:NewDataObject('LibsDataBar_Currency', {
+		type = 'data source',
+		text = CurrencyPlugin:GetText(),
+		icon = CurrencyPlugin:GetIcon(),
+		label = CurrencyPlugin.name,
+
+		-- Forward methods to CurrencyPlugin with database access preserved
+		OnClick = function(self, button)
+			CurrencyPlugin:OnClick(button)
+		end,
+
+		OnTooltipShow = function(tooltip)
+			tooltip:SetText(CurrencyPlugin:GetTooltip())
+		end,
+
+		-- Update method to refresh LDB object
+		UpdateLDB = function(self)
+			self.text = CurrencyPlugin:GetText()
+			self.icon = CurrencyPlugin:GetIcon()
+		end,
+	})
+
+	-- Store reference for updates
+	CurrencyPlugin._ldbObject = currencyLDBObject
+
+	LibsDataBar:DebugLog('info', 'Currency plugin registered as LibDataBroker object')
 else
-	LibsDataBar:DebugLog('error', 'Failed to register Currency plugin')
+	LibsDataBar:DebugLog('error', 'LibDataBroker not available for Currency plugin')
 end
 
 -- Return plugin for external access

@@ -20,7 +20,8 @@
       "Bash(do echo \"=== $file ===\")",
       "Bash(for file in \"C:\\Users\\jerem\\Syncthing\\WoW\\Code\\SpartanUI\\DataBrokerDisplay\\LibsDataBar\\Plugins\"/{Bags,Location,Volume,Experience,Repair,PlayedTime,Reputation,Friends}.lua)",
       "Bash(tail:*)",
-      "Bash(for file in Clock.lua Currency.lua Location.lua)"
+      "Bash(for file in Clock.lua Currency.lua Location.lua)",
+      "Bash(for file in \"C:\\Users\\jerem\\Syncthing\\WoW\\Code\\SpartanUI\\FutureExternalAddons\\LibsDataBar\\Plugins\"/{Bags,Currency,Experience,Friends,Performance,PlayedTime,Repair,Reputation,Volume}.lua)"
     ],
     "deny": [],
     "ask": [],
