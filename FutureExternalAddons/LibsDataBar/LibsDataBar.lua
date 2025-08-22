@@ -545,21 +545,29 @@ function lib:RegisterBuiltinPlugins(bar)
 	-- Pure LDB implementation - all plugins are discovered through LibDataBroker
 	local registeredCount = 0
 
-	-- Add LDB plugins through auto-discovery
-	if self.ldb and self.ldb.autoDiscovery then
-		C_Timer.After(1, function()
+	-- Add LDB plugins through discovery
+	if self.ldb then
+		self:DebugLog('info', 'Starting LDB plugin discovery for main bar')
+		C_Timer.After(2, function()
+			-- Force discovery of all current LDB objects to catch any we missed
+			self.ldb:DiscoverExistingObjects()
+			
+			local available = 0
 			for name, wrapper in pairs(self.ldb.registeredObjects or {}) do
+				available = available + 1
 				if wrapper and wrapper.plugin then
 					local button = bar:AddPlugin(wrapper.plugin)
 					if button then 
 						registeredCount = registeredCount + 1
-						self:DebugLog('debug', 'Added LDB plugin to main bar: ' .. name)
+						self:DebugLog('info', 'Added LDB plugin to main bar: ' .. name)
+					else
+						self:DebugLog('warning', 'Failed to add LDB plugin to main bar: ' .. name)
 					end
+				else
+					self:DebugLog('warning', 'LDB wrapper invalid for: ' .. name)
 				end
 			end
-			if registeredCount > 0 then 
-				self:DebugLog('info', 'Added ' .. registeredCount .. ' LDB plugins to main bar') 
-			end
+			self:DebugLog('info', 'LDB Discovery complete: ' .. available .. ' available, ' .. registeredCount .. ' added to main bar')
 		end)
 	else
 		self:DebugLog('warning', 'LDB adapter not available for plugin discovery')
