@@ -103,6 +103,11 @@ function FriendsPlugin:ParseRealID()
 	local friends, bnets = {}, {}
 	local _, numOnline = BNGetNumFriends()
 
+	-- Handle case where numOnline might be nil (during loading or when Battle.net isn't ready)
+	if not numOnline or numOnline == 0 then
+		return friends, bnets
+	end
+
 	for i = 1, numOnline do
 		local accountInfo = C_BattleNet.GetFriendAccountInfo(i)
 		if accountInfo then
@@ -169,6 +174,11 @@ function FriendsPlugin:GetFriendsData()
 	local friends = {}
 	local numOnline = C_FriendList.GetNumOnlineFriends()
 
+	-- Handle case where numOnline might be nil (during loading or when friends list isn't ready)
+	if not numOnline or numOnline == 0 then
+		return friends
+	end
+
 	for i = 1, numOnline do
 		local info = C_FriendList.GetFriendInfoByIndex(i)
 		if info then table.insert(friends, info) end
@@ -185,6 +195,11 @@ function FriendsPlugin:GetGuildData()
 	if not IsInGuild() then return members end
 
 	local numTotal, numOnline = GetNumGuildMembers()
+
+	-- Handle case where numOnline might be nil (during loading or when guild roster isn't ready)
+	if not numOnline or numOnline == 0 then
+		return members
+	end
 
 	for i = 1, numOnline do
 		local name, rank, rankIndex, level, class, zone, note, officerNote, online, status, classFileName, achievementPoints, achievementRank, isMobile = GetGuildRosterInfo(i)
