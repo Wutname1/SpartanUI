@@ -21,10 +21,9 @@ local pairs, ipairs = pairs, ipairs
 local type, tostring = type, tostring
 local tinsert = table.insert
 
----@class LDBAdapter
+---@class LDBAdapter  
 ---@field registeredObjects table<string, LDBPluginWrapper> Registered LDB objects
 ---@field autoDiscovery boolean Whether to auto-discover LDB objects
----@field callbacks table LibDataBroker callback handlers
 local LDBAdapter = {}
 LDBAdapter.__index = LDBAdapter
 
@@ -32,7 +31,6 @@ LDBAdapter.__index = LDBAdapter
 LibsDataBar.ldb = LibsDataBar.ldb or setmetatable({
 	registeredObjects = {},
 	autoDiscovery = true,
-	callbacks = {},
 }, LDBAdapter)
 
 ---@class LDBPluginWrapper
@@ -47,18 +45,9 @@ LDBPluginWrapper.__index = LDBPluginWrapper
 function LDBAdapter:Initialize()
 	if not LDB then return end
 
-	-- Register for LibDataBroker callbacks
-	self.callbacks.OnDataObjectCreated = function(event, name, dataObject)
-		self:OnLDBObjectCreated(name, dataObject)
-	end
-
-	self.callbacks.OnDataObjectChanged = function(event, name, key, value, dataObject)
-		self:OnLDBObjectChanged(name, key, value, dataObject)
-	end
-
 	-- Register callbacks with LibDataBroker
-	LDB.RegisterCallback(self, 'LibDataBroker_DataObjectCreated', self.callbacks.OnDataObjectCreated)
-	LDB.RegisterCallback(self, 'LibDataBroker_AttributeChanged', self.callbacks.OnDataObjectChanged)
+	LDB.RegisterCallback(self, 'LibDataBroker_DataObjectCreated', 'OnLDBObjectCreated')
+	LDB.RegisterCallback(self, 'LibDataBroker_AttributeChanged', 'OnLDBObjectChanged')
 
 	-- Auto-discover existing LDB objects if enabled
 	if self.autoDiscovery then self:DiscoverExistingObjects() end
@@ -440,9 +429,8 @@ function LDBAdapter:Cleanup()
 	end
 
 	-- Unregister LDB callbacks
-	if self.callbacks.OnDataObjectCreated then LDB.UnregisterCallback(self, 'LibDataBroker_DataObjectCreated') end
-
-	if self.callbacks.OnDataObjectChanged then LDB.UnregisterCallback(self, 'LibDataBroker_AttributeChanged') end
+	LDB.UnregisterCallback(self, 'LibDataBroker_DataObjectCreated')
+	LDB.UnregisterCallback(self, 'LibDataBroker_AttributeChanged')
 
 	LibsDataBar:DebugLog('info', 'LDBAdapter cleaned up')
 end
