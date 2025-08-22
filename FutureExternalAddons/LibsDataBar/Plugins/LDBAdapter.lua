@@ -47,8 +47,12 @@ function LDBAdapter:Initialize()
 	if not LDB then return end
 
 	-- Register callbacks with LibDataBroker
-	LDB.RegisterCallback(self, 'LibDataBroker_DataObjectCreated', 'OnLDBObjectCreated')
-	LDB.RegisterCallback(self, 'LibDataBroker_AttributeChanged', 'OnLDBObjectChanged')
+	LDB.RegisterCallback(self, 'LibDataBroker_DataObjectCreated', function(event, name, dataObject)
+		self:OnLDBObjectCreated(name, dataObject)
+	end)
+	LDB.RegisterCallback(self, 'LibDataBroker_AttributeChanged', function(event, name, key, value, dataObject)
+		self:OnLDBObjectChanged(name, key, value, dataObject)
+	end)
 
 	-- Auto-discover existing LDB objects if enabled
 	if self.autoDiscovery then self:DiscoverExistingObjects() end
@@ -64,13 +68,14 @@ function LDBAdapter:DiscoverExistingObjects()
 
 	-- Get all data objects from LDB
 	for name, dataObject in LDB:DataObjectIterator() do
-		if self:IsValidLDBObject(dataObject) then
+		-- Skip if already registered
+		if not self.registeredObjects[name] and self:IsValidLDBObject(dataObject) then
 			self:RegisterLDBObject(name, dataObject)
 			discoveredCount = discoveredCount + 1
 		end
 	end
 
-	LibsDataBar:DebugLog('info', 'Auto-discovered ' .. discoveredCount .. ' LDB objects')
+	LibsDataBar:DebugLog('info', 'Auto-discovered ' .. discoveredCount .. ' new LDB objects')
 end
 
 ---Check if an LDB object is valid for registration
@@ -343,7 +348,11 @@ end
 ---@param name string Object name
 ---@param dataObject table LDB data object
 function LDBAdapter:OnLDBObjectCreated(name, dataObject)
-	if self.autoDiscovery then self:RegisterLDBObject(name, dataObject) end
+	LibsDataBar:DebugLog('info', 'LDB object created: ' .. name)
+	if self.autoDiscovery then 
+		LibsDataBar:DebugLog('info', 'Auto-registering LDB object: ' .. name)
+		self:RegisterLDBObject(name, dataObject) 
+	end
 end
 
 ---Handle LDB object attribute changes
@@ -430,8 +439,7 @@ function LDBAdapter:Cleanup()
 	end
 
 	-- Unregister LDB callbacks
-	LDB.UnregisterCallback(self, 'LibDataBroker_DataObjectCreated')
-	LDB.UnregisterCallback(self, 'LibDataBroker_AttributeChanged')
+	LDB.UnregisterAllCallbacks(self)
 
 	LibsDataBar:DebugLog('info', 'LDBAdapter cleaned up')
 end
