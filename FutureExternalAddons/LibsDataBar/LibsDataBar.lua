@@ -1036,6 +1036,242 @@ function LibsDataBar:PLAYER_ENTERING_WORLD(event)
 	self:DebugLog('info', 'Player entering world')
 end
 
+----------------------------------------------------------------------------------------------------
+-- Timer Callbacks (AceTimer-3.0)
+----------------------------------------------------------------------------------------------------
+
+---Initial setup callback - called once after game data is loaded
+function LibsDataBar:InitialSetup()
+	self:DebugLog('info', 'InitialSetup timer callback executed')
+	
+	-- Call the original setup defaults function
+	self:SetupDefaults()
+	
+	-- Trigger an immediate update of all bars to display initial data
+	self:UpdateAllBars()
+	
+	-- Clear the init timer reference
+	self.initTimer = nil
+	
+	self:DebugLog('info', 'Initial setup completed - bars should now display text')
+end
+
+---Periodic update callback - refreshes all data bar content
+function LibsDataBar:UpdateAllBars()
+	if not self.bars then 
+		self:DebugLog('warning', 'UpdateAllBars called but no bars registry found')
+		return 
+	end
+	
+	local updateCount = 0
+	for barId, bar in pairs(self.bars) do
+		if bar and bar.Update then
+			-- Safely call bar update with error handling
+			local success, errorMsg = pcall(function()
+				bar:Update()
+			end)
+			
+			if success then
+				updateCount = updateCount + 1
+			else
+				self:DebugLog('error', 'Failed to update bar ' .. tostring(barId) .. ': ' .. tostring(errorMsg))
+			end
+		end
+	end
+	
+	if LIBSDATABAR_DEBUG then
+		self:DebugLog('info', 'Updated ' .. updateCount .. ' data bars')
+	end
+end
+
+---Throttled update function for high-frequency events
+---@param delay? number Optional delay before update (default 0.1 seconds)
+function LibsDataBar:ScheduleUpdate(delay)
+	delay = delay or 0.1
+	
+	-- Cancel any pending update to prevent spam
+	if self.pendingUpdateTimer then
+		self:CancelTimer(self.pendingUpdateTimer)
+	end
+	
+	-- Schedule new update
+	self.pendingUpdateTimer = self:ScheduleTimer('UpdateAllBars', delay)
+end
+
+----------------------------------------------------------------------------------------------------
+-- Configuration System (AceDB-3.0 + AceConfig-3.0)
+----------------------------------------------------------------------------------------------------
+
+---Setup AceConfig-3.0 options table and register with Settings panel
+function LibsDataBar:SetupConfigOptions()
+	local options = {
+		name = 'LibsDataBar',
+		handler = self,
+		type = 'group',
+		args = {
+			general = {
+				type = 'group',
+				name = 'General',
+				order = 1,
+				args = {
+					enabled = {
+						type = 'toggle',
+						name = 'Enable LibsDataBar',
+						desc = 'Enable or disable the LibsDataBar addon',
+						get = function() return self.db.profile.enabled end,
+						set = function(_, value) 
+							self.db.profile.enabled = value
+							if value then
+								self:Enable()
+							else
+								self:Disable()
+							end
+						end,
+						order = 1,
+					},
+					debug = {
+						type = 'toggle',
+						name = 'Debug Mode',
+						desc = 'Enable debug logging for troubleshooting',
+						get = function() return self.db.profile.debug end,
+						set = function(_, value) self.db.profile.debug = value end,
+						order = 2,
+					},
+					updateInterval = {
+						type = 'range',
+						name = 'Update Interval',
+						desc = 'How often to refresh data bars (in seconds)',
+						min = 1.0,
+						max = 30.0,
+						step = 0.5,
+						get = function() return self.db.profile.performance.updateInterval end,
+						set = function(_, value) 
+							self.db.profile.performance.updateInterval = value
+							-- Restart the refresh timer with new interval
+							if self.refreshTimer then
+								self:CancelTimer(self.refreshTimer)
+								self.refreshTimer = self:ScheduleRepeatingTimer('UpdateAllBars', value)
+							end
+						end,
+						order = 3,
+					},
+				},
+			},
+			bars = {
+				type = 'group',
+				name = 'Data Bars',
+				order = 2,
+				args = {
+					main = {
+						type = 'group',
+						name = 'Main Bar',
+						order = 1,
+						args = {
+							enabled = {
+								type = 'toggle',
+								name = 'Enable Main Bar',
+								desc = 'Show or hide the main data bar',
+								get = function() return self.db.profile.bars.main.enabled end,
+								set = function(_, value) self.db.profile.bars.main.enabled = value end,
+								order = 1,
+							},
+							height = {
+								type = 'range',
+								name = 'Bar Height',
+								desc = 'Height of the data bar in pixels',
+								min = 16,
+								max = 64,
+								step = 1,
+								get = function() return self.db.profile.bars.main.size.height end,
+								set = function(_, value) self.db.profile.bars.main.size.height = value end,
+								order = 2,
+							},
+						},
+					},
+				},
+			},
+		},
+	}
+	
+	-- Register the options table with AceConfig
+	LibStub('AceConfig-3.0'):RegisterOptionsTable('LibsDataBar', options)
+	
+	-- Add to Settings panel  
+	self.optionsFrame = LibStub('AceConfigDialog-3.0'):AddToBlizOptions('LibsDataBar', 'LibsDataBar')
+	
+	-- Add AceDBOptions for profile management
+	local AceDBOptions = LibStub('AceDBOptions-3.0')
+	LibStub('AceConfig-3.0'):RegisterOptionsTable('LibsDataBar_Profiles', AceDBOptions:GetOptionsTable(self.db))
+	LibStub('AceConfigDialog-3.0'):AddToBlizOptions('LibsDataBar_Profiles', 'Profiles', 'LibsDataBar')
+	
+	-- Setup slash commands
+	SLASH_LIBSDATABAR1 = '/libsdatabar'
+	SLASH_LIBSDATABAR2 = '/ldb'
+	SlashCmdList['LIBSDATABAR'] = function(msg)
+		LibStub('AceConfigDialog-3.0'):Open('LibsDataBar')
+	end
+	
+	self:DebugLog('info', 'Configuration options and slash commands registered')
+end
+
+---Handle profile changes from AceDB
+function LibsDataBar:OnProfileChanged()
+	self:DebugLog('info', 'Profile changed - refreshing configuration')
+	
+	-- Update debug logging based on new profile
+	LIBSDATABAR_DEBUG = self.db.profile.debug
+	
+	-- Refresh all bars with new settings
+	self:ScheduleUpdate(0.1)
+end
+
+---Get configuration value from database
+---@param path string Dot-separated path to config value
+---@return any value The configuration value
+function LibsDataBar:GetConfig(path)
+	-- Handle case where database isn't initialized yet
+	if not self.db or not self.db.profile then
+		self:DebugLog('warning', 'GetConfig called before database initialization: ' .. tostring(path))
+		return nil
+	end
+	
+	local keys = { strsplit('.', path) }
+	local value = self.db.profile
+	
+	for _, key in ipairs(keys) do
+		if type(value) == 'table' and value[key] ~= nil then
+			value = value[key]
+		else
+			return nil
+		end
+	end
+	
+	return value
+end
+
+---Set configuration value in database
+---@param path string Dot-separated path to config value
+---@param value any The value to set
+function LibsDataBar:SetConfig(path, value)
+	local keys = { strsplit('.', path) }
+	local config = self.db.profile
+	
+	-- Navigate to parent table
+	for i = 1, #keys - 1 do
+		local key = keys[i]
+		if type(config[key]) ~= 'table' then
+			config[key] = {}
+		end
+		config = config[key]
+	end
+	
+	-- Set the value
+	config[keys[#keys]] = value
+	
+	-- Fire change callback for real-time updates
+	self.callbacks:Fire('ConfigChanged', path, value)
+end
+
 -- For backward compatibility, maintain library interface
 -- This allows existing code to continue working while we migrate
 _G.LibsDataBar = LibsDataBar

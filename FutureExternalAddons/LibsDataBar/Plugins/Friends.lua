@@ -604,14 +604,14 @@ end
 ---@param key string Configuration key
 ---@return any value Configuration value
 function FriendsPlugin:GetConfig(key)
-	return LibsDataBar.config:GetConfig('plugins.' .. self.id .. '.pluginSettings.' .. key) or friendsDefaults[key]
+	return LibsDataBar:GetConfig('plugins.' .. self.id .. '.pluginSettings.' .. key) or friendsDefaults[key]
 end
 
 ---Helper: Set plugin configuration value
 ---@param key string Configuration key
 ---@param value any Configuration value
 function FriendsPlugin:SetConfig(key, value)
-	return LibsDataBar.config:SetConfig('plugins.' .. self.id .. '.pluginSettings.' .. key, value)
+	return LibsDataBar:SetConfig('plugins.' .. self.id .. '.pluginSettings.' .. key, value)
 end
 
 ---Lifecycle: Plugin enabled

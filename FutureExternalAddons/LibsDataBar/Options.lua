@@ -247,20 +247,9 @@ function Options:Initialize()
 	-- Generate dynamic plugin options
 	self:GeneratePluginOptions()
 
-	-- Register with AceConfig if available
-	if AceConfig and AceConfigDialog then
-		AceConfig:RegisterOptionsTable('LibsDataBar', configTable)
-		AceConfigDialog:AddToBlizOptions('LibsDataBar', L['LibsDataBar'])
-
-		-- Add slash commands
-		SLASH_LIBSDATABAR1 = '/libsdatabar'
-		SLASH_LIBSDATABAR2 = '/ldb'
-		SlashCmdList['LIBSDATABAR'] = function(msg)
-			AceConfigDialog:Open('LibsDataBar')
-		end
-
-		LibsDataBar:DebugLog('info', 'Options interface initialized')
-	end
+	-- Phase 2: Options registration moved to main addon AceConfig system
+	-- This legacy system is disabled to prevent conflicts with new system
+	LibsDataBar:DebugLog('info', 'Legacy options system disabled - using new AceConfig system in main addon')
 end
 
 -- Generate bar configuration options dynamically
