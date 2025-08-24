@@ -52,16 +52,21 @@ local function Update(frame, settings)
 	element.bg:SetTexture(UF:FindStatusBarTexture(DB.texture))
 	element.bg:SetVertexColor(unpack(DB.bg.color or { 1, 1, 1, 0.2 }))
 
-	element.TextElements = {}
-	for i, TextElement in pairs(element.TextElements) do
-		local key = DB.text[i]
-		TextElement:SetJustifyH(key.SetJustifyH)
-		TextElement:SetJustifyV(key.SetJustifyV)
-		TextElement:ClearAllPoints()
-		TextElement:SetPoint(key.position.anchor, element, key.position.anchor, key.position.x, key.position.y)
-		frame:Tag(TextElement, key.text)
+	for i, key in pairs(DB.text) do
+		if element.TextElements[i] then
+			local TextElement = element.TextElements[i]
+			TextElement:SetJustifyH(key.SetJustifyH)
+			TextElement:SetJustifyV(key.SetJustifyV)
+			TextElement:ClearAllPoints()
+			TextElement:SetPoint(key.position.anchor, element, key.position.anchor, key.position.x, key.position.y)
+			frame:Tag(TextElement, key.text)
 
-		if not key.enabled then element.TextElements[i]:Hide() end
+			if key.enabled then
+				TextElement:Show()
+			else
+				TextElement:Hide()
+			end
+		end
 	end
 
 	element:ClearAllPoints()
@@ -108,10 +113,26 @@ local Settings = {
 		['1'] = {
 			enabled = false,
 			text = '[SUIPower(hideDead)][ / $>SUIPower(max,hideDead,hideZero,hideMax)]',
+			size = 10,
+			SetJustifyH = 'CENTER',
+			SetJustifyV = 'MIDDLE',
+			position = {
+				anchor = 'CENTER',
+				x = 0,
+				y = 0,
+			},
 		},
 		['2'] = {
 			enabled = false,
 			text = '[perpp]%',
+			size = 10,
+			SetJustifyH = 'CENTER',
+			SetJustifyV = 'MIDDLE',
+			position = {
+				anchor = 'CENTER',
+				x = 0,
+				y = 0,
+			},
 		},
 	},
 	position = {

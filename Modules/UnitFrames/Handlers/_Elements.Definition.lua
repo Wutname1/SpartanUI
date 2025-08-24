@@ -1,5 +1,6 @@
 ---@class ElementProps
 ---@field DB SUI.UF.Elements.Settings
+---@field TextElements table<integer, FontString>
 local ElementProps = {}
 
 ---@class SUI.UF.Elements.Config

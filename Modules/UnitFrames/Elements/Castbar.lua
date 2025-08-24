@@ -120,16 +120,22 @@ local function Update(frame, settings)
 	element.bg:SetTexture(UF:FindStatusBarTexture(DB.texture))
 	element.bg:SetVertexColor(unpack(DB.bg.color or { 1, 1, 1, 0.2 }))
 
-	element.TextElements = {}
-	for i, TextElement in pairs(element.TextElements) do
-		local key = DB.text[i]
-		TextElement:SetJustifyH(key.SetJustifyH)
-		TextElement:SetJustifyV(key.SetJustifyV)
-		TextElement:ClearAllPoints()
-		TextElement:SetPoint(key.position.anchor, element, key.position.anchor, key.position.x, key.position.y)
-		frame:Tag(TextElement, key.text)
+	for i, key in pairs(DB.text) do
+		if element.TextElements[i] then
+			local TextElement = element.TextElements[i]
+			TextElement:SetJustifyH(key.SetJustifyH)
+			TextElement:SetJustifyV(key.SetJustifyV)
+			TextElement:ClearAllPoints()
+			TextElement:SetPoint(key.position.anchor, element, key.position.anchor, key.position.x, key.position.y)
+			-- Don't apply tags to castbar TextElements as they are built-in elements (cast.Text, cast.Time)
+			-- that already have their own functionality
 
-		if not key.enabled then element.TextElements[i]:Hide() end
+			if key.enabled then
+				TextElement:Show()
+			else
+				TextElement:Hide()
+			end
+		end
 	end
 
 	element:ClearAllPoints()
@@ -309,7 +315,7 @@ local Settings = {
 	text = {
 		['1'] = {
 			enabled = true,
-			text = '[Spell name]',
+			text = '', -- Castbar Text element handles spell name automatically
 			position = {
 				anchor = 'CENTER',
 				x = 0,
@@ -318,7 +324,7 @@ local Settings = {
 		},
 		['2'] = {
 			enabled = true,
-			text = '[Spell timer]',
+			text = '', -- Castbar Time element handles timer automatically
 			size = 8,
 			position = {
 				anchor = 'RIGHT',
