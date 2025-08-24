@@ -1367,19 +1367,16 @@ function LibsDataBar:SetupEventBuckets()
 	-- Register buckets for high-frequency events to batch updates
 	
 	-- Bag update bucket - batch bag changes every 0.5 seconds
-	self:RegisterBucket('BAG_UPDATE', 0.5, 'LibsDataBar_BagUpdates')
-	self:RegisterBucket('BAG_UPDATE_DELAYED', 0.5, 'LibsDataBar_BagUpdates')
+	self:RegisterBucketEvent('LibsDataBar_BagUpdates', 0.5, 'BAG_UPDATE', 'BAG_UPDATE_DELAYED')
 	
 	-- Money update bucket - batch currency changes every 0.3 seconds  
-	self:RegisterBucket('PLAYER_MONEY', 0.3, 'LibsDataBar_MoneyUpdates')
+	self:RegisterBucketEvent('LibsDataBar_MoneyUpdates', 0.3, 'PLAYER_MONEY')
 	
 	-- XP update bucket - batch XP changes every 1.0 seconds
-	self:RegisterBucket('PLAYER_XP_UPDATE', 1.0, 'LibsDataBar_XPUpdates')
-	self:RegisterBucket('UPDATE_EXHAUSTION', 1.0, 'LibsDataBar_XPUpdates')
+	self:RegisterBucketEvent('LibsDataBar_XPUpdates', 1.0, 'PLAYER_XP_UPDATE', 'UPDATE_EXHAUSTION')
 	
 	-- Reputation update bucket - batch reputation changes every 2.0 seconds
-	self:RegisterBucket('UPDATE_FACTION', 2.0, 'LibsDataBar_ReputationUpdates')
-	self:RegisterBucket('QUEST_TURNED_IN', 2.0, 'LibsDataBar_ReputationUpdates')
+	self:RegisterBucketEvent('LibsDataBar_ReputationUpdates', 2.0, 'UPDATE_FACTION', 'QUEST_TURNED_IN')
 	
 	self:DebugLog('info', 'Phase 3: AceBucket event throttling enabled for performance optimization')
 end
