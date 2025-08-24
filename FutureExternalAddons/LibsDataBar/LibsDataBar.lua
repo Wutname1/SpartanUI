@@ -1176,7 +1176,29 @@ function LibsDataBar:InitialSetup()
 	-- Clear the init timer reference
 	self.initTimer = nil
 
+	-- Phase 1B: Schedule delayed initialization for data-dependent plugins
+	self:ScheduleDelayedPluginInit()
+	
 	self:DebugLog('info', 'Initial setup completed with periodic refresh every ' .. updateInterval .. 's - bars should now display text')
+end
+
+---Phase 1B: Schedule delayed initialization for data-dependent plugins
+---Some plugins need game data to be fully loaded before they can display correctly
+function LibsDataBar:ScheduleDelayedPluginInit()
+	-- Additional delay for plugins that need specific game data
+	local dataDelays = {
+		{ delay = 2.0, reason = 'currency_data', callback = function() self:ScheduleUpdate(0.1, 'delayed_currency_init') end },
+		{ delay = 3.0, reason = 'reputation_data', callback = function() self:ScheduleUpdate(0.1, 'delayed_reputation_init') end },
+		{ delay = 1.5, reason = 'location_data', callback = function() self:ScheduleUpdate(0.1, 'delayed_location_init') end },
+		{ delay = 2.5, reason = 'friends_data', callback = function() self:ScheduleUpdate(0.1, 'delayed_friends_init') end },
+	}
+	
+	for _, delayInfo in ipairs(dataDelays) do
+		self:ScheduleTimer(function()
+			delayInfo.callback()
+			self:DebugLog('info', 'Delayed plugin refresh for: ' .. delayInfo.reason)
+		end, delayInfo.delay)
+	end
 end
 
 ---Periodic update callback - refreshes all data bar content
@@ -1205,16 +1227,35 @@ function LibsDataBar:UpdateAllBars()
 	if LIBSDATABAR_DEBUG then self:DebugLog('info', 'Updated ' .. updateCount .. ' data bars') end
 end
 
----Throttled update function for high-frequency events
----@param delay? number Optional delay before update (default 0.1 seconds)
-function LibsDataBar:ScheduleUpdate(delay)
-	delay = delay or 0.1
+---Phase 1B: Enhanced throttled update function for high-frequency events
+---@param delay? number Optional delay before update (default based on maxUpdateFrequency)
+---@param reason? string Reason for update (for debugging and intelligent throttling)
+function LibsDataBar:ScheduleUpdate(delay, reason)
+	-- Phase 1B: Intelligent delay based on update reason
+	local maxFreq = self:GetConfig('performance.maxUpdateFrequency') or 0.1
+	
+	if not delay then
+		-- Intelligent throttling based on update reason
+		if reason == 'money' or reason == 'currency' then
+			delay = 0.2 -- Money updates less frequent
+		elseif reason == 'bag' or reason == 'inventory' then
+			delay = 0.5 -- Bag updates can be slower
+		elseif reason == 'zone' or reason == 'location' then
+			delay = 0.1 -- Zone changes need quick response
+		else
+			delay = maxFreq -- Default throttling
+		end
+	end
 
 	-- Cancel any pending update to prevent spam
 	if self.pendingUpdateTimer then self:CancelTimer(self.pendingUpdateTimer) end
 
 	-- Schedule new update
 	self.pendingUpdateTimer = self:ScheduleTimer('UpdateAllBars', delay)
+	
+	if LIBSDATABAR_DEBUG and reason then 
+		self:DebugLog('info', 'Scheduled update in ' .. delay .. 's for reason: ' .. reason) 
+	end
 end
 
 ----------------------------------------------------------------------------------------------------
