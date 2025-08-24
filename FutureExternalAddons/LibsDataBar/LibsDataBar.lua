@@ -18,7 +18,7 @@ assert(LibStub:GetLibrary('CallbackHandler-1.0', true), 'LibsDataBar requires Ca
 local LibQTip = LibStub:GetLibrary('LibQTip-1.0', true)
 
 -- Addon Registration with AceAddon-3.0
-local LibsDataBar = LibStub('AceAddon-3.0'):NewAddon('LibsDataBar', 'AceEvent-3.0', 'AceTimer-3.0', 'AceBucket-3.0', 'AceConsole-3.0')
+local LibsDataBar = LibStub('AceAddon-3.0'):NewAddon('LibsDataBar', 'AceEvent-3.0', 'AceTimer-3.0', 'AceConsole-3.0')
 if not LibsDataBar then return end
 
 -- For backward compatibility, expose as library for existing code
@@ -1230,10 +1230,10 @@ function LibsDataBar:InitialSetup()
 
 	-- Phase 1B: Schedule plugin text display validation
 	self:ScheduleTimer('ValidatePluginTextDisplay', 5.0)
-	
+
 	-- Phase 3: Setup AceBucket event throttling for performance
 	self:SetupEventBuckets()
-	
+
 	-- Phase 3: Initialize enhanced tooltips system
 	self:InitializeTooltipSystem()
 
@@ -1364,20 +1364,37 @@ end
 
 ---Phase 3: Setup AceBucket-3.0 event throttling for high-frequency events
 function LibsDataBar:SetupEventBuckets()
+	-- Check if AceBucket-3.0 is available
+	if not self.RegisterBucket then
+		self:DebugLog('warning', 'AceBucket-3.0 not available - using fallback event throttling')
+		-- Fallback to regular AceEvent with our existing throttling
+		self:RegisterEvent('BAG_UPDATE', function() self:ScheduleUpdate(0.5, 'bag_fallback') end)
+		self:RegisterEvent('BAG_UPDATE_DELAYED', function() self:ScheduleUpdate(0.5, 'bag_fallback') end)
+		self:RegisterEvent('PLAYER_MONEY', function() self:ScheduleUpdate(0.3, 'money_fallback') end)
+		self:RegisterEvent('PLAYER_XP_UPDATE', function() self:ScheduleUpdate(1.0, 'xp_fallback') end)
+		self:RegisterEvent('UPDATE_EXHAUSTION', function() self:ScheduleUpdate(1.0, 'xp_fallback') end)
+		self:RegisterEvent('UPDATE_FACTION', function() self:ScheduleUpdate(2.0, 'reputation_fallback') end)
+		self:RegisterEvent('QUEST_TURNED_IN', function() self:ScheduleUpdate(2.0, 'reputation_fallback') end)
+		return
+	end
+	
 	-- Register buckets for high-frequency events to batch updates
-	
+
 	-- Bag update bucket - batch bag changes every 0.5 seconds
-	self:RegisterBucketEvent('LibsDataBar_BagUpdates', 0.5, 'BAG_UPDATE', 'BAG_UPDATE_DELAYED')
-	
-	-- Money update bucket - batch currency changes every 0.3 seconds  
-	self:RegisterBucketEvent('LibsDataBar_MoneyUpdates', 0.3, 'PLAYER_MONEY')
-	
+	self:RegisterBucket('BAG_UPDATE', 0.5, 'LibsDataBar_BagUpdates')
+	self:RegisterBucket('BAG_UPDATE_DELAYED', 0.5, 'LibsDataBar_BagUpdates')
+
+	-- Money update bucket - batch currency changes every 0.3 seconds
+	self:RegisterBucket('PLAYER_MONEY', 0.3, 'LibsDataBar_MoneyUpdates')
+
 	-- XP update bucket - batch XP changes every 1.0 seconds
-	self:RegisterBucketEvent('LibsDataBar_XPUpdates', 1.0, 'PLAYER_XP_UPDATE', 'UPDATE_EXHAUSTION')
-	
+	self:RegisterBucket('PLAYER_XP_UPDATE', 1.0, 'LibsDataBar_XPUpdates')
+	self:RegisterBucket('UPDATE_EXHAUSTION', 1.0, 'LibsDataBar_XPUpdates')
+
 	-- Reputation update bucket - batch reputation changes every 2.0 seconds
-	self:RegisterBucketEvent('LibsDataBar_ReputationUpdates', 2.0, 'UPDATE_FACTION', 'QUEST_TURNED_IN')
-	
+	self:RegisterBucket('UPDATE_FACTION', 2.0, 'LibsDataBar_ReputationUpdates')
+	self:RegisterBucket('QUEST_TURNED_IN', 2.0, 'LibsDataBar_ReputationUpdates')
+
 	self:DebugLog('info', 'Phase 3: AceBucket event throttling enabled for performance optimization')
 end
 
@@ -1386,7 +1403,7 @@ function LibsDataBar:LibsDataBar_BagUpdates()
 	self:ScheduleUpdate(0.1, 'bag_bucket')
 end
 
----Phase 3: Handle bucketed money updates  
+---Phase 3: Handle bucketed money updates
 function LibsDataBar:LibsDataBar_MoneyUpdates()
 	self:ScheduleUpdate(0.1, 'money_bucket')
 end
@@ -1464,9 +1481,7 @@ end
 ---@param pluginArgs table Plugin arguments table to populate
 function LibsDataBar:GeneratePluginOptions(pluginArgs)
 	-- Safety check for database availability
-	if not self.db or not self.db.profile then
-		self:DebugLog('warning', 'Database not ready during plugin options generation - using defaults')
-	end
+	if not self.db or not self.db.profile then self:DebugLog('warning', 'Database not ready during plugin options generation - using defaults') end
 	-- Plugin configuration based on database defaults
 	local pluginConfigs = {
 		Clock = {
@@ -1478,7 +1493,7 @@ function LibsDataBar:GeneratePluginOptions(pluginArgs)
 				showSeconds = { type = 'toggle', name = 'Show Seconds', desc = 'Display seconds in time', order = 3 },
 				showDate = { type = 'toggle', name = 'Show Date', desc = 'Display current date', order = 4 },
 				use24Hour = { type = 'toggle', name = '24-Hour Format', desc = 'Use 24-hour time format', order = 5 },
-			}
+			},
 		},
 		Currency = {
 			name = 'Currency',
@@ -1487,7 +1502,7 @@ function LibsDataBar:GeneratePluginOptions(pluginArgs)
 				enabled = { type = 'toggle', name = 'Enabled', desc = 'Show/hide currency plugin', order = 1 },
 				showIcons = { type = 'toggle', name = 'Show Icons', desc = 'Display currency icons', order = 2 },
 				colorByQuality = { type = 'toggle', name = 'Color by Quality', desc = 'Color currency by quality', order = 3 },
-			}
+			},
 		},
 		Performance = {
 			name = 'Performance',
@@ -1497,7 +1512,7 @@ function LibsDataBar:GeneratePluginOptions(pluginArgs)
 				showFPS = { type = 'toggle', name = 'Show FPS', desc = 'Display frames per second', order = 2 },
 				showLatency = { type = 'toggle', name = 'Show Latency', desc = 'Display network latency', order = 3 },
 				showMemory = { type = 'toggle', name = 'Show Memory', desc = 'Display memory usage', order = 4 },
-			}
+			},
 		},
 		Location = {
 			name = 'Location',
@@ -1506,19 +1521,19 @@ function LibsDataBar:GeneratePluginOptions(pluginArgs)
 				enabled = { type = 'toggle', name = 'Enabled', desc = 'Show/hide location plugin', order = 1 },
 				showCoordinates = { type = 'toggle', name = 'Show Coordinates', desc = 'Display player coordinates', order = 2 },
 				showPvPStatus = { type = 'toggle', name = 'Show PvP Status', desc = 'Display PvP zone status', order = 3 },
-			}
+			},
 		},
 		Bags = {
 			name = 'Bags',
-			desc = 'Configure bag space display settings', 
+			desc = 'Configure bag space display settings',
 			args = {
 				enabled = { type = 'toggle', name = 'Enabled', desc = 'Show/hide bags plugin', order = 1 },
 				showFreeSlots = { type = 'toggle', name = 'Show Free Slots', desc = 'Display free bag slots', order = 2 },
 				colorBySpace = { type = 'toggle', name = 'Color by Space', desc = 'Color by available space', order = 3 },
-			}
-		}
+			},
+		},
 	}
-	
+
 	-- Generate options for each plugin
 	for pluginName, config in pairs(pluginConfigs) do
 		pluginArgs[pluginName] = {
@@ -1526,9 +1541,9 @@ function LibsDataBar:GeneratePluginOptions(pluginArgs)
 			name = config.name,
 			desc = config.desc,
 			order = self:GetPluginOrder(pluginName),
-			args = {}
+			args = {},
 		}
-		
+
 		-- Add each plugin's configuration options
 		for optionKey, optionConfig in pairs(config.args) do
 			pluginArgs[pluginName].args[optionKey] = {
@@ -1538,9 +1553,7 @@ function LibsDataBar:GeneratePluginOptions(pluginArgs)
 				order = optionConfig.order,
 				values = optionConfig.values,
 				get = function()
-					if self.db and self.db.profile and self.db.profile.plugins and self.db.profile.plugins[pluginName] then
-						return self.db.profile.plugins[pluginName][optionKey]
-					end
+					if self.db and self.db.profile and self.db.profile.plugins and self.db.profile.plugins[pluginName] then return self.db.profile.plugins[pluginName][optionKey] end
 					-- Return default from database defaults structure
 					local defaults = databaseDefaults.profile.plugins[pluginName]
 					return defaults and defaults[optionKey] or false
@@ -1548,9 +1561,7 @@ function LibsDataBar:GeneratePluginOptions(pluginArgs)
 				set = function(_, value)
 					if self.db and self.db.profile and self.db.profile.plugins then
 						-- Ensure plugin section exists
-						if not self.db.profile.plugins[pluginName] then
-							self.db.profile.plugins[pluginName] = {}
-						end
+						if not self.db.profile.plugins[pluginName] then self.db.profile.plugins[pluginName] = {} end
 						self.db.profile.plugins[pluginName][optionKey] = value
 						-- Trigger plugin update
 						self:ScheduleUpdate(0.1, 'plugin_config_change')
@@ -1562,14 +1573,14 @@ function LibsDataBar:GeneratePluginOptions(pluginArgs)
 end
 
 ---Generate dynamic bar configuration options for all existing bars
----@param barArgs table Bar arguments table to populate  
+---@param barArgs table Bar arguments table to populate
 function LibsDataBar:GenerateDynamicBarOptions(barArgs)
 	-- Safety check for bars registry
 	if not self.bars then
 		self:DebugLog('warning', 'Bars registry not initialized during dynamic bar options generation')
 		return
 	end
-	
+
 	-- Get all existing bars and create options for each
 	for barId, bar in pairs(self.bars) do
 		if barId ~= 'main' then -- Main bar already configured statically
@@ -1583,11 +1594,17 @@ function LibsDataBar:GenerateDynamicBarOptions(barArgs)
 						type = 'toggle',
 						name = 'Enable Bar',
 						desc = 'Show or hide this data bar',
-						get = function() return bar and bar.config and bar.config.enabled end,
-						set = function(_, value) 
+						get = function()
+							return bar and bar.config and bar.config.enabled
+						end,
+						set = function(_, value)
 							if bar and bar.config then
 								bar.config.enabled = value
-								if value then bar:Show() else bar:Hide() end
+								if value then
+									bar:Show()
+								else
+									bar:Hide()
+								end
 							end
 						end,
 						order = 1,
@@ -1615,8 +1632,17 @@ end
 ---@return number order Display order
 function LibsDataBar:GetPluginOrder(pluginName)
 	local orderMap = {
-		Clock = 1, Currency = 2, Performance = 3, Location = 4, Bags = 5,
-		Volume = 6, Experience = 7, Repair = 8, PlayedTime = 9, Reputation = 10, Friends = 11
+		Clock = 1,
+		Currency = 2,
+		Performance = 3,
+		Location = 4,
+		Bags = 5,
+		Volume = 6,
+		Experience = 7,
+		Repair = 8,
+		PlayedTime = 9,
+		Reputation = 10,
+		Friends = 11,
 	}
 	return orderMap[pluginName] or 99
 end
@@ -1626,7 +1652,7 @@ function LibsDataBar:SetupConsoleCommands()
 	-- Register main command with AceConsole
 	self:RegisterChatCommand('libsdatabar', 'HandleChatCommand')
 	self:RegisterChatCommand('ldb', 'HandleChatCommand')
-	
+
 	self:DebugLog('info', 'Phase 3: AceConsole-3.0 command system registered')
 end
 
@@ -1635,26 +1661,21 @@ end
 function LibsDataBar:HandleChatCommand(input)
 	local args = { self:GetArgs(input, 10) }
 	local command = args[1] and string.lower(args[1]) or ''
-	
+
 	if command == 'config' or command == 'options' or command == '' then
 		-- Open configuration panel
 		LibStub('AceConfigDialog-3.0'):Open('LibsDataBar')
-		
 	elseif command == 'debug' then
 		-- Toggle debug mode
 		local newState = not LIBSDATABAR_DEBUG
 		LIBSDATABAR_DEBUG = newState
-		if self.db and self.db.profile then
-			self.db.profile.debug = newState
-		end
+		if self.db and self.db.profile then self.db.profile.debug = newState end
 		self:Print('Debug mode ' .. (newState and 'enabled' or 'disabled'))
-		
 	elseif command == 'reload' or command == 'rl' then
 		-- Reload LibsDataBar
 		self:Disable()
 		self:Enable()
 		self:Print('LibsDataBar reloaded')
-		
 	elseif command == 'status' then
 		-- Show status information
 		local bars = self:GetBarList()
@@ -1662,22 +1683,19 @@ function LibsDataBar:HandleChatCommand(input)
 		self:Print('- Version: ' .. self.version)
 		self:Print('- Active bars: ' .. #bars .. ' (' .. table.concat(bars, ', ') .. ')')
 		self:Print('- Debug mode: ' .. (LIBSDATABAR_DEBUG and 'enabled' or 'disabled'))
-		
 	elseif command == 'validate' then
 		-- Run plugin text display validation
 		self:ValidatePluginTextDisplay()
 		self:Print('Plugin validation completed - check debug log for results')
-		
 	elseif command == 'help' then
 		-- Show command help
 		self:Print('LibsDataBar Commands:')
 		self:Print('/ldb config - Open configuration panel')
 		self:Print('/ldb debug - Toggle debug mode')
-		self:Print('/ldb reload - Reload the addon') 
+		self:Print('/ldb reload - Reload the addon')
 		self:Print('/ldb status - Show addon status')
 		self:Print('/ldb validate - Run plugin validation')
 		self:Print('/ldb help - Show this help')
-		
 	else
 		self:Print('Unknown command: ' .. command .. '. Type /ldb help for available commands.')
 	end
@@ -1689,10 +1707,10 @@ function LibsDataBar:InitializeTooltipSystem()
 		self:DebugLog('warning', 'LibQTip-1.0 not available - using basic tooltips')
 		return
 	end
-	
+
 	-- Create tooltip registry for cleanup
 	self.tooltips = self.tooltips or {}
-	
+
 	self:DebugLog('info', 'Phase 3: Enhanced LibQTip-1.0 tooltip system initialized')
 end
 
@@ -1705,32 +1723,32 @@ function LibsDataBar:CreateEnhancedTooltip(pluginName, parent)
 		-- Fallback to basic GameTooltip
 		return nil
 	end
-	
+
 	local tooltipKey = 'LibsDataBar_' .. pluginName
-	
+
 	-- Release existing tooltip
 	if self.tooltips[tooltipKey] then
 		LibQTip:Release(self.tooltips[tooltipKey])
 		self.tooltips[tooltipKey] = nil
 	end
-	
+
 	-- Create new enhanced tooltip
 	local tooltip = LibQTip:Acquire(tooltipKey, 3, 'LEFT', 'CENTER', 'RIGHT')
 	if not tooltip then return nil end
-	
+
 	-- Configure tooltip appearance
 	tooltip:SetFrameStrata('TOOLTIP')
 	tooltip:SetBackdropBorderColor(1, 1, 1, 1)
 	tooltip:SetBackdropColor(0, 0, 0, 0.8)
-	
+
 	-- Add header
 	local headerLine = tooltip:AddHeader()
 	tooltip:SetCell(headerLine, 1, pluginName .. ' Details', nil, 'CENTER', 3)
 	tooltip:AddSeparator()
-	
+
 	-- Store tooltip reference
 	self.tooltips[tooltipKey] = tooltip
-	
+
 	return tooltip
 end
 
@@ -1748,36 +1766,33 @@ function LibsDataBar:ShowEnhancedTooltip(pluginName, data, parent)
 		GameTooltip:Show()
 		return
 	end
-	
+
 	-- Add plugin-specific rich data
 	if pluginName == 'Performance' and data.fps and data.latency and data.memory then
 		tooltip:AddLine('FPS:', data.fps, self:GetPerformanceColor(data.fps, 60))
 		tooltip:AddLine('Latency:', data.latency .. 'ms', self:GetPerformanceColor(100 - data.latency, 50))
 		tooltip:AddLine('Memory:', data.memory, self:GetMemoryColor(data.memory))
-		
 	elseif pluginName == 'Currency' and data.gold then
 		tooltip:AddLine('Gold:', self:FormatGold(data.gold), '|cFFFFD700')
 		if data.session then
 			tooltip:AddSeparator()
 			tooltip:AddLine('Session:', self:FormatGold(data.session), data.session >= 0 and '|cFF00FF00' or '|cFFFF0000')
 		end
-		
 	elseif pluginName == 'Location' and data.zone and data.coords then
 		tooltip:AddLine('Zone:', data.zone, '|cFF00FFFF')
 		tooltip:AddLine('Coordinates:', data.coords, '|cFFFFFFFF')
 		if data.pvpStatus then tooltip:AddLine('PvP Status:', data.pvpStatus, '|cFFFF0000') end
-		
 	else
 		-- Generic data display
 		if data.text then tooltip:AddLine('Value:', data.text, '|cFFFFFFFF') end
 		if data.status then tooltip:AddLine('Status:', data.status, '|cFF00FF00') end
 	end
-	
+
 	-- Add timestamp
 	tooltip:AddSeparator()
 	local timeText = date('%H:%M:%S')
 	tooltip:AddLine('Updated:', timeText, '|cFF888888')
-	
+
 	-- Position and show tooltip
 	tooltip:SetAutoHideDelay(0.25, parent)
 	tooltip:SmartAnchorTo(parent)
@@ -1789,9 +1804,13 @@ end
 ---@param threshold number Good performance threshold
 ---@return string colorCode Color code string
 function LibsDataBar:GetPerformanceColor(value, threshold)
-	if value >= threshold then return '|cFF00FF00' -- Green
-	elseif value >= threshold * 0.7 then return '|cFFFFFF00' -- Yellow  
-	else return '|cFFFF0000' end -- Red
+	if value >= threshold then
+		return '|cFF00FF00' -- Green
+	elseif value >= threshold * 0.7 then
+		return '|cFFFFFF00' -- Yellow
+	else
+		return '|cFFFF0000'
+	end -- Red
 end
 
 ---Phase 3: Get memory usage color coding
@@ -1799,9 +1818,13 @@ end
 ---@return string colorCode Color code string
 function LibsDataBar:GetMemoryColor(memoryString)
 	local memory = tonumber(memoryString:match('%d+')) or 0
-	if memory < 50 then return '|cFF00FF00' -- Green < 50MB
-	elseif memory < 100 then return '|cFFFFFF00' -- Yellow < 100MB
-	else return '|cFFFF0000' end -- Red >= 100MB
+	if memory < 50 then
+		return '|cFF00FF00' -- Green < 50MB
+	elseif memory < 100 then
+		return '|cFFFFFF00' -- Yellow < 100MB
+	else
+		return '|cFFFF0000'
+	end -- Red >= 100MB
 end
 
 ---Phase 3: Format gold with proper separators
@@ -1811,7 +1834,7 @@ function LibsDataBar:FormatGold(copper)
 	local gold = math.floor(copper / 10000)
 	local silver = math.floor((copper % 10000) / 100)
 	copper = copper % 100
-	
+
 	if gold > 0 then
 		return string.format('%d|cFFFFD700g|r %02d|cFFC7C7C7s|r %02d|cFFB87333c|r', gold, silver, copper)
 	elseif silver > 0 then
@@ -1824,7 +1847,7 @@ end
 ---Phase 3: Hide all enhanced tooltips
 function LibsDataBar:HideEnhancedTooltips()
 	if not LibQTip then return end
-	
+
 	for key, tooltip in pairs(self.tooltips or {}) do
 		LibQTip:Release(tooltip)
 		self.tooltips[key] = nil
@@ -1912,9 +1935,7 @@ function LibsDataBar:SetupConfigOptions()
 									return self.db and self.db.profile and self.db.profile.bars and self.db.profile.bars.main and self.db.profile.bars.main.enabled or true
 								end,
 								set = function(_, value)
-									if self.db and self.db.profile and self.db.profile.bars and self.db.profile.bars.main then
-										self.db.profile.bars.main.enabled = value
-									end
+									if self.db and self.db.profile and self.db.profile.bars and self.db.profile.bars.main then self.db.profile.bars.main.enabled = value end
 								end,
 								order = 1,
 							},
@@ -1926,7 +1947,13 @@ function LibsDataBar:SetupConfigOptions()
 								max = 64,
 								step = 1,
 								get = function()
-									return self.db and self.db.profile and self.db.profile.bars and self.db.profile.bars.main and self.db.profile.bars.main.size and self.db.profile.bars.main.size.height or 24
+									return self.db
+											and self.db.profile
+											and self.db.profile.bars
+											and self.db.profile.bars.main
+											and self.db.profile.bars.main.size
+											and self.db.profile.bars.main.size.height
+										or 24
 								end,
 								set = function(_, value)
 									if self.db and self.db.profile and self.db.profile.bars and self.db.profile.bars.main and self.db.profile.bars.main.size then
@@ -1963,9 +1990,7 @@ function LibsDataBar:SetupConfigOptions()
 						type = 'description',
 						name = function()
 							local bars = self:GetBarList()
-							if #bars == 0 then
-								return 'No bars created yet.'
-							end
+							if #bars == 0 then return 'No bars created yet.' end
 							return 'Active bars: ' .. table.concat(bars, ', ')
 						end,
 						order = 2,
@@ -2001,7 +2026,7 @@ function LibsDataBar:SetupConfigOptions()
 			self:DebugLog('error', 'plugins is: ' .. type(options.args.plugins))
 		end
 	end
-	
+
 	-- Generate dynamic bar options (with safety checks)
 	if options.args.bars and options.args.bars.args then
 		self:GenerateDynamicBarOptions(options.args.bars.args)
@@ -2017,7 +2042,7 @@ function LibsDataBar:SetupConfigOptions()
 		self:DebugLog('info', 'plugins.args type: ' .. type(options.args.plugins.args))
 		self:DebugLog('info', 'plugins.order: ' .. tostring(options.args.plugins.order))
 	end
-	
+
 	-- Register the options table with AceConfig
 	LibStub('AceConfig-3.0'):RegisterOptionsTable('LibsDataBar', options)
 
@@ -2040,7 +2065,7 @@ function LibsDataBar:SetupConfigOptions()
 
 	-- Phase 3: Setup AceConsole-3.0 command system
 	self:SetupConsoleCommands()
-	
+
 	-- Legacy slash commands for compatibility
 	SLASH_LIBSDATABAR1 = '/libsdatabar'
 	SLASH_LIBSDATABAR2 = '/ldb'
