@@ -740,31 +740,33 @@ function LibsDataBar:InitializeCommunication()
 	self:DebugLog('info', 'Communication system initialized for configuration sharing')
 end
 
----Export current configuration to shareable string
----@return string|nil Encoded configuration string or nil on error
-function LibsDataBar:ExportConfiguration()
+---Export configuration for sharing (internal use)
+---@return string|nil Encoded configuration string or nil on error  
+function LibsDataBar:ExportConfigurationForSharing()
 	if not AceSerializer then
 		self:Print('AceSerializer-3.0 not available - cannot export configuration')
 		return nil
 	end
 	
-	-- Create export package with essential configuration
+	-- Create export package with all configuration scopes for sharing
 	local exportData = {
 		version = LIBSDATABAR_VERSION,
 		timestamp = time(),
 		playerName = UnitName('player'),
 		realmName = GetRealmName(),
-		appearance = self.db.profile.appearance,
-		plugins = {},
-		bars = {},
+		scopes = {
+			appearance = self.db.profile.appearance,
+			performance = self.db.profile.performance,
+			plugins = {},
+			bars = {},
+		}
 	}
 	
-	-- Export plugin configurations (only enabled plugins)
+	-- Export enabled plugins
 	for pluginName, pluginConfig in pairs(self.db.profile.plugins) do
 		if pluginConfig.enabled then
-			exportData.plugins[pluginName] = {
+			exportData.scopes.plugins[pluginName] = {
 				enabled = true,
-				-- Copy safe configuration values (exclude sensitive data)
 				bar = pluginConfig.bar,
 				position = pluginConfig.position,
 				display = pluginConfig.display,
@@ -774,9 +776,9 @@ function LibsDataBar:ExportConfiguration()
 		end
 	end
 	
-	-- Export bar configurations
+	-- Export bar configurations  
 	for barName, barConfig in pairs(self.db.profile.bars) do
-		exportData.bars[barName] = {
+		exportData.scopes.bars[barName] = {
 			enabled = barConfig.enabled,
 			anchor = barConfig.anchor,
 			size = barConfig.size,
@@ -789,123 +791,10 @@ function LibsDataBar:ExportConfiguration()
 	local serializedData = AceSerializer:Serialize(exportData)
 	local encodedData = LibStub('AceComm-3.0'):Encode(serializedData)
 	
-	self:DebugLog('info', 'Configuration exported successfully')
+	self:DebugLog('info', 'Configuration exported for sharing')
 	return encodedData
 end
 
----Import configuration from encoded string
----@param encodedData string Encoded configuration string
----@param applyImmediately boolean Whether to apply changes immediately
----@return boolean Success status
-function LibsDataBar:ImportConfiguration(encodedData, applyImmediately)
-	if not AceSerializer or not encodedData then
-		self:Print('Invalid data or AceSerializer-3.0 not available')
-		return false
-	end
-	
-	-- Decode and deserialize
-	local success, serializedData = LibStub('AceComm-3.0'):Decode(encodedData)
-	if not success then
-		self:Print('Failed to decode configuration data')
-		return false
-	end
-	
-	success, importData = AceSerializer:Deserialize(serializedData)
-	if not success or not importData then
-		self:Print('Failed to deserialize configuration data')
-		return false
-	end
-	
-	-- Validate import data
-	if not importData.version or not importData.appearance then
-		self:Print('Invalid configuration format')
-		return false
-	end
-	
-	-- Show import preview to user
-	self:ShowImportPreview(importData, applyImmediately)
-	
-	return true
-end
-
----Show import preview dialog
----@param importData table Imported configuration data
----@param applyImmediately boolean Whether to apply immediately
-function LibsDataBar:ShowImportPreview(importData, applyImmediately)
-	local message = string.format(
-		'Configuration Import Preview\n\n' ..
-		'Source: %s (%s)\n' ..
-		'Version: %s\n' ..
-		'Theme: %s\n' ..
-		'Plugins: %d enabled\n' ..
-		'Bars: %d configured\n\n' ..
-		'Apply this configuration?',
-		importData.playerName or 'Unknown',
-		importData.realmName or 'Unknown',
-		importData.version or 'Unknown',
-		importData.appearance.theme or 'default',
-		self:CountTable(importData.plugins or {}),
-		self:CountTable(importData.bars or {})
-	)
-	
-	-- For now, just print the preview and apply if requested
-	self:Print(message)
-	
-	if applyImmediately then
-		self:ApplyImportedConfiguration(importData)
-	else
-		-- Store for manual application
-		self.pendingImport = importData
-		self:Print('Configuration stored. Use /libsdatabar import apply to apply changes.')
-	end
-end
-
----Apply imported configuration
----@param importData table Configuration data to apply
-function LibsDataBar:ApplyImportedConfiguration(importData)
-	if not importData then
-		self:Print('No configuration data to apply')
-		return
-	end
-	
-	-- Apply appearance settings
-	if importData.appearance then
-		for key, value in pairs(importData.appearance) do
-			self.db.profile.appearance[key] = value
-		end
-		self:ApplyTheme(self.db.profile.appearance.theme)
-	end
-	
-	-- Apply plugin configurations
-	if importData.plugins then
-		for pluginName, pluginConfig in pairs(importData.plugins) do
-			if not self.db.profile.plugins[pluginName] then
-				self.db.profile.plugins[pluginName] = {}
-			end
-			for key, value in pairs(pluginConfig) do
-				self.db.profile.plugins[pluginName][key] = value
-			end
-		end
-	end
-	
-	-- Apply bar configurations  
-	if importData.bars then
-		for barName, barConfig in pairs(importData.bars) do
-			if not self.db.profile.bars[barName] then
-				self.db.profile.bars[barName] = {}
-			end
-			for key, value in pairs(barConfig) do
-				self.db.profile.bars[barName][key] = value
-			end
-		end
-	end
-	
-	-- Refresh all bars and plugins
-	self:RefreshAllBarsAndPlugins()
-	
-	self:Print('Configuration imported and applied successfully')
-	self.pendingImport = nil
-end
 
 ---Share configuration with guild members
 ---@param target string|nil Target channel ('GUILD', 'WHISPER', etc.) or nil for guild
@@ -915,7 +804,7 @@ function LibsDataBar:ShareConfiguration(target)
 		return
 	end
 	
-	local exportData = self:ExportConfiguration()
+	local exportData = self:ExportConfigurationForSharing()
 	if not exportData then
 		self:Print('Failed to export configuration for sharing')
 		return
@@ -2659,31 +2548,20 @@ function LibsDataBar:HandleChatCommand(input)
 			window.exportTab:Click() -- Ensure export tab is selected
 		end
 	elseif command == 'import' then
-		-- Phase 4: Handle import command variants
-		local subCommand = args[2] and string.lower(args[2]) or ''
-		if subCommand == 'apply' then
-			-- Apply pending import (legacy support)
-			if self.pendingImport then
-				self:ApplyImportedConfiguration(self.pendingImport)
-			else
-				self:Print('No pending import to apply')
-			end
-		else
-			-- Open enhanced export/import UI (Import tab)
-			local window = self:CreateExportImportWindow()
-			if window and window.importTab then
-				window.importTab:Click() -- Ensure import tab is selected
-			end
-			
-			-- If user provided import data, populate the text field
-			local importData = args[2]
-			if importData and window and window.importFrame and window.importFrame.importTextBox then
-				window.importFrame.importTextBox:SetText(importData)
-				window.importFrame.importTextBox:SetFocus()
-				-- Trigger validation automatically
-				if window.importFrame.previewBtn then
-					window.importFrame.previewBtn:SetEnabled(true)
-				end
+		-- Phase 4: Open enhanced export/import UI (Import tab)
+		local window = self:CreateExportImportWindow()
+		if window and window.importTab then
+			window.importTab:Click() -- Ensure import tab is selected
+		end
+		
+		-- If user provided import data, populate the text field
+		local importData = args[2]
+		if importData and window and window.importFrame and window.importFrame.importTextBox then
+			window.importFrame.importTextBox:SetText(importData)
+			window.importFrame.importTextBox:SetFocus()
+			-- Trigger validation automatically
+			if window.importFrame.previewBtn then
+				window.importFrame.previewBtn:SetEnabled(true)
 			end
 		end
 	elseif command == 'share' then
@@ -2703,7 +2581,6 @@ function LibsDataBar:HandleChatCommand(input)
 		self:Print('/ldb validate - Run plugin validation')
 		self:Print('/ldb export - Open configuration manager (Export tab)')
 		self:Print('/ldb import [config] - Open configuration manager (Import tab)')
-		self:Print('/ldb import apply - Apply pending import (legacy)')
 		self:Print('/ldb share [channel] - Share config (default: GUILD)')
 		self:Print('/ldb manager - Open configuration manager')
 		self:Print('/ldb help - Show this help')
