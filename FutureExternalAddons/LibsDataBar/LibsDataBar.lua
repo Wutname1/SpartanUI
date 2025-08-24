@@ -18,7 +18,7 @@ assert(LibStub:GetLibrary('CallbackHandler-1.0', true), 'LibsDataBar requires Ca
 local LibQTip = LibStub:GetLibrary('LibQTip-1.0', true)
 
 -- Addon Registration with AceAddon-3.0
-local LibsDataBar = LibStub('AceAddon-3.0'):NewAddon('LibsDataBar', 'AceEvent-3.0', 'AceTimer-3.0', 'AceConsole-3.0')
+local LibsDataBar = LibStub('AceAddon-3.0'):NewAddon('LibsDataBar', 'AceEvent-3.0', 'AceTimer-3.0', 'AceBucket-3.0', 'AceConsole-3.0')
 if not LibsDataBar then return end
 
 -- For backward compatibility, expose as library for existing code
