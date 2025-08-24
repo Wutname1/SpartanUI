@@ -14,6 +14,9 @@ assert(LibStub:GetLibrary('AceEvent-3.0', true), 'LibsDataBar requires AceEvent-
 assert(LibStub:GetLibrary('AceTimer-3.0', true), 'LibsDataBar requires AceTimer-3.0')
 assert(LibStub:GetLibrary('CallbackHandler-1.0', true), 'LibsDataBar requires CallbackHandler-1.0')
 
+-- Phase 3: LibQTip-1.0 for enhanced tooltips (optional)
+local LibQTip = LibStub:GetLibrary('LibQTip-1.0', true)
+
 -- Addon Registration with AceAddon-3.0
 local LibsDataBar = LibStub('AceAddon-3.0'):NewAddon('LibsDataBar', 'AceEvent-3.0', 'AceTimer-3.0', 'AceBucket-3.0', 'AceConsole-3.0')
 if not LibsDataBar then return end
@@ -1178,6 +1181,9 @@ function LibsDataBar:OnDisable()
 		self.pendingUpdateTimer = nil
 	end
 
+	-- Phase 3: Clean up enhanced tooltips
+	self:HideEnhancedTooltips()
+
 	-- AceEvent-3.0 automatically unregisters events
 	self:DebugLog('info', 'LibsDataBar disabled and timers cleaned up')
 end
@@ -1227,6 +1233,9 @@ function LibsDataBar:InitialSetup()
 	
 	-- Phase 3: Setup AceBucket event throttling for performance
 	self:SetupEventBuckets()
+	
+	-- Phase 3: Initialize enhanced tooltips system
+	self:InitializeTooltipSystem()
 
 	self:DebugLog('info', 'Initial setup completed with periodic refresh every ' .. updateInterval .. 's - bars should now display text')
 end
@@ -1652,6 +1661,154 @@ function LibsDataBar:HandleChatCommand(input)
 		
 	else
 		self:Print('Unknown command: ' .. command .. '. Type /ldb help for available commands.')
+	end
+end
+
+---Phase 3: Initialize LibQTip-1.0 enhanced tooltip system
+function LibsDataBar:InitializeTooltipSystem()
+	if not LibQTip then
+		self:DebugLog('warning', 'LibQTip-1.0 not available - using basic tooltips')
+		return
+	end
+	
+	-- Create tooltip registry for cleanup
+	self.tooltips = self.tooltips or {}
+	
+	self:DebugLog('info', 'Phase 3: Enhanced LibQTip-1.0 tooltip system initialized')
+end
+
+---Phase 3: Create enhanced multi-column tooltip for plugins
+---@param pluginName string Plugin name
+---@param parent Frame Parent frame for tooltip anchor
+---@return table|nil tooltip LibQTip tooltip or nil if unavailable
+function LibsDataBar:CreateEnhancedTooltip(pluginName, parent)
+	if not LibQTip then
+		-- Fallback to basic GameTooltip
+		return nil
+	end
+	
+	local tooltipKey = 'LibsDataBar_' .. pluginName
+	
+	-- Release existing tooltip
+	if self.tooltips[tooltipKey] then
+		LibQTip:Release(self.tooltips[tooltipKey])
+		self.tooltips[tooltipKey] = nil
+	end
+	
+	-- Create new enhanced tooltip
+	local tooltip = LibQTip:Acquire(tooltipKey, 3, 'LEFT', 'CENTER', 'RIGHT')
+	if not tooltip then return nil end
+	
+	-- Configure tooltip appearance
+	tooltip:SetFrameStrata('TOOLTIP')
+	tooltip:SetBackdropBorderColor(1, 1, 1, 1)
+	tooltip:SetBackdropColor(0, 0, 0, 0.8)
+	
+	-- Add header
+	local headerLine = tooltip:AddHeader()
+	tooltip:SetCell(headerLine, 1, pluginName .. ' Details', nil, 'CENTER', 3)
+	tooltip:AddSeparator()
+	
+	-- Store tooltip reference
+	self.tooltips[tooltipKey] = tooltip
+	
+	return tooltip
+end
+
+---Phase 3: Show enhanced tooltip with rich formatting
+---@param pluginName string Plugin name
+---@param data table Plugin data for display
+---@param parent Frame Parent frame for anchoring
+function LibsDataBar:ShowEnhancedTooltip(pluginName, data, parent)
+	local tooltip = self:CreateEnhancedTooltip(pluginName, parent)
+	if not tooltip then
+		-- Fallback to basic tooltip
+		GameTooltip:SetOwner(parent, 'ANCHOR_CURSOR')
+		GameTooltip:SetText(pluginName)
+		if data.text then GameTooltip:AddLine(data.text, 1, 1, 1) end
+		GameTooltip:Show()
+		return
+	end
+	
+	-- Add plugin-specific rich data
+	if pluginName == 'Performance' and data.fps and data.latency and data.memory then
+		tooltip:AddLine('FPS:', data.fps, self:GetPerformanceColor(data.fps, 60))
+		tooltip:AddLine('Latency:', data.latency .. 'ms', self:GetPerformanceColor(100 - data.latency, 50))
+		tooltip:AddLine('Memory:', data.memory, self:GetMemoryColor(data.memory))
+		
+	elseif pluginName == 'Currency' and data.gold then
+		tooltip:AddLine('Gold:', self:FormatGold(data.gold), '|cFFFFD700')
+		if data.session then
+			tooltip:AddSeparator()
+			tooltip:AddLine('Session:', self:FormatGold(data.session), data.session >= 0 and '|cFF00FF00' or '|cFFFF0000')
+		end
+		
+	elseif pluginName == 'Location' and data.zone and data.coords then
+		tooltip:AddLine('Zone:', data.zone, '|cFF00FFFF')
+		tooltip:AddLine('Coordinates:', data.coords, '|cFFFFFFFF')
+		if data.pvpStatus then tooltip:AddLine('PvP Status:', data.pvpStatus, '|cFFFF0000') end
+		
+	else
+		-- Generic data display
+		if data.text then tooltip:AddLine('Value:', data.text, '|cFFFFFFFF') end
+		if data.status then tooltip:AddLine('Status:', data.status, '|cFF00FF00') end
+	end
+	
+	-- Add timestamp
+	tooltip:AddSeparator()
+	local timeText = date('%H:%M:%S')
+	tooltip:AddLine('Updated:', timeText, '|cFF888888')
+	
+	-- Position and show tooltip
+	tooltip:SetAutoHideDelay(0.25, parent)
+	tooltip:SmartAnchorTo(parent)
+	tooltip:Show()
+end
+
+---Phase 3: Get performance-based color coding
+---@param value number Performance value
+---@param threshold number Good performance threshold
+---@return string colorCode Color code string
+function LibsDataBar:GetPerformanceColor(value, threshold)
+	if value >= threshold then return '|cFF00FF00' -- Green
+	elseif value >= threshold * 0.7 then return '|cFFFFFF00' -- Yellow  
+	else return '|cFFFF0000' end -- Red
+end
+
+---Phase 3: Get memory usage color coding
+---@param memoryString string Memory usage string
+---@return string colorCode Color code string
+function LibsDataBar:GetMemoryColor(memoryString)
+	local memory = tonumber(memoryString:match('%d+')) or 0
+	if memory < 50 then return '|cFF00FF00' -- Green < 50MB
+	elseif memory < 100 then return '|cFFFFFF00' -- Yellow < 100MB
+	else return '|cFFFF0000' end -- Red >= 100MB
+end
+
+---Phase 3: Format gold with proper separators
+---@param copper number Copper amount
+---@return string formatted Formatted gold string
+function LibsDataBar:FormatGold(copper)
+	local gold = math.floor(copper / 10000)
+	local silver = math.floor((copper % 10000) / 100)
+	copper = copper % 100
+	
+	if gold > 0 then
+		return string.format('%d|cFFFFD700g|r %02d|cFFC7C7C7s|r %02d|cFFB87333c|r', gold, silver, copper)
+	elseif silver > 0 then
+		return string.format('%d|cFFC7C7C7s|r %02d|cFFB87333c|r', silver, copper)
+	else
+		return string.format('%d|cFFB87333c|r', copper)
+	end
+end
+
+---Phase 3: Hide all enhanced tooltips
+function LibsDataBar:HideEnhancedTooltips()
+	if not LibQTip then return end
+	
+	for key, tooltip in pairs(self.tooltips or {}) do
+		LibQTip:Release(tooltip)
+		self.tooltips[key] = nil
 	end
 end
 
