@@ -1409,6 +1409,148 @@ end
 -- Configuration System (AceDB-3.0 + AceConfig-3.0)
 ----------------------------------------------------------------------------------------------------
 
+---Generate plugin configuration options dynamically based on available plugins
+---@param pluginArgs table Plugin arguments table to populate
+function LibsDataBar:GeneratePluginOptions(pluginArgs)
+	-- Plugin configuration based on database defaults
+	local pluginConfigs = {
+		Clock = {
+			name = 'Clock',
+			desc = 'Configure clock display settings',
+			args = {
+				enabled = { type = 'toggle', name = 'Enabled', desc = 'Show/hide clock plugin', order = 1 },
+				format = { type = 'select', name = 'Format', desc = 'Time display format', values = { short = 'Short', long = 'Long' }, order = 2 },
+				showSeconds = { type = 'toggle', name = 'Show Seconds', desc = 'Display seconds in time', order = 3 },
+				showDate = { type = 'toggle', name = 'Show Date', desc = 'Display current date', order = 4 },
+				use24Hour = { type = 'toggle', name = '24-Hour Format', desc = 'Use 24-hour time format', order = 5 },
+			}
+		},
+		Currency = {
+			name = 'Currency',
+			desc = 'Configure currency display settings',
+			args = {
+				enabled = { type = 'toggle', name = 'Enabled', desc = 'Show/hide currency plugin', order = 1 },
+				showIcons = { type = 'toggle', name = 'Show Icons', desc = 'Display currency icons', order = 2 },
+				colorByQuality = { type = 'toggle', name = 'Color by Quality', desc = 'Color currency by quality', order = 3 },
+			}
+		},
+		Performance = {
+			name = 'Performance',
+			desc = 'Configure performance display settings',
+			args = {
+				enabled = { type = 'toggle', name = 'Enabled', desc = 'Show/hide performance plugin', order = 1 },
+				showFPS = { type = 'toggle', name = 'Show FPS', desc = 'Display frames per second', order = 2 },
+				showLatency = { type = 'toggle', name = 'Show Latency', desc = 'Display network latency', order = 3 },
+				showMemory = { type = 'toggle', name = 'Show Memory', desc = 'Display memory usage', order = 4 },
+			}
+		},
+		Location = {
+			name = 'Location',
+			desc = 'Configure location display settings',
+			args = {
+				enabled = { type = 'toggle', name = 'Enabled', desc = 'Show/hide location plugin', order = 1 },
+				showCoordinates = { type = 'toggle', name = 'Show Coordinates', desc = 'Display player coordinates', order = 2 },
+				showPvPStatus = { type = 'toggle', name = 'Show PvP Status', desc = 'Display PvP zone status', order = 3 },
+			}
+		},
+		Bags = {
+			name = 'Bags',
+			desc = 'Configure bag space display settings', 
+			args = {
+				enabled = { type = 'toggle', name = 'Enabled', desc = 'Show/hide bags plugin', order = 1 },
+				showFreeSlots = { type = 'toggle', name = 'Show Free Slots', desc = 'Display free bag slots', order = 2 },
+				colorBySpace = { type = 'toggle', name = 'Color by Space', desc = 'Color by available space', order = 3 },
+			}
+		}
+	}
+	
+	-- Generate options for each plugin
+	for pluginName, config in pairs(pluginConfigs) do
+		pluginArgs[pluginName] = {
+			type = 'group',
+			name = config.name,
+			desc = config.desc,
+			order = self:GetPluginOrder(pluginName),
+			args = {}
+		}
+		
+		-- Add each plugin's configuration options
+		for optionKey, optionConfig in pairs(config.args) do
+			pluginArgs[pluginName].args[optionKey] = {
+				type = optionConfig.type,
+				name = optionConfig.name,
+				desc = optionConfig.desc,
+				order = optionConfig.order,
+				values = optionConfig.values,
+				get = function()
+					return self.db and self.db.profile and self.db.profile.plugins and self.db.profile.plugins[pluginName] and self.db.profile.plugins[pluginName][optionKey]
+				end,
+				set = function(_, value)
+					if self.db and self.db.profile and self.db.profile.plugins and self.db.profile.plugins[pluginName] then
+						self.db.profile.plugins[pluginName][optionKey] = value
+						-- Trigger plugin update
+						self:ScheduleUpdate(0.1, 'plugin_config_change')
+					end
+				end,
+			}
+		end
+	end
+end
+
+---Generate dynamic bar configuration options for all existing bars
+---@param barArgs table Bar arguments table to populate  
+function LibsDataBar:GenerateDynamicBarOptions(barArgs)
+	-- Get all existing bars and create options for each
+	for barId, bar in pairs(self.bars or {}) do
+		if barId ~= 'main' then -- Main bar already configured statically
+			barArgs[barId] = {
+				type = 'group',
+				name = 'Bar: ' .. barId,
+				desc = 'Configure ' .. barId .. ' data bar',
+				order = 10 + tonumber(barId:match('%d+') or 0),
+				args = {
+					enabled = {
+						type = 'toggle',
+						name = 'Enable Bar',
+						desc = 'Show or hide this data bar',
+						get = function() return bar and bar.config and bar.config.enabled end,
+						set = function(_, value) 
+							if bar and bar.config then
+								bar.config.enabled = value
+								if value then bar:Show() else bar:Hide() end
+							end
+						end,
+						order = 1,
+					},
+					delete = {
+						type = 'execute',
+						name = 'Delete Bar',
+						desc = 'Remove this data bar',
+						func = function()
+							self:DeleteBar(barId)
+							LibStub('AceConfigRegistry-3.0'):NotifyChange('LibsDataBar')
+						end,
+						order = 99,
+						confirm = true,
+						confirmText = 'Are you sure you want to delete this bar?',
+					},
+				},
+			}
+		end
+	end
+end
+
+---Get plugin display order for options
+---@param pluginName string Plugin name
+---@return number order Display order
+function LibsDataBar:GetPluginOrder(pluginName)
+	local orderMap = {
+		Clock = 1, Currency = 2, Performance = 3, Location = 4, Bags = 5,
+		Volume = 6, Experience = 7, Repair = 8, PlayedTime = 9, Reputation = 10, Friends = 11
+	}
+	return orderMap[pluginName] or 99
+end
+
 ---Setup AceConfig-3.0 options table and register with Settings panel
 function LibsDataBar:SetupConfigOptions()
 	local options = {
@@ -1517,8 +1659,53 @@ function LibsDataBar:SetupConfigOptions()
 					},
 				},
 			},
+			barManagement = {
+				type = 'group',
+				name = 'Bar Management',
+				order = 3,
+				args = {
+					createBar = {
+						type = 'execute',
+						name = 'Create New Bar',
+						desc = 'Create a new data bar',
+						func = function()
+							local newBarId = 'bar_' .. (#self:GetBarList() + 1)
+							local bar = self:CreateQuickBar(newBarId)
+							if bar then
+								self:DebugLog('info', 'Created new bar: ' .. newBarId)
+								-- Refresh options to show the new bar
+								LibStub('AceConfigRegistry-3.0'):NotifyChange('LibsDataBar')
+							end
+						end,
+						order = 1,
+					},
+					listBars = {
+						type = 'description',
+						name = function()
+							local bars = self:GetBarList()
+							if #bars == 0 then
+								return 'No bars created yet.'
+							end
+							return 'Active bars: ' .. table.concat(bars, ', ')
+						end,
+						order = 2,
+					},
+				},
+			},
+		},
+		plugins = {
+			type = 'group',
+			name = 'Plugin Settings',
+			order = 3,
+			args = {},
 		},
 	}
+
+	-- Generate plugin configuration options dynamically
+	self:GeneratePluginOptions(options.args.plugins.args)
+	
+	-- Generate dynamic bar options
+	self:GenerateDynamicBarOptions(options.args.bars.args)
 
 	-- Register the options table with AceConfig
 	LibStub('AceConfig-3.0'):RegisterOptionsTable('LibsDataBar', options)
