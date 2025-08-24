@@ -71,6 +71,7 @@ lib.events = lib.events or setmetatable({
 	batchQueue = {},
 	updateTimer = nil,
 	throttleRates = {},
+	lastThrottleCall = {}, -- Phase 1B: Track last throttle calls
 	frame = nil,
 }, EventManager)
 
@@ -110,6 +111,15 @@ function EventManager:RegisterEvent(event, callback, options)
 				self.frame:RegisterEvent(event)
 				break
 			end
+		end
+		
+		-- Phase 1B: Set up default throttling for high-frequency events
+		if event == 'BAG_UPDATE' or event == 'BAG_UPDATE_DELAYED' then
+			self.throttleRates[event] = 0.5 -- Bag updates every 0.5s max
+		elseif event == 'PLAYER_MONEY' then
+			self.throttleRates[event] = 0.2 -- Money updates every 0.2s max
+		elseif event == 'UPDATE_EXHAUSTION' or event == 'PLAYER_XP_UPDATE' then
+			self.throttleRates[event] = 1.0 -- XP updates every 1s max
 		end
 	end
 
@@ -211,6 +221,23 @@ function EventManager:ProcessBatchQueue()
 	end
 	self.batchQueue = {}
 	self.updateTimer = nil
+end
+
+---Phase 1B: Throttle callback execution to prevent spam
+---@param event string Event name
+---@param callback function Callback function
+---@param args table Event arguments
+---@param throttleRate number Throttle rate in seconds
+function EventManager:ThrottleCallback(event, callback, args, throttleRate)
+	local throttleKey = event .. '_' .. tostring(callback)
+	local lastCall = self.lastThrottleCall and self.lastThrottleCall[throttleKey] or 0
+	local now = GetTime()
+	
+	if now - lastCall >= throttleRate then
+		self:SafeCall(callback, event, unpack(args))
+		self.lastThrottleCall = self.lastThrottleCall or {}
+		self.lastThrottleCall[throttleKey] = now
+	end
 end
 
 ----------------------------------------------------------------------------------------------------
