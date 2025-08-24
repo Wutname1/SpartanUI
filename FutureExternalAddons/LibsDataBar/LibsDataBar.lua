@@ -1024,6 +1024,14 @@ local databaseDefaults = {
 			bars = {},
 			containers = {},
 		},
+		bars = {
+			main = {
+				enabled = true,
+				size = {
+					height = 24,
+				},
+			},
+		},
 		plugins = {
 			Clock = {
 				enabled = true,
@@ -1479,10 +1487,12 @@ function LibsDataBar:SetupConfigOptions()
 								name = 'Enable Main Bar',
 								desc = 'Show or hide the main data bar',
 								get = function()
-									return self.db.profile.bars.main.enabled
+									return self.db and self.db.profile and self.db.profile.bars and self.db.profile.bars.main and self.db.profile.bars.main.enabled or true
 								end,
 								set = function(_, value)
-									self.db.profile.bars.main.enabled = value
+									if self.db and self.db.profile and self.db.profile.bars and self.db.profile.bars.main then
+										self.db.profile.bars.main.enabled = value
+									end
 								end,
 								order = 1,
 							},
@@ -1494,10 +1504,12 @@ function LibsDataBar:SetupConfigOptions()
 								max = 64,
 								step = 1,
 								get = function()
-									return self.db.profile.bars.main.size.height
+									return self.db and self.db.profile and self.db.profile.bars and self.db.profile.bars.main and self.db.profile.bars.main.size and self.db.profile.bars.main.size.height or 24
 								end,
 								set = function(_, value)
-									self.db.profile.bars.main.size.height = value
+									if self.db and self.db.profile and self.db.profile.bars and self.db.profile.bars.main and self.db.profile.bars.main.size then
+										self.db.profile.bars.main.size.height = value
+									end
 								end,
 								order = 2,
 							},
