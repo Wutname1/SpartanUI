@@ -66,14 +66,15 @@ lib.callbacks = lib.callbacks or LibStub:GetLibrary('CallbackHandler-1.0'):New(l
 local EventManager = {}
 EventManager.__index = EventManager
 
-lib.events = lib.events or setmetatable({
-	eventRegistry = {},
-	batchQueue = {},
-	updateTimer = nil,
-	throttleRates = {},
-	lastThrottleCall = {}, -- Phase 1B: Track last throttle calls
-	frame = nil,
-}, EventManager)
+lib.events = lib.events
+	or setmetatable({
+		eventRegistry = {},
+		batchQueue = {},
+		updateTimer = nil,
+		throttleRates = {},
+		lastThrottleCall = {}, -- Phase 1B: Track last throttle calls
+		frame = nil,
+	}, EventManager)
 
 function EventManager:Initialize()
 	if not self.frame then
@@ -112,7 +113,7 @@ function EventManager:RegisterEvent(event, callback, options)
 				break
 			end
 		end
-		
+
 		-- Phase 1B: Set up default throttling for high-frequency events
 		if event == 'BAG_UPDATE' or event == 'BAG_UPDATE_DELAYED' then
 			self.throttleRates[event] = 0.5 -- Bag updates every 0.5s max
@@ -232,7 +233,7 @@ function EventManager:ThrottleCallback(event, callback, args, throttleRate)
 	local throttleKey = event .. '_' .. tostring(callback)
 	local lastCall = self.lastThrottleCall and self.lastThrottleCall[throttleKey] or 0
 	local now = GetTime()
-	
+
 	if now - lastCall >= throttleRate then
 		self:SafeCall(callback, event, unpack(args))
 		self.lastThrottleCall = self.lastThrottleCall or {}
@@ -1112,6 +1113,17 @@ function LibsDataBar:OnInitialize()
 	local AceDB = LibStub('AceDB-3.0')
 	self.db = AceDB:New('LibsDataBarDB', databaseDefaults, true)
 
+	-- -- Add Profiles to Options
+	-- SUI.opt.args['Profiles'] = SUI.Lib.AceDBO:GetOptionsTable(SUI.SpartanUIDB)
+	-- SUI.opt.args['Profiles'].order = 999
+
+	-- Add dual-spec support
+	local LibDualSpec = LibStub('LibDualSpec-1.0', true)
+	if SUI.IsRetail and LibDualSpec then
+		LibDualSpec:EnhanceDatabase(self.SpartanUIDB, 'SpartanUI')
+		LibDualSpec:EnhanceOptions(SUI.opt.args['Profiles'], self.SpartanUIDB)
+	end
+
 	-- Create database change callbacks
 	self.db.RegisterCallback(self, 'OnProfileChanged', 'OnProfileChanged')
 	self.db.RegisterCallback(self, 'OnProfileCopied', 'OnProfileChanged')
@@ -1151,12 +1163,12 @@ function LibsDataBar:OnDisable()
 		self:CancelTimer(self.initTimer)
 		self.initTimer = nil
 	end
-	
+
 	if self.refreshTimer then
 		self:CancelTimer(self.refreshTimer)
 		self.refreshTimer = nil
 	end
-	
+
 	if self.pendingUpdateTimer then
 		self:CancelTimer(self.pendingUpdateTimer)
 		self.pendingUpdateTimer = nil
@@ -1205,6 +1217,9 @@ function LibsDataBar:InitialSetup()
 
 	-- Phase 1B: Schedule delayed initialization for data-dependent plugins
 	self:ScheduleDelayedPluginInit()
+
+	-- Phase 1B: Schedule plugin text display validation
+	self:ScheduleTimer('ValidatePluginTextDisplay', 5.0)
 	
 	self:DebugLog('info', 'Initial setup completed with periodic refresh every ' .. updateInterval .. 's - bars should now display text')
 end
@@ -1214,18 +1229,108 @@ end
 function LibsDataBar:ScheduleDelayedPluginInit()
 	-- Additional delay for plugins that need specific game data
 	local dataDelays = {
-		{ delay = 2.0, reason = 'currency_data', callback = function() self:ScheduleUpdate(0.1, 'delayed_currency_init') end },
-		{ delay = 3.0, reason = 'reputation_data', callback = function() self:ScheduleUpdate(0.1, 'delayed_reputation_init') end },
-		{ delay = 1.5, reason = 'location_data', callback = function() self:ScheduleUpdate(0.1, 'delayed_location_init') end },
-		{ delay = 2.5, reason = 'friends_data', callback = function() self:ScheduleUpdate(0.1, 'delayed_friends_init') end },
+		{
+			delay = 2.0,
+			reason = 'currency_data',
+			callback = function()
+				self:ScheduleUpdate(0.1, 'delayed_currency_init')
+			end,
+		},
+		{
+			delay = 3.0,
+			reason = 'reputation_data',
+			callback = function()
+				self:ScheduleUpdate(0.1, 'delayed_reputation_init')
+			end,
+		},
+		{
+			delay = 1.5,
+			reason = 'location_data',
+			callback = function()
+				self:ScheduleUpdate(0.1, 'delayed_location_init')
+			end,
+		},
+		{
+			delay = 2.5,
+			reason = 'friends_data',
+			callback = function()
+				self:ScheduleUpdate(0.1, 'delayed_friends_init')
+			end,
+		},
 	}
-	
+
 	for _, delayInfo in ipairs(dataDelays) do
 		self:ScheduleTimer(function()
 			delayInfo.callback()
 			self:DebugLog('info', 'Delayed plugin refresh for: ' .. delayInfo.reason)
 		end, delayInfo.delay)
 	end
+end
+
+---Phase 1B: Validate that all plugins are displaying text correctly
+---This function checks each plugin to ensure text display is working after initialization
+function LibsDataBar:ValidatePluginTextDisplay()
+	local validationResults = {
+		total = 0,
+		working = 0,
+		failing = {},
+		testTime = GetTime(),
+	}
+
+	self:DebugLog('info', 'Starting Phase 1B plugin text display validation...')
+
+	-- Expected plugins that should display text
+	local expectedPlugins = {
+		'Clock', 'Currency', 'Performance', 'Location', 'Bags', 
+		'Volume', 'Experience', 'Repair', 'PlayedTime', 'Reputation', 'Friends'
+	}
+
+	-- Check each bar for plugin text display
+	for barId, bar in pairs(self.bars) do
+		if bar and bar.plugins then
+			for pluginId, pluginButton in pairs(bar.plugins) do
+				validationResults.total = validationResults.total + 1
+				
+				-- Check if plugin has text being displayed
+				local hasValidText = false
+				if pluginButton and pluginButton.textFrame then
+					local text = pluginButton.textFrame:GetText()
+					if text and text:trim() ~= '' and text ~= 'N/A' and text ~= '???' then
+						hasValidText = true
+						validationResults.working = validationResults.working + 1
+					end
+				end
+				
+				if not hasValidText then
+					table.insert(validationResults.failing, {
+						barId = barId,
+						pluginId = pluginId,
+						reason = 'No valid text displayed'
+					})
+				end
+			end
+		end
+	end
+
+	-- Report validation results
+	local successRate = (validationResults.working / math.max(validationResults.total, 1)) * 100
+	
+	if successRate >= 90 then
+		self:DebugLog('info', 'Phase 1B Validation PASSED: ' .. validationResults.working .. '/' .. validationResults.total .. ' plugins displaying text (' .. string.format('%.1f%%', successRate) .. ')')
+	else
+		self:DebugLog('warning', 'Phase 1B Validation NEEDS ATTENTION: ' .. validationResults.working .. '/' .. validationResults.total .. ' plugins displaying text (' .. string.format('%.1f%%', successRate) .. ')')
+		
+		-- Log specific failures
+		for _, failure in ipairs(validationResults.failing) do
+			self:DebugLog('warning', 'Plugin text display issue: ' .. failure.pluginId .. ' in bar ' .. failure.barId .. ' - ' .. failure.reason)
+		end
+		
+		-- Schedule another validation attempt in 10 seconds
+		self:ScheduleTimer('ValidatePluginTextDisplay', 10.0)
+		self:DebugLog('info', 'Scheduling re-validation in 10 seconds...')
+	end
+	
+	return validationResults
 end
 
 ---Periodic update callback - refreshes all data bar content
@@ -1260,7 +1365,7 @@ end
 function LibsDataBar:ScheduleUpdate(delay, reason)
 	-- Phase 1B: Intelligent delay based on update reason
 	local maxFreq = self:GetConfig('performance.maxUpdateFrequency') or 0.1
-	
+
 	if not delay then
 		-- Intelligent throttling based on update reason
 		if reason == 'money' or reason == 'currency' then
@@ -1279,10 +1384,8 @@ function LibsDataBar:ScheduleUpdate(delay, reason)
 
 	-- Schedule new update
 	self.pendingUpdateTimer = self:ScheduleTimer('UpdateAllBars', delay)
-	
-	if LIBSDATABAR_DEBUG and reason then 
-		self:DebugLog('info', 'Scheduled update in ' .. delay .. 's for reason: ' .. reason) 
-	end
+
+	if LIBSDATABAR_DEBUG and reason then self:DebugLog('info', 'Scheduled update in ' .. delay .. 's for reason: ' .. reason) end
 end
 
 ----------------------------------------------------------------------------------------------------
