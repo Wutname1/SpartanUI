@@ -1113,15 +1113,11 @@ function LibsDataBar:OnInitialize()
 	local AceDB = LibStub('AceDB-3.0')
 	self.db = AceDB:New('LibsDataBarDB', databaseDefaults, true)
 
-	-- -- Add Profiles to Options
-	-- SUI.opt.args['Profiles'] = SUI.Lib.AceDBO:GetOptionsTable(SUI.SpartanUIDB)
-	-- SUI.opt.args['Profiles'].order = 999
-
-	-- Add dual-spec support
+	-- Add LibDualSpec-1.0 support for spec-specific configurations
 	local LibDualSpec = LibStub('LibDualSpec-1.0', true)
-	if SUI.IsRetail and LibDualSpec then
-		LibDualSpec:EnhanceDatabase(self.SpartanUIDB, 'SpartanUI')
-		LibDualSpec:EnhanceOptions(SUI.opt.args['Profiles'], self.SpartanUIDB)
+	if LibDualSpec then
+		LibDualSpec:EnhanceDatabase(self.db, 'LibsDataBar')
+		self:DebugLog('info', 'LibDualSpec-1.0 support enabled for LibsDataBar')
 	end
 
 	-- Create database change callbacks
@@ -1220,7 +1216,7 @@ function LibsDataBar:InitialSetup()
 
 	-- Phase 1B: Schedule plugin text display validation
 	self:ScheduleTimer('ValidatePluginTextDisplay', 5.0)
-	
+
 	self:DebugLog('info', 'Initial setup completed with periodic refresh every ' .. updateInterval .. 's - bars should now display text')
 end
 
@@ -1281,8 +1277,17 @@ function LibsDataBar:ValidatePluginTextDisplay()
 
 	-- Expected plugins that should display text
 	local expectedPlugins = {
-		'Clock', 'Currency', 'Performance', 'Location', 'Bags', 
-		'Volume', 'Experience', 'Repair', 'PlayedTime', 'Reputation', 'Friends'
+		'Clock',
+		'Currency',
+		'Performance',
+		'Location',
+		'Bags',
+		'Volume',
+		'Experience',
+		'Repair',
+		'PlayedTime',
+		'Reputation',
+		'Friends',
 	}
 
 	-- Check each bar for plugin text display
@@ -1290,7 +1295,7 @@ function LibsDataBar:ValidatePluginTextDisplay()
 		if bar and bar.plugins then
 			for pluginId, pluginButton in pairs(bar.plugins) do
 				validationResults.total = validationResults.total + 1
-				
+
 				-- Check if plugin has text being displayed
 				local hasValidText = false
 				if pluginButton and pluginButton.textFrame then
@@ -1300,36 +1305,40 @@ function LibsDataBar:ValidatePluginTextDisplay()
 						validationResults.working = validationResults.working + 1
 					end
 				end
-				
-				if not hasValidText then
-					table.insert(validationResults.failing, {
-						barId = barId,
-						pluginId = pluginId,
-						reason = 'No valid text displayed'
-					})
-				end
+
+				if not hasValidText then table.insert(validationResults.failing, {
+					barId = barId,
+					pluginId = pluginId,
+					reason = 'No valid text displayed',
+				}) end
 			end
 		end
 	end
 
 	-- Report validation results
 	local successRate = (validationResults.working / math.max(validationResults.total, 1)) * 100
-	
+
 	if successRate >= 90 then
-		self:DebugLog('info', 'Phase 1B Validation PASSED: ' .. validationResults.working .. '/' .. validationResults.total .. ' plugins displaying text (' .. string.format('%.1f%%', successRate) .. ')')
+		self:DebugLog(
+			'info',
+			'Phase 1B Validation PASSED: ' .. validationResults.working .. '/' .. validationResults.total .. ' plugins displaying text (' .. string.format('%.1f%%', successRate) .. ')'
+		)
 	else
-		self:DebugLog('warning', 'Phase 1B Validation NEEDS ATTENTION: ' .. validationResults.working .. '/' .. validationResults.total .. ' plugins displaying text (' .. string.format('%.1f%%', successRate) .. ')')
-		
+		self:DebugLog(
+			'warning',
+			'Phase 1B Validation NEEDS ATTENTION: ' .. validationResults.working .. '/' .. validationResults.total .. ' plugins displaying text (' .. string.format('%.1f%%', successRate) .. ')'
+		)
+
 		-- Log specific failures
 		for _, failure in ipairs(validationResults.failing) do
 			self:DebugLog('warning', 'Plugin text display issue: ' .. failure.pluginId .. ' in bar ' .. failure.barId .. ' - ' .. failure.reason)
 		end
-		
+
 		-- Schedule another validation attempt in 10 seconds
 		self:ScheduleTimer('ValidatePluginTextDisplay', 10.0)
 		self:DebugLog('info', 'Scheduling re-validation in 10 seconds...')
 	end
-	
+
 	return validationResults
 end
 
@@ -1507,7 +1516,16 @@ function LibsDataBar:SetupConfigOptions()
 
 	-- Add AceDBOptions for profile management
 	local AceDBOptions = LibStub('AceDBOptions-3.0')
-	LibStub('AceConfig-3.0'):RegisterOptionsTable('LibsDataBar_Profiles', AceDBOptions:GetOptionsTable(self.db))
+	local profileOptions = AceDBOptions:GetOptionsTable(self.db)
+
+	-- Enhance with LibDualSpec-1.0 if available
+	local LibDualSpec = LibStub('LibDualSpec-1.0', true)
+	if LibDualSpec then
+		LibDualSpec:EnhanceOptions(profileOptions, self.db)
+		self:DebugLog('info', 'LibDualSpec-1.0 enhanced profile options')
+	end
+
+	LibStub('AceConfig-3.0'):RegisterOptionsTable('LibsDataBar_Profiles', profileOptions)
 	LibStub('AceConfigDialog-3.0'):AddToBlizOptions('LibsDataBar_Profiles', 'Profiles', 'LibsDataBar')
 
 	-- Setup slash commands
