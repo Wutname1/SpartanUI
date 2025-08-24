@@ -15,7 +15,7 @@ assert(LibStub:GetLibrary('AceTimer-3.0', true), 'LibsDataBar requires AceTimer-
 assert(LibStub:GetLibrary('CallbackHandler-1.0', true), 'LibsDataBar requires CallbackHandler-1.0')
 
 -- Addon Registration with AceAddon-3.0
-local LibsDataBar = LibStub('AceAddon-3.0'):NewAddon('LibsDataBar', 'AceEvent-3.0', 'AceTimer-3.0')
+local LibsDataBar = LibStub('AceAddon-3.0'):NewAddon('LibsDataBar', 'AceEvent-3.0', 'AceTimer-3.0', 'AceBucket-3.0', 'AceConsole-3.0')
 if not LibsDataBar then return end
 
 -- For backward compatibility, expose as library for existing code
@@ -1224,6 +1224,9 @@ function LibsDataBar:InitialSetup()
 
 	-- Phase 1B: Schedule plugin text display validation
 	self:ScheduleTimer('ValidatePluginTextDisplay', 5.0)
+	
+	-- Phase 3: Setup AceBucket event throttling for performance
+	self:SetupEventBuckets()
 
 	self:DebugLog('info', 'Initial setup completed with periodic refresh every ' .. updateInterval .. 's - bars should now display text')
 end
@@ -1348,6 +1351,45 @@ function LibsDataBar:ValidatePluginTextDisplay()
 	end
 
 	return validationResults
+end
+
+---Phase 3: Setup AceBucket-3.0 event throttling for high-frequency events
+function LibsDataBar:SetupEventBuckets()
+	-- Register buckets for high-frequency events to batch updates
+	
+	-- Bag update bucket - batch bag changes every 0.5 seconds
+	self:RegisterBucketEvent('LibsDataBar_BagUpdates', 0.5, 'BAG_UPDATE', 'BAG_UPDATE_DELAYED')
+	
+	-- Money update bucket - batch currency changes every 0.3 seconds  
+	self:RegisterBucketEvent('LibsDataBar_MoneyUpdates', 0.3, 'PLAYER_MONEY')
+	
+	-- XP update bucket - batch XP changes every 1.0 seconds
+	self:RegisterBucketEvent('LibsDataBar_XPUpdates', 1.0, 'PLAYER_XP_UPDATE', 'UPDATE_EXHAUSTION')
+	
+	-- Reputation update bucket - batch reputation changes every 2.0 seconds
+	self:RegisterBucketEvent('LibsDataBar_ReputationUpdates', 2.0, 'UPDATE_FACTION', 'QUEST_TURNED_IN')
+	
+	self:DebugLog('info', 'Phase 3: AceBucket event throttling enabled for performance optimization')
+end
+
+---Phase 3: Handle bucketed bag updates
+function LibsDataBar:LibsDataBar_BagUpdates()
+	self:ScheduleUpdate(0.1, 'bag_bucket')
+end
+
+---Phase 3: Handle bucketed money updates  
+function LibsDataBar:LibsDataBar_MoneyUpdates()
+	self:ScheduleUpdate(0.1, 'money_bucket')
+end
+
+---Phase 3: Handle bucketed XP updates
+function LibsDataBar:LibsDataBar_XPUpdates()
+	self:ScheduleUpdate(0.1, 'xp_bucket')
+end
+
+---Phase 3: Handle bucketed reputation updates
+function LibsDataBar:LibsDataBar_ReputationUpdates()
+	self:ScheduleUpdate(0.1, 'reputation_bucket')
 end
 
 ---Periodic update callback - refreshes all data bar content
@@ -1551,6 +1593,68 @@ function LibsDataBar:GetPluginOrder(pluginName)
 	return orderMap[pluginName] or 99
 end
 
+---Phase 3: Setup AceConsole-3.0 command system with help and debug commands
+function LibsDataBar:SetupConsoleCommands()
+	-- Register main command with AceConsole
+	self:RegisterChatCommand('libsdatabar', 'HandleChatCommand')
+	self:RegisterChatCommand('ldb', 'HandleChatCommand')
+	
+	self:DebugLog('info', 'Phase 3: AceConsole-3.0 command system registered')
+end
+
+---Phase 3: Handle chat commands with AceConsole-3.0
+---@param input string Command input
+function LibsDataBar:HandleChatCommand(input)
+	local args = { self:GetArgs(input, 10) }
+	local command = args[1] and string.lower(args[1]) or ''
+	
+	if command == 'config' or command == 'options' or command == '' then
+		-- Open configuration panel
+		LibStub('AceConfigDialog-3.0'):Open('LibsDataBar')
+		
+	elseif command == 'debug' then
+		-- Toggle debug mode
+		local newState = not LIBSDATABAR_DEBUG
+		LIBSDATABAR_DEBUG = newState
+		if self.db and self.db.profile then
+			self.db.profile.debug = newState
+		end
+		self:Print('Debug mode ' .. (newState and 'enabled' or 'disabled'))
+		
+	elseif command == 'reload' or command == 'rl' then
+		-- Reload LibsDataBar
+		self:Disable()
+		self:Enable()
+		self:Print('LibsDataBar reloaded')
+		
+	elseif command == 'status' then
+		-- Show status information
+		local bars = self:GetBarList()
+		self:Print('LibsDataBar Status:')
+		self:Print('- Version: ' .. self.version)
+		self:Print('- Active bars: ' .. #bars .. ' (' .. table.concat(bars, ', ') .. ')')
+		self:Print('- Debug mode: ' .. (LIBSDATABAR_DEBUG and 'enabled' or 'disabled'))
+		
+	elseif command == 'validate' then
+		-- Run plugin text display validation
+		self:ValidatePluginTextDisplay()
+		self:Print('Plugin validation completed - check debug log for results')
+		
+	elseif command == 'help' then
+		-- Show command help
+		self:Print('LibsDataBar Commands:')
+		self:Print('/ldb config - Open configuration panel')
+		self:Print('/ldb debug - Toggle debug mode')
+		self:Print('/ldb reload - Reload the addon') 
+		self:Print('/ldb status - Show addon status')
+		self:Print('/ldb validate - Run plugin validation')
+		self:Print('/ldb help - Show this help')
+		
+	else
+		self:Print('Unknown command: ' .. command .. '. Type /ldb help for available commands.')
+	end
+end
+
 ---Setup AceConfig-3.0 options table and register with Settings panel
 function LibsDataBar:SetupConfigOptions()
 	local options = {
@@ -1727,7 +1831,10 @@ function LibsDataBar:SetupConfigOptions()
 	LibStub('AceConfig-3.0'):RegisterOptionsTable('LibsDataBar_Profiles', profileOptions)
 	LibStub('AceConfigDialog-3.0'):AddToBlizOptions('LibsDataBar_Profiles', 'Profiles', 'LibsDataBar')
 
-	-- Setup slash commands
+	-- Phase 3: Setup AceConsole-3.0 command system
+	self:SetupConsoleCommands()
+	
+	-- Legacy slash commands for compatibility
 	SLASH_LIBSDATABAR1 = '/libsdatabar'
 	SLASH_LIBSDATABAR2 = '/ldb'
 	SlashCmdList['LIBSDATABAR'] = function(msg)
