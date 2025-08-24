@@ -2653,31 +2653,37 @@ function LibsDataBar:HandleChatCommand(input)
 		self:ValidatePluginTextDisplay()
 		self:Print('Plugin validation completed - check debug log for results')
 	elseif command == 'export' then
-		-- Phase 4: Export current configuration
-		local exportData = self:ExportConfiguration()
-		if exportData then
-			self:Print('Configuration exported successfully. Copy the following:')
-			self:Print('--- START CONFIG ---')
-			self:Print(exportData)
-			self:Print('--- END CONFIG ---')
+		-- Phase 4: Open enhanced export/import UI (Export tab)
+		local window = self:CreateExportImportWindow()
+		if window and window.exportTab then
+			window.exportTab:Click() -- Ensure export tab is selected
 		end
 	elseif command == 'import' then
-		-- Phase 4: Import configuration
+		-- Phase 4: Handle import command variants
 		local subCommand = args[2] and string.lower(args[2]) or ''
 		if subCommand == 'apply' then
-			-- Apply pending import
+			-- Apply pending import (legacy support)
 			if self.pendingImport then
 				self:ApplyImportedConfiguration(self.pendingImport)
 			else
 				self:Print('No pending import to apply')
 			end
 		else
-			-- Import from provided string
+			-- Open enhanced export/import UI (Import tab)
+			local window = self:CreateExportImportWindow()
+			if window and window.importTab then
+				window.importTab:Click() -- Ensure import tab is selected
+			end
+			
+			-- If user provided import data, populate the text field
 			local importData = args[2]
-			if importData then
-				self:ImportConfiguration(importData, false)
-			else
-				self:Print('Usage: /ldb import <config_string> or /ldb import apply')
+			if importData and window and window.importFrame and window.importFrame.importTextBox then
+				window.importFrame.importTextBox:SetText(importData)
+				window.importFrame.importTextBox:SetFocus()
+				-- Trigger validation automatically
+				if window.importFrame.previewBtn then
+					window.importFrame.previewBtn:SetEnabled(true)
+				end
 			end
 		end
 	elseif command == 'share' then
@@ -2695,9 +2701,9 @@ function LibsDataBar:HandleChatCommand(input)
 		self:Print('/ldb reload - Reload the addon')
 		self:Print('/ldb status - Show addon status')
 		self:Print('/ldb validate - Run plugin validation')
-		self:Print('/ldb export - Export current configuration')
-		self:Print('/ldb import <config> - Import configuration string')
-		self:Print('/ldb import apply - Apply pending import')
+		self:Print('/ldb export - Open configuration manager (Export tab)')
+		self:Print('/ldb import [config] - Open configuration manager (Import tab)')
+		self:Print('/ldb import apply - Apply pending import (legacy)')
 		self:Print('/ldb share [channel] - Share config (default: GUILD)')
 		self:Print('/ldb manager - Open configuration manager')
 		self:Print('/ldb help - Show this help')
