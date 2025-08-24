@@ -17,8 +17,15 @@ assert(LibStub:GetLibrary('CallbackHandler-1.0', true), 'LibsDataBar requires Ca
 -- Phase 3: LibQTip-1.0 for enhanced tooltips (optional)
 local LibQTip = LibStub:GetLibrary('LibQTip-1.0', true)
 
+-- Phase 4: LibSharedMedia-3.0 for theme system (optional)
+local LibSharedMedia = LibStub:GetLibrary('LibSharedMedia-3.0', true)
+
+-- Phase 4: Communication libraries for configuration sharing (optional)
+local AceComm = LibStub:GetLibrary('AceComm-3.0', true)
+local AceSerializer = LibStub:GetLibrary('AceSerializer-3.0', true)
+
 -- Addon Registration with AceAddon-3.0
-local LibsDataBar = LibStub('AceAddon-3.0'):NewAddon('LibsDataBar', 'AceEvent-3.0', 'AceTimer-3.0', 'AceBucket-3.0', 'AceConsole-3.0')
+local LibsDataBar = LibStub('AceAddon-3.0'):NewAddon('LibsDataBar', 'AceEvent-3.0', 'AceTimer-3.0', 'AceBucket-3.0', 'AceConsole-3.0', 'AceComm-3.0')
 if not LibsDataBar then return end
 
 -- For backward compatibility, expose as library for existing code
@@ -515,6 +522,480 @@ end
 function lib:InitializeSystems()
 	lib.events:Initialize()
 	lib.config:Initialize()
+end
+
+-- Phase 4: Enhanced Theme System with LibSharedMedia-3.0 Support
+---Initialize enhanced theme system with LibSharedMedia-3.0 integration
+function LibsDataBar:InitializeThemeSystem()
+	self:DebugLog('info', 'Initializing enhanced theme system...')
+	
+	-- Initialize theme manager
+	self.themes = self.themes or {}
+	
+	-- Register default LibSharedMedia-3.0 fonts and textures if available
+	if LibSharedMedia then
+		self:RegisterSharedMediaDefaults()
+		self:DebugLog('info', 'LibSharedMedia-3.0 integration enabled')
+	end
+	
+	-- Initialize theme configuration
+	self:InitializeThemeDefaults()
+	
+	-- Apply current theme
+	local currentTheme = self.db.profile.appearance.theme or 'default'
+	self:ApplyTheme(currentTheme)
+end
+
+---Register default fonts and textures with LibSharedMedia-3.0
+function LibsDataBar:RegisterSharedMediaDefaults()
+	if not LibSharedMedia then return end
+	
+	-- Register custom fonts for LibsDataBar
+	LibSharedMedia:Register('font', 'LibsDataBar Default', [[Interface\AddOns\LibsDataBar\Media\Fonts\Default.ttf]])
+	LibSharedMedia:Register('font', 'LibsDataBar Condensed', [[Interface\AddOns\LibsDataBar\Media\Fonts\Condensed.ttf]])
+	
+	-- Register custom textures for LibsDataBar
+	LibSharedMedia:Register('statusbar', 'LibsDataBar Clean', [[Interface\AddOns\LibsDataBar\Media\Textures\Clean.tga]])
+	LibSharedMedia:Register('statusbar', 'LibsDataBar Modern', [[Interface\AddOns\LibsDataBar\Media\Textures\Modern.tga]])
+	LibSharedMedia:Register('background', 'LibsDataBar Panel', [[Interface\AddOns\LibsDataBar\Media\Textures\Panel.tga]])
+end
+
+---Initialize theme defaults and available themes
+function LibsDataBar:InitializeThemeDefaults()
+	self.themes.available = {
+		default = {
+			name = 'Default',
+			description = 'Clean, minimalist theme',
+			font = 'Fonts\\FRIZQT__.TTF',
+			fontSize = 12,
+			fontFlags = 'OUTLINE',
+			texture = [[Interface\TargetingFrame\UI-StatusBar]],
+			backgroundColor = {0, 0, 0, 0.8},
+			borderColor = {0.5, 0.5, 0.5, 1},
+		},
+		modern = {
+			name = 'Modern',
+			description = 'Sleek modern appearance',
+			font = 'Fonts\\ARIALN.TTF',
+			fontSize = 11,
+			fontFlags = 'OUTLINE',
+			texture = [[Interface\RaidFrame\Raid-Bar-Hp-Fill]],
+			backgroundColor = {0.1, 0.1, 0.1, 0.9},
+			borderColor = {0.3, 0.6, 1, 1},
+		},
+		classic = {
+			name = 'Classic',
+			description = 'Traditional WoW styling',
+			font = 'Fonts\\FRIZQT__.TTF',
+			fontSize = 13,
+			fontFlags = 'OUTLINE',
+			texture = [[Interface\TargetingFrame\UI-StatusBar]],
+			backgroundColor = {0.2, 0.1, 0, 0.8},
+			borderColor = {0.8, 0.6, 0.2, 1},
+		},
+	}
+	
+	-- Add LibSharedMedia fonts and textures to theme options if available
+	if LibSharedMedia then
+		for themeName, theme in pairs(self.themes.available) do
+			theme.sharedMediaFonts = LibSharedMedia:HashTable('font')
+			theme.sharedMediaTextures = LibSharedMedia:HashTable('statusbar')
+			theme.sharedMediaBackgrounds = LibSharedMedia:HashTable('background')
+		end
+	end
+end
+
+---Apply a theme to all bars and plugins
+---@param themeName string Name of theme to apply
+function LibsDataBar:ApplyTheme(themeName)
+	local theme = self.themes.available[themeName]
+	if not theme then
+		self:DebugLog('error', 'Theme not found: ' .. tostring(themeName))
+		return
+	end
+	
+	self:DebugLog('info', 'Applying theme: ' .. themeName)
+	
+	-- Store current theme
+	self.themes.current = theme
+	self.db.profile.appearance.theme = themeName
+	
+	-- Apply theme to all existing bars
+	for barName, bar in pairs(self.bars) do
+		self:ApplyThemeToBar(bar, theme)
+	end
+	
+	-- Fire theme changed callback
+	self.callbacks:Fire('ThemeChanged', themeName, theme)
+end
+
+---Apply theme settings to a specific bar
+---@param bar DataBar The bar to apply theme to
+---@param theme table Theme configuration
+function LibsDataBar:ApplyThemeToBar(bar, theme)
+	if not bar or not theme then return end
+	
+	-- Apply font settings with LibSharedMedia override support
+	local fontPath = theme.font
+	-- Check for user custom font override first
+	if LibSharedMedia and self.db.profile.appearance.customFont then
+		fontPath = LibSharedMedia:Fetch('font', self.db.profile.appearance.customFont)
+	-- Then check if theme specifies a LibSharedMedia font
+	elseif LibSharedMedia and theme.sharedMediaFont then
+		fontPath = LibSharedMedia:Fetch('font', theme.sharedMediaFont)
+	end
+	
+	if bar.text then
+		bar.text:SetFont(fontPath, theme.fontSize, theme.fontFlags)
+	end
+	
+	-- Apply texture settings with LibSharedMedia override support
+	local texturePath = theme.texture
+	-- Check for user custom texture override first
+	if LibSharedMedia and self.db.profile.appearance.customTexture then
+		texturePath = LibSharedMedia:Fetch('statusbar', self.db.profile.appearance.customTexture)
+	-- Then check if theme specifies a LibSharedMedia texture
+	elseif LibSharedMedia and theme.sharedMediaTexture then
+		texturePath = LibSharedMedia:Fetch('statusbar', theme.sharedMediaTexture)
+	end
+	
+	if bar.texture then
+		bar.texture:SetTexture(texturePath)
+	end
+	
+	-- Apply colors
+	if bar.background then
+		local bg = theme.backgroundColor
+		bar.background:SetColorTexture(bg[1], bg[2], bg[3], bg[4])
+	end
+	
+	if bar.border then
+		local border = theme.borderColor
+		bar.border:SetColorTexture(border[1], border[2], border[3], border[4])
+	end
+end
+
+---Get available themes list
+---@return table List of available theme names and descriptions
+function LibsDataBar:GetAvailableThemes()
+	local themes = {}
+	for name, theme in pairs(self.themes.available) do
+		themes[name] = {
+			name = theme.name,
+			description = theme.description
+		}
+	end
+	return themes
+end
+
+---Get current theme name
+---@return string Current theme name
+function LibsDataBar:GetCurrentTheme()
+	return self.db.profile.appearance.theme or 'default'
+end
+
+---Sync theme with SpartanUI if available
+function LibsDataBar:SyncWithSpartanUITheme()
+	-- Check if SpartanUI is available
+	if not _G.SUI or not _G.SUI.DB or not _G.SUI.DB.profile then
+		self:DebugLog('info', 'SpartanUI not found - cannot sync themes')
+		return
+	end
+	
+	local suiTheme = _G.SUI.DB.profile.theme
+	if not suiTheme then
+		self:DebugLog('info', 'SpartanUI theme not found in profile')
+		return
+	end
+	
+	-- Map SpartanUI themes to LibsDataBar themes
+	local themeMapping = {
+		['Classic'] = 'classic',
+		['War'] = 'modern',
+		['Fel'] = 'modern',
+		['Digital'] = 'modern',
+		['Default'] = 'default',
+	}
+	
+	local mappedTheme = themeMapping[suiTheme] or 'default'
+	
+	self:DebugLog('info', 'Syncing with SpartanUI theme: ' .. suiTheme .. ' -> ' .. mappedTheme)
+	
+	if mappedTheme ~= self:GetCurrentTheme() then
+		self:ApplyTheme(mappedTheme)
+		self:Print('Theme synced with SpartanUI: ' .. suiTheme)
+	end
+end
+
+-- Phase 4: Advanced Communication Features
+---Initialize communication system for configuration sharing
+function LibsDataBar:InitializeCommunication()
+	if not AceComm or not AceSerializer then
+		self:DebugLog('info', 'Communication libraries not available - configuration sharing disabled')
+		return
+	end
+	
+	-- Register communication channel
+	self:RegisterComm('LibsDataBarConfig', 'OnCommReceived')
+	self:DebugLog('info', 'Communication system initialized for configuration sharing')
+end
+
+---Export current configuration to shareable string
+---@return string|nil Encoded configuration string or nil on error
+function LibsDataBar:ExportConfiguration()
+	if not AceSerializer then
+		self:Print('AceSerializer-3.0 not available - cannot export configuration')
+		return nil
+	end
+	
+	-- Create export package with essential configuration
+	local exportData = {
+		version = LIBSDATABAR_VERSION,
+		timestamp = time(),
+		playerName = UnitName('player'),
+		realmName = GetRealmName(),
+		appearance = self.db.profile.appearance,
+		plugins = {},
+		bars = {},
+	}
+	
+	-- Export plugin configurations (only enabled plugins)
+	for pluginName, pluginConfig in pairs(self.db.profile.plugins) do
+		if pluginConfig.enabled then
+			exportData.plugins[pluginName] = {
+				enabled = true,
+				-- Copy safe configuration values (exclude sensitive data)
+				bar = pluginConfig.bar,
+				position = pluginConfig.position,
+				display = pluginConfig.display,
+				behavior = pluginConfig.behavior,
+				appearance = pluginConfig.appearance,
+			}
+		end
+	end
+	
+	-- Export bar configurations
+	for barName, barConfig in pairs(self.db.profile.bars) do
+		exportData.bars[barName] = {
+			enabled = barConfig.enabled,
+			anchor = barConfig.anchor,
+			size = barConfig.size,
+			appearance = barConfig.appearance,
+			behavior = barConfig.behavior,
+		}
+	end
+	
+	-- Serialize and encode
+	local serializedData = AceSerializer:Serialize(exportData)
+	local encodedData = LibStub('AceComm-3.0'):Encode(serializedData)
+	
+	self:DebugLog('info', 'Configuration exported successfully')
+	return encodedData
+end
+
+---Import configuration from encoded string
+---@param encodedData string Encoded configuration string
+---@param applyImmediately boolean Whether to apply changes immediately
+---@return boolean Success status
+function LibsDataBar:ImportConfiguration(encodedData, applyImmediately)
+	if not AceSerializer or not encodedData then
+		self:Print('Invalid data or AceSerializer-3.0 not available')
+		return false
+	end
+	
+	-- Decode and deserialize
+	local success, serializedData = LibStub('AceComm-3.0'):Decode(encodedData)
+	if not success then
+		self:Print('Failed to decode configuration data')
+		return false
+	end
+	
+	success, importData = AceSerializer:Deserialize(serializedData)
+	if not success or not importData then
+		self:Print('Failed to deserialize configuration data')
+		return false
+	end
+	
+	-- Validate import data
+	if not importData.version or not importData.appearance then
+		self:Print('Invalid configuration format')
+		return false
+	end
+	
+	-- Show import preview to user
+	self:ShowImportPreview(importData, applyImmediately)
+	
+	return true
+end
+
+---Show import preview dialog
+---@param importData table Imported configuration data
+---@param applyImmediately boolean Whether to apply immediately
+function LibsDataBar:ShowImportPreview(importData, applyImmediately)
+	local message = string.format(
+		'Configuration Import Preview\n\n' ..
+		'Source: %s (%s)\n' ..
+		'Version: %s\n' ..
+		'Theme: %s\n' ..
+		'Plugins: %d enabled\n' ..
+		'Bars: %d configured\n\n' ..
+		'Apply this configuration?',
+		importData.playerName or 'Unknown',
+		importData.realmName or 'Unknown',
+		importData.version or 'Unknown',
+		importData.appearance.theme or 'default',
+		self:CountTable(importData.plugins or {}),
+		self:CountTable(importData.bars or {})
+	)
+	
+	-- For now, just print the preview and apply if requested
+	self:Print(message)
+	
+	if applyImmediately then
+		self:ApplyImportedConfiguration(importData)
+	else
+		-- Store for manual application
+		self.pendingImport = importData
+		self:Print('Configuration stored. Use /libsdatabar import apply to apply changes.')
+	end
+end
+
+---Apply imported configuration
+---@param importData table Configuration data to apply
+function LibsDataBar:ApplyImportedConfiguration(importData)
+	if not importData then
+		self:Print('No configuration data to apply')
+		return
+	end
+	
+	-- Apply appearance settings
+	if importData.appearance then
+		for key, value in pairs(importData.appearance) do
+			self.db.profile.appearance[key] = value
+		end
+		self:ApplyTheme(self.db.profile.appearance.theme)
+	end
+	
+	-- Apply plugin configurations
+	if importData.plugins then
+		for pluginName, pluginConfig in pairs(importData.plugins) do
+			if not self.db.profile.plugins[pluginName] then
+				self.db.profile.plugins[pluginName] = {}
+			end
+			for key, value in pairs(pluginConfig) do
+				self.db.profile.plugins[pluginName][key] = value
+			end
+		end
+	end
+	
+	-- Apply bar configurations  
+	if importData.bars then
+		for barName, barConfig in pairs(importData.bars) do
+			if not self.db.profile.bars[barName] then
+				self.db.profile.bars[barName] = {}
+			end
+			for key, value in pairs(barConfig) do
+				self.db.profile.bars[barName][key] = value
+			end
+		end
+	end
+	
+	-- Refresh all bars and plugins
+	self:RefreshAllBarsAndPlugins()
+	
+	self:Print('Configuration imported and applied successfully')
+	self.pendingImport = nil
+end
+
+---Share configuration with guild members
+---@param target string|nil Target channel ('GUILD', 'WHISPER', etc.) or nil for guild
+function LibsDataBar:ShareConfiguration(target)
+	if not AceComm or not AceSerializer then
+		self:Print('Communication libraries not available - cannot share configuration')
+		return
+	end
+	
+	local exportData = self:ExportConfiguration()
+	if not exportData then
+		self:Print('Failed to export configuration for sharing')
+		return
+	end
+	
+	-- Create sharing message
+	local message = {
+		action = 'SHARE_CONFIG',
+		data = exportData,
+		sender = UnitName('player'),
+		timestamp = time(),
+	}
+	
+	local serializedMessage = AceSerializer:Serialize(message)
+	
+	-- Default to guild channel
+	target = target or 'GUILD'
+	
+	self:SendCommMessage('LibsDataBarConfig', serializedMessage, target)
+	self:Print('Configuration shared to ' .. target)
+end
+
+---Handle received communication messages
+---@param prefix string Communication prefix
+---@param message string Received message
+---@param distribution string Distribution channel
+---@param sender string Message sender
+function LibsDataBar:OnCommReceived(prefix, message, distribution, sender)
+	if prefix ~= 'LibsDataBarConfig' or sender == UnitName('player') then
+		return -- Ignore own messages
+	end
+	
+	if not AceSerializer then
+		return
+	end
+	
+	-- Deserialize message
+	local success, data = AceSerializer:Deserialize(message)
+	if not success or not data then
+		return
+	end
+	
+	if data.action == 'SHARE_CONFIG' and data.data then
+		-- Someone shared their configuration
+		self:Print(string.format('%s shared their LibsDataBar configuration. Use /libsdatabar import <data> to import it.', sender))
+		-- Could implement automatic import dialog here
+	end
+end
+
+---Utility function to count table entries
+---@param t table Table to count
+---@return number Count of entries
+function LibsDataBar:CountTable(t)
+	local count = 0
+	for _ in pairs(t or {}) do
+		count = count + 1
+	end
+	return count
+end
+
+---Refresh all bars and plugins after configuration changes
+function LibsDataBar:RefreshAllBarsAndPlugins()
+	-- Refresh all existing bars
+	for barName, bar in pairs(self.bars) do
+		if self.db.profile.bars[barName] then
+			-- Reapply bar configuration
+			self:UpdateBar(barName)
+		end
+	end
+	
+	-- Refresh all plugins
+	for pluginName, plugin in pairs(self.plugins) do
+		if plugin.UpdateDisplay then
+			plugin:UpdateDisplay()
+		end
+	end
+	
+	-- Apply current theme
+	local currentTheme = self.db.profile.appearance.theme or 'default'
+	self:ApplyTheme(currentTheme)
 end
 
 ---Setup default bars and plugins for first-time use
@@ -1103,6 +1584,10 @@ local databaseDefaults = {
 			theme = 'default',
 			animation = 'fade',
 			updateInterval = 1.0,
+			-- Phase 4: LibSharedMedia-3.0 integration defaults
+			customFont = nil, -- User override for LibSharedMedia fonts
+			customTexture = nil, -- User override for LibSharedMedia textures
+			syncWithSpartanUI = false, -- Auto-sync with SpartanUI themes
 		},
 		performance = {
 			enableProfiling = false,
@@ -1138,6 +1623,12 @@ function LibsDataBar:OnInitialize()
 
 	-- Initialize core systems
 	self:InitializeSystems()
+	
+	-- Phase 4: Initialize enhanced theme system with LibSharedMedia-3.0
+	self:InitializeThemeSystem()
+	
+	-- Phase 4: Initialize communication system for configuration sharing
+	self:InitializeCommunication()
 
 	-- Phase 2: Setup AceConfig-3.0 options
 	self:SetupConfigOptions()
@@ -1687,6 +2178,38 @@ function LibsDataBar:HandleChatCommand(input)
 		-- Run plugin text display validation
 		self:ValidatePluginTextDisplay()
 		self:Print('Plugin validation completed - check debug log for results')
+	elseif command == 'export' then
+		-- Phase 4: Export current configuration
+		local exportData = self:ExportConfiguration()
+		if exportData then
+			self:Print('Configuration exported successfully. Copy the following:')
+			self:Print('--- START CONFIG ---')
+			self:Print(exportData)
+			self:Print('--- END CONFIG ---')
+		end
+	elseif command == 'import' then
+		-- Phase 4: Import configuration
+		local subCommand = args[2] and string.lower(args[2]) or ''
+		if subCommand == 'apply' then
+			-- Apply pending import
+			if self.pendingImport then
+				self:ApplyImportedConfiguration(self.pendingImport)
+			else
+				self:Print('No pending import to apply')
+			end
+		else
+			-- Import from provided string
+			local importData = args[2]
+			if importData then
+				self:ImportConfiguration(importData, false)
+			else
+				self:Print('Usage: /ldb import <config_string> or /ldb import apply')
+			end
+		end
+	elseif command == 'share' then
+		-- Phase 4: Share configuration with guild
+		local target = args[2] and string.upper(args[2]) or 'GUILD'
+		self:ShareConfiguration(target)
 	elseif command == 'help' then
 		-- Show command help
 		self:Print('LibsDataBar Commands:')
@@ -1695,6 +2218,10 @@ function LibsDataBar:HandleChatCommand(input)
 		self:Print('/ldb reload - Reload the addon')
 		self:Print('/ldb status - Show addon status')
 		self:Print('/ldb validate - Run plugin validation')
+		self:Print('/ldb export - Export current configuration')
+		self:Print('/ldb import <config> - Import configuration string')
+		self:Print('/ldb import apply - Apply pending import')
+		self:Print('/ldb share [channel] - Share config (default: GUILD)')
 		self:Print('/ldb help - Show this help')
 	else
 		self:Print('Unknown command: ' .. command .. '. Type /ldb help for available commands.')
@@ -2003,6 +2530,185 @@ function LibsDataBar:SetupConfigOptions()
 			name = 'Plugin Settings',
 			order = 3,
 			args = {},
+		},
+		appearance = {
+			type = 'group',
+			name = 'Appearance & Themes',
+			order = 4,
+			args = {
+				theme = {
+					type = 'select',
+					name = 'Theme',
+					desc = 'Choose the visual theme for all data bars',
+					values = function()
+						local themes = {}
+						if self.themes and self.themes.available then
+							for name, theme in pairs(self.themes.available) do
+								themes[name] = theme.name .. ' - ' .. theme.description
+							end
+						end
+						return themes
+					end,
+					get = function()
+						return self.db.profile.appearance.theme or 'default'
+					end,
+					set = function(_, value)
+						self.db.profile.appearance.theme = value
+						self:ApplyTheme(value)
+					end,
+					order = 1,
+				},
+				themePreview = {
+					type = 'description',
+					name = function()
+						local currentTheme = self.db.profile.appearance.theme or 'default'
+						local theme = self.themes and self.themes.available and self.themes.available[currentTheme]
+						if theme then
+							return 'Current Theme: |cff00ff00' .. theme.name .. '|r\n' .. theme.description
+						end
+						return 'Theme information not available'
+					end,
+					order = 2,
+				},
+				separator1 = {
+					type = 'description',
+					name = '',
+					order = 3,
+				},
+				sharedMediaSection = {
+					type = 'header',
+					name = LibSharedMedia and 'LibSharedMedia-3.0 Options' or 'LibSharedMedia-3.0 Not Available',
+					order = 4,
+				},
+				customFont = {
+					type = 'select',
+					name = 'Custom Font',
+					desc = 'Override the theme font with a LibSharedMedia font',
+					values = function()
+						if LibSharedMedia then
+							return LibSharedMedia:HashTable('font')
+						end
+						return {}
+					end,
+					get = function()
+						return self.db.profile.appearance.customFont or 'None'
+					end,
+					set = function(_, value)
+						if value == 'None' then
+							self.db.profile.appearance.customFont = nil
+						else
+							self.db.profile.appearance.customFont = value
+						end
+						-- Reapply current theme to update fonts
+						local currentTheme = self.db.profile.appearance.theme or 'default'
+						self:ApplyTheme(currentTheme)
+					end,
+					disabled = function() return not LibSharedMedia end,
+					order = 5,
+				},
+				customTexture = {
+					type = 'select',
+					name = 'Custom Status Bar Texture',
+					desc = 'Override the theme texture with a LibSharedMedia texture',
+					values = function()
+						if LibSharedMedia then
+							return LibSharedMedia:HashTable('statusbar')
+						end
+						return {}
+					end,
+					get = function()
+						return self.db.profile.appearance.customTexture or 'None'
+					end,
+					set = function(_, value)
+						if value == 'None' then
+							self.db.profile.appearance.customTexture = nil
+						else
+							self.db.profile.appearance.customTexture = value
+						end
+						-- Reapply current theme to update textures
+						local currentTheme = self.db.profile.appearance.theme or 'default'
+						self:ApplyTheme(currentTheme)
+					end,
+					disabled = function() return not LibSharedMedia end,
+					order = 6,
+				},
+				spartanUIIntegration = {
+					type = 'header',
+					name = 'SpartanUI Integration',
+					order = 7,
+				},
+				syncWithSpartanUI = {
+					type = 'toggle',
+					name = 'Sync with SpartanUI Themes',
+					desc = 'Automatically match SpartanUI theme changes',
+					get = function()
+						return self.db.profile.appearance.syncWithSpartanUI or false
+					end,
+					set = function(_, value)
+						self.db.profile.appearance.syncWithSpartanUI = value
+						if value then
+							-- Try to detect and sync with SpartanUI theme
+							self:SyncWithSpartanUITheme()
+						end
+					end,
+					order = 8,
+				},
+				separator2 = {
+					type = 'description',
+					name = '',
+					order = 9,
+				},
+				configSharingSection = {
+					type = 'header',
+					name = 'Configuration Sharing',
+					order = 10,
+				},
+				exportConfig = {
+					type = 'execute',
+					name = 'Export Configuration',
+					desc = 'Export current configuration to shareable string',
+					func = function()
+						local exportData = self:ExportConfiguration()
+						if exportData then
+							-- Create a frame to display the export data
+							if not self.exportFrame then
+								self.exportFrame = CreateFrame('Frame', 'LibsDataBarExportFrame', UIParent, 'BasicFrameTemplateWithInset')
+								self.exportFrame:SetSize(500, 300)
+								self.exportFrame:SetPoint('CENTER')
+								self.exportFrame.title = self.exportFrame:CreateFontString(nil, 'OVERLAY', 'GameFontHighlight')
+								self.exportFrame.title:SetPoint('TOP', 0, -10)
+								self.exportFrame.title:SetText('LibsDataBar Configuration Export')
+								
+								self.exportFrame.scrollFrame = CreateFrame('ScrollFrame', nil, self.exportFrame, 'UIPanelScrollFrameTemplate')
+								self.exportFrame.scrollFrame:SetPoint('TOPLEFT', 10, -35)
+								self.exportFrame.scrollFrame:SetPoint('BOTTOMRIGHT', -30, 10)
+								
+								self.exportFrame.editBox = CreateFrame('EditBox', nil, self.exportFrame.scrollFrame)
+								self.exportFrame.editBox:SetMultiLine(true)
+								self.exportFrame.editBox:SetFontObject('ChatFontNormal')
+								self.exportFrame.editBox:SetWidth(460)
+								self.exportFrame.editBox:SetAutoFocus(false)
+								self.exportFrame.scrollFrame:SetScrollChild(self.exportFrame.editBox)
+							end
+							
+							self.exportFrame.editBox:SetText(exportData)
+							self.exportFrame.editBox:HighlightText()
+							self.exportFrame:Show()
+						end
+					end,
+					order = 11,
+				},
+				shareToGuild = {
+					type = 'execute',
+					name = 'Share to Guild',
+					desc = 'Share your configuration with guild members',
+					func = function()
+						self:ShareConfiguration('GUILD')
+					end,
+					disabled = function() return not AceComm or not AceSerializer end,
+					order = 12,
+				},
+			},
 		},
 	}
 
