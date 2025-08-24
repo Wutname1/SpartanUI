@@ -28,7 +28,6 @@ local type, next = type, next
 local tinsert, tremove = tinsert, tremove
 local CreateFrame = CreateFrame
 local GetTime = GetTime
-local InCombatLockdown = InCombatLockdown
 
 -- Library Constants
 local LIBSDATABAR_VERSION = '1.0.0'
@@ -343,7 +342,7 @@ end
 ---@return any value Configuration value
 function ConfigManager:GetConfig(path)
 	if self.cache[path] then return self.cache[path] end
-	
+
 	if not self.db or not self.db.profile then
 		LibsDataBar:DebugLog('warning', 'ConfigManager GetConfig called before database initialization: ' .. tostring(path))
 		return nil
@@ -372,7 +371,7 @@ function ConfigManager:SetConfig(path, value)
 		LibsDataBar:DebugLog('warning', 'ConfigManager SetConfig called before database initialization: ' .. tostring(path))
 		return
 	end
-	
+
 	local keys = { strsplit('.', path) }
 	local current = self.db.profile
 
@@ -577,10 +576,10 @@ function lib:RegisterBuiltinPlugins(bar)
 				ldbObject = dataObject, -- Direct reference to LDB object
 				ldbName = name,
 			}
-			
+
 			-- Add to bar
 			local button = bar:AddPlugin(plugin)
-			if button then 
+			if button then
 				self:DebugLog('info', 'Auto-added new LDB plugin to main bar: ' .. name)
 			else
 				self:DebugLog('warning', 'Failed to auto-add new LDB plugin to main bar: ' .. name)
@@ -592,12 +591,12 @@ function lib:RegisterBuiltinPlugins(bar)
 	self:DebugLog('info', 'Starting direct LDB plugin discovery for main bar')
 	C_Timer.After(5, function()
 		local available = 0
-		
+
 		-- Iterate through all LDB objects
 		for name, dataObject in LDB:DataObjectIterator() do
 			if self:IsValidLDBObject(dataObject) then
 				available = available + 1
-				
+
 				-- Create direct LDB plugin object
 				local plugin = {
 					id = 'LDB_' .. name,
@@ -610,10 +609,10 @@ function lib:RegisterBuiltinPlugins(bar)
 					ldbObject = dataObject, -- Direct reference to LDB object
 					ldbName = name,
 				}
-				
+
 				-- Add to bar
 				local button = bar:AddPlugin(plugin)
-				if button then 
+				if button then
 					registeredCount = registeredCount + 1
 					self:DebugLog('info', 'Added LDB plugin directly to main bar: ' .. name)
 				else
@@ -621,7 +620,7 @@ function lib:RegisterBuiltinPlugins(bar)
 				end
 			end
 		end
-		
+
 		self:DebugLog('info', 'Direct LDB Discovery complete: ' .. available .. ' available, ' .. registeredCount .. ' added to main bar')
 	end)
 end
@@ -848,7 +847,7 @@ function lib:MovePlugin(pluginId, fromBarId, toBarId)
 		self:DebugLog('error', 'Plugin not found in source bar: ' .. tostring(pluginId))
 		return false
 	end
-	
+
 	local plugin = pluginButton.plugin
 
 	-- Remove from source bar
@@ -972,7 +971,6 @@ function lib:GetBars()
 	return self.bars
 end
 
-
 ---Debug logging function
 ---@param level string Log level (info, warning, error)
 ---@param message string Log message
@@ -996,7 +994,7 @@ local databaseDefaults = {
 	profile = {
 		displays = {
 			bars = {},
-			containers = {}
+			containers = {},
 		},
 		plugins = {
 			Clock = {
@@ -1005,73 +1003,74 @@ local databaseDefaults = {
 				showSeconds = false,
 				showDate = true,
 				use24Hour = false,
-				timezone = 'local'
+				timezone = 'local',
 			},
 			Currency = {
 				enabled = true,
 				showIcons = true,
 				colorByQuality = true,
-				trackAcrossCharacters = false
+				trackAcrossCharacters = false,
 			},
 			Performance = {
 				enabled = true,
 				showFPS = true,
 				showLatency = true,
 				showMemory = true,
-				updateInterval = 1.0
+				updateInterval = 1.0,
 			},
 			Location = {
 				enabled = true,
 				showCoordinates = true,
 				showPvPStatus = true,
-				showRestingState = true
+				showRestingState = true,
 			},
 			Bags = {
 				enabled = true,
 				showFreeSlots = true,
 				colorBySpace = true,
-				includeReagentBag = true
+				includeReagentBag = true,
 			},
 			Volume = {
 				enabled = true,
 				showIcons = true,
-				compactMode = false
+				compactMode = false,
 			},
 			Experience = {
 				enabled = true,
 				showPercentage = true,
 				showRested = true,
-				autoHideAtMaxLevel = true
+				autoHideAtMaxLevel = true,
 			},
 			Repair = {
 				enabled = true,
 				showPercentage = true,
 				warnThreshold = 50,
-				showRepairCost = true
+				showRepairCost = true,
 			},
 			PlayedTime = {
 				enabled = true,
 				showTotal = true,
 				showSession = true,
-				format = 'short'
+				format = 'short',
 			},
 			Reputation = {
 				enabled = true,
 				showPercentage = true,
 				autoTrack = true,
-				showParagon = true
-			}
+				showParagon = true,
+			},
 		},
 		appearance = {
 			theme = 'default',
 			animation = 'fade',
-			updateInterval = 1.0
+			updateInterval = 1.0,
 		},
 		performance = {
 			enableProfiling = false,
-			maxUpdateFrequency = 0.1
-		}
-	}
+			maxUpdateFrequency = 0.1,
+			updateInterval = 5.0, -- Phase 1B: Default 5-second refresh interval
+		},
+	},
 }
 
 ----------------------------------------------------------------------------------------------------
@@ -1081,51 +1080,63 @@ local databaseDefaults = {
 ---Called when the addon is first loaded
 function LibsDataBar:OnInitialize()
 	self:DebugLog('info', 'LibsDataBar OnInitialize() called')
-	
+
 	-- Phase 2: Initialize AceDB-3.0 database
 	local AceDB = LibStub('AceDB-3.0')
 	self.db = AceDB:New('LibsDataBarDB', databaseDefaults, true)
-	
+
 	-- Create database change callbacks
 	self.db.RegisterCallback(self, 'OnProfileChanged', 'OnProfileChanged')
 	self.db.RegisterCallback(self, 'OnProfileCopied', 'OnProfileChanged')
 	self.db.RegisterCallback(self, 'OnProfileReset', 'OnProfileChanged')
-	
+
 	-- Initialize core systems
 	self:InitializeSystems()
-	
+
 	-- Phase 2: Setup AceConfig-3.0 options
 	self:SetupConfigOptions()
-	
+
 	-- Fire library initialization event for backward compatibility
 	self.callbacks:Fire('LibsDataBar_Initialized', self)
-	
-	if LIBSDATABAR_DEBUG then 
-		self:DebugLog('info', 'LibsDataBar-1.0 initialized with AceDB-3.0 and AceConfig-3.0') 
-	end
+
+	if LIBSDATABAR_DEBUG then self:DebugLog('info', 'LibsDataBar-1.0 initialized with AceDB-3.0 and AceConfig-3.0') end
 end
 
 ---Called when the addon is enabled (PLAYER_LOGIN equivalent)
 function LibsDataBar:OnEnable()
 	self:DebugLog('info', 'LibsDataBar OnEnable() called')
-	
+
 	-- Register events using AceEvent-3.0
 	self:RegisterEvent('ADDON_LOADED')
 	self:RegisterEvent('PLAYER_ENTERING_WORLD')
-	
-	-- Setup defaults after a small delay to ensure game data is ready
-	-- Note: This will be enhanced in Phase 1B with proper timer system
-	C_Timer.After(0.5, function()
-		self:SetupDefaults()
-	end)
+
+	-- Phase 1B: Implement proper initialization timing with AceTimer-3.0
+	-- Schedule initial setup after game data is fully loaded
+	self.initTimer = self:ScheduleTimer('InitialSetup', 1.0)
 end
 
 ---Called when the addon is disabled
 function LibsDataBar:OnDisable()
 	self:DebugLog('info', 'LibsDataBar OnDisable() called')
+
+	-- Phase 1B: Clean up timers
+	if self.initTimer then
+		self:CancelTimer(self.initTimer)
+		self.initTimer = nil
+	end
 	
+	if self.refreshTimer then
+		self:CancelTimer(self.refreshTimer)
+		self.refreshTimer = nil
+	end
+	
+	if self.pendingUpdateTimer then
+		self:CancelTimer(self.pendingUpdateTimer)
+		self.pendingUpdateTimer = nil
+	end
+
 	-- AceEvent-3.0 automatically unregisters events
-	-- Additional cleanup can be added here if needed
+	self:DebugLog('info', 'LibsDataBar disabled and timers cleaned up')
 end
 
 ----------------------------------------------------------------------------------------------------
@@ -1151,26 +1162,30 @@ end
 ---Initial setup callback - called once after game data is loaded
 function LibsDataBar:InitialSetup()
 	self:DebugLog('info', 'InitialSetup timer callback executed')
-	
+
 	-- Call the original setup defaults function
 	self:SetupDefaults()
-	
+
 	-- Trigger an immediate update of all bars to display initial data
 	self:UpdateAllBars()
-	
+
+	-- Phase 1B: Add periodic refresh system with configurable update intervals
+	local updateInterval = self:GetConfig('performance.updateInterval') or 5.0
+	self.refreshTimer = self:ScheduleRepeatingTimer('UpdateAllBars', updateInterval)
+
 	-- Clear the init timer reference
 	self.initTimer = nil
-	
-	self:DebugLog('info', 'Initial setup completed - bars should now display text')
+
+	self:DebugLog('info', 'Initial setup completed with periodic refresh every ' .. updateInterval .. 's - bars should now display text')
 end
 
 ---Periodic update callback - refreshes all data bar content
 function LibsDataBar:UpdateAllBars()
-	if not self.bars then 
+	if not self.bars then
 		self:DebugLog('warning', 'UpdateAllBars called but no bars registry found')
-		return 
+		return
 	end
-	
+
 	local updateCount = 0
 	for barId, bar in pairs(self.bars) do
 		if bar and bar.Update then
@@ -1178,7 +1193,7 @@ function LibsDataBar:UpdateAllBars()
 			local success, errorMsg = pcall(function()
 				bar:Update()
 			end)
-			
+
 			if success then
 				updateCount = updateCount + 1
 			else
@@ -1186,22 +1201,18 @@ function LibsDataBar:UpdateAllBars()
 			end
 		end
 	end
-	
-	if LIBSDATABAR_DEBUG then
-		self:DebugLog('info', 'Updated ' .. updateCount .. ' data bars')
-	end
+
+	if LIBSDATABAR_DEBUG then self:DebugLog('info', 'Updated ' .. updateCount .. ' data bars') end
 end
 
 ---Throttled update function for high-frequency events
 ---@param delay? number Optional delay before update (default 0.1 seconds)
 function LibsDataBar:ScheduleUpdate(delay)
 	delay = delay or 0.1
-	
+
 	-- Cancel any pending update to prevent spam
-	if self.pendingUpdateTimer then
-		self:CancelTimer(self.pendingUpdateTimer)
-	end
-	
+	if self.pendingUpdateTimer then self:CancelTimer(self.pendingUpdateTimer) end
+
 	-- Schedule new update
 	self.pendingUpdateTimer = self:ScheduleTimer('UpdateAllBars', delay)
 end
@@ -1226,8 +1237,10 @@ function LibsDataBar:SetupConfigOptions()
 						type = 'toggle',
 						name = 'Enable LibsDataBar',
 						desc = 'Enable or disable the LibsDataBar addon',
-						get = function() return self.db.profile.enabled end,
-						set = function(_, value) 
+						get = function()
+							return self.db.profile.enabled
+						end,
+						set = function(_, value)
 							self.db.profile.enabled = value
 							if value then
 								self:Enable()
@@ -1241,8 +1254,12 @@ function LibsDataBar:SetupConfigOptions()
 						type = 'toggle',
 						name = 'Debug Mode',
 						desc = 'Enable debug logging for troubleshooting',
-						get = function() return self.db.profile.debug end,
-						set = function(_, value) self.db.profile.debug = value end,
+						get = function()
+							return self.db.profile.debug
+						end,
+						set = function(_, value)
+							self.db.profile.debug = value
+						end,
 						order = 2,
 					},
 					updateInterval = {
@@ -1252,8 +1269,10 @@ function LibsDataBar:SetupConfigOptions()
 						min = 1.0,
 						max = 30.0,
 						step = 0.5,
-						get = function() return self.db.profile.performance.updateInterval end,
-						set = function(_, value) 
+						get = function()
+							return self.db.profile.performance.updateInterval
+						end,
+						set = function(_, value)
 							self.db.profile.performance.updateInterval = value
 							-- Restart the refresh timer with new interval
 							if self.refreshTimer then
@@ -1279,8 +1298,12 @@ function LibsDataBar:SetupConfigOptions()
 								type = 'toggle',
 								name = 'Enable Main Bar',
 								desc = 'Show or hide the main data bar',
-								get = function() return self.db.profile.bars.main.enabled end,
-								set = function(_, value) self.db.profile.bars.main.enabled = value end,
+								get = function()
+									return self.db.profile.bars.main.enabled
+								end,
+								set = function(_, value)
+									self.db.profile.bars.main.enabled = value
+								end,
 								order = 1,
 							},
 							height = {
@@ -1290,8 +1313,12 @@ function LibsDataBar:SetupConfigOptions()
 								min = 16,
 								max = 64,
 								step = 1,
-								get = function() return self.db.profile.bars.main.size.height end,
-								set = function(_, value) self.db.profile.bars.main.size.height = value end,
+								get = function()
+									return self.db.profile.bars.main.size.height
+								end,
+								set = function(_, value)
+									self.db.profile.bars.main.size.height = value
+								end,
 								order = 2,
 							},
 						},
@@ -1300,35 +1327,35 @@ function LibsDataBar:SetupConfigOptions()
 			},
 		},
 	}
-	
+
 	-- Register the options table with AceConfig
 	LibStub('AceConfig-3.0'):RegisterOptionsTable('LibsDataBar', options)
-	
-	-- Add to Settings panel  
+
+	-- Add to Settings panel
 	self.optionsFrame = LibStub('AceConfigDialog-3.0'):AddToBlizOptions('LibsDataBar', 'LibsDataBar')
-	
+
 	-- Add AceDBOptions for profile management
 	local AceDBOptions = LibStub('AceDBOptions-3.0')
 	LibStub('AceConfig-3.0'):RegisterOptionsTable('LibsDataBar_Profiles', AceDBOptions:GetOptionsTable(self.db))
 	LibStub('AceConfigDialog-3.0'):AddToBlizOptions('LibsDataBar_Profiles', 'Profiles', 'LibsDataBar')
-	
+
 	-- Setup slash commands
 	SLASH_LIBSDATABAR1 = '/libsdatabar'
 	SLASH_LIBSDATABAR2 = '/ldb'
 	SlashCmdList['LIBSDATABAR'] = function(msg)
 		LibStub('AceConfigDialog-3.0'):Open('LibsDataBar')
 	end
-	
+
 	self:DebugLog('info', 'Configuration options and slash commands registered')
 end
 
 ---Handle profile changes from AceDB
 function LibsDataBar:OnProfileChanged()
 	self:DebugLog('info', 'Profile changed - refreshing configuration')
-	
+
 	-- Update debug logging based on new profile
 	LIBSDATABAR_DEBUG = self.db.profile.debug
-	
+
 	-- Refresh all bars with new settings
 	self:ScheduleUpdate(0.1)
 end
@@ -1342,10 +1369,10 @@ function LibsDataBar:GetConfig(path)
 		self:DebugLog('warning', 'GetConfig called before database initialization: ' .. tostring(path))
 		return nil
 	end
-	
+
 	local keys = { strsplit('.', path) }
 	local value = self.db.profile
-	
+
 	for _, key in ipairs(keys) do
 		if type(value) == 'table' and value[key] ~= nil then
 			value = value[key]
@@ -1353,7 +1380,7 @@ function LibsDataBar:GetConfig(path)
 			return nil
 		end
 	end
-	
+
 	return value
 end
 
@@ -1366,22 +1393,20 @@ function LibsDataBar:SetConfig(path, value)
 		self:DebugLog('warning', 'SetConfig called before database initialization: ' .. tostring(path))
 		return
 	end
-	
+
 	local keys = { strsplit('.', path) }
 	local config = self.db.profile
-	
+
 	-- Navigate to parent table
 	for i = 1, #keys - 1 do
 		local key = keys[i]
-		if type(config[key]) ~= 'table' then
-			config[key] = {}
-		end
+		if type(config[key]) ~= 'table' then config[key] = {} end
 		config = config[key]
 	end
-	
+
 	-- Set the value
 	config[keys[#keys]] = value
-	
+
 	-- Fire change callback for real-time updates
 	self.callbacks:Fire('ConfigChanged', path, value)
 end
