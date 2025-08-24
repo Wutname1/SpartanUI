@@ -1463,6 +1463,10 @@ end
 ---Generate plugin configuration options dynamically based on available plugins
 ---@param pluginArgs table Plugin arguments table to populate
 function LibsDataBar:GeneratePluginOptions(pluginArgs)
+	-- Safety check for database availability
+	if not self.db or not self.db.profile then
+		self:DebugLog('warning', 'Database not ready during plugin options generation - using defaults')
+	end
 	-- Plugin configuration based on database defaults
 	local pluginConfigs = {
 		Clock = {
@@ -1534,10 +1538,19 @@ function LibsDataBar:GeneratePluginOptions(pluginArgs)
 				order = optionConfig.order,
 				values = optionConfig.values,
 				get = function()
-					return self.db and self.db.profile and self.db.profile.plugins and self.db.profile.plugins[pluginName] and self.db.profile.plugins[pluginName][optionKey]
+					if self.db and self.db.profile and self.db.profile.plugins and self.db.profile.plugins[pluginName] then
+						return self.db.profile.plugins[pluginName][optionKey]
+					end
+					-- Return default from database defaults structure
+					local defaults = databaseDefaults.profile.plugins[pluginName]
+					return defaults and defaults[optionKey] or false
 				end,
 				set = function(_, value)
-					if self.db and self.db.profile and self.db.profile.plugins and self.db.profile.plugins[pluginName] then
+					if self.db and self.db.profile and self.db.profile.plugins then
+						-- Ensure plugin section exists
+						if not self.db.profile.plugins[pluginName] then
+							self.db.profile.plugins[pluginName] = {}
+						end
 						self.db.profile.plugins[pluginName][optionKey] = value
 						-- Trigger plugin update
 						self:ScheduleUpdate(0.1, 'plugin_config_change')
@@ -1551,8 +1564,14 @@ end
 ---Generate dynamic bar configuration options for all existing bars
 ---@param barArgs table Bar arguments table to populate  
 function LibsDataBar:GenerateDynamicBarOptions(barArgs)
+	-- Safety check for bars registry
+	if not self.bars then
+		self:DebugLog('warning', 'Bars registry not initialized during dynamic bar options generation')
+		return
+	end
+	
 	-- Get all existing bars and create options for each
-	for barId, bar in pairs(self.bars or {}) do
+	for barId, bar in pairs(self.bars) do
 		if barId ~= 'main' then -- Main bar already configured statically
 			barArgs[barId] = {
 				type = 'group',
@@ -1962,11 +1981,19 @@ function LibsDataBar:SetupConfigOptions()
 		},
 	}
 
-	-- Generate plugin configuration options dynamically
-	self:GeneratePluginOptions(options.args.plugins.args)
+	-- Generate plugin configuration options dynamically (with safety checks)
+	if options.args.plugins and options.args.plugins.args then
+		self:GeneratePluginOptions(options.args.plugins.args)
+	else
+		self:DebugLog('error', 'plugins options structure is nil - skipping plugin options generation')
+	end
 	
-	-- Generate dynamic bar options
-	self:GenerateDynamicBarOptions(options.args.bars.args)
+	-- Generate dynamic bar options (with safety checks)
+	if options.args.bars and options.args.bars.args then
+		self:GenerateDynamicBarOptions(options.args.bars.args)
+	else
+		self:DebugLog('error', 'bars options structure is nil - skipping dynamic bar options generation')
+	end
 
 	-- Register the options table with AceConfig
 	LibStub('AceConfig-3.0'):RegisterOptionsTable('LibsDataBar', options)
