@@ -1986,9 +1986,23 @@ function LibsDataBar:SetupConfigOptions()
 
 	-- Generate plugin configuration options dynamically (with safety checks)
 	if options.args.plugins and options.args.plugins.args then
+		self:DebugLog('info', 'Generating plugin options - plugins structure exists')
 		self:GeneratePluginOptions(options.args.plugins.args)
+		self:DebugLog('info', 'Plugin options generated')
+		-- Check if the plugins structure is still intact
+		self:DebugLog('info', 'After generation - options.args.plugins type: ' .. type(options.args.plugins))
+		if type(options.args.plugins) == 'table' then
+			self:DebugLog('info', 'plugins.order after generation: ' .. tostring(options.args.plugins.order))
+			self:DebugLog('info', 'plugins.args type after generation: ' .. type(options.args.plugins.args))
+		end
 	else
 		self:DebugLog('error', 'plugins options structure is nil - skipping plugin options generation')
+		-- Debug what we have
+		if options.args.plugins then
+			self:DebugLog('error', 'plugins exists but args is: ' .. type(options.args.plugins.args))
+		else
+			self:DebugLog('error', 'plugins is: ' .. type(options.args.plugins))
+		end
 	end
 	
 	-- Generate dynamic bar options (with safety checks)
@@ -1998,6 +2012,15 @@ function LibsDataBar:SetupConfigOptions()
 		self:DebugLog('error', 'bars options structure is nil - skipping dynamic bar options generation')
 	end
 
+	-- Debug the options structure before registration
+	self:DebugLog('info', 'Options structure before registration:')
+	self:DebugLog('info', 'options.args type: ' .. type(options.args))
+	self:DebugLog('info', 'options.args.plugins type: ' .. type(options.args.plugins))
+	if type(options.args.plugins) == 'table' then
+		self:DebugLog('info', 'plugins.args type: ' .. type(options.args.plugins.args))
+		self:DebugLog('info', 'plugins.order: ' .. tostring(options.args.plugins.order))
+	end
+	
 	-- Register the options table with AceConfig
 	LibStub('AceConfig-3.0'):RegisterOptionsTable('LibsDataBar', options)
 
