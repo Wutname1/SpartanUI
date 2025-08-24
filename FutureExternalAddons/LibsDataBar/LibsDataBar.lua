@@ -735,8 +735,8 @@ function LibsDataBar:InitializeCommunication()
 		return
 	end
 	
-	-- Register communication channel
-	self:RegisterComm('LibsDataBarConfig', 'OnCommReceived')
+	-- Register communication channel (max 16 characters for AceComm)
+	self:RegisterComm('LibsDataBar', 'OnCommReceived')
 	self:DebugLog('info', 'Communication system initialized for configuration sharing')
 end
 
@@ -934,7 +934,7 @@ function LibsDataBar:ShareConfiguration(target)
 	-- Default to guild channel
 	target = target or 'GUILD'
 	
-	self:SendCommMessage('LibsDataBarConfig', serializedMessage, target)
+	self:SendCommMessage('LibsDataBar', serializedMessage, target)
 	self:Print('Configuration shared to ' .. target)
 end
 
@@ -944,7 +944,7 @@ end
 ---@param distribution string Distribution channel
 ---@param sender string Message sender
 function LibsDataBar:OnCommReceived(prefix, message, distribution, sender)
-	if prefix ~= 'LibsDataBarConfig' or sender == UnitName('player') then
+	if prefix ~= 'LibsDataBar' or sender == UnitName('player') then
 		return -- Ignore own messages
 	end
 	
@@ -996,6 +996,480 @@ function LibsDataBar:RefreshAllBarsAndPlugins()
 	-- Apply current theme
 	local currentTheme = self.db.profile.appearance.theme or 'default'
 	self:ApplyTheme(currentTheme)
+end
+
+-- Phase 4: Enhanced Export/Import UI System (Native WoW UI Implementation)
+---Create enhanced export/import window similar to SpartanUI
+function LibsDataBar:CreateExportImportWindow()
+	if self.exportImportFrame then
+		self.exportImportFrame:Show()
+		return
+	end
+	
+	-- Main Window
+	local frame = CreateFrame('Frame', 'LibsDataBarExportImportFrame', UIParent, 'BasicFrameTemplateWithInset')
+	frame:SetSize(800, 600)
+	frame:SetPoint('CENTER')
+	frame:SetFrameStrata('DIALOG')
+	frame:SetFrameLevel(100)
+	frame.title = frame:CreateFontString(nil, 'OVERLAY', 'GameFontHighlight')
+	frame.title:SetPoint('TOP', 0, -10)
+	frame.title:SetText('LibsDataBar Configuration Manager')
+	frame:SetMovable(true)
+	frame:EnableMouse(true)
+	frame:RegisterForDrag('LeftButton')
+	frame:SetScript('OnDragStart', frame.StartMoving)
+	frame:SetScript('OnDragStop', frame.StopMovingOrSizing)
+	
+	self.exportImportFrame = frame
+	
+	-- Mode switching tabs
+	local exportTab = CreateFrame('Button', nil, frame, 'TabButtonTemplate')
+	exportTab:SetPoint('TOPLEFT', frame, 'BOTTOMLEFT', 5, 2)
+	exportTab:SetText('Export Configuration')
+	exportTab:SetWidth(160)
+	frame.exportTab = exportTab
+	
+	local importTab = CreateFrame('Button', nil, frame, 'TabButtonTemplate')
+	importTab:SetPoint('LEFT', exportTab, 'RIGHT', 0, 0)
+	importTab:SetText('Import Configuration')  
+	importTab:SetWidth(160)
+	frame.importTab = importTab
+	
+	-- Content frames
+	frame.exportFrame = self:CreateExportFrame(frame)
+	frame.importFrame = self:CreateImportFrame(frame)
+	
+	-- Tab switching logic
+	local function switchToExport()
+		frame.exportFrame:Show()
+		frame.importFrame:Hide()
+		PanelTemplates_DeselectTab(importTab)
+		PanelTemplates_SelectTab(exportTab)
+		frame.mode = 'export'
+	end
+	
+	local function switchToImport()
+		frame.exportFrame:Hide()
+		frame.importFrame:Show()
+		PanelTemplates_DeselectTab(exportTab)
+		PanelTemplates_SelectTab(importTab)
+		frame.mode = 'import'
+	end
+	
+	exportTab:SetScript('OnClick', switchToExport)
+	importTab:SetScript('OnClick', switchToImport)
+	
+	-- Default to export mode
+	switchToExport()
+	
+	return frame
+end
+
+---Create export configuration frame
+---@param parent Frame Parent frame
+---@return Frame Export frame
+function LibsDataBar:CreateExportFrame(parent)
+	local frame = CreateFrame('Frame', nil, parent)
+	frame:SetPoint('TOPLEFT', 10, -35)
+	frame:SetPoint('BOTTOMRIGHT', -10, 10)
+	
+	-- Left side: Configuration options
+	local optionFrame = CreateFrame('Frame', nil, frame, 'InsetFrameTemplate')
+	optionFrame:SetPoint('TOPLEFT', 0, 0)
+	optionFrame:SetPoint('BOTTOMLEFT', 0, 0)
+	optionFrame:SetWidth(250)
+	
+	local optionTitle = optionFrame:CreateFontString(nil, 'OVERLAY', 'GameFontHighlight')
+	optionTitle:SetPoint('TOP', 0, -10)
+	optionTitle:SetText('Export Options')
+	
+	-- Export scope checkboxes
+	local yOffset = -40
+	local checkboxes = {}
+	
+	local exportScopes = {
+		{key = 'appearance', label = 'Theme & Appearance Settings', desc = 'Current theme, fonts, and visual customizations'},
+		{key = 'bars', label = 'Data Bar Configurations', desc = 'Bar positioning, size, and display settings'},
+		{key = 'plugins', label = 'Plugin Configurations', desc = 'All plugin settings and enabled states'},
+		{key = 'performance', label = 'Performance Settings', desc = 'Update intervals and optimization settings'},
+	}
+	
+	for i, scope in ipairs(exportScopes) do
+		local checkbox = CreateFrame('CheckButton', nil, optionFrame, 'ChatConfigCheckButtonTemplate')
+		checkbox:SetPoint('TOPLEFT', 15, yOffset)
+		checkbox.Text:SetText(scope.label)
+		checkbox.Text:SetFontObject('GameFontNormal')
+		checkbox:SetChecked(true) -- Default to all selected
+		checkbox.scope = scope.key
+		checkboxes[scope.key] = checkbox
+		
+		-- Tooltip
+		checkbox:SetScript('OnEnter', function(self)
+			GameTooltip:SetOwner(self, 'ANCHOR_RIGHT')
+			GameTooltip:SetText(scope.label, 1, 1, 1, 1, true)
+			GameTooltip:AddLine(scope.desc, 1, 0.8, 0, true)
+			GameTooltip:Show()
+		end)
+		checkbox:SetScript('OnLeave', GameTooltip_Hide)
+		
+		yOffset = yOffset - 30
+	end
+	
+	frame.exportCheckboxes = checkboxes
+	
+	-- Select All / Deselect All buttons
+	local selectAllBtn = CreateFrame('Button', nil, optionFrame, 'UIPanelButtonTemplate')
+	selectAllBtn:SetPoint('TOPLEFT', 15, yOffset - 10)
+	selectAllBtn:SetSize(100, 22)
+	selectAllBtn:SetText('Select All')
+	selectAllBtn:SetScript('OnClick', function()
+		for _, cb in pairs(checkboxes) do
+			cb:SetChecked(true)
+		end
+	end)
+	
+	local deselectAllBtn = CreateFrame('Button', nil, optionFrame, 'UIPanelButtonTemplate')
+	deselectAllBtn:SetPoint('LEFT', selectAllBtn, 'RIGHT', 5, 0)
+	deselectAllBtn:SetSize(100, 22)
+	deselectAllBtn:SetText('Clear All')
+	deselectAllBtn:SetScript('OnClick', function()
+		for _, cb in pairs(checkboxes) do
+			cb:SetChecked(false)
+		end
+	end)
+	
+	-- Export button
+	local exportBtn = CreateFrame('Button', nil, optionFrame, 'UIPanelButtonTemplate')
+	exportBtn:SetPoint('BOTTOM', 0, 15)
+	exportBtn:SetSize(120, 25)
+	exportBtn:SetText('Generate Export')
+	exportBtn:SetScript('OnClick', function()
+		self:GenerateConfigurationExport(frame)
+	end)
+	
+	-- Right side: Export text display
+	local textFrame = CreateFrame('Frame', nil, frame, 'InsetFrameTemplate')
+	textFrame:SetPoint('TOPLEFT', optionFrame, 'TOPRIGHT', 5, 0)
+	textFrame:SetPoint('BOTTOMRIGHT', 0, 0)
+	
+	local textTitle = textFrame:CreateFontString(nil, 'OVERLAY', 'GameFontHighlight')
+	textTitle:SetPoint('TOP', 0, -10)
+	textTitle:SetText('Exported Configuration')
+	
+	-- Scrollable text area
+	local scrollFrame = CreateFrame('ScrollFrame', nil, textFrame, 'UIPanelScrollFrameTemplate')
+	scrollFrame:SetPoint('TOPLEFT', 10, -35)
+	scrollFrame:SetPoint('BOTTOMRIGHT', -30, 40)
+	
+	local editBox = CreateFrame('EditBox', nil, scrollFrame)
+	editBox:SetMultiLine(true)
+	editBox:SetFontObject('ChatFontNormal')
+	editBox:SetWidth(scrollFrame:GetWidth())
+	editBox:SetAutoFocus(false)
+	editBox:SetScript('OnEscapePressed', function() editBox:ClearFocus() end)
+	scrollFrame:SetScrollChild(editBox)
+	
+	frame.exportTextBox = editBox
+	
+	-- Copy button
+	local copyBtn = CreateFrame('Button', nil, textFrame, 'UIPanelButtonTemplate')
+	copyBtn:SetPoint('BOTTOM', 0, 15)
+	copyBtn:SetSize(100, 22)
+	copyBtn:SetText('Select All')
+	copyBtn:SetScript('OnClick', function()
+		editBox:SetFocus()
+		editBox:HighlightText()
+	end)
+	
+	return frame
+end
+
+---Create import configuration frame
+---@param parent Frame Parent frame
+---@return Frame Import frame
+function LibsDataBar:CreateImportFrame(parent)
+	local frame = CreateFrame('Frame', nil, parent)
+	frame:SetPoint('TOPLEFT', 10, -35)
+	frame:SetPoint('BOTTOMRIGHT', -10, 10)
+	
+	-- Instructions
+	local instructionText = frame:CreateFontString(nil, 'OVERLAY', 'GameFontNormal')
+	instructionText:SetPoint('TOP', 0, -10)
+	instructionText:SetText('Paste exported configuration string below:')
+	instructionText:SetJustifyH('CENTER')
+	
+	-- Import text area
+	local scrollFrame = CreateFrame('ScrollFrame', nil, frame, 'UIPanelScrollFrameTemplate')
+	scrollFrame:SetPoint('TOPLEFT', 10, -35)
+	scrollFrame:SetPoint('BOTTOMRIGHT', -30, 120)
+	
+	local editBox = CreateFrame('EditBox', nil, scrollFrame)
+	editBox:SetMultiLine(true)
+	editBox:SetFontObject('ChatFontNormal')
+	editBox:SetWidth(scrollFrame:GetWidth())
+	editBox:SetAutoFocus(false)
+	editBox:SetScript('OnEscapePressed', function() editBox:ClearFocus() end)
+	editBox:SetScript('OnTextChanged', function()
+		-- Enable preview button when text is entered
+		frame.previewBtn:SetEnabled(editBox:GetText():len() > 0)
+		frame.importBtn:SetEnabled(false) -- Reset import button
+	end)
+	scrollFrame:SetScrollChild(editBox)
+	
+	frame.importTextBox = editBox
+	
+	-- Preview area
+	local previewFrame = CreateFrame('Frame', nil, frame, 'InsetFrameTemplate')
+	previewFrame:SetPoint('TOPLEFT', 10, -scrollFrame:GetHeight() - 45)
+	previewFrame:SetPoint('BOTTOMRIGHT', -10, 80)
+	
+	local previewTitle = previewFrame:CreateFontString(nil, 'OVERLAY', 'GameFontHighlight')
+	previewTitle:SetPoint('TOP', 0, -10)
+	previewTitle:SetText('Import Preview')
+	
+	local previewText = previewFrame:CreateFontString(nil, 'OVERLAY', 'GameFontNormal')
+	previewText:SetPoint('TOPLEFT', 10, -35)
+	previewText:SetPoint('BOTTOMRIGHT', -10, 10)
+	previewText:SetJustifyH('LEFT')
+	previewText:SetJustifyV('TOP')
+	previewText:SetText('Preview will appear here after validation...')
+	
+	frame.previewText = previewText
+	
+	-- Buttons
+	local previewBtn = CreateFrame('Button', nil, frame, 'UIPanelButtonTemplate')
+	previewBtn:SetPoint('BOTTOMLEFT', 10, 15)
+	previewBtn:SetSize(120, 25)
+	previewBtn:SetText('Validate & Preview')
+	previewBtn:SetEnabled(false)
+	previewBtn:SetScript('OnClick', function()
+		self:PreviewConfigurationImport(frame)
+	end)
+	frame.previewBtn = previewBtn
+	
+	local importBtn = CreateFrame('Button', nil, frame, 'UIPanelButtonTemplate')
+	importBtn:SetPoint('LEFT', previewBtn, 'RIGHT', 10, 0)
+	importBtn:SetSize(100, 25)
+	importBtn:SetText('Import')
+	importBtn:SetEnabled(false)
+	importBtn:SetScript('OnClick', function()
+		self:ExecuteConfigurationImport(frame)
+	end)
+	frame.importBtn = importBtn
+	
+	local clearBtn = CreateFrame('Button', nil, frame, 'UIPanelButtonTemplate')
+	clearBtn:SetPoint('LEFT', importBtn, 'RIGHT', 10, 0)
+	clearBtn:SetSize(80, 25)
+	clearBtn:SetText('Clear')
+	clearBtn:SetScript('OnClick', function()
+		editBox:SetText('')
+		previewText:SetText('Preview will appear here after validation...')
+		previewBtn:SetEnabled(false)
+		importBtn:SetEnabled(false)
+		frame.validatedImport = nil
+	end)
+	
+	return frame
+end
+
+---Generate configuration export based on selected options
+---@param exportFrame Frame Export frame with checkboxes
+function LibsDataBar:GenerateConfigurationExport(exportFrame)
+	local selectedScopes = {}
+	
+	-- Check which scopes are selected
+	for scope, checkbox in pairs(exportFrame.exportCheckboxes) do
+		if checkbox:GetChecked() then
+			selectedScopes[scope] = true
+		end
+	end
+	
+	-- Build export data
+	local exportData = {
+		version = LIBSDATABAR_VERSION,
+		timestamp = time(),
+		playerName = UnitName('player'),
+		realmName = GetRealmName(),
+		scopes = {},
+	}
+	
+	-- Export selected scopes
+	if selectedScopes.appearance then
+		exportData.scopes.appearance = self.db.profile.appearance
+	end
+	
+	if selectedScopes.bars then
+		exportData.scopes.bars = self.db.profile.bars
+	end
+	
+	if selectedScopes.plugins then
+		-- Only export enabled plugins
+		exportData.scopes.plugins = {}
+		for pluginName, pluginConfig in pairs(self.db.profile.plugins) do
+			if pluginConfig.enabled then
+				exportData.scopes.plugins[pluginName] = {
+					enabled = true,
+					bar = pluginConfig.bar,
+					position = pluginConfig.position,
+					display = pluginConfig.display,
+					behavior = pluginConfig.behavior,
+					appearance = pluginConfig.appearance,
+				}
+			end
+		end
+	end
+	
+	if selectedScopes.performance then
+		exportData.scopes.performance = self.db.profile.performance
+	end
+	
+	-- Serialize and encode
+	if AceSerializer then
+		local serializedData = AceSerializer:Serialize(exportData)
+		local encodedData = LibStub('AceComm-3.0'):Encode(serializedData)
+		
+		exportFrame.exportTextBox:SetText(encodedData)
+		exportFrame.exportTextBox:SetFocus()
+		exportFrame.exportTextBox:HighlightText()
+		
+		self:Print('Configuration exported successfully!')
+	else
+		self:Print('AceSerializer-3.0 not available - cannot export')
+	end
+end
+
+---Preview configuration import with validation
+---@param importFrame Frame Import frame
+function LibsDataBar:PreviewConfigurationImport(importFrame)
+	local importText = importFrame.importTextBox:GetText()
+	
+	if not importText or importText:len() == 0 then
+		importFrame.previewText:SetText('|cffff0000Error: No import data provided|r')
+		return
+	end
+	
+	-- Validate and deserialize
+	local success, importData = self:ValidateImportData(importText)
+	
+	if not success then
+		importFrame.previewText:SetText('|cffff0000Error: Invalid import data\n' .. (importData or 'Unknown error') .. '|r')
+		importFrame.importBtn:SetEnabled(false)
+		return
+	end
+	
+	-- Generate preview text
+	local previewLines = {
+		'|cff00ff00Import Validation Successful|r',
+		'',
+		'Source: ' .. (importData.playerName or 'Unknown') .. ' (' .. (importData.realmName or 'Unknown') .. ')',
+		'Version: ' .. (importData.version or 'Unknown'),
+		'Export Date: ' .. (importData.timestamp and date('%Y-%m-%d %H:%M:%S', importData.timestamp) or 'Unknown'),
+		'',
+		'Configuration Scopes:',
+	}
+	
+	if importData.scopes then
+		for scope, data in pairs(importData.scopes) do
+			local count = 0
+			if type(data) == 'table' then
+				for _ in pairs(data) do count = count + 1 end
+			end
+			table.insert(previewLines, '  • ' .. scope:gsub('^%l', string.upper) .. ': ' .. count .. ' items')
+		end
+	end
+	
+	importFrame.previewText:SetText(table.concat(previewLines, '\n'))
+	importFrame.validatedImport = importData
+	importFrame.importBtn:SetEnabled(true)
+end
+
+---Execute configuration import
+---@param importFrame Frame Import frame
+function LibsDataBar:ExecuteConfigurationImport(importFrame)
+	local importData = importFrame.validatedImport
+	
+	if not importData then
+		self:Print('No validated import data available')
+		return
+	end
+	
+	-- Apply imported scopes
+	if importData.scopes then
+		if importData.scopes.appearance then
+			for key, value in pairs(importData.scopes.appearance) do
+				self.db.profile.appearance[key] = value
+			end
+		end
+		
+		if importData.scopes.bars then
+			for barName, barConfig in pairs(importData.scopes.bars) do
+				if not self.db.profile.bars[barName] then
+					self.db.profile.bars[barName] = {}
+				end
+				for key, value in pairs(barConfig) do
+					self.db.profile.bars[barName][key] = value
+				end
+			end
+		end
+		
+		if importData.scopes.plugins then
+			for pluginName, pluginConfig in pairs(importData.scopes.plugins) do
+				if not self.db.profile.plugins[pluginName] then
+					self.db.profile.plugins[pluginName] = {}
+				end
+				for key, value in pairs(pluginConfig) do
+					self.db.profile.plugins[pluginName][key] = value
+				end
+			end
+		end
+		
+		if importData.scopes.performance then
+			for key, value in pairs(importData.scopes.performance) do
+				self.db.profile.performance[key] = value
+			end
+		end
+	end
+	
+	-- Refresh everything
+	self:RefreshAllBarsAndPlugins()
+	
+	self:Print('Configuration imported successfully!')
+	
+	-- Close the window
+	self.exportImportFrame:Hide()
+end
+
+---Validate import data
+---@param importText string Encoded import string
+---@return boolean success, table|string data_or_error
+function LibsDataBar:ValidateImportData(importText)
+	if not AceSerializer then
+		return false, 'AceSerializer-3.0 not available'
+	end
+	
+	-- Decode
+	local success, serializedData = LibStub('AceComm-3.0'):Decode(importText)
+	if not success then
+		return false, 'Failed to decode import string'
+	end
+	
+	-- Deserialize
+	success, importData = AceSerializer:Deserialize(serializedData)
+	if not success or not importData then
+		return false, 'Failed to deserialize import data'
+	end
+	
+	-- Validate structure
+	if not importData.version then
+		return false, 'Missing version information'
+	end
+	
+	if not importData.scopes then
+		return false, 'Missing configuration scopes'
+	end
+	
+	return true, importData
 end
 
 ---Setup default bars and plugins for first-time use
@@ -2210,6 +2684,9 @@ function LibsDataBar:HandleChatCommand(input)
 		-- Phase 4: Share configuration with guild
 		local target = args[2] and string.upper(args[2]) or 'GUILD'
 		self:ShareConfiguration(target)
+	elseif command == 'manager' or command == 'configmgr' then
+		-- Phase 4: Open enhanced export/import UI
+		self:CreateExportImportWindow()
 	elseif command == 'help' then
 		-- Show command help
 		self:Print('LibsDataBar Commands:')
@@ -2222,6 +2699,7 @@ function LibsDataBar:HandleChatCommand(input)
 		self:Print('/ldb import <config> - Import configuration string')
 		self:Print('/ldb import apply - Apply pending import')
 		self:Print('/ldb share [channel] - Share config (default: GUILD)')
+		self:Print('/ldb manager - Open configuration manager')
 		self:Print('/ldb help - Show this help')
 	else
 		self:Print('Unknown command: ' .. command .. '. Type /ldb help for available commands.')
@@ -2665,36 +3143,10 @@ function LibsDataBar:SetupConfigOptions()
 				},
 				exportConfig = {
 					type = 'execute',
-					name = 'Export Configuration',
-					desc = 'Export current configuration to shareable string',
+					name = 'Open Configuration Manager',
+					desc = 'Open enhanced export/import window with detailed options',
 					func = function()
-						local exportData = self:ExportConfiguration()
-						if exportData then
-							-- Create a frame to display the export data
-							if not self.exportFrame then
-								self.exportFrame = CreateFrame('Frame', 'LibsDataBarExportFrame', UIParent, 'BasicFrameTemplateWithInset')
-								self.exportFrame:SetSize(500, 300)
-								self.exportFrame:SetPoint('CENTER')
-								self.exportFrame.title = self.exportFrame:CreateFontString(nil, 'OVERLAY', 'GameFontHighlight')
-								self.exportFrame.title:SetPoint('TOP', 0, -10)
-								self.exportFrame.title:SetText('LibsDataBar Configuration Export')
-								
-								self.exportFrame.scrollFrame = CreateFrame('ScrollFrame', nil, self.exportFrame, 'UIPanelScrollFrameTemplate')
-								self.exportFrame.scrollFrame:SetPoint('TOPLEFT', 10, -35)
-								self.exportFrame.scrollFrame:SetPoint('BOTTOMRIGHT', -30, 10)
-								
-								self.exportFrame.editBox = CreateFrame('EditBox', nil, self.exportFrame.scrollFrame)
-								self.exportFrame.editBox:SetMultiLine(true)
-								self.exportFrame.editBox:SetFontObject('ChatFontNormal')
-								self.exportFrame.editBox:SetWidth(460)
-								self.exportFrame.editBox:SetAutoFocus(false)
-								self.exportFrame.scrollFrame:SetScrollChild(self.exportFrame.editBox)
-							end
-							
-							self.exportFrame.editBox:SetText(exportData)
-							self.exportFrame.editBox:HighlightText()
-							self.exportFrame:Show()
-						end
+						self:CreateExportImportWindow()
 					end,
 					order = 11,
 				},
