@@ -27,7 +27,8 @@
     "defaultMode": "acceptEdits",
     "additionalDirectories": [
       "C:\\Users\\jerem\\Syncthing\\WOWUICode\\wow-ui-source\\Interface\\AddOns",
-      "C:\\Users\\jerem\\Syncthing\\WoW\\AppData\\_retail_\\Interface\\Addons\\Bartender4\\"
+      "C:\\Users\\jerem\\Syncthing\\WoW\\AppData\\_retail_\\Interface\\Addons\\Bartender4\\",
+      "C:\\Users\\jerem\\OneDrive\\WoW\\Examples"
     ]
   },
   "outputStyle": "default"

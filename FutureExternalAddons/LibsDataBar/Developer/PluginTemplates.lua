@@ -5,6 +5,7 @@ Comprehensive templates for creating native and LDB plugins
 --]===]
 
 -- Get the LibsDataBar addon
+---@class LibsDataBar
 local LibsDataBar = LibStub('AceAddon-3.0'):GetAddon('LibsDataBar', true)
 if not LibsDataBar then return end
 
@@ -324,12 +325,12 @@ if LDB then
         text = {PLUGIN_CLASS}:GetText(),
         icon = {PLUGIN_CLASS}:GetIcon(),
         label = {PLUGIN_CLASS}.name,
-        
+
         -- Forward methods to {PLUGIN_CLASS} with database access preserved
         OnClick = function(self, button)
             {PLUGIN_CLASS}:OnClick(button)
         end,
-        
+
         OnTooltipShow = function(tooltip)
             local tooltipText = {PLUGIN_CLASS}:GetTooltip()
             -- Handle both \n and \\n newline formats
@@ -343,17 +344,17 @@ if LDB then
                 end
             end
         end,
-        
+
         -- Update method to refresh LDB object
         UpdateLDB = function(self)
             self.text = {PLUGIN_CLASS}:GetText()
             self.icon = {PLUGIN_CLASS}:GetIcon()
         end,
     })
-    
+
     -- Store reference for updates
     {PLUGIN_CLASS}._ldbObject = {PLUGIN_LOWER}LDBObject
-    
+
     LibsDataBar:DebugLog('info', '{PLUGIN_NAME} plugin registered as LibDataBroker object')
 else
     LibsDataBar:DebugLog('error', 'LibDataBroker not available for {PLUGIN_NAME} plugin')

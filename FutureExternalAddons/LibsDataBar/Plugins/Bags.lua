@@ -477,7 +477,7 @@ if LDB then
 			local tooltipText = BagsPlugin:GetTooltip()
 			-- Handle both \n and \\n newline formats
 			tooltipText = tooltipText:gsub('\\n', '\n')
-			local lines = {strsplit('\n', tooltipText)}
+			local lines = { strsplit('\n', tooltipText) }
 			for i, line in ipairs(lines) do
 				if i == 1 then
 					tooltip:SetText(line)
