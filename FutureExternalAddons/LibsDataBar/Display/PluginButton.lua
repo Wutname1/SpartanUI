@@ -5,6 +5,7 @@ Visual display elements for plugin data with full interaction support
 --]===]
 
 -- Get the LibsDataBar addon
+---@class LibsDataBar
 local LibsDataBar = LibStub('AceAddon-3.0'):GetAddon('LibsDataBar', true)
 if not LibsDataBar then return end
 
@@ -462,17 +463,15 @@ function PluginButton:Update()
 
 	-- Update text from plugin - handle LDB vs native
 	local newText = nil
-	
+
 	if self.plugin.type == 'ldb' and self.plugin.ldbObject then
 		-- Direct LDB object access
 		local ldb = self.plugin.ldbObject
 		newText = ldb.text or ldb.label
-		
+
 		-- Handle suffix
-		if newText and ldb.suffix then
-			newText = newText .. ' ' .. ldb.suffix
-		end
-		
+		if newText and ldb.suffix then newText = newText .. ' ' .. ldb.suffix end
+
 		if newText and newText ~= '' then
 			self.text:SetText(newText)
 			self.text:Show()
@@ -643,9 +642,7 @@ function PluginButton:ShowTooltip()
 		else
 			-- Fallback LDB tooltip
 			GameTooltip:SetText(self.plugin.name or self.plugin.id)
-			if self.plugin.ldbObject.tooltiptext then
-				GameTooltip:AddLine(self.plugin.ldbObject.tooltiptext, 1, 1, 1, true)
-			end
+			if self.plugin.ldbObject.tooltiptext then GameTooltip:AddLine(self.plugin.ldbObject.tooltiptext, 1, 1, 1, true) end
 		end
 	elseif self.plugin.UpdateTooltip and type(self.plugin.UpdateTooltip) == 'function' then
 		-- Native plugin UpdateTooltip

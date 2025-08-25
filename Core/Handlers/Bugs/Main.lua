@@ -89,12 +89,7 @@ local function OnAddonLoaded(self, event, loadedAddonName)
 	SLASH_SUIERRORS1 = '/suierrors'
 	SlashCmdList['SUIERRORS'] = function(msg)
 		if msg == 'config' or msg == 'options' then
-			if InterfaceOptionsFrame_OpenToCategory then
-				InterfaceOptionsFrame_OpenToCategory(addonName)
-				InterfaceOptionsFrame_OpenToCategory(addonName)
-			else
 				Settings.OpenToCategory(addon.settingsCategory.ID)
-			end
 		else
 			addon.BugWindow:OpenErrorWindow()
 		end

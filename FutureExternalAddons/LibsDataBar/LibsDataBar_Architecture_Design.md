@@ -78,12 +78,12 @@ LibsDataBar Ecosystem
 ### 2.1 Library Interface Design
 
 ```lua
----@class LibsDataBar
+---@class LibsDataBar : AceAddon-3.0, AceEvent-3.0, AceTimer-3.0, AceBucket-3.0, AceConsole-3.0, AceComm-3.0
 ---@field version string Library version
 ---@field bars table<string, DataBar> Active bars registry
 ---@field plugins table<string, Plugin> Plugin registry
----@field events EventManager Event management system
----@field config ConfigManager Configuration system
+---@field db table AceDB-3.0 database instance
+---@field callbacks table CallbackHandler-1.0 instance for events
 ---@field performance PerformanceMonitor Performance tracking
 local LibsDataBar = LibStub:NewLibrary("LibsDataBar-1.0", 1)
 
@@ -185,23 +185,33 @@ local ldbAdapter = {
 
 ### 2.3 Event Management System
 
-**High-Performance Event Framework:**
+**Ace3-Based Event Framework:**
+
+LibsDataBar uses the industry-standard Ace3 library system for robust event management:
+
+- **AceEvent-3.0**: WoW event registration and handling
+- **CallbackHandler-1.0**: Internal addon messaging system
+- **AceTimer-3.0**: Efficient timer system for periodic updates
+- **AceBucket-3.0**: Event batching for performance optimization
 
 ```lua
----@class EventManager
----@field eventRegistry table<string, table<function, boolean>>
----@field batchQueue table<string, table> Batched event queue
----@field updateTimer number Timer for batched updates
----@field throttleRates table<string, number> Event throttling configuration
-local EventManager = {}
+-- Event handling using AceEvent-3.0
+function LibsDataBar:OnEnable()
+    -- Register WoW events
+    self:RegisterEvent("PLAYER_LOGIN")
+    self:RegisterEvent("BAG_UPDATE_DELAYED")
+    
+    -- Setup internal messaging
+    self.callbacks = self.callbacks or LibStub("CallbackHandler-1.0"):New(self)
+end
 
-function EventManager:RegisterEvent(event, callback, options)
-    options = options or {}
-
-    -- Register with WoW event system if needed
-    if not self.eventRegistry[event] then
-        self.eventRegistry[event] = {}
-        if WoWEvents[event] then
+-- Internal messaging for plugins and systems
+function LibsDataBar:TriggerInternalEvent(event, ...)
+    if self.callbacks then
+        self.callbacks:Fire(event, ...)
+    end
+    -- Also use AceEvent messaging
+    self:SendMessage(event, ...)
             self.frame:RegisterEvent(event)
         end
     end
@@ -257,15 +267,50 @@ end
 
 ### 2.4 Configuration Management
 
-**Hierarchical Configuration System:**
+**AceDB-3.0 Based Configuration System:**
+
+LibsDataBar uses AceDB-3.0 for robust configuration management with profiles, persistence, and automatic UI generation through AceConfig-3.0.
 
 ```lua
----@class ConfigManager
----@field db table AceDB database
----@field cache table<string, any> Cached values
----@field validators table<string, function> Config validators
----@field migrations table<number, function> Version migrations
-local ConfigManager = {}
+-- Configuration system using AceDB-3.0
+function LibsDataBar:InitializeDatabase()
+    local AceDB = LibStub('AceDB-3.0')
+    self.db = AceDB:New('LibsDataBarDB', databaseDefaults, true)
+    
+    -- Add profile support with AceDBOptions-3.0
+    local AceDBOptions = LibStub('AceDBOptions-3.0')
+    local profileOptions = AceDBOptions:GetOptionsTable(self.db)
+end
+
+-- Direct configuration access methods
+function LibsDataBar:GetConfig(path)
+    -- Navigate dot-separated path: "plugins.clock.enabled"
+    local config = self.db.profile
+    for key in string.gmatch(path, "[^%.]+") do
+        if type(config) == "table" and config[key] ~= nil then
+            config = config[key]
+        else
+            return nil
+        end
+    end
+    return config
+end
+
+function LibsDataBar:SetConfig(path, value)
+    local config = self.db.profile
+    local keys = {string.match(path, "([^%.]+)")}
+    
+    -- Navigate to parent object
+    for i = 1, #keys - 1 do
+        if type(config[keys[i]]) ~= "table" then 
+            config[keys[i]] = {} 
+        end
+        config = config[keys[i]]
+    end
+    
+    config[keys[#keys]] = value
+    self.callbacks:Fire('ConfigChanged', path, value)
+end
 
 -- Configuration Schema
 local configSchema = {

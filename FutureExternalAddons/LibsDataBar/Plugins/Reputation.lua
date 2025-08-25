@@ -308,11 +308,16 @@ function ReputationPlugin:GetWatchedFactionData()
 		for i = 1, numFactions do
 			local factionData = C_Reputation.GetFactionDataByIndex(i)
 			if not factionData then break end
-			
-			local name, standingId, barMin, barMax, barValue, isHeader, isWatched, factionId = 
-				factionData.name, factionData.reaction, factionData.currentReactionThreshold, 
-				factionData.nextReactionThreshold, factionData.currentStanding, factionData.isHeader, 
-				factionData.isWatched, factionData.factionID
+
+			local name, standingId, barMin, barMax, barValue, isHeader, isWatched, factionId =
+				factionData.name,
+				factionData.reaction,
+				factionData.currentReactionThreshold,
+				factionData.nextReactionThreshold,
+				factionData.currentStanding,
+				factionData.isHeader,
+				factionData.isWatched,
+				factionData.factionID
 
 			if isWatched and not isHeader then
 				return {
@@ -369,7 +374,7 @@ function ReputationPlugin:GetParagonRewardStatus()
 	for i = 1, numFactions do
 		local factionData = C_Reputation.GetFactionDataByIndex(i)
 		if not factionData then break end
-		
+
 		local name, standingId, isHeader, factionId = factionData.name, factionData.reaction, factionData.isHeader, factionData.factionID
 
 		if not isHeader and factionId and standingId == 8 then -- Exalted factions only
@@ -441,10 +446,9 @@ function ReputationPlugin:GetFactionDataById(factionId)
 	for i = 1, numFactions do
 		local factionData = C_Reputation.GetFactionDataByIndex(i)
 		if not factionData then break end
-		
-		local name, standingId, barMin, barMax, barValue, isHeader, id = 
-			factionData.name, factionData.reaction, factionData.currentReactionThreshold,
-			factionData.nextReactionThreshold, factionData.currentStanding, factionData.isHeader, factionData.factionID
+
+		local name, standingId, barMin, barMax, barValue, isHeader, id =
+			factionData.name, factionData.reaction, factionData.currentReactionThreshold, factionData.nextReactionThreshold, factionData.currentStanding, factionData.isHeader, factionData.factionID
 
 		if id == factionId and not isHeader then return {
 			index = i,
@@ -699,7 +703,7 @@ function ReputationPlugin:GetFactionIdByName(name)
 	for i = 1, numFactions do
 		local factionData = C_Reputation.GetFactionDataByIndex(i)
 		if not factionData then break end
-		
+
 		local factionName, isHeader, factionId = factionData.name, factionData.isHeader, factionData.factionID
 
 		if factionName == name and not isHeader then return factionId end
@@ -757,7 +761,7 @@ if LDB then
 			local tooltipText = ReputationPlugin:GetTooltip()
 			-- Handle both \n and \\n newline formats
 			tooltipText = tooltipText:gsub('\\n', '\n')
-			local lines = {strsplit('\n', tooltipText)}
+			local lines = { strsplit('\n', tooltipText) }
 			for i, line in ipairs(lines) do
 				if i == 1 then
 					tooltip:SetText(line)

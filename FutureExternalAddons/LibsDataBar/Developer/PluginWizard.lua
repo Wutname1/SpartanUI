@@ -5,6 +5,7 @@ Rapid plugin creation with guided interface
 --]===]
 
 -- Get the LibsDataBar addon
+---@class LibsDataBar
 local LibsDataBar = LibStub('AceAddon-3.0'):GetAddon('LibsDataBar', true)
 if not LibsDataBar then return end
 
