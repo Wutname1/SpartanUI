@@ -191,3 +191,154 @@ function LibsDisenchantAssist:SetConfig(key, value)
 	
 	current[keys[#keys]] = value
 end
+
+---Register as SpartanUI module
+function LibsDisenchantAssist:RegisterSpartanUIModule()
+	if not SUI or not SUI.opt or not SUI.opt.args or not SUI.opt.args.Modules then
+		return
+	end
+
+	-- Create options table for SpartanUI integration
+	local optionsTable = {
+		name = "Lib's - Disenchant Assist",
+		type = 'group',
+		desc = 'Smart disenchanting with advanced filtering options',
+		args = {
+			enabled = {
+				name = 'Enable Disenchant Assist',
+				desc = 'Enable or disable the disenchant assist addon',
+				type = 'toggle',
+				order = 10,
+				get = function() return self.db.global.options.enabled end,
+				set = function(_, val) 
+					self.db.global.options.enabled = val
+					if self.UI then
+						if val then
+							self.UI:Show()
+						else
+							self.UI:Hide()
+						end
+					end
+				end,
+			},
+			excludeToday = {
+				name = 'Exclude Today\'s Items',
+				desc = 'Don\'t disenchant items gained today',
+				type = 'toggle',
+				order = 20,
+				get = function() return self.db.global.options.excludeToday end,
+				set = function(_, val) self.db.global.options.excludeToday = val end,
+			},
+			excludeHigherIlvl = {
+				name = 'Exclude Higher Item Level',
+				desc = 'Don\'t disenchant gear with higher item level than equipped',
+				type = 'toggle',
+				order = 30,
+				get = function() return self.db.global.options.excludeHigherIlvl end,
+				set = function(_, val) self.db.global.options.excludeHigherIlvl = val end,
+			},
+			excludeGearSets = {
+				name = 'Exclude Equipment Sets',
+				desc = 'Don\'t disenchant items that are part of saved equipment sets',
+				type = 'toggle',
+				order = 40,
+				get = function() return self.db.global.options.excludeGearSets end,
+				set = function(_, val) self.db.global.options.excludeGearSets = val end,
+			},
+			excludeWarbound = {
+				name = 'Exclude Warbound Items',
+				desc = 'Don\'t disenchant warbound items',
+				type = 'toggle',
+				order = 50,
+				get = function() return self.db.global.options.excludeWarbound end,
+				set = function(_, val) self.db.global.options.excludeWarbound = val end,
+			},
+			excludeBOE = {
+				name = 'Exclude Bind on Equip',
+				desc = 'Don\'t disenchant bind on equip items',
+				type = 'toggle',
+				order = 60,
+				get = function() return self.db.global.options.excludeBOE end,
+				set = function(_, val) self.db.global.options.excludeBOE = val end,
+			},
+			spacer1 = {
+				name = '',
+				type = 'header',
+				order = 70,
+			},
+			minIlvl = {
+				name = 'Minimum Item Level',
+				desc = 'Only disenchant items at or above this item level',
+				type = 'range',
+				min = 1,
+				max = 1000,
+				step = 1,
+				order = 80,
+				get = function() return self.db.global.options.minIlvl end,
+				set = function(_, val) self.db.global.options.minIlvl = val end,
+			},
+			maxIlvl = {
+				name = 'Maximum Item Level',
+				desc = 'Only disenchant items at or below this item level',
+				type = 'range',
+				min = 1,
+				max = 1000,
+				step = 1,
+				order = 90,
+				get = function() return self.db.global.options.maxIlvl end,
+				set = function(_, val) self.db.global.options.maxIlvl = val end,
+			},
+			spacer2 = {
+				name = '',
+				type = 'header',
+				order = 100,
+			},
+			confirmDisenchant = {
+				name = 'Confirm Disenchant',
+				desc = 'Show confirmation dialog before disenchanting items',
+				type = 'toggle',
+				order = 110,
+				get = function() return self.db.global.options.confirmDisenchant end,
+				set = function(_, val) self.db.global.options.confirmDisenchant = val end,
+			},
+			spacer3 = {
+				name = '',
+				type = 'header',
+				order = 120,
+			},
+			showUI = {
+				name = 'Show Main Window',
+				desc = 'Open the disenchant assistant main window',
+				type = 'execute',
+				order = 130,
+				func = function() 
+					if self.UI then
+						self.UI:Show()
+					end
+				end,
+			},
+			scanBags = {
+				name = 'Scan Bags',
+				desc = 'Manually scan bags for new items',
+				type = 'execute',
+				order = 140,
+				func = function()
+					if self.ItemTracker then
+						self.ItemTracker:ScanBagsForNewItems()
+						self:Print('Scanned bags for new items.')
+					end
+				end,
+			},
+		},
+	}
+
+	-- Register options with SpartanUI
+	if SUI.Handler and SUI.Handler.Options and SUI.Handler.Options.AddOptions then
+		SUI.Handler.Options:AddOptions(optionsTable, 'LibsDisenchantAssist')
+		self:Print('Registered with SpartanUI options system')
+	else
+		-- Fallback direct registration
+		SUI.opt.args.Modules.args['LibsDisenchantAssist'] = optionsTable
+		self:Print('Registered with SpartanUI (fallback method)')
+	end
+end

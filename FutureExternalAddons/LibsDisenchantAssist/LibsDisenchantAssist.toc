@@ -3,6 +3,7 @@
 ## Title: Lib's - Disenchant Assist
 ## Notes: Smart disenchanting assistant with advanced filtering and safety features
 ## Author: Libs
+## OptionalDeps: SpartanUI
 ## SavedVariables: LibsDisenchantAssistDB
 ## SavedVariablesPerCharacter: LibsDisenchantAssistCharDB
 

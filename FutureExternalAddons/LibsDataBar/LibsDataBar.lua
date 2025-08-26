@@ -1993,8 +1993,7 @@ function LibsDataBar:OnInitialize()
 	-- Phase 4: Initialize communication system for configuration sharing
 	self:InitializeCommunication()
 
-	-- Phase 2: Setup AceConfig-3.0 options
-	self:SetupConfigOptions()
+	-- Setup AceConfig-3.0 options is now handled conditionally in InitialSetup()
 
 	-- Fire library initialization event for backward compatibility
 	self.callbacks:Fire('LibsDataBar_Initialized', self)
@@ -2090,6 +2089,17 @@ function LibsDataBar:InitialSetup()
 
 	-- Phase 3: Initialize enhanced tooltips system
 	self:InitializeTooltipSystem()
+
+	-- Check if SpartanUI is available and register as a module
+	if SUI and SUI.opt and SUI.opt.args and SUI.opt.args.Modules then
+		self:RegisterSpartanUIModule()
+		-- Skip standalone options panel when using SpartanUI
+		self:DebugLog('info', 'Using SpartanUI integration, skipping standalone options panel')
+	else
+		-- Setup standalone options panel
+		self:SetupConfigOptions()
+		self:DebugLog('info', 'SpartanUI not detected, creating standalone options panel')
+	end
 
 	self:DebugLog('info', 'Initial setup completed with periodic refresh every ' .. updateInterval .. 's - bars should now display text')
 end
@@ -3177,6 +3187,130 @@ function LibsDataBar:SetConfig(path, value)
 
 	-- Fire change callback for real-time updates
 	self.callbacks:Fire('ConfigChanged', path, value)
+end
+
+---Register as SpartanUI module
+function LibsDataBar:RegisterSpartanUIModule()
+	if not SUI or not SUI.opt or not SUI.opt.args or not SUI.opt.args.Modules then
+		return
+	end
+
+	-- Create options table for SpartanUI integration
+	local optionsTable = {
+		name = "Lib's - DataBar",
+		type = 'group',
+		desc = 'Next-generation data broker display with flexible positioning',
+		args = {
+			enabled = {
+				name = 'Enable LibsDataBar',
+				desc = 'Enable or disable the data bar addon',
+				type = 'toggle',
+				order = 10,
+				get = function() return self.db.profile.enabled end,
+				set = function(_, val) 
+					self.db.profile.enabled = val
+					if val then
+						self:Enable()
+					else
+						self:Disable()
+					end
+				end,
+			},
+			spacer1 = {
+				name = '',
+				type = 'header',
+				order = 20,
+			},
+			updateInterval = {
+				name = 'Update Interval',
+				desc = 'How often to refresh data bars (in seconds)',
+				type = 'range',
+				min = 1.0,
+				max = 30.0,
+				step = 0.5,
+				order = 30,
+				get = function() return self.db.profile.performance.updateInterval end,
+				set = function(_, val) 
+					self.db.profile.performance.updateInterval = val
+					if self.refreshTimer then
+						self:CancelTimer(self.refreshTimer)
+						self.refreshTimer = self:ScheduleRepeatingTimer('UpdateAllBars', val)
+					end
+				end,
+			},
+			theme = {
+				name = 'Theme',
+				desc = 'Choose the visual theme for all data bars',
+				type = 'select',
+				order = 40,
+				values = function()
+					local themes = {}
+					if self.themes and self.themes.available then
+						for name, theme in pairs(self.themes.available) do
+							themes[name] = theme.name .. ' - ' .. theme.description
+						end
+					end
+					return themes
+				end,
+				get = function() return self.db.profile.appearance.theme or 'default' end,
+				set = function(_, val) 
+					self.db.profile.appearance.theme = val
+					self:ApplyTheme(val)
+				end,
+			},
+			syncWithSpartanUI = {
+				name = 'Sync with SpartanUI Themes',
+				desc = 'Automatically match SpartanUI theme changes',
+				type = 'toggle',
+				order = 50,
+				get = function() return self.db.profile.appearance.syncWithSpartanUI or false end,
+				set = function(_, val) 
+					self.db.profile.appearance.syncWithSpartanUI = val
+					if val then
+						self:SyncWithSpartanUITheme()
+					end
+				end,
+			},
+			spacer2 = {
+				name = '',
+				type = 'header',
+				order = 60,
+			},
+			createBar = {
+				name = 'Create New Bar',
+				desc = 'Create a new data bar',
+				type = 'execute',
+				order = 70,
+				func = function()
+					local newBarId = 'bar_' .. (#self:GetBarList() + 1)
+					local bar = self:CreateQuickBar(newBarId)
+					if bar then
+						self:DebugLog('info', 'Created new bar: ' .. newBarId)
+						self:Print('Created new bar: ' .. newBarId)
+					end
+				end,
+			},
+			openFullOptions = {
+				name = 'Open Full Options',
+				desc = 'Open the complete LibsDataBar configuration window',
+				type = 'execute',
+				order = 80,
+				func = function()
+					LibStub('AceConfigDialog-3.0'):Open('LibsDataBar')
+				end,
+			},
+		},
+	}
+
+	-- Register options with SpartanUI
+	if SUI.Handler and SUI.Handler.Options and SUI.Handler.Options.AddOptions then
+		SUI.Handler.Options:AddOptions(optionsTable, 'LibsDataBar')
+		self:Print('Registered with SpartanUI options system')
+	else
+		-- Fallback direct registration
+		SUI.opt.args.Modules.args['LibsDataBar'] = optionsTable
+		self:Print('Registered with SpartanUI (fallback method)')
+	end
 end
 
 -- For backward compatibility, maintain library interface

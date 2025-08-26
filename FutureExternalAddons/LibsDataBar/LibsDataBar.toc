@@ -1,0 +1,11 @@
+## Interface: 110005
+## Version: 1.0.0
+## Title: Lib's - DataBar
+## Notes: Next-generation data broker display addon with flexible positioning
+## Author: Libs
+## OptionalDeps: SpartanUI
+## SavedVariables: LibsDataBarDB
+## SavedVariablesPerCharacter: LibsDataBarCharDB
+
+# Load file loader which handles all includes
+Loader.xml
