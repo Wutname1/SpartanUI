@@ -44,6 +44,24 @@ local tooltips = {
 local whitebg = { bgFile = 'Interface\\AddOns\\SpartanUI\\images\\blank.tga', tile = false, edgeSize = 3, insets = { left = 0, right = 1, top = 0, bottom = 1 } }
 local ilvlTempData = {}
 
+---Check if the modifier key condition is met for spell ID display
+---@param setting string The modifier setting ('NONE', 'SHIFT', 'CTRL', 'ALT', 'ALL')
+---@return boolean
+local function IsModifierConditionMet(setting)
+	if setting == 'ALL' then
+		return true
+	elseif setting == 'NONE' then
+		return false
+	elseif setting == 'SHIFT' then
+		return IsShiftKeyDown()
+	elseif setting == 'CTRL' then
+		return IsControlKeyDown()
+	elseif setting == 'ALT' then
+		return IsAltKeyDown()
+	end
+	return false
+end
+
 function module:OnInitialize()
 	---@class SUI.Tooltip.Settings
 	local defaults = {
@@ -84,6 +102,10 @@ function module:OnInitialize()
 		ColorOverlay = true,
 		Color = { 0, 0, 0, 0.4 },
 		SuppressNoMatch = true,
+		SpellID = {
+			enabled = false,
+			modifierKey = 'NONE',
+		},
 	}
 	module.Database = SUI.SpartanUIDB:RegisterNamespace('Tooltips', { profile = defaults })
 	module.DB = module.Database.profile ---@type SUI.Tooltip.Settings
@@ -215,6 +237,27 @@ local TooltipSetGeneric = function(self, tooltipData)
 	ApplySkin(self)
 end
 
+---Enhanced spell tooltip handler with spell ID display
+---@param self any The tooltip frame
+---@param tooltipData any The tooltip data
+local TooltipSetSpell = function(self, tooltipData)
+	-- Apply standard skin
+	if self.NineSlice then SUI.Skins.RemoveTextures(self.NineSlice) end
+	ApplySkin(self)
+
+	-- Add spell ID if enabled and conditions are met
+	if module.DB.SpellID.enabled and tooltipData and tooltipData.id then
+		local shouldShowID = IsModifierConditionMet(module.DB.SpellID.modifierKey)
+		
+		if shouldShowID then
+			-- Use ElvUI-style formatting for consistency
+			local IDLine = '|cFFCA3C3C%s:|r %d'
+			self:AddLine(string.format(IDLine, 'ID', tooltipData.id))
+			self:Show()
+		end
+	end
+end
+
 local TooltipSetItem = function(tooltip, tooltipData)
 	local itemLink = nil
 	if tooltip.GetItem then
@@ -250,6 +293,18 @@ local TooltipSetItem = function(tooltip, tooltipData)
 			tooltip:SetBorderColor(r, g, b)
 		end
 		tooltip.itemCleared = true
+
+		-- Add item ID if enabled and conditions are met
+		if module.DB.SpellID.enabled and tooltipData and tooltipData.id then
+			local shouldShowID = IsModifierConditionMet(module.DB.SpellID.modifierKey)
+			
+			if shouldShowID then
+				-- Use ElvUI-style formatting for consistency
+				local IDLine = '|cFFCA3C3C%s:|r %d'
+				tooltip:AddLine(string.format(IDLine, 'ID', tooltipData.id))
+				tooltip:Show()
+			end
+		end
 	end
 end
 
@@ -461,7 +516,7 @@ function module:OnEnable()
 	GameTooltip:HookScript('OnTooltipCleared', TipCleared)
 	TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Item, TooltipSetItem)
 	TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Unit, TooltipSetUnit)
-	TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Spell, TooltipSetGeneric)
+	TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Spell, TooltipSetSpell)
 	TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Mount, TooltipSetGeneric)
 	TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Quest, TooltipSetGeneric)
 end
@@ -512,6 +567,42 @@ function module:BuildOptions()
 				type = 'toggle',
 				order = 12,
 				desc = L['TooltipOverrideDesc'],
+			},
+			spellIDGroup = {
+				name = 'Spell/Item IDs',
+				type = 'group',
+				order = 20,
+				inline = true,
+				get = function(info)
+					return module.DB.SpellID[info[#info]]
+				end,
+				set = function(info, val)
+					module.DB.SpellID[info[#info]] = val
+				end,
+				args = {
+					enabled = {
+						name = 'Show Spell IDs',
+						desc = 'Display spell IDs in tooltips',
+						type = 'toggle',
+						order = 1,
+					},
+					modifierKey = {
+						name = 'Modifier Key',
+						desc = 'Modifier key required to show spell IDs',
+						type = 'select',
+						order = 2,
+						values = {
+							NONE = 'Never',
+							ALL = 'Always',
+							SHIFT = 'Shift',
+							CTRL = 'Ctrl',
+							ALT = 'Alt',
+						},
+						disabled = function()
+							return not module.DB.SpellID.enabled
+						end,
+					},
+				},
 			},
 		},
 	}
