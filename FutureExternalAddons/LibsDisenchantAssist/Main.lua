@@ -11,7 +11,15 @@ frame:SetScript('OnEvent', function(self, event, addonName)
 		-- Initialize subsystems (Core is already initialized via AceAddon)
 		LibsDisenchantAssist.ItemTracker:Initialize()
 		LibsDisenchantAssist.DisenchantLogic:Initialize()
-		LibsDisenchantAssist.OptionsPanel:Initialize()
+		
+		-- Check if SpartanUI is available and register as a module
+		if SUI and SUI.opt and SUI.opt.args and SUI.opt.args.Modules then
+			-- Register options with SpartanUI instead of creating standalone panel
+			LibsDisenchantAssist:RegisterSpartanUIModule()
+		else
+			-- Fallback to standalone options panel
+			LibsDisenchantAssist.OptionsPanel:Initialize()
+		end
 	elseif event == 'PLAYER_LOGIN' then
 		-- Do initial bag scan after player is fully logged in
 		C_Timer.After(2, function()
