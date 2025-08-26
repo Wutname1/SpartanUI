@@ -11,7 +11,7 @@ frame:SetScript('OnEvent', function(self, event, addonName)
 		-- Initialize subsystems (Core is already initialized via AceAddon)
 		LibsDisenchantAssist.ItemTracker:Initialize()
 		LibsDisenchantAssist.DisenchantLogic:Initialize()
-		
+
 		-- Check if SpartanUI is available and register as a module
 		if SUI and SUI.opt and SUI.opt.args and SUI.opt.args.Modules then
 			-- Register options with SpartanUI instead of creating standalone panel
@@ -121,7 +121,7 @@ if LDB then
 
 	-- Setup LibDBIcon for minimap button if available
 	local LibDBIcon = LibStub:GetLibrary('LibDBIcon-1.0', true)
-	if LibDBIcon then LibDBIcon:Register('LibsDisenchantAssist', disenchantLDB, LibsDisenchantAssistCharDB.minimap) end
+	if LibDBIcon then LibDBIcon:Register('LibsDisenchantAssist', disenchantLDB, LibsDisenchantAssist.DBC.minimap) end
 
 	LibsDisenchantAssist:Print('Registered with LibDataBroker system')
 else

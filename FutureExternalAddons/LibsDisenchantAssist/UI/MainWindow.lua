@@ -1,9 +1,7 @@
 ---@class LibsDisenchantAssist
 local LibsDisenchantAssist = _G.LibsDisenchantAssist
 
----@class UI
-LibsDisenchantAssist.UI = {}
-local UI = LibsDisenchantAssist.UI
+local UI = {}
 
 UI.itemButtons = {}
 UI.maxButtons = 20
@@ -144,7 +142,7 @@ function UI:CreateOptionsPanelControls(panel)
 	excludeTodayCheck:SetPoint('TOPLEFT', 10, -10)
 	excludeTodayCheck.Text:SetText("Don't DE items gained today")
 	excludeTodayCheck:SetScript('OnClick', function()
-		LibsDisenchantAssistDB.options.excludeToday = excludeTodayCheck:GetChecked()
+		LibsDisenchantAssist.DB.excludeToday = excludeTodayCheck:GetChecked()
 		self:RefreshItemList()
 	end)
 	panel.excludeTodayCheck = excludeTodayCheck
@@ -154,7 +152,7 @@ function UI:CreateOptionsPanelControls(panel)
 	excludeHigherIlvlCheck:SetPoint('TOPLEFT', 10, -35)
 	excludeHigherIlvlCheck.Text:SetText("Don't DE higher ilvl gear")
 	excludeHigherIlvlCheck:SetScript('OnClick', function()
-		LibsDisenchantAssistDB.options.excludeHigherIlvl = excludeHigherIlvlCheck:GetChecked()
+		LibsDisenchantAssist.DB.excludeHigherIlvl = excludeHigherIlvlCheck:GetChecked()
 		self:RefreshItemList()
 	end)
 	panel.excludeHigherIlvlCheck = excludeHigherIlvlCheck
@@ -164,7 +162,7 @@ function UI:CreateOptionsPanelControls(panel)
 	excludeGearSetsCheck:SetPoint('TOPLEFT', 10, -60)
 	excludeGearSetsCheck.Text:SetText("Don't DE gear in sets")
 	excludeGearSetsCheck:SetScript('OnClick', function()
-		LibsDisenchantAssistDB.options.excludeGearSets = excludeGearSetsCheck:GetChecked()
+		LibsDisenchantAssist.DB.excludeGearSets = excludeGearSetsCheck:GetChecked()
 		self:RefreshItemList()
 	end)
 	panel.excludeGearSetsCheck = excludeGearSetsCheck
@@ -174,7 +172,7 @@ function UI:CreateOptionsPanelControls(panel)
 	excludeWarboundCheck:SetPoint('TOPLEFT', 210, -10)
 	excludeWarboundCheck.Text:SetText("Don't DE warbound gear")
 	excludeWarboundCheck:SetScript('OnClick', function()
-		LibsDisenchantAssistDB.options.excludeWarbound = excludeWarboundCheck:GetChecked()
+		LibsDisenchantAssist.DB.excludeWarbound = excludeWarboundCheck:GetChecked()
 		self:RefreshItemList()
 	end)
 	panel.excludeWarboundCheck = excludeWarboundCheck
@@ -184,7 +182,7 @@ function UI:CreateOptionsPanelControls(panel)
 	excludeBOECheck:SetPoint('TOPLEFT', 210, -35)
 	excludeBOECheck.Text:SetText("Don't DE BOE gear")
 	excludeBOECheck:SetScript('OnClick', function()
-		LibsDisenchantAssistDB.options.excludeBOE = excludeBOECheck:GetChecked()
+		LibsDisenchantAssist.DB.excludeBOE = excludeBOECheck:GetChecked()
 		self:RefreshItemList()
 	end)
 	panel.excludeBOECheck = excludeBOECheck
@@ -197,7 +195,7 @@ function UI:CreateOptionsPanelControls(panel)
 	minIlvlSlider:SetValueStep(1)
 	minIlvlSlider:SetScript('OnValueChanged', function(self, value)
 		value = math.floor(value + 0.5)
-		LibsDisenchantAssistDB.options.minIlvl = value
+		LibsDisenchantAssist.DB.minIlvl = value
 		_G[self:GetName() .. 'Text']:SetText('Min iLvl: ' .. value)
 		UI:RefreshItemList()
 	end)
@@ -214,7 +212,7 @@ function UI:CreateOptionsPanelControls(panel)
 	maxIlvlSlider:SetValueStep(1)
 	maxIlvlSlider:SetScript('OnValueChanged', function(self, value)
 		value = math.floor(value + 0.5)
-		LibsDisenchantAssistDB.options.maxIlvl = value
+		LibsDisenchantAssist.DB.maxIlvl = value
 		_G[self:GetName() .. 'Text']:SetText('Max iLvl: ' .. value)
 		UI:RefreshItemList()
 	end)
@@ -350,9 +348,9 @@ function UI:ToggleOptions()
 end
 
 function UI:UpdateOptionsFromDB()
-	if not LibsDisenchantAssistDB then return end
+	if not LibsDisenchantAssist.DB then return end
 
-	local options = LibsDisenchantAssistDB.options
+	local options = LibsDisenchantAssist.DB
 	local panel = self.frame.OptionsPanel
 
 	panel.excludeTodayCheck:SetChecked(options.excludeToday)
@@ -413,19 +411,15 @@ function UI:RefreshItemList()
 	else
 		self.frame.ScrollFrame.ScrollBar:Hide()
 	end
-	
+
 	-- Update LibDataBroker display
-	if LibsDisenchantAssist._ldbObject and LibsDisenchantAssist._ldbObject.UpdateLDB then
-		LibsDisenchantAssist._ldbObject:UpdateLDB()
-	end
+	if LibsDisenchantAssist._ldbObject and LibsDisenchantAssist._ldbObject.UpdateLDB then LibsDisenchantAssist._ldbObject:UpdateLDB() end
 end
 
 ---Handle profile changes
 function UI:OnProfileChanged()
 	-- Refresh the display when profile changes
-	if self.frame and self.frame:IsVisible() then
-		self:RefreshItemList()
-	end
+	if self.frame and self.frame:IsVisible() then self:RefreshItemList() end
 end
 
 ---Show the main window
@@ -447,3 +441,5 @@ function UI:Toggle()
 		self:Show()
 	end
 end
+
+LibsDisenchantAssist.UI = UI
