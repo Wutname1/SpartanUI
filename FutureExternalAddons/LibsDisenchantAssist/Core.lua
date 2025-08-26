@@ -1,4 +1,4 @@
----@class LibsDisenchantAssist : AceAddon
+---@class LibsDisenchantAssist : AceAddon, AceEvent-3.0, AceTimer-3.0
 local LibsDisenchantAssist = LibStub('AceAddon-3.0'):NewAddon('LibsDisenchantAssist', 'AceEvent-3.0', 'AceTimer-3.0')
 _G.LibsDisenchantAssist = LibsDisenchantAssist
 
@@ -7,12 +7,11 @@ _G.LibsDisenchantAssist = LibsDisenchantAssist
 ---@field char LibsDisenchantAssistCharDB
 
 ---@class LibsDisenchantAssistGlobalDB
----@field itemFirstSeen table<number, number>
----@field options LibsDisenchantAssistOptions
 
 ---@class LibsDisenchantAssistCharDB
 ---@field windowPosition table
 ---@field minimap table
+---@field itemFirstSeen table<number, number>
 
 ---@class LibsDisenchantAssistOptions
 ---@field enabled boolean
@@ -27,23 +26,26 @@ _G.LibsDisenchantAssist = LibsDisenchantAssist
 
 local AceDB = LibStub('AceDB-3.0')
 
--- Database defaults
+-- Database defaults following SpartanUI pattern
 local defaults = {
+	profile = {
+		-- User preferences that should be shared across characters
+		enabled = true,
+		excludeToday = true,
+		excludeHigherIlvl = true,
+		excludeGearSets = true,
+		excludeWarbound = false,
+		excludeBOE = false,
+		minIlvl = 1,
+		maxIlvl = 999,
+		confirmDisenchant = true,
+	},
 	global = {
-		itemFirstSeen = {},
-		options = {
-			enabled = true,
-			excludeToday = true,
-			excludeHigherIlvl = true,
-			excludeGearSets = true,
-			excludeWarbound = false,
-			excludeBOE = false,
-			minIlvl = 1,
-			maxIlvl = 999,
-			confirmDisenchant = true,
-		},
+		-- Truly global data shared across all characters and profiles (none currently)
 	},
 	char = {
+		-- Character-specific data that should not be shared
+		itemFirstSeen = {}, -- Each character's item discovery history
 		windowPosition = { point = 'CENTER', x = 0, y = 0 },
 		minimap = { hide = false },
 	},
@@ -53,16 +55,17 @@ local defaults = {
 function LibsDisenchantAssist:OnInitialize()
 	-- Initialize database
 	self.db = AceDB:New('LibsDisenchantAssistDB', defaults, true)
-	
+
 	-- Setup profile callbacks
 	self.db.RegisterCallback(self, 'OnProfileChanged', 'OnProfileChanged')
 	self.db.RegisterCallback(self, 'OnProfileCopied', 'OnProfileChanged')
 	self.db.RegisterCallback(self, 'OnProfileReset', 'OnProfileChanged')
-	
-	-- Expose databases globally for subsystems
-	LibsDisenchantAssistDB = self.db.global
-	LibsDisenchantAssistCharDB = self.db.char
-	
+
+	-- Attach database to addon object following SpartanUI pattern
+	self.DB = self.db.profile ---@type LibsDisenchantAssistOptions (main settings)
+	self.DBG = self.db.global ---@type LibsDisenchantAssistGlobalDB
+	self.DBC = self.db.char ---@type LibsDisenchantAssistCharDB
+
 	-- Register chat commands
 	self:RegisterChatCommands()
 end
@@ -74,23 +77,16 @@ end
 
 ---Handle profile changes
 function LibsDisenchantAssist:OnProfileChanged()
-	-- Update global references
-	LibsDisenchantAssistDB = self.db.global
-	LibsDisenchantAssistCharDB = self.db.char
-	
+	-- Update database references
+	self.DB = self.db.profile
+	self.DBG = self.db.global
+	self.DBC = self.db.char
+
 	-- Notify subsystems of profile change
-	if self.UI then
-		self.UI:OnProfileChanged()
-	end
-	if self.ItemTracker then
-		self.ItemTracker:OnProfileChanged()
-	end
-	if self.FilterSystem then
-		self.FilterSystem:OnProfileChanged()
-	end
-	if self.DisenchantLogic then
-		self.DisenchantLogic:OnProfileChanged()
-	end
+	if self.UI then self.UI:OnProfileChanged() end
+	if self.ItemTracker then self.ItemTracker:OnProfileChanged() end
+	if self.FilterSystem then self.FilterSystem:OnProfileChanged() end
+	if self.DisenchantLogic then self.DisenchantLogic:OnProfileChanged() end
 end
 
 ---Register chat commands
@@ -98,7 +94,7 @@ function LibsDisenchantAssist:RegisterChatCommands()
 	-- Register slash commands
 	SLASH_LIBSDISENCHANTASSIST1 = '/libsde'
 	SLASH_LIBSDISENCHANTASSIST2 = '/disenchantassist'
-	
+
 	SlashCmdList['LIBSDISENCHANTASSIST'] = function(msg)
 		self:HandleChatCommand(msg)
 	end
@@ -108,25 +104,17 @@ end
 ---@param msg string
 function LibsDisenchantAssist:HandleChatCommand(msg)
 	local command = string.lower(string.trim(msg or ''))
-	
+
 	if command == '' or command == 'show' then
-		if self.UI then
-			self.UI:Show()
-		end
+		if self.UI then self.UI:Show() end
 	elseif command == 'hide' then
-		if self.UI then
-			self.UI:Hide()
-		end
+		if self.UI then self.UI:Hide() end
 	elseif command == 'toggle' then
-		if self.UI then
-			self.UI:Toggle()
-		end
+		if self.UI then self.UI:Toggle() end
 	elseif command == 'options' then
 		if self.UI then
 			self.UI:Show()
-			if not self.UI.isOptionsVisible then
-				self.UI:ToggleOptions()
-			end
+			if not self.UI.isOptionsVisible then self.UI:ToggleOptions() end
 		end
 	elseif command == 'scan' then
 		if self.ItemTracker then
@@ -134,9 +122,7 @@ function LibsDisenchantAssist:HandleChatCommand(msg)
 			self:Print('Scanned bags for new items.')
 		end
 	elseif command == 'stop' then
-		if self.DisenchantLogic then
-			self.DisenchantLogic:StopBatchDisenchant()
-		end
+		if self.DisenchantLogic then self.DisenchantLogic:StopBatchDisenchant() end
 	elseif command == 'help' then
 		self:Print('Commands:')
 		self:Print('/libsde or /libsde show - Show the main window')
@@ -163,7 +149,7 @@ end
 function LibsDisenchantAssist:GetConfig(key)
 	local keys = { strsplit('.', key) }
 	local current = self.db.global
-	
+
 	for i = 1, #keys do
 		if current[keys[i]] then
 			current = current[keys[i]]
@@ -171,7 +157,7 @@ function LibsDisenchantAssist:GetConfig(key)
 			return nil
 		end
 	end
-	
+
 	return current
 end
 
@@ -181,22 +167,18 @@ end
 function LibsDisenchantAssist:SetConfig(key, value)
 	local keys = { strsplit('.', key) }
 	local current = self.db.global
-	
+
 	for i = 1, #keys - 1 do
-		if not current[keys[i]] then
-			current[keys[i]] = {}
-		end
+		if not current[keys[i]] then current[keys[i]] = {} end
 		current = current[keys[i]]
 	end
-	
+
 	current[keys[#keys]] = value
 end
 
 ---Register as SpartanUI module
 function LibsDisenchantAssist:RegisterSpartanUIModule()
-	if not SUI or not SUI.opt or not SUI.opt.args or not SUI.opt.args.Modules then
-		return
-	end
+	if not SUI or not SUI.opt or not SUI.opt.args or not SUI.opt.args.Modules then return end
 
 	-- Create options table for SpartanUI integration
 	local optionsTable = {
@@ -209,9 +191,11 @@ function LibsDisenchantAssist:RegisterSpartanUIModule()
 				desc = 'Enable or disable the disenchant assist addon',
 				type = 'toggle',
 				order = 10,
-				get = function() return self.db.global.options.enabled end,
-				set = function(_, val) 
-					self.db.global.options.enabled = val
+				get = function()
+					return self.db.profile.options.enabled
+				end,
+				set = function(_, val)
+					self.db.profile.options.enabled = val
 					if self.UI then
 						if val then
 							self.UI:Show()
@@ -222,44 +206,64 @@ function LibsDisenchantAssist:RegisterSpartanUIModule()
 				end,
 			},
 			excludeToday = {
-				name = 'Exclude Today\'s Items',
-				desc = 'Don\'t disenchant items gained today',
+				name = "Exclude Today's Items",
+				desc = "Don't disenchant items gained today",
 				type = 'toggle',
 				order = 20,
-				get = function() return self.db.global.options.excludeToday end,
-				set = function(_, val) self.db.global.options.excludeToday = val end,
+				get = function()
+					return self.db.profile.options.excludeToday
+				end,
+				set = function(_, val)
+					self.db.profile.options.excludeToday = val
+				end,
 			},
 			excludeHigherIlvl = {
 				name = 'Exclude Higher Item Level',
-				desc = 'Don\'t disenchant gear with higher item level than equipped',
+				desc = "Don't disenchant gear with higher item level than equipped",
 				type = 'toggle',
 				order = 30,
-				get = function() return self.db.global.options.excludeHigherIlvl end,
-				set = function(_, val) self.db.global.options.excludeHigherIlvl = val end,
+				get = function()
+					return self.db.profile.options.excludeHigherIlvl
+				end,
+				set = function(_, val)
+					self.db.profile.options.excludeHigherIlvl = val
+				end,
 			},
 			excludeGearSets = {
 				name = 'Exclude Equipment Sets',
-				desc = 'Don\'t disenchant items that are part of saved equipment sets',
+				desc = "Don't disenchant items that are part of saved equipment sets",
 				type = 'toggle',
 				order = 40,
-				get = function() return self.db.global.options.excludeGearSets end,
-				set = function(_, val) self.db.global.options.excludeGearSets = val end,
+				get = function()
+					return self.db.profile.options.excludeGearSets
+				end,
+				set = function(_, val)
+					self.db.profile.options.excludeGearSets = val
+				end,
 			},
 			excludeWarbound = {
 				name = 'Exclude Warbound Items',
-				desc = 'Don\'t disenchant warbound items',
+				desc = "Don't disenchant warbound items",
 				type = 'toggle',
 				order = 50,
-				get = function() return self.db.global.options.excludeWarbound end,
-				set = function(_, val) self.db.global.options.excludeWarbound = val end,
+				get = function()
+					return self.db.profile.options.excludeWarbound
+				end,
+				set = function(_, val)
+					self.db.profile.options.excludeWarbound = val
+				end,
 			},
 			excludeBOE = {
 				name = 'Exclude Bind on Equip',
-				desc = 'Don\'t disenchant bind on equip items',
+				desc = "Don't disenchant bind on equip items",
 				type = 'toggle',
 				order = 60,
-				get = function() return self.db.global.options.excludeBOE end,
-				set = function(_, val) self.db.global.options.excludeBOE = val end,
+				get = function()
+					return self.db.profile.options.excludeBOE
+				end,
+				set = function(_, val)
+					self.db.profile.options.excludeBOE = val
+				end,
 			},
 			spacer1 = {
 				name = '',
@@ -274,8 +278,12 @@ function LibsDisenchantAssist:RegisterSpartanUIModule()
 				max = 1000,
 				step = 1,
 				order = 80,
-				get = function() return self.db.global.options.minIlvl end,
-				set = function(_, val) self.db.global.options.minIlvl = val end,
+				get = function()
+					return self.db.profile.options.minIlvl
+				end,
+				set = function(_, val)
+					self.db.profile.options.minIlvl = val
+				end,
 			},
 			maxIlvl = {
 				name = 'Maximum Item Level',
@@ -285,8 +293,12 @@ function LibsDisenchantAssist:RegisterSpartanUIModule()
 				max = 1000,
 				step = 1,
 				order = 90,
-				get = function() return self.db.global.options.maxIlvl end,
-				set = function(_, val) self.db.global.options.maxIlvl = val end,
+				get = function()
+					return self.db.profile.options.maxIlvl
+				end,
+				set = function(_, val)
+					self.db.profile.options.maxIlvl = val
+				end,
 			},
 			spacer2 = {
 				name = '',
@@ -298,8 +310,12 @@ function LibsDisenchantAssist:RegisterSpartanUIModule()
 				desc = 'Show confirmation dialog before disenchanting items',
 				type = 'toggle',
 				order = 110,
-				get = function() return self.db.global.options.confirmDisenchant end,
-				set = function(_, val) self.db.global.options.confirmDisenchant = val end,
+				get = function()
+					return self.db.profile.options.confirmDisenchant
+				end,
+				set = function(_, val)
+					self.db.profile.options.confirmDisenchant = val
+				end,
 			},
 			spacer3 = {
 				name = '',
@@ -311,10 +327,8 @@ function LibsDisenchantAssist:RegisterSpartanUIModule()
 				desc = 'Open the disenchant assistant main window',
 				type = 'execute',
 				order = 130,
-				func = function() 
-					if self.UI then
-						self.UI:Show()
-					end
+				func = function()
+					if self.UI then self.UI:Show() end
 				end,
 			},
 			scanBags = {
@@ -333,8 +347,8 @@ function LibsDisenchantAssist:RegisterSpartanUIModule()
 	}
 
 	-- Register options with SpartanUI
-	if SUI.Handler and SUI.Handler.Options and SUI.Handler.Options.AddOptions then
-		SUI.Handler.Options:AddOptions(optionsTable, 'LibsDisenchantAssist')
+	if SUI.Handlers and SUI.Handlers.Options and SUI.Handlers.Options.AddOptions then
+		SUI.Handlers.Options:AddOptions(optionsTable, 'LibsDisenchantAssist')
 		self:Print('Registered with SpartanUI options system')
 	else
 		-- Fallback direct registration
