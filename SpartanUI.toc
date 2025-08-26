@@ -61,4 +61,5 @@ modules\LoadAll.xml
 core\Framework.xml
 Themes\Themes.xml
 
+FutureExternalAddons\LibsDisenchantAssist\Load.xml
 FutureExternalAddons\LibsDataBar\Loader.xml

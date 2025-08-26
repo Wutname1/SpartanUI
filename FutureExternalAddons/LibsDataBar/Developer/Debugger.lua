@@ -75,11 +75,11 @@ local LOG_LEVELS = {
 
 ---Initialize the debugger
 function Debugger:Initialize()
-	-- Load debug settings from configuration
-	self.enabled = LibsDataBar.config:GetConfig('global.developer.debugMode') or false
+	-- Load debug settings from configuration using AceDB system
+	self.enabled = LibsDataBar:GetConfig('global.developer.debugMode') or false
 
 	-- Load category settings
-	local categoryConfig = LibsDataBar.config:GetConfig('global.developer.debugCategories') or {}
+	local categoryConfig = LibsDataBar:GetConfig('global.developer.debugCategories') or {}
 	for category, enabled in pairs(categoryConfig) do
 		if self.categories[category] ~= nil then self.categories[category] = enabled end
 	end
@@ -156,14 +156,15 @@ end
 ---Trigger debug event for external listeners
 ---@param entry DebugEntry Log entry
 function Debugger:TriggerDebugEvent(entry)
-	if LibsDataBar.events then LibsDataBar.events:TriggerEvent('DEBUG_LOG', entry) end
+	-- Use AceEvent system instead of undefined events field
+	if LibsDataBar and LibsDataBar.SendMessage then LibsDataBar:SendMessage('DEBUG_LOG', entry) end
 end
 
 ---Enable/disable debugging
 ---@param enabled boolean Whether to enable debugging
 function Debugger:SetEnabled(enabled)
 	self.enabled = enabled
-	LibsDataBar.config:SetConfig('global.developer.debugMode', enabled)
+	LibsDataBar:SetConfig('global.developer.debugMode', enabled)
 
 	if enabled then self:Log('info', 'Debugging enabled', 'core') end
 end
@@ -179,10 +180,10 @@ function Debugger:SetCategoryEnabled(category, enabled)
 
 	self.categories[category] = enabled
 
-	-- Save to configuration
-	local categoryConfig = LibsDataBar.config:GetConfig('global.developer.debugCategories') or {}
+	-- Save to configuration using AceDB system
+	local categoryConfig = LibsDataBar:GetConfig('global.developer.debugCategories') or {}
 	categoryConfig[category] = enabled
-	LibsDataBar.config:SetConfig('global.developer.debugCategories', categoryConfig)
+	LibsDataBar:SetConfig('global.developer.debugCategories', categoryConfig)
 
 	self:Log('info', string.format("Debug category '%s' %s", category, enabled and 'enabled' or 'disabled'), 'core')
 end
