@@ -37,9 +37,22 @@ local ElementList = {
 	'PvPIndicator',
 	'ThreatIndicator',
 	'PvPRoleIndicator',
+	'Name',
 }
 ---@type table<SUI.UF.Elements.list, SUI.UF.Elements.Settings>
 local ElementDefaults = {
+	Name = {
+		enabled = true,
+		textSize = 8,
+		SetJustifyH = 'CENTER',
+		position = {
+			anchor = 'BOTTOM',
+			relativeTo = 'Frame',
+			relativePoint = 'TOP',
+			x = 0,
+			y = 0,
+		},
+	},
 	Health = {
 		enabled = true,
 		height = 8,
@@ -293,11 +306,7 @@ local NamePlateFactory = function(frame, unit)
 		if module.DB.ShowLevel then nameString = '[difficulty][level]' end
 		if module.DB.ShowName then nameString = nameString .. ' [SUI_ColorClass][name]' end
 		if nameString ~= '' then
-			frame.Name = frame:CreateFontString(nil, 'OVERLAY')
-			SUI.Font:Format(frame.Name, 8, 'Nameplate')
-			frame.Name:SetSize(frame:GetWidth(), 9)
-			frame.Name:SetJustifyH(elementsDB.Name.SetJustifyH)
-			frame.Name:SetPoint('BOTTOM', frame, 'TOP')
+			BuildElement(frame, 'Name')
 			frame:Tag(frame.Name, nameString)
 		end
 
