@@ -1120,8 +1120,61 @@ function module:BuildOptions()
 		-- 	print(elementName)
 		-- end
 
-		--Add nameplate-specific options for elements that need them
+		-- Helper function to override get/set functions recursively
+		local function OverrideGetSet(optTable, path)
+			for key, option in pairs(optTable) do
+				if option.args then
+					-- Recursively handle nested groups
+					OverrideGetSet(option.args, path)
+				elseif option.get or option.set then
+					-- Override get function
+					if option.get then
+						option.get = function(info)
+							local setting = ElementSettings
+							for _, pathKey in ipairs(path) do
+								setting = setting[pathKey]
+							end
+							local value = setting[info[#info]]
+							if option.type == 'color' and value then
+								return unpack(value, 1, 4)
+							else
+								return value
+							end
+						end
+					end
+					
+					-- Override set function  
+					if option.set then
+						option.set = function(info, val, ...)
+							local setting = ElementSettings
+							local userSetting = UserSetting
+							for _, pathKey in ipairs(path) do
+								setting = setting[pathKey]
+								userSetting = userSetting[pathKey]
+							end
+							
+							if option.type == 'color' then
+								setting[info[#info]] = {val, ...}
+								userSetting[info[#info]] = {val, ...}
+							else
+								setting[info[#info]] = val
+								userSetting[info[#info]] = val
+							end
+							module:UpdateNameplates()
+						end
+					end
+				end
+			end
+		end
+
+		--Add element-specific options using shared system where available
 		if elementName == 'Name' then
+			-- Use shared Name element Options function 
+			UF.Elements:Options('Name', 'nameplate', ElementOptSet)
+			-- Override get/set functions for nameplate settings structure
+			OverrideGetSet(ElementOptSet.args, {})
+			
+			-- Add nameplate-specific text format option
 			ElementOptSet.args.text = {
 				name = L['Text'] or 'Text',
 				type = 'input',
@@ -1139,256 +1192,45 @@ function module:BuildOptions()
 				end,
 			}
 		elseif elementName == 'Health' or elementName == 'Power' or elementName == 'Castbar' then
-			-- Add status bar options (texture, sizing, colors, background, text)
-			ElementOptSet.args.texture = {
-				type = 'select',
-				dialogControl = 'LSM30_Statusbar',
-				order = 2,
-				width = 'double',
-				name = L['Bar Texture'] or 'Bar Texture',
-				desc = L['Select the texture used for the status bar'] or 'Select the texture used for the status bar',
-				values = AceGUIWidgetLSMlists.statusbar,
-				get = function() return ElementSettings.texture end,
-				set = function(_, val)
-					ElementSettings.texture = val
-					UserSetting.texture = val
-					module:UpdateNameplates()
-				end,
-			}
-			
-			-- Height control
-			ElementOptSet.args.height = {
-				name = L['Height'] or 'Height',
-				type = 'range',
-				width = 'double',
-				order = 5,
-				min = 2,
-				max = 100,
-				step = 1,
-				get = function() return ElementSettings.height end,
-				set = function(_, val)
-					ElementSettings.height = val
-					UserSetting.height = val
-					module:UpdateNameplates()
-				end,
-			}
-			
-			-- Color options (for Health and Power)
-			if elementName == 'Health' or elementName == 'Power' then
-				ElementOptSet.args.colors = {
-					name = L['Colors'] or 'Colors',
-					type = 'group',
-					inline = true,
-					order = 15,
-					args = {
-						colorClass = {
-							name = L['Class'] or 'Class',
-							desc = L['Color the bar based on unit class'] or 'Color the bar based on unit class',
-							type = 'toggle',
-							order = 1,
-							get = function() return ElementSettings.colorClass end,
-							set = function(_, val)
-								ElementSettings.colorClass = val
-								UserSetting.colorClass = val
-								module:UpdateNameplates()
-							end,
-						},
-						colorReaction = {
-							name = L['Reaction'] or 'Reaction',
-							desc = 'Color the bar based on the player\'s reaction towards the unit',
-							type = 'toggle',
-							order = 2,
-							get = function() return ElementSettings.colorReaction end,
-							set = function(_, val)
-								ElementSettings.colorReaction = val
-								UserSetting.colorReaction = val
-								module:UpdateNameplates()
-							end,
-						},
-						colorSmooth = {
-							name = L['Smooth'] or 'Smooth',
-							desc = 'Color the bar with a smooth gradient based on current percentage',
-							type = 'toggle',
-							order = 3,
-							get = function() return ElementSettings.colorSmooth end,
-							set = function(_, val)
-								ElementSettings.colorSmooth = val
-								UserSetting.colorSmooth = val
-								module:UpdateNameplates()
-							end,
-						},
-						colorTapping = {
-							name = L['Tapped'] or 'Tapped',
-							desc = 'Color the bar if the unit isn\'t tapped by the player',
-							type = 'toggle',
-							order = 4,
-							get = function() return ElementSettings.colorTapping end,
-							set = function(_, val)
-								ElementSettings.colorTapping = val
-								UserSetting.colorTapping = val
-								module:UpdateNameplates()
-							end,
-						},
-						colorDisconnected = {
-							name = L['Disconnected'] or 'Disconnected',
-							desc = L['Color the bar if the player is offline'] or 'Color the bar if the player is offline',
-							type = 'toggle',
-							order = 5,
-							get = function() return ElementSettings.colorDisconnected end,
-							set = function(_, val)
-								ElementSettings.colorDisconnected = val
-								UserSetting.colorDisconnected = val
-								module:UpdateNameplates()
-							end,
-						},
-					},
-				}
-			end
-			
-			-- Background options
-			ElementOptSet.args.background = {
-				name = L['Background'] or 'Background',
-				type = 'group',
-				inline = true,
-				order = 20,
-				args = {
-					enabled = {
-						name = L['Enabled'] or 'Enabled',
-						type = 'toggle',
-						order = 1,
-						get = function() return ElementSettings.bg.enabled end,
-						set = function(_, val)
-							ElementSettings.bg.enabled = val
-							UserSetting.bg.enabled = val
-							module:UpdateNameplates()
-						end,
-					},
-					color = {
-						name = L['Background Color'] or 'Background Color',
-						type = 'color',
-						hasAlpha = true,
-						order = 2,
-						disabled = function() return not ElementSettings.bg.enabled end,
-						get = function() 
-							local color = ElementSettings.bg.color or {0, 0, 0, 0.2}
-							return color[1], color[2], color[3], color[4]
-						end,
-						set = function(_, r, g, b, a)
-							ElementSettings.bg.color = {r, g, b, a}
-							UserSetting.bg.color = {r, g, b, a}
-							module:UpdateNameplates()
-						end,
-					},
-				},
-			}
-			
-			-- Text options
-			ElementOptSet.args.text = {
-				name = L['Text'] or 'Text',
-				type = 'group',
-				childGroups = 'tab',
-				order = 25,
-				args = {
-					text1 = {
-						name = 'Text 1',
-						type = 'group',
-						order = 1,
-						args = {
-							enabled = {
-								name = L['Enabled'] or 'Enabled',
-								type = 'toggle',
-								order = 1,
-								get = function() return ElementSettings.text['1'].enabled end,
-								set = function(_, val)
-									ElementSettings.text['1'].enabled = val
-									UserSetting.text['1'].enabled = val
-									module:UpdateNameplates()
-								end,
-							},
-							text = {
-								name = L['Text Format'] or 'Text Format',
-								type = 'input',
-								width = 'full',
-								multiline = true,
-								order = 2,
-								disabled = function() return not ElementSettings.text['1'].enabled end,
-								get = function() return ElementSettings.text['1'].text end,
-								set = function(_, val)
-									ElementSettings.text['1'].text = val
-									UserSetting.text['1'].text = val
-									module:UpdateNameplates()
-								end,
-							},
-							size = {
-								name = L['Font Size'] or 'Font Size',
-								type = 'range',
-								order = 3,
-								min = 6,
-								max = 32,
-								step = 1,
-								disabled = function() return not ElementSettings.text['1'].enabled end,
-								get = function() return ElementSettings.text['1'].size end,
-								set = function(_, val)
-									ElementSettings.text['1'].size = val
-									UserSetting.text['1'].size = val
-									module:UpdateNameplates()
-								end,
-							},
-						},
-					},
-					text2 = {
-						name = 'Text 2',
-						type = 'group',
-						order = 2,
-						args = {
-							enabled = {
-								name = L['Enabled'] or 'Enabled',
-								type = 'toggle',
-								order = 1,
-								get = function() return ElementSettings.text['2'].enabled end,
-								set = function(_, val)
-									ElementSettings.text['2'].enabled = val
-									UserSetting.text['2'].enabled = val
-									module:UpdateNameplates()
-								end,
-							},
-							text = {
-								name = L['Text Format'] or 'Text Format',
-								type = 'input',
-								width = 'full',
-								multiline = true,
-								order = 2,
-								disabled = function() return not ElementSettings.text['2'].enabled end,
-								get = function() return ElementSettings.text['2'].text end,
-								set = function(_, val)
-									ElementSettings.text['2'].text = val
-									UserSetting.text['2'].text = val
-									module:UpdateNameplates()
-								end,
-							},
-							size = {
-								name = L['Font Size'] or 'Font Size',
-								type = 'range',
-								order = 3,
-								min = 6,
-								max = 32,
-								step = 1,
-								disabled = function() return not ElementSettings.text['2'].enabled end,
-								get = function() return ElementSettings.text['2'].size end,
-								set = function(_, val)
-									ElementSettings.text['2'].size = val
-									UserSetting.text['2'].size = val
-									module:UpdateNameplates()
-								end,
-							},
-						},
-					},
-				},
-			}
-			
-			-- Add castbar-specific options only for Castbar element
-			if elementName == 'Castbar' then
-				ElementOptSet.args.FlashOnInterruptible = {
+			-- Use the existing StatusBarDefaults to get all the standard options
+			Options:StatusBarDefaults('temp', ElementOptSet, elementName)
+			-- Override the main options
+			OverrideGetSet(ElementOptSet.args, {})
+			-- Add dynamic text elements for status bars
+			UF.Options:AddDynamicText('nameplate', ElementOptSet, elementName)
+		elseif elementName == 'Runes' then
+			-- Use shared Runes element Options function
+			UF.Elements:Options('Runes', 'nameplate', ElementOptSet)
+			OverrideGetSet(ElementOptSet.args, {})
+		elseif elementName == 'ClassPower' then
+			-- Use shared ClassPower element Options function  
+			UF.Elements:Options('ClassPower', 'nameplate', ElementOptSet)
+			OverrideGetSet(ElementOptSet.args, {})
+		elseif elementName == 'ClassIcon' then
+			-- Use shared ClassIcon element Options function
+			UF.Elements:Options('ClassIcon', 'nameplate', ElementOptSet)
+			OverrideGetSet(ElementOptSet.args, {})
+		elseif elementName == 'PVPIndicator' then
+			-- Use shared PVPIndicator element Options function
+			UF.Elements:Options('PVPIndicator', 'nameplate', ElementOptSet)
+			OverrideGetSet(ElementOptSet.args, {})
+		elseif elementName == 'PvPRoleIndicator' then
+			-- Use shared PvPRoleIndicator element Options function
+			UF.Elements:Options('PvPRoleIndicator', 'nameplate', ElementOptSet)
+			OverrideGetSet(ElementOptSet.args, {})
+		elseif elementName == 'QuestMob' then
+			-- Use shared QuestMob element Options function
+			UF.Elements:Options('QuestMob', 'nameplate', ElementOptSet)
+			OverrideGetSet(ElementOptSet.args, {})
+		elseif elementName == 'WidgetXPBar' then
+			-- Use shared WidgetXPBar element Options function
+			UF.Elements:Options('WidgetXPBar', 'nameplate', ElementOptSet)
+			OverrideGetSet(ElementOptSet.args, {})
+		end
+
+		-- Add element-specific options that aren't covered by shared system
+		if elementName == 'Castbar' then
+			ElementOptSet.args.FlashOnInterruptible = {
 				name = L['Flash on interruptible cast'] or 'Flash on interruptible cast',
 				type = 'toggle',
 				width = 'double',
