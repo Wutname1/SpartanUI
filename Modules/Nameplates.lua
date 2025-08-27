@@ -894,166 +894,6 @@ function module:BuildOptions()
 		},
 	}
 
-	-- ---@type AceConfig.OptionsTable
-	-- local OptSet = {
-	-- 	args = {
-	-- 		Indicator = {
-	-- 			name = L['Indicators'],
-	-- 			type = 'group',
-	-- 			order = 20,
-	-- 			childGroups = 'tree',
-	-- 			args = {
-	-- 				Name = {
-	-- 					name = L['Name'],
-	-- 					type = 'group',
-	-- 					order = 1,
-	-- 					args = {
-	-- 						ShowLevel = {
-	-- 							name = L['Show level'],
-	-- 							type = 'toggle',
-	-- 							order = 1,
-	-- 							get = function(info)
-	-- 								return module.DB.ShowLevel
-	-- 							end,
-	-- 							set = function(info, val)
-	-- 								module.DB.ShowLevel = val
-	-- 							end
-	-- 						},
-	-- 						ShowName = {
-	-- 							name = L['Show name'],
-	-- 							type = 'toggle',
-	-- 							order = 2,
-	-- 							get = function(info)
-	-- 								return module.DB.elements.Name.enabled
-	-- 							end,
-	-- 							set = function(info, val)
-	-- 								--Update the DB
-	-- 								module.DB.elements.Name.enabled = val
-	-- 							end
-	-- 						},
-	-- 						JustifyH = {
-	-- 							name = L['Horizontal alignment'],
-	-- 							type = 'select',
-	-- 							order = 3,
-	-- 							values = {
-	-- 								['LEFT'] = 'Left',
-	-- 								['CENTER'] = 'Center',
-	-- 								['RIGHT'] = 'Right'
-	-- 							},
-	-- 							get = function(info)
-	-- 								return module.DB.elements.Name.SetJustifyH
-	-- 							end,
-	-- 							set = function(info, val)
-	-- 								--Update the DB
-	-- 								module.DB.elements.Name.SetJustifyH = val
-	-- 								--Update the screen
-	-- 								-- module.frames[frameName][key]:SetJustifyH(val)
-	-- 							end
-	-- 						}
-	-- 					}
-	-- 				},
-	-- 				Auras = {
-	-- 					name = L['Auras'],
-	-- 					type = 'group',
-	-- 					args = {
-	-- 						enabled = {
-	-- 							name = L['Enabled'],
-	-- 							type = 'toggle',
-	-- 							order = 1,
-	-- 							width = 'double',
-	-- 							get = function(info)
-	-- 								return module.DB.elements.Auras.enabled
-	-- 							end,
-	-- 							set = function(info, val)
-	-- 								module.DB.elements.Auras.enabled = val
-	-- 								module:UpdateNameplates()
-	-- 							end
-	-- 						},
-	-- 						onlyShowPlayer = {
-	-- 							name = L['Show only auras created by player'],
-	-- 							type = 'toggle',
-	-- 							order = 2,
-	-- 							width = 'double',
-	-- 							get = function(info)
-	-- 								return module.DB.onlyShowPlayer
-	-- 							end,
-	-- 							set = function(info, val)
-	-- 								module.DB.onlyShowPlayer = val
-	-- 								module:UpdateNameplates()
-	-- 							end
-	-- 						},
-	-- 						showStealableBuffs = {
-	-- 							name = L['Show Stealable/Dispellable buffs'],
-	-- 							type = 'toggle',
-	-- 							order = 3,
-	-- 							width = 'double',
-	-- 							get = function(info)
-	-- 								return module.DB.showStealableBuffs
-	-- 							end,
-	-- 							set = function(info, val)
-	-- 								module.DB.showStealableBuffs = val
-	-- 								module:UpdateNameplates()
-	-- 							end
-	-- 						},
-	-- 						notice = {
-	-- 							name = L['With both of these options active your DOTs will not appear on enemies.'],
-	-- 							type = 'description',
-	-- 							order = 4,
-	-- 							fontSize = 'small'
-	-- 						}
-	-- 					}
-	-- 				},
-	-- 				XPBar = {
-	-- 					name = L['XP Bar'],
-	-- 					type = 'group',
-	-- 					args = {
-	-- 						enabled = {
-	-- 							name = L['Enabled'],
-	-- 							type = 'toggle',
-	-- 							width = 'full',
-	-- 							order = 1,
-	-- 							get = function(info)
-	-- 								return module.DB.elements.XPBar.enabled
-	-- 							end,
-	-- 							set = function(info, val)
-	-- 								module.DB.elements.XPBar.enabled = val
-	-- 							end
-	-- 						},
-	-- 						size = {
-	-- 							name = L['Size'],
-	-- 							type = 'range',
-	-- 							order = 2,
-	-- 							min = 1,
-	-- 							max = 30,
-	-- 							step = 1,
-	-- 							get = function(info)
-	-- 								return module.DB.elements.XPBar.size
-	-- 							end,
-	-- 							set = function(info, val)
-	-- 								module.DB.elements.XPBar.size = val
-	-- 							end
-	-- 						},
-	-- 						Offset = {
-	-- 							name = L['Offset'],
-	-- 							type = 'range',
-	-- 							order = 3,
-	-- 							min = -30,
-	-- 							max = 30,
-	-- 							step = .5,
-	-- 							get = function(info)
-	-- 								return module.DB.elements.XPBar.Offset
-	-- 							end,
-	-- 							set = function(info, val)
-	-- 								module.DB.elements.XPBar.Offset = val
-	-- 							end
-	-- 						}
-	-- 					}
-	-- 				}
-	-- 			}
-	-- 		},
-	-- 	}
-	-- }
-
 	for _, elementName in ipairs(ElementList) do
 		local config = UF.Elements:GetConfig(elementName).config
 
@@ -1108,18 +948,6 @@ function module:BuildOptions()
 			--TODO
 		end
 
-		-- local Opt = OptSet.args[config.type].args[elementName]
-		-- if Opt then
-		-- 	if config.type == 'StatusBar' then
-		-- 		-- SUI.UF.Options:StatusBarDefaults('Nameplate', Opt, elementName)
-		-- 	elseif config.type == 'Indicator' then
-		-- 		SUI.UF.Options:IndicatorAddDisplay(Opt)
-		-- 		SUI.UF.Options:AddPositioning(ElementList, Opt, PositionGet, PositionSet)
-		-- 	end
-		-- else
-		-- 	print(elementName)
-		-- end
-
 		-- Helper function to override get/set functions recursively
 		local function OverrideGetSet(optTable, path)
 			for key, option in pairs(optTable) do
@@ -1142,8 +970,8 @@ function module:BuildOptions()
 							end
 						end
 					end
-					
-					-- Override set function  
+
+					-- Override set function
 					if option.set then
 						option.set = function(info, val, ...)
 							local setting = ElementSettings
@@ -1152,7 +980,7 @@ function module:BuildOptions()
 								setting = setting[pathKey]
 								userSetting = userSetting[pathKey]
 							end
-							
+
 							if option.type == 'color' then
 								setting[info[#info]] = {val, ...}
 								userSetting[info[#info]] = {val, ...}
@@ -1169,11 +997,11 @@ function module:BuildOptions()
 
 		--Add element-specific options using shared system where available
 		if elementName == 'Name' then
-			-- Use shared Name element Options function 
+			-- Use shared Name element Options function
 			UF.Elements:Options('Name', 'nameplate', ElementOptSet)
 			-- Override get/set functions for nameplate settings structure
 			OverrideGetSet(ElementOptSet.args, {})
-			
+
 			-- Add nameplate-specific text format option
 			ElementOptSet.args.text = {
 				name = L['Text'] or 'Text',
@@ -1203,7 +1031,7 @@ function module:BuildOptions()
 			UF.Elements:Options('Runes', 'nameplate', ElementOptSet)
 			OverrideGetSet(ElementOptSet.args, {})
 		elseif elementName == 'ClassPower' then
-			-- Use shared ClassPower element Options function  
+			-- Use shared ClassPower element Options function
 			UF.Elements:Options('ClassPower', 'nameplate', ElementOptSet)
 			OverrideGetSet(ElementOptSet.args, {})
 		elseif elementName == 'ClassIcon' then
@@ -1280,7 +1108,6 @@ function module:BuildOptions()
 					module:UpdateNameplates()
 				end,
 			}
-			end
 		end
 
 		if not ElementOptSet.args.enabled then
