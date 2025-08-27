@@ -39,6 +39,7 @@ local ElementList = {
 	'PvPRoleIndicator',
 	'Name',
 	'Runes',
+	'ClassPower',
 }
 ---@type table<SUI.UF.Elements.list, SUI.UF.Elements.Settings>
 local ElementDefaults = {
@@ -57,6 +58,19 @@ local ElementDefaults = {
 	Runes = {
 		enabled = true,
 		texture = 'SpartanUI Default',
+	},
+	ClassPower = {
+		enabled = true,
+		width = 16,
+		height = 6,
+		texture = 'SpartanUI Default',
+		position = {
+			anchor = 'TOPLEFT',
+			relativeTo = 'Frame', 
+			relativePoint = 'BOTTOMLEFT',
+			x = 0,
+			y = -2,
+		},
 	},
 	Health = {
 		enabled = true,
@@ -207,30 +221,7 @@ local PlayerPowerIcons = function(frame, attachPoint)
 			DeathKnightResourceOverlayFrame:Hide()
 		end)
 	else
-		frame.ComboPoints = frame:CreateFontString(nil, 'BORDER')
-		frame.ComboPoints:SetPoint('TOPLEFT', frame[attachPoint], 'BOTTOMLEFT', 0, -2)
-		local MaxPower, ClassPower = 5, {}
-
-		if select(2, UnitClass('player')) == 'MONK' then MaxPower = 6 end
-
-		for index = 1, MaxPower do
-			local Bar = CreateFrame('StatusBar', nil, frame)
-			Bar:SetStatusBarTexture('Interface\\AddOns\\SpartanUI\\images\\statusbars\\Smoothv2')
-
-			-- Position and size.
-			Bar:SetSize(((frame.Health:GetWidth() - 10) / MaxPower), 6)
-			if index == 1 then
-				Bar:SetPoint('TOPLEFT', frame.ComboPoints, 'TOPLEFT')
-			else
-				Bar:SetPoint('LEFT', ClassPower[index - 1], 'RIGHT', 2, 0)
-			end
-			Bar:Hide()
-
-			ClassPower[index] = Bar
-		end
-
-		-- Register with oUF
-		frame.ClassPower = ClassPower
+		BuildElement(frame, 'ClassPower')
 	end
 end
 
