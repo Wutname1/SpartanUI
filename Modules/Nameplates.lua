@@ -1138,15 +1138,64 @@ function module:BuildOptions()
 					module:UpdateNameplates()
 				end,
 			}
-		elseif elementName == 'Health' then
-			Options:StatusBarDefaults('Nameplates', ElementOptSet, elementName, ElementSettings, UserSetting, function() module:UpdateNameplates() end)
-		elseif elementName == 'Power' then
-			Options:StatusBarDefaults('Nameplates', ElementOptSet, elementName, ElementSettings, UserSetting, function() module:UpdateNameplates() end)
-		elseif elementName == 'Castbar' then
-			Options:StatusBarDefaults('Nameplates', ElementOptSet, elementName, ElementSettings, UserSetting, function() module:UpdateNameplates() end)
+		elseif elementName == 'Health' or elementName == 'Power' or elementName == 'Castbar' then
+			-- Add status bar options (texture, colors, background)
+			ElementOptSet.args.texture = {
+				type = 'select',
+				dialogControl = 'LSM30_Statusbar',
+				order = 2,
+				width = 'double',
+				name = L['Bar Texture'] or 'Bar Texture',
+				desc = L['Select the texture used for the status bar'] or 'Select the texture used for the status bar',
+				values = AceGUIWidgetLSMlists.statusbar,
+				get = function() return ElementSettings.texture end,
+				set = function(_, val)
+					ElementSettings.texture = val
+					UserSetting.texture = val
+					module:UpdateNameplates()
+				end,
+			}
 			
-			-- Add castbar-specific options
-			ElementOptSet.args.FlashOnInterruptible = {
+			-- Background options
+			ElementOptSet.args.background = {
+				name = L['Background'] or 'Background',
+				type = 'group',
+				inline = true,
+				order = 20,
+				args = {
+					enabled = {
+						name = L['Enabled'] or 'Enabled',
+						type = 'toggle',
+						order = 1,
+						get = function() return ElementSettings.bg.enabled end,
+						set = function(_, val)
+							ElementSettings.bg.enabled = val
+							UserSetting.bg.enabled = val
+							module:UpdateNameplates()
+						end,
+					},
+					color = {
+						name = L['Background Color'] or 'Background Color',
+						type = 'color',
+						hasAlpha = true,
+						order = 2,
+						disabled = function() return not ElementSettings.bg.enabled end,
+						get = function() 
+							local color = ElementSettings.bg.color or {0, 0, 0, 0.2}
+							return color[1], color[2], color[3], color[4]
+						end,
+						set = function(_, r, g, b, a)
+							ElementSettings.bg.color = {r, g, b, a}
+							UserSetting.bg.color = {r, g, b, a}
+							module:UpdateNameplates()
+						end,
+					},
+				},
+			}
+			
+			-- Add castbar-specific options only for Castbar element
+			if elementName == 'Castbar' then
+				ElementOptSet.args.FlashOnInterruptible = {
 				name = L['Flash on interruptible cast'] or 'Flash on interruptible cast',
 				type = 'toggle',
 				width = 'double',
@@ -1196,6 +1245,7 @@ function module:BuildOptions()
 					module:UpdateNameplates()
 				end,
 			}
+			end
 		end
 
 		if not ElementOptSet.args.enabled then
