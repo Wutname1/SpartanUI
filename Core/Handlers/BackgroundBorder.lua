@@ -1,5 +1,5 @@
 ---@class SUI.Handlers.BackgroundBorder
-local Handler = SUI:NewHandler('BackgroundBorder')
+local Handler = SUI:NewModule('Handler.BackgroundBorder')
 
 Handler.instances = {}
 
@@ -9,7 +9,7 @@ Handler.instances = {}
 ---@field background SUI.BackgroundBorder.Background
 ---@field border SUI.BackgroundBorder.Border
 
----@class SUI.BackgroundBorder.Background  
+---@class SUI.BackgroundBorder.Background
 ---@field enabled boolean
 ---@field type 'color'|'texture' Background type
 ---@field color table {r, g, b, a} Background color
@@ -32,22 +32,22 @@ Handler.DefaultSettings = {
 	background = {
 		enabled = true,
 		type = 'color',
-		color = {0.1, 0.1, 0.1, 0.8},
+		color = { 0.1, 0.1, 0.1, 0.8 },
 		texture = 'Interface\\Buttons\\WHITE8X8',
 		alpha = 0.8,
 		classColor = false,
 	},
 	border = {
 		enabled = false,
-		sides = {top = true, bottom = true, left = true, right = true},
+		sides = { top = true, bottom = true, left = true, right = true },
 		size = 1,
 		colors = {
-			top = {1, 1, 1, 1},
-			bottom = {1, 1, 1, 1},
-			left = {1, 1, 1, 1},
-			right = {1, 1, 1, 1},
+			top = { 1, 1, 1, 1 },
+			bottom = { 1, 1, 1, 1 },
+			left = { 1, 1, 1, 1 },
+			right = { 1, 1, 1, 1 },
 		},
-		classColors = {top = false, bottom = false, left = false, right = false},
+		classColors = { top = false, bottom = false, left = false, right = false },
 	},
 }
 
@@ -57,9 +57,7 @@ Handler.DefaultSettings = {
 ---@param settings? SUI.BackgroundBorder.Settings Configuration settings
 ---@return SUI.BackgroundBorder.Instance
 function Handler:Create(parent, id, settings)
-	if self.instances[id] then
-		self:Destroy(id)
-	end
+	if self.instances[id] then self:Destroy(id) end
 
 	settings = SUI:MergeData(SUI:CopyData(self.DefaultSettings), settings or {})
 
@@ -83,7 +81,7 @@ function Handler:Create(parent, id, settings)
 	instance.background.texture:SetAllPoints(instance.background)
 
 	-- Create border frames for each side
-	for _, side in ipairs({'top', 'bottom', 'left', 'right'}) do
+	for _, side in ipairs({ 'top', 'bottom', 'left', 'right' }) do
 		local border = CreateFrame('Frame', id .. '_Border_' .. side, parent)
 		border:SetFrameLevel(parent:GetFrameLevel() + settings.displayLevel + 1)
 		border.texture = border:CreateTexture(nil, 'BORDER')
@@ -94,7 +92,7 @@ function Handler:Create(parent, id, settings)
 
 	self.instances[id] = instance
 	self:Update(id)
-	
+
 	return instance
 end
 
@@ -106,9 +104,7 @@ function Handler:Update(id, settings)
 	if not instance then return end
 
 	-- Merge new settings if provided
-	if settings then
-		instance.settings = SUI:MergeData(instance.settings, settings)
-	end
+	if settings then instance.settings = SUI:MergeData(instance.settings, settings) end
 
 	local config = instance.settings
 
@@ -148,9 +144,7 @@ function Handler:UpdateBackground(id)
 			local texturePath = bg.texture
 			-- Try to get from LibSharedMedia if it's a key
 			local LSM = SUI.Lib.LSM
-			if LSM and LSM:Fetch('background', texturePath, true) then
-				texturePath = LSM:Fetch('background', texturePath)
-			end
+			if LSM and LSM:Fetch('background', texturePath, true) then texturePath = LSM:Fetch('background', texturePath) end
 			texture:SetTexture(texturePath)
 			texture:SetVertexColor(1, 1, 1, bg.alpha)
 		else
@@ -169,13 +163,13 @@ function Handler:UpdateBackground(id)
 end
 
 ---Update border appearance
----@param id string Instance identifier  
+---@param id string Instance identifier
 function Handler:UpdateBorders(id)
 	local instance = self.instances[id]
 	if not instance then return end
 
 	local border = instance.settings.border
-	
+
 	if not border.enabled then
 		for _, borderFrame in pairs(instance.borders) do
 			borderFrame:Hide()
@@ -184,12 +178,12 @@ function Handler:UpdateBorders(id)
 	end
 
 	-- Position and show enabled border sides
-	for _, side in ipairs({'top', 'bottom', 'left', 'right'}) do
+	for _, side in ipairs({ 'top', 'bottom', 'left', 'right' }) do
 		local borderFrame = instance.borders[side]
-		
+
 		if border.sides[side] then
 			borderFrame:Show()
-			
+
 			-- Position the border
 			borderFrame:ClearAllPoints()
 			if side == 'top' then
@@ -230,7 +224,7 @@ end
 function Handler:SetVisible(id, visible)
 	local instance = self.instances[id]
 	if not instance then return end
-	
+
 	instance.visible = visible
 	self:Update(id)
 end
@@ -265,7 +259,7 @@ function Handler:GetSettings(id)
 end
 
 ---Generate options table for AceConfig integration
----@param id string Instance identifier 
+---@param id string Instance identifier
 ---@param getFunc function Function to get current settings
 ---@param setFunc function Function to save settings changes
 ---@param updateFunc function Function to call after changes
@@ -283,8 +277,10 @@ function Handler:GenerateOptions(id, getFunc, setFunc, updateFunc)
 				name = L['Enable'] or 'Enable',
 				desc = L['Enable background and border system'] or 'Enable background and border system',
 				order = 1,
-				get = function() return getFunc().enabled end,
-				set = function(_, val) 
+				get = function()
+					return getFunc().enabled
+				end,
+				set = function(_, val)
 					local settings = getFunc()
 					settings.enabled = val
 					setFunc(settings)
@@ -293,13 +289,15 @@ function Handler:GenerateOptions(id, getFunc, setFunc, updateFunc)
 			},
 			displayLevel = {
 				type = 'range',
-				name = L['Display Level'] or 'Display Level', 
+				name = L['Display Level'] or 'Display Level',
 				desc = L['Frame level relative to parent (negative = below art, positive = above art)'] or 'Frame level relative to parent (negative = below art, positive = above art)',
 				order = 2,
 				min = -10,
 				max = 10,
 				step = 1,
-				get = function() return getFunc().displayLevel end,
+				get = function()
+					return getFunc().displayLevel
+				end,
 				set = function(_, val)
 					local settings = getFunc()
 					settings.displayLevel = val
@@ -317,7 +315,9 @@ function Handler:GenerateOptions(id, getFunc, setFunc, updateFunc)
 						type = 'toggle',
 						name = L['Enable Background'] or 'Enable Background',
 						order = 1,
-						get = function() return getFunc().background.enabled end,
+						get = function()
+							return getFunc().background.enabled
+						end,
 						set = function(_, val)
 							local settings = getFunc()
 							settings.background.enabled = val
@@ -333,8 +333,12 @@ function Handler:GenerateOptions(id, getFunc, setFunc, updateFunc)
 							color = L['Solid Color'] or 'Solid Color',
 							texture = L['Texture'] or 'Texture',
 						},
-						disabled = function() return not getFunc().background.enabled end,
-						get = function() return getFunc().background.type end,
+						disabled = function()
+							return not getFunc().background.enabled
+						end,
+						get = function()
+							return getFunc().background.type
+						end,
 						set = function(_, val)
 							local settings = getFunc()
 							settings.background.type = val
@@ -347,17 +351,17 @@ function Handler:GenerateOptions(id, getFunc, setFunc, updateFunc)
 						name = L['Background Color'] or 'Background Color',
 						order = 3,
 						hasAlpha = true,
-						disabled = function() 
+						disabled = function()
 							local bg = getFunc().background
 							return not bg.enabled or bg.type ~= 'color' or bg.classColor
 						end,
-						get = function() 
+						get = function()
 							local color = getFunc().background.color
 							return unpack(color)
 						end,
 						set = function(_, r, g, b, a)
 							local settings = getFunc()
-							settings.background.color = {r, g, b, a}
+							settings.background.color = { r, g, b, a }
 							setFunc(settings)
 							if updateFunc then updateFunc() end
 						end,
@@ -366,11 +370,13 @@ function Handler:GenerateOptions(id, getFunc, setFunc, updateFunc)
 						type = 'toggle',
 						name = L['Use Class Color'] or 'Use Class Color',
 						order = 4,
-						disabled = function() 
+						disabled = function()
 							local bg = getFunc().background
 							return not bg.enabled or bg.type ~= 'color'
 						end,
-						get = function() return getFunc().background.classColor end,
+						get = function()
+							return getFunc().background.classColor
+						end,
 						set = function(_, val)
 							local settings = getFunc()
 							settings.background.classColor = val
@@ -381,7 +387,7 @@ function Handler:GenerateOptions(id, getFunc, setFunc, updateFunc)
 					texture = {
 						type = 'select',
 						dialogControl = 'LSM30_Background',
-						name = L['Background Texture'] or 'Background Texture', 
+						name = L['Background Texture'] or 'Background Texture',
 						order = 5,
 						values = function()
 							local LSM = SUI.Lib.LSM
@@ -391,7 +397,9 @@ function Handler:GenerateOptions(id, getFunc, setFunc, updateFunc)
 							local bg = getFunc().background
 							return not bg.enabled or bg.type ~= 'texture'
 						end,
-						get = function() return getFunc().background.texture end,
+						get = function()
+							return getFunc().background.texture
+						end,
 						set = function(_, val)
 							local settings = getFunc()
 							settings.background.texture = val
@@ -406,8 +414,12 @@ function Handler:GenerateOptions(id, getFunc, setFunc, updateFunc)
 						min = 0,
 						max = 1,
 						step = 0.01,
-						disabled = function() return not getFunc().background.enabled end,
-						get = function() return getFunc().background.alpha end,
+						disabled = function()
+							return not getFunc().background.enabled
+						end,
+						get = function()
+							return getFunc().background.alpha
+						end,
 						set = function(_, val)
 							local settings = getFunc()
 							settings.background.alpha = val
@@ -427,7 +439,9 @@ function Handler:GenerateOptions(id, getFunc, setFunc, updateFunc)
 						type = 'toggle',
 						name = L['Enable Border'] or 'Enable Border',
 						order = 1,
-						get = function() return getFunc().border.enabled end,
+						get = function()
+							return getFunc().border.enabled
+						end,
 						set = function(_, val)
 							local settings = getFunc()
 							settings.border.enabled = val
@@ -442,8 +456,12 @@ function Handler:GenerateOptions(id, getFunc, setFunc, updateFunc)
 						min = 1,
 						max = 10,
 						step = 1,
-						disabled = function() return not getFunc().border.enabled end,
-						get = function() return getFunc().border.size end,
+						disabled = function()
+							return not getFunc().border.enabled
+						end,
+						get = function()
+							return getFunc().border.size
+						end,
 						set = function(_, val)
 							local settings = getFunc()
 							settings.border.size = val
@@ -457,12 +475,16 @@ function Handler:GenerateOptions(id, getFunc, setFunc, updateFunc)
 						order = 3,
 						values = {
 							top = L['Top'] or 'Top',
-							bottom = L['Bottom'] or 'Bottom', 
+							bottom = L['Bottom'] or 'Bottom',
 							left = L['Left'] or 'Left',
 							right = L['Right'] or 'Right',
 						},
-						disabled = function() return not getFunc().border.enabled end,
-						get = function(_, key) return getFunc().border.sides[key] end,
+						disabled = function()
+							return not getFunc().border.enabled
+						end,
+						get = function(_, key)
+							return getFunc().border.sides[key]
+						end,
 						set = function(_, key, val)
 							local settings = getFunc()
 							settings.border.sides[key] = val
@@ -475,7 +497,9 @@ function Handler:GenerateOptions(id, getFunc, setFunc, updateFunc)
 						name = L['Border Colors'] or 'Border Colors',
 						order = 10,
 						inline = true,
-						disabled = function() return not getFunc().border.enabled end,
+						disabled = function()
+							return not getFunc().border.enabled
+						end,
 						args = {},
 					},
 					classColors = {
@@ -483,7 +507,9 @@ function Handler:GenerateOptions(id, getFunc, setFunc, updateFunc)
 						name = L['Use Class Color'] or 'Use Class Color',
 						order = 20,
 						inline = true,
-						disabled = function() return not getFunc().border.enabled end,
+						disabled = function()
+							return not getFunc().border.enabled
+						end,
 						args = {},
 					},
 				},
@@ -495,15 +521,15 @@ end
 ---Generate border color and class color options for each side
 ---@param options AceConfig.OptionsTable Base options table from GenerateOptions
 ---@param getFunc function Function to get current settings
----@param setFunc function Function to save settings changes  
+---@param setFunc function Function to save settings changes
 ---@param updateFunc function Function to call after changes
 function Handler:AddBorderSideOptions(options, getFunc, setFunc, updateFunc)
 	local L = SUI.L
-	local sides = {'top', 'bottom', 'left', 'right'}
+	local sides = { 'top', 'bottom', 'left', 'right' }
 	local sideNames = {
 		top = L['Top'] or 'Top',
 		bottom = L['Bottom'] or 'Bottom',
-		left = L['Left'] or 'Left', 
+		left = L['Left'] or 'Left',
 		right = L['Right'] or 'Right',
 	}
 
@@ -519,12 +545,12 @@ function Handler:AddBorderSideOptions(options, getFunc, setFunc, updateFunc)
 				return not settings.border.enabled or not settings.border.sides[side] or settings.border.classColors[side]
 			end,
 			get = function()
-				local color = getFunc().border.colors[side] or {1, 1, 1, 1}
+				local color = getFunc().border.colors[side] or { 1, 1, 1, 1 }
 				return unpack(color)
 			end,
 			set = function(_, r, g, b, a)
 				local settings = getFunc()
-				settings.border.colors[side] = {r, g, b, a}
+				settings.border.colors[side] = { r, g, b, a }
 				setFunc(settings)
 				if updateFunc then updateFunc() end
 			end,
@@ -532,14 +558,16 @@ function Handler:AddBorderSideOptions(options, getFunc, setFunc, updateFunc)
 
 		-- Add class color toggle for each side
 		options.args.border.args.classColors.args[side] = {
-			type = 'toggle', 
+			type = 'toggle',
 			name = sideNames[side],
 			order = i,
 			disabled = function()
 				local settings = getFunc()
 				return not settings.border.enabled or not settings.border.sides[side]
 			end,
-			get = function() return getFunc().border.classColors[side] end,
+			get = function()
+				return getFunc().border.classColors[side]
+			end,
 			set = function(_, val)
 				local settings = getFunc()
 				settings.border.classColors[side] = val
@@ -556,7 +584,7 @@ end
 ---@param id string Instance identifier
 ---@param getFunc function Function to get current settings
 ---@param setFunc function Function to save settings changes
----@param updateFunc function Function to call after changes  
+---@param updateFunc function Function to call after changes
 ---@return AceConfig.OptionsTable Complete options table
 function Handler:GenerateCompleteOptions(id, getFunc, setFunc, updateFunc)
 	local options = self:GenerateOptions(id, getFunc, setFunc, updateFunc)
@@ -573,7 +601,7 @@ function Handler:SetupUnitFrame(frame, frameName, settings)
 	return self:Create(frame, id, settings)
 end
 
----Convenience method: Quick setup for nameplates  
+---Convenience method: Quick setup for nameplates
 ---@param frame Frame Nameplate frame
 ---@param settings? SUI.BackgroundBorder.Settings Initial settings
 ---@return SUI.BackgroundBorder.Instance
@@ -597,9 +625,9 @@ end
 ---@param alpha? number Override alpha value
 ---@return SUI.BackgroundBorder.Settings
 function Handler:CreateColorBackground(color, alpha)
-	color = color or {0.1, 0.1, 0.1, 0.8}
+	color = color or { 0.1, 0.1, 0.1, 0.8 }
 	alpha = alpha or color[4] or 0.8
-	
+
 	return {
 		enabled = true,
 		displayLevel = 0,
@@ -622,8 +650,8 @@ end
 ---@param borderSize? number Border thickness
 ---@return SUI.BackgroundBorder.Settings
 function Handler:CreateBackgroundWithBorder(backgroundColor, borderColor, borderSize)
-	backgroundColor = backgroundColor or {0.1, 0.1, 0.1, 0.8}
-	borderColor = borderColor or {1, 1, 1, 1}
+	backgroundColor = backgroundColor or { 0.1, 0.1, 0.1, 0.8 }
+	borderColor = borderColor or { 1, 1, 1, 1 }
 	borderSize = borderSize or 1
 
 	return {
@@ -638,7 +666,7 @@ function Handler:CreateBackgroundWithBorder(backgroundColor, borderColor, border
 		},
 		border = {
 			enabled = true,
-			sides = {top = true, bottom = true, left = true, right = true},
+			sides = { top = true, bottom = true, left = true, right = true },
 			size = borderSize,
 			colors = {
 				top = borderColor,
@@ -646,7 +674,7 @@ function Handler:CreateBackgroundWithBorder(backgroundColor, borderColor, border
 				left = borderColor,
 				right = borderColor,
 			},
-			classColors = {top = false, bottom = false, left = false, right = false},
+			classColors = { top = false, bottom = false, left = false, right = false },
 		},
 	}
 end
@@ -657,26 +685,26 @@ end
 ---@return SUI.BackgroundBorder.Settings
 function Handler:CreateClassColoredBackground(useClassBorder, alpha)
 	alpha = alpha or 0.8
-	
+
 	return {
 		enabled = true,
 		displayLevel = 0,
 		background = {
 			enabled = true,
 			type = 'color',
-			color = {1, 1, 1, alpha}, -- Will be overridden by class color
+			color = { 1, 1, 1, alpha }, -- Will be overridden by class color
 			alpha = alpha,
 			classColor = true,
 		},
 		border = {
 			enabled = useClassBorder or false,
-			sides = {top = true, bottom = true, left = true, right = true},
+			sides = { top = true, bottom = true, left = true, right = true },
 			size = 1,
 			colors = {
-				top = {1, 1, 1, 1},
-				bottom = {1, 1, 1, 1},
-				left = {1, 1, 1, 1},
-				right = {1, 1, 1, 1},
+				top = { 1, 1, 1, 1 },
+				bottom = { 1, 1, 1, 1 },
+				left = { 1, 1, 1, 1 },
+				right = { 1, 1, 1, 1 },
 			},
 			classColors = {
 				top = useClassBorder or false,
@@ -697,7 +725,7 @@ function Handler:UpdateMultiple(ids, settings)
 	end
 end
 
----Convenience method: Mass destroy multiple instances  
+---Convenience method: Mass destroy multiple instances
 ---@param ids table Array of instance IDs
 function Handler:DestroyMultiple(ids)
 	for _, id in ipairs(ids) do
@@ -711,9 +739,7 @@ end
 function Handler:GetInstancesByPrefix(prefix)
 	local matches = {}
 	for id, _ in pairs(self.instances) do
-		if id:match('^' .. prefix) then
-			table.insert(matches, id)
-		end
+		if id:match('^' .. prefix) then table.insert(matches, id) end
 	end
 	return matches
 end

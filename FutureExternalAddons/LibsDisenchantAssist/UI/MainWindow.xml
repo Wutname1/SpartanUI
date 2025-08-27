@@ -15,7 +15,7 @@
             <Button name="$parentTitleBar" enableMouse="true">
                 <Size x="418" y="32"/>
                 <Anchors>
-                    <Anchor point="TOP" y="-5"/>
+                    <Anchor point="TOP" y="0"/>
                 </Anchors>
                 <Scripts>
                     <OnMouseDown>
@@ -153,7 +153,7 @@
                         <Anchor point="TOP" y="-16"/>
                     </Anchors>
                 </FontString>
-                
+
                 <!-- Item Count Display -->
                 <FontString name="$parentItemCount" inherits="GameFontHighlight">
                     <Anchors>
