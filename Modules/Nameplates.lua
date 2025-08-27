@@ -1121,8 +1121,25 @@ function module:BuildOptions()
 		-- 	print(elementName)
 		-- end
 
-		--Call Elements Custom function
-		-- UF.Elements:Options('Nameplates', elementName, ElementOptSet, ElementSettings)
+		--Add nameplate-specific options for elements that need them
+		if elementName == 'Name' then
+			ElementOptSet.args.text = {
+				name = L['Text'] or 'Text',
+				type = 'input',
+				width = 'full',
+				multiline = true,
+				order = 10,
+				desc = 'Text format for nameplate names. Use [difficulty][level] [SUI_ColorClass][name] or custom format.',
+				get = function()
+					return ElementSettings.text or '[difficulty][level] [SUI_ColorClass][name]'
+				end,
+				set = function(_, val)
+					ElementSettings.text = val
+					UserSetting.text = val
+					module:UpdateNameplates()
+				end,
+			}
+		end
 
 		if not ElementOptSet.args.enabled then
 			--Add a disable check to all args
