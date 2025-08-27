@@ -38,6 +38,7 @@ local ElementList = {
 	'ThreatIndicator',
 	'PvPRoleIndicator',
 	'Name',
+	'Runes',
 }
 ---@type table<SUI.UF.Elements.list, SUI.UF.Elements.Settings>
 local ElementDefaults = {
@@ -52,6 +53,10 @@ local ElementDefaults = {
 			x = 0,
 			y = 0,
 		},
+	},
+	Runes = {
+		enabled = true,
+		texture = 'SpartanUI Default',
 	},
 	Health = {
 		enabled = true,
@@ -196,32 +201,11 @@ end
 local PlayerPowerIcons = function(frame, attachPoint)
 	--Runes
 	if select(2, UnitClass('player')) == 'DEATHKNIGHT' then
-		frame.Runes = {}
-		frame.Runes.colorSpec = true
-
-		for i = 1, 6 do
-			frame.Runes[i] = CreateFrame('StatusBar', frame:GetName() .. '_Runes' .. i, frame)
-			frame.Runes[i]:SetSize((frame.Health:GetWidth() - 10) / 6, 4)
-			if i == 1 then
-				frame.Runes[i]:SetPoint('TOPLEFT', frame[attachPoint], 'BOTTOMLEFT', 0, 0)
-			else
-				frame.Runes[i]:SetPoint('TOPLEFT', frame.Runes[i - 1], 'TOPRIGHT', 2, 0)
-			end
-			frame.Runes[i]:SetStatusBarTexture('Interface\\AddOns\\SpartanUI\\images\\statusbars\\Smoothv2')
-			frame.Runes[i]:SetStatusBarColor(0, 0.39, 0.63, 1)
-
-			frame.Runes[i].bg = frame.Runes[i]:CreateTexture(nil, 'BORDER')
-			frame.Runes[i].bg:SetPoint('TOPLEFT', frame.Runes[i], 'TOPLEFT', -0, 0)
-			frame.Runes[i].bg:SetPoint('BOTTOMRIGHT', frame.Runes[i], 'BOTTOMRIGHT', 0, -0)
-			frame.Runes[i].bg:SetTexture('Interface\\AddOns\\SpartanUI\\images\\statusbars\\Smoothv2')
-			frame.Runes[i].bg:SetVertexColor(0, 0, 0, 1)
-			frame.Runes[i].bg.multiplier = 0.64
-			frame.Runes[i]:Hide()
-
-			DeathKnightResourceOverlayFrame:HookScript('OnShow', function()
-				DeathKnightResourceOverlayFrame:Hide()
-			end)
-		end
+		BuildElement(frame, 'Runes')
+		
+		DeathKnightResourceOverlayFrame:HookScript('OnShow', function()
+			DeathKnightResourceOverlayFrame:Hide()
+		end)
 	else
 		frame.ComboPoints = frame:CreateFontString(nil, 'BORDER')
 		frame.ComboPoints:SetPoint('TOPLEFT', frame[attachPoint], 'BOTTOMLEFT', 0, -2)
