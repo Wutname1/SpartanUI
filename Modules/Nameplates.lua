@@ -66,7 +66,7 @@ local ElementDefaults = {
 		texture = 'SpartanUI Default',
 		position = {
 			anchor = 'TOPLEFT',
-			relativeTo = 'Frame', 
+			relativeTo = 'Frame',
 			relativePoint = 'BOTTOMLEFT',
 			x = 0,
 			y = -2,
@@ -144,54 +144,57 @@ local UpdateElementState = function(frame)
 		local element = frame[elementName]
 		local data = elements[elementName]
 
-		-- Setup the Alpha scape and position
-		element:SetAlpha(data.alpha)
-		element:SetScale(data.scale)
+		-- Only process if element exists on this frame
+		if element then
+			-- Setup the Alpha scape and position
+			element:SetAlpha(data.alpha)
+			element:SetScale(data.scale)
 
-		if UF.Elements:GetConfig(elementName).config.NoBulkUpdate then return end
-		if UF.Elements:GetConfig(elementName).config.type == 'Indicator' and element.SetDrawLayer then element:SetDrawLayer('BORDER', 7) end
+			if UF.Elements:GetConfig(elementName).config.NoBulkUpdate then return end
+			if UF.Elements:GetConfig(elementName).config.type == 'Indicator' and element.SetDrawLayer then element:SetDrawLayer('BORDER', 7) end
 
-		-- Positioning
-		element:ClearAllPoints()
-		if data.points then
-			if type(data.points) == 'string' then
-				element:SetAllPoints(frame[data.points])
-			elseif data.points and type(data.points) == 'table' then
-				for _, key in pairs(data.points) do
-					if key.relativeTo == 'Frame' then
-						element:SetPoint(key.anchor, frame, key.anchor, key.x, key.y)
-					else
-						element:SetPoint(key.anchor, frame[key.relativeTo], key.anchor, key.x, key.y)
-					end
-				end
-			else
-				element:SetAllPoints(frame)
-			end
-		elseif data.position.anchor then
-			if data.position.relativeTo == 'Frame' then
-				element:SetPoint(data.position.anchor, frame, data.position.relativePoint or data.position.anchor, data.position.x, data.position.y)
-			else
-				element:SetPoint(data.position.anchor, frame[data.position.relativeTo], data.position.relativePoint or data.position.anchor, data.position.x, data.position.y)
-			end
-		end
-
-		--Size it if we have a size change function for the element
-		if element and data.enabled then
+			-- Positioning
 			element:ClearAllPoints()
-			element:SetPoint(data.position.anchor, frame, data.position.relativePoint, data.position.x, data.position.y)
+			if data.points then
+				if type(data.points) == 'string' then
+					element:SetAllPoints(frame[data.points])
+				elseif data.points and type(data.points) == 'table' then
+					for _, key in pairs(data.points) do
+						if key.relativeTo == 'Frame' then
+							element:SetPoint(key.anchor, frame, key.anchor, key.x, key.y)
+						else
+							element:SetPoint(key.anchor, frame[key.relativeTo], key.anchor, key.x, key.y)
+						end
+					end
+				else
+					element:SetAllPoints(frame)
+				end
+			elseif data.position.anchor then
+				if data.position.relativeTo == 'Frame' then
+					element:SetPoint(data.position.anchor, frame, data.position.relativePoint or data.position.anchor, data.position.x, data.position.y)
+				else
+					element:SetPoint(data.position.anchor, frame[data.position.relativeTo], data.position.relativePoint or data.position.anchor, data.position.x, data.position.y)
+				end
+			end
 
 			--Size it if we have a size change function for the element
-			if element.SizeChange then
-				element:SizeChange()
-			elseif data.size then
-				element:SetSize(data.size, data.size)
-			else
-				element:SetSize(data.width or frame:GetWidth(), data.height or frame:GetHeight())
-			end
-		end
+			if element and data.enabled then
+				element:ClearAllPoints()
+				element:SetPoint(data.position.anchor, frame, data.position.relativePoint, data.position.x, data.position.y)
 
-		-- Call the elements update function
-		if frame[elementName] and data.enabled and frame[elementName].ForceUpdate then frame[elementName].ForceUpdate(element) end
+				--Size it if we have a size change function for the element
+				if element.SizeChange then
+					element:SizeChange()
+				elseif data.size then
+					element:SetSize(data.size, data.size)
+				else
+					element:SetSize(data.width or frame:GetWidth(), data.height or frame:GetHeight())
+				end
+			end
+
+			-- Call the elements update function
+			if frame[elementName] and data.enabled and frame[elementName].ForceUpdate then frame[elementName].ForceUpdate(element) end
+		end
 	end
 
 	-- Power
@@ -216,7 +219,7 @@ local PlayerPowerIcons = function(frame, attachPoint)
 	--Runes
 	if select(2, UnitClass('player')) == 'DEATHKNIGHT' then
 		BuildElement(frame, 'Runes')
-		
+
 		DeathKnightResourceOverlayFrame:HookScript('OnShow', function()
 			DeathKnightResourceOverlayFrame:Hide()
 		end)
@@ -277,13 +280,7 @@ local NamePlateFactory = function(frame, unit)
 		frame.bg.artwork.Horde:SetSize(frame:GetSize())
 
 		-- Name
-		local nameString = ''
-		if module.DB.ShowLevel then nameString = '[difficulty][level]' end
-		if module.DB.ShowName then nameString = nameString .. ' [SUI_ColorClass][name]' end
-		if nameString ~= '' then
-			BuildElement(frame, 'Name')
-			frame:Tag(frame.Name, nameString)
-		end
+		BuildElement(frame, 'Name')
 
 		-- health bar
 		BuildElement(frame, 'ThreatIndicator')
@@ -525,8 +522,6 @@ function module:OnInitialize()
 	---#TODO: convert to new element settings process
 	---@class SUI.NamePlates.Settings
 	local defaults = {
-		ShowName = true,
-		ShowLevel = true,
 		ShowTarget = true,
 		onlyShowPlayer = true,
 		showStealableBuffs = false,
@@ -582,7 +577,18 @@ function module:OnInitialize()
 			DispelHighlight = {},
 			RareElite = {},
 			Name = {
+				enabled = true,
+				textSize = 8,
 				SetJustifyH = 'CENTER',
+				SetJustifyV = 'MIDDLE',
+				text = '[difficulty][level] [SUI_ColorClass][name]',
+				position = {
+					anchor = 'BOTTOM',
+					relativeTo = 'Frame',
+					relativePoint = 'TOP',
+					x = 0,
+					y = 0,
+				},
 			},
 			Health = {
 				enabled = true,
@@ -732,6 +738,23 @@ function module:OnInitialize()
 					damageThreshold = 10000,
 				},
 				enemy = {},
+			},
+			Runes = {
+				enabled = true,
+				texture = 'SpartanUI Default',
+			},
+			ClassPower = {
+				enabled = true,
+				width = 16,
+				height = 6,
+				texture = 'SpartanUI Default',
+				position = {
+					anchor = 'TOPLEFT',
+					relativeTo = 'Frame',
+					relativePoint = 'BOTTOMLEFT',
+					x = 0,
+					y = -2,
+				},
 			},
 		},
 	}
