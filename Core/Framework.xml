@@ -8,6 +8,7 @@
 	<Script file="Handlers\ChatCommands.lua" />
 	<Include file="Skins\loader.xml" />
 	<Script file="Handlers\Font.lua" />
+	<Script file="Handlers\BackgroundBorder.lua" />
 	<Script file="Handlers\Modules.lua" />
 	<Script file="Handlers\Profiles.lua" />
 	<Script file="Handlers\SetupWizard.lua" />
