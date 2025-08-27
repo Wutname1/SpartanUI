@@ -801,7 +801,6 @@ end
 
 function module:BuildOptions()
 	local Options = UF.Options
-	---#TODO: update to new element options process
 	local function toInt(val)
 		if val then return 1 end
 		return 0
@@ -1139,6 +1138,13 @@ function module:BuildOptions()
 					module:UpdateNameplates()
 				end,
 			}
+		elseif elementName == 'Health' then
+			Options:StatusBarDefaults('Nameplates', ElementOptSet, elementName, ElementSettings, UserSetting, function() module:UpdateNameplates() end)
+		elseif elementName == 'Power' then
+			Options:StatusBarDefaults('Nameplates', ElementOptSet, elementName, ElementSettings, UserSetting, function() module:UpdateNameplates() end)
+		elseif elementName == 'Castbar' then
+			Options:StatusBarDefaults('Nameplates', ElementOptSet, elementName, ElementSettings, UserSetting, function() module:UpdateNameplates() end)
+			Options:CastbarDefaults('Nameplates', ElementOptSet, elementName, ElementSettings, UserSetting, function() module:UpdateNameplates() end)
 		end
 
 		if not ElementOptSet.args.enabled then
