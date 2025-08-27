@@ -982,8 +982,8 @@ function module:BuildOptions()
 							end
 
 							if option.type == 'color' then
-								setting[info[#info]] = {val, ...}
-								userSetting[info[#info]] = {val, ...}
+								setting[info[#info]] = { val, ... }
+								userSetting[info[#info]] = { val, ... }
 							else
 								setting[info[#info]] = val
 								userSetting[info[#info]] = val
@@ -997,10 +997,7 @@ function module:BuildOptions()
 
 		--Add element-specific options using shared system where available
 		if elementName == 'Name' then
-			-- Use shared Name element Options function
-			UF.Elements:Options('Name', 'nameplate', ElementOptSet)
-			-- Override get/set functions for nameplate settings structure
-			OverrideGetSet(ElementOptSet.args, {})
+			-- Name element uses simple text configuration
 
 			-- Add nameplate-specific text format option
 			ElementOptSet.args.text = {
@@ -1021,39 +1018,11 @@ function module:BuildOptions()
 			}
 		elseif elementName == 'Health' or elementName == 'Power' or elementName == 'Castbar' then
 			-- Use the existing StatusBarDefaults to get all the standard options
-			Options:StatusBarDefaults('temp', ElementOptSet, elementName)
-			-- Override the main options
+			Options:StatusBarDefaults('player', ElementOptSet, elementName)
+			-- Override the main options to work with nameplate settings structure
 			OverrideGetSet(ElementOptSet.args, {})
-			-- Add dynamic text elements for status bars
-			UF.Options:AddDynamicText('nameplate', ElementOptSet, elementName)
-		elseif elementName == 'Runes' then
-			-- Use shared Runes element Options function
-			UF.Elements:Options('Runes', 'nameplate', ElementOptSet)
-			OverrideGetSet(ElementOptSet.args, {})
-		elseif elementName == 'ClassPower' then
-			-- Use shared ClassPower element Options function
-			UF.Elements:Options('ClassPower', 'nameplate', ElementOptSet)
-			OverrideGetSet(ElementOptSet.args, {})
-		elseif elementName == 'ClassIcon' then
-			-- Use shared ClassIcon element Options function
-			UF.Elements:Options('ClassIcon', 'nameplate', ElementOptSet)
-			OverrideGetSet(ElementOptSet.args, {})
-		elseif elementName == 'PVPIndicator' then
-			-- Use shared PVPIndicator element Options function
-			UF.Elements:Options('PVPIndicator', 'nameplate', ElementOptSet)
-			OverrideGetSet(ElementOptSet.args, {})
-		elseif elementName == 'PvPRoleIndicator' then
-			-- Use shared PvPRoleIndicator element Options function
-			UF.Elements:Options('PvPRoleIndicator', 'nameplate', ElementOptSet)
-			OverrideGetSet(ElementOptSet.args, {})
-		elseif elementName == 'QuestMob' then
-			-- Use shared QuestMob element Options function
-			UF.Elements:Options('QuestMob', 'nameplate', ElementOptSet)
-			OverrideGetSet(ElementOptSet.args, {})
-		elseif elementName == 'WidgetXPBar' then
-			-- Use shared WidgetXPBar element Options function
-			UF.Elements:Options('WidgetXPBar', 'nameplate', ElementOptSet)
-			OverrideGetSet(ElementOptSet.args, {})
+			-- Note: Skip AddDynamicText as it requires UF.CurrentSettings structure
+		-- Note: Other elements use shared building but require UF.CurrentSettings structure for options
 		end
 
 		-- Add element-specific options that aren't covered by shared system
@@ -1063,7 +1032,9 @@ function module:BuildOptions()
 				type = 'toggle',
 				width = 'double',
 				order = 10,
-				get = function() return ElementSettings.FlashOnInterruptible end,
+				get = function()
+					return ElementSettings.FlashOnInterruptible
+				end,
 				set = function(_, val)
 					ElementSettings.FlashOnInterruptible = val
 					UserSetting.FlashOnInterruptible = val
@@ -1078,7 +1049,9 @@ function module:BuildOptions()
 				max = 1,
 				step = 0.01,
 				order = 11,
-				get = function() return ElementSettings.InterruptSpeed end,
+				get = function()
+					return ElementSettings.InterruptSpeed
+				end,
 				set = function(_, val)
 					ElementSettings.InterruptSpeed = val
 					UserSetting.InterruptSpeed = val
@@ -1090,7 +1063,9 @@ function module:BuildOptions()
 				type = 'toggle',
 				width = 'double',
 				order = 20,
-				get = function() return ElementSettings.interruptable end,
+				get = function()
+					return ElementSettings.interruptable
+				end,
 				set = function(_, val)
 					ElementSettings.interruptable = val
 					UserSetting.interruptable = val
@@ -1101,7 +1076,9 @@ function module:BuildOptions()
 				name = L['Show latency'] or 'Show latency',
 				type = 'toggle',
 				order = 21,
-				get = function() return ElementSettings.latency end,
+				get = function()
+					return ElementSettings.latency
+				end,
 				set = function(_, val)
 					ElementSettings.latency = val
 					UserSetting.latency = val
