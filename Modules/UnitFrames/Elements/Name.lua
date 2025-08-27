@@ -8,6 +8,23 @@ local function Build(frame, DB)
 	frame.Name:SetSize(frame:GetWidth(), 12)
 	frame.Name:SetJustifyH(DB.SetJustifyH)
 	frame.Name:SetJustifyV(DB.SetJustifyV)
+	
+	-- Position the name element based on position settings
+	if DB.position then
+		local relativeTo = frame
+		local relativePoint = DB.position.anchor
+		
+		-- Handle nameplate-style positioning with relativeTo and relativePoint
+		if DB.position.relativeTo and DB.position.relativePoint then
+			if DB.position.relativeTo == 'Frame' then
+				relativeTo = frame
+			end
+			relativePoint = DB.position.relativePoint
+		end
+		
+		frame.Name:SetPoint(DB.position.anchor, relativeTo, relativePoint, DB.position.x or 0, DB.position.y or 0)
+	end
+	
 	frame:Tag(frame.Name, DB.text)
 end
 
@@ -17,6 +34,24 @@ local function Update(frame)
 	SUI.Font:Format(frame.Name, DB.textSize, 'UnitFrames')
 	frame.Name:SetJustifyH(DB.SetJustifyH)
 	frame.Name:SetJustifyV(DB.SetJustifyV)
+	
+	-- Update positioning
+	if DB.position then
+		local relativeTo = frame
+		local relativePoint = DB.position.anchor
+		
+		-- Handle nameplate-style positioning with relativeTo and relativePoint
+		if DB.position.relativeTo and DB.position.relativePoint then
+			if DB.position.relativeTo == 'Frame' then
+				relativeTo = frame
+			end
+			relativePoint = DB.position.relativePoint
+		end
+		
+		frame.Name:ClearAllPoints()
+		frame.Name:SetPoint(DB.position.anchor, relativeTo, relativePoint, DB.position.x or 0, DB.position.y or 0)
+	end
+	
 	frame:Tag(frame.Name, DB.text)
 end
 

@@ -1016,6 +1016,168 @@ function module:BuildOptions()
 					module:UpdateNameplates()
 				end,
 			}
+
+			-- Add positioning controls for Name element
+			ElementOptSet.args.position = {
+				name = L['Position'] or 'Position',
+				type = 'group',
+				inline = true,
+				order = 20,
+				args = {
+					anchor = {
+						name = L['Anchor Point'] or 'Anchor Point',
+						type = 'select',
+						order = 1,
+						values = {
+							TOPLEFT = L['Top Left'] or 'Top Left',
+							TOP = L['Top'] or 'Top', 
+							TOPRIGHT = L['Top Right'] or 'Top Right',
+							LEFT = L['Left'] or 'Left',
+							CENTER = L['Center'] or 'Center',
+							RIGHT = L['Right'] or 'Right',
+							BOTTOMLEFT = L['Bottom Left'] or 'Bottom Left',
+							BOTTOM = L['Bottom'] or 'Bottom',
+							BOTTOMRIGHT = L['Bottom Right'] or 'Bottom Right',
+						},
+						get = function()
+							return ElementSettings.position and ElementSettings.position.anchor or 'BOTTOM'
+						end,
+						set = function(_, val)
+							ElementSettings.position = ElementSettings.position or {}
+							ElementSettings.position.anchor = val
+							UserSetting.position = UserSetting.position or {}
+							UserSetting.position.anchor = val
+							module:UpdateNameplates()
+						end,
+					},
+					relativePoint = {
+						name = L['Relative Point'] or 'Relative Point',
+						type = 'select',
+						order = 2,
+						values = {
+							TOPLEFT = L['Top Left'] or 'Top Left',
+							TOP = L['Top'] or 'Top',
+							TOPRIGHT = L['Top Right'] or 'Top Right', 
+							LEFT = L['Left'] or 'Left',
+							CENTER = L['Center'] or 'Center',
+							RIGHT = L['Right'] or 'Right',
+							BOTTOMLEFT = L['Bottom Left'] or 'Bottom Left',
+							BOTTOM = L['Bottom'] or 'Bottom',
+							BOTTOMRIGHT = L['Bottom Right'] or 'Bottom Right',
+						},
+						get = function()
+							return ElementSettings.position and ElementSettings.position.relativePoint or 'TOP'
+						end,
+						set = function(_, val)
+							ElementSettings.position = ElementSettings.position or {}
+							ElementSettings.position.relativePoint = val
+							UserSetting.position = UserSetting.position or {}
+							UserSetting.position.relativePoint = val
+							module:UpdateNameplates()
+						end,
+					},
+					x = {
+						name = L['X Offset'] or 'X Offset',
+						type = 'range',
+						order = 3,
+						min = -100,
+						max = 100,
+						step = 1,
+						get = function()
+							return ElementSettings.position and ElementSettings.position.x or 0
+						end,
+						set = function(_, val)
+							ElementSettings.position = ElementSettings.position or {}
+							ElementSettings.position.x = val
+							UserSetting.position = UserSetting.position or {}
+							UserSetting.position.x = val
+							module:UpdateNameplates()
+						end,
+					},
+					y = {
+						name = L['Y Offset'] or 'Y Offset',
+						type = 'range',
+						order = 4,
+						min = -100,
+						max = 100,
+						step = 1,
+						get = function()
+							return ElementSettings.position and ElementSettings.position.y or 0
+						end,
+						set = function(_, val)
+							ElementSettings.position = ElementSettings.position or {}
+							ElementSettings.position.y = val
+							UserSetting.position = UserSetting.position or {}
+							UserSetting.position.y = val
+							module:UpdateNameplates()
+						end,
+					},
+				},
+			}
+
+			-- Add text justification controls
+			ElementOptSet.args.justify = {
+				name = L['Text Alignment'] or 'Text Alignment',
+				type = 'group',
+				inline = true,
+				order = 30,
+				args = {
+					SetJustifyH = {
+						name = L['Horizontal'] or 'Horizontal',
+						type = 'select',
+						order = 1,
+						values = {
+							LEFT = L['Left'] or 'Left',
+							CENTER = L['Center'] or 'Center', 
+							RIGHT = L['Right'] or 'Right',
+						},
+						get = function()
+							return ElementSettings.SetJustifyH or 'CENTER'
+						end,
+						set = function(_, val)
+							ElementSettings.SetJustifyH = val
+							UserSetting.SetJustifyH = val
+							module:UpdateNameplates()
+						end,
+					},
+					SetJustifyV = {
+						name = L['Vertical'] or 'Vertical',
+						type = 'select',
+						order = 2,
+						values = {
+							TOP = L['Top'] or 'Top',
+							MIDDLE = L['Middle'] or 'Middle',
+							BOTTOM = L['Bottom'] or 'Bottom',
+						},
+						get = function()
+							return ElementSettings.SetJustifyV or 'MIDDLE'
+						end,
+						set = function(_, val)
+							ElementSettings.SetJustifyV = val
+							UserSetting.SetJustifyV = val
+							module:UpdateNameplates()
+						end,
+					},
+				},
+			}
+
+			-- Add text size control
+			ElementOptSet.args.textSize = {
+				name = L['Text Size'] or 'Text Size',
+				type = 'range',
+				order = 40,
+				min = 6,
+				max = 20,
+				step = 1,
+				get = function()
+					return ElementSettings.textSize or 8
+				end,
+				set = function(_, val)
+					ElementSettings.textSize = val
+					UserSetting.textSize = val
+					module:UpdateNameplates()
+				end,
+			}
 		elseif elementName == 'Health' or elementName == 'Power' or elementName == 'Castbar' then
 			-- Use the existing StatusBarDefaults to get all the standard options
 			Options:StatusBarDefaults('player', ElementOptSet, elementName)
