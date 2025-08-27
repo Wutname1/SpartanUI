@@ -1144,7 +1144,58 @@ function module:BuildOptions()
 			Options:StatusBarDefaults('Nameplates', ElementOptSet, elementName, ElementSettings, UserSetting, function() module:UpdateNameplates() end)
 		elseif elementName == 'Castbar' then
 			Options:StatusBarDefaults('Nameplates', ElementOptSet, elementName, ElementSettings, UserSetting, function() module:UpdateNameplates() end)
-			Options:CastbarDefaults('Nameplates', ElementOptSet, elementName, ElementSettings, UserSetting, function() module:UpdateNameplates() end)
+			
+			-- Add castbar-specific options
+			ElementOptSet.args.FlashOnInterruptible = {
+				name = L['Flash on interruptible cast'] or 'Flash on interruptible cast',
+				type = 'toggle',
+				width = 'double',
+				order = 10,
+				get = function() return ElementSettings.FlashOnInterruptible end,
+				set = function(_, val)
+					ElementSettings.FlashOnInterruptible = val
+					UserSetting.FlashOnInterruptible = val
+					module:UpdateNameplates()
+				end,
+			}
+			ElementOptSet.args.InterruptSpeed = {
+				name = L['Interrupt flash speed'] or 'Interrupt flash speed',
+				type = 'range',
+				width = 'double',
+				min = 0.01,
+				max = 1,
+				step = 0.01,
+				order = 11,
+				get = function() return ElementSettings.InterruptSpeed end,
+				set = function(_, val)
+					ElementSettings.InterruptSpeed = val
+					UserSetting.InterruptSpeed = val
+					module:UpdateNameplates()
+				end,
+			}
+			ElementOptSet.args.interruptable = {
+				name = L['Show interrupt or spell steal'] or 'Show interrupt or spell steal',
+				type = 'toggle',
+				width = 'double',
+				order = 20,
+				get = function() return ElementSettings.interruptable end,
+				set = function(_, val)
+					ElementSettings.interruptable = val
+					UserSetting.interruptable = val
+					module:UpdateNameplates()
+				end,
+			}
+			ElementOptSet.args.latency = {
+				name = L['Show latency'] or 'Show latency',
+				type = 'toggle',
+				order = 21,
+				get = function() return ElementSettings.latency end,
+				set = function(_, val)
+					ElementSettings.latency = val
+					UserSetting.latency = val
+					module:UpdateNameplates()
+				end,
+			}
 		end
 
 		if not ElementOptSet.args.enabled then
