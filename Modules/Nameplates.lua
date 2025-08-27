@@ -1139,7 +1139,7 @@ function module:BuildOptions()
 				end,
 			}
 		elseif elementName == 'Health' or elementName == 'Power' or elementName == 'Castbar' then
-			-- Add status bar options (texture, colors, background)
+			-- Add status bar options (texture, sizing, colors, background, text)
 			ElementOptSet.args.texture = {
 				type = 'select',
 				dialogControl = 'LSM30_Statusbar',
@@ -1155,6 +1155,95 @@ function module:BuildOptions()
 					module:UpdateNameplates()
 				end,
 			}
+			
+			-- Height control
+			ElementOptSet.args.height = {
+				name = L['Height'] or 'Height',
+				type = 'range',
+				width = 'double',
+				order = 5,
+				min = 2,
+				max = 100,
+				step = 1,
+				get = function() return ElementSettings.height end,
+				set = function(_, val)
+					ElementSettings.height = val
+					UserSetting.height = val
+					module:UpdateNameplates()
+				end,
+			}
+			
+			-- Color options (for Health and Power)
+			if elementName == 'Health' or elementName == 'Power' then
+				ElementOptSet.args.colors = {
+					name = L['Colors'] or 'Colors',
+					type = 'group',
+					inline = true,
+					order = 15,
+					args = {
+						colorClass = {
+							name = L['Class'] or 'Class',
+							desc = L['Color the bar based on unit class'] or 'Color the bar based on unit class',
+							type = 'toggle',
+							order = 1,
+							get = function() return ElementSettings.colorClass end,
+							set = function(_, val)
+								ElementSettings.colorClass = val
+								UserSetting.colorClass = val
+								module:UpdateNameplates()
+							end,
+						},
+						colorReaction = {
+							name = L['Reaction'] or 'Reaction',
+							desc = 'Color the bar based on the player\'s reaction towards the unit',
+							type = 'toggle',
+							order = 2,
+							get = function() return ElementSettings.colorReaction end,
+							set = function(_, val)
+								ElementSettings.colorReaction = val
+								UserSetting.colorReaction = val
+								module:UpdateNameplates()
+							end,
+						},
+						colorSmooth = {
+							name = L['Smooth'] or 'Smooth',
+							desc = 'Color the bar with a smooth gradient based on current percentage',
+							type = 'toggle',
+							order = 3,
+							get = function() return ElementSettings.colorSmooth end,
+							set = function(_, val)
+								ElementSettings.colorSmooth = val
+								UserSetting.colorSmooth = val
+								module:UpdateNameplates()
+							end,
+						},
+						colorTapping = {
+							name = L['Tapped'] or 'Tapped',
+							desc = 'Color the bar if the unit isn\'t tapped by the player',
+							type = 'toggle',
+							order = 4,
+							get = function() return ElementSettings.colorTapping end,
+							set = function(_, val)
+								ElementSettings.colorTapping = val
+								UserSetting.colorTapping = val
+								module:UpdateNameplates()
+							end,
+						},
+						colorDisconnected = {
+							name = L['Disconnected'] or 'Disconnected',
+							desc = L['Color the bar if the player is offline'] or 'Color the bar if the player is offline',
+							type = 'toggle',
+							order = 5,
+							get = function() return ElementSettings.colorDisconnected end,
+							set = function(_, val)
+								ElementSettings.colorDisconnected = val
+								UserSetting.colorDisconnected = val
+								module:UpdateNameplates()
+							end,
+						},
+					},
+				}
+			end
 			
 			-- Background options
 			ElementOptSet.args.background = {
@@ -1189,6 +1278,110 @@ function module:BuildOptions()
 							UserSetting.bg.color = {r, g, b, a}
 							module:UpdateNameplates()
 						end,
+					},
+				},
+			}
+			
+			-- Text options
+			ElementOptSet.args.text = {
+				name = L['Text'] or 'Text',
+				type = 'group',
+				childGroups = 'tab',
+				order = 25,
+				args = {
+					text1 = {
+						name = 'Text 1',
+						type = 'group',
+						order = 1,
+						args = {
+							enabled = {
+								name = L['Enabled'] or 'Enabled',
+								type = 'toggle',
+								order = 1,
+								get = function() return ElementSettings.text['1'].enabled end,
+								set = function(_, val)
+									ElementSettings.text['1'].enabled = val
+									UserSetting.text['1'].enabled = val
+									module:UpdateNameplates()
+								end,
+							},
+							text = {
+								name = L['Text Format'] or 'Text Format',
+								type = 'input',
+								width = 'full',
+								multiline = true,
+								order = 2,
+								disabled = function() return not ElementSettings.text['1'].enabled end,
+								get = function() return ElementSettings.text['1'].text end,
+								set = function(_, val)
+									ElementSettings.text['1'].text = val
+									UserSetting.text['1'].text = val
+									module:UpdateNameplates()
+								end,
+							},
+							size = {
+								name = L['Font Size'] or 'Font Size',
+								type = 'range',
+								order = 3,
+								min = 6,
+								max = 32,
+								step = 1,
+								disabled = function() return not ElementSettings.text['1'].enabled end,
+								get = function() return ElementSettings.text['1'].size end,
+								set = function(_, val)
+									ElementSettings.text['1'].size = val
+									UserSetting.text['1'].size = val
+									module:UpdateNameplates()
+								end,
+							},
+						},
+					},
+					text2 = {
+						name = 'Text 2',
+						type = 'group',
+						order = 2,
+						args = {
+							enabled = {
+								name = L['Enabled'] or 'Enabled',
+								type = 'toggle',
+								order = 1,
+								get = function() return ElementSettings.text['2'].enabled end,
+								set = function(_, val)
+									ElementSettings.text['2'].enabled = val
+									UserSetting.text['2'].enabled = val
+									module:UpdateNameplates()
+								end,
+							},
+							text = {
+								name = L['Text Format'] or 'Text Format',
+								type = 'input',
+								width = 'full',
+								multiline = true,
+								order = 2,
+								disabled = function() return not ElementSettings.text['2'].enabled end,
+								get = function() return ElementSettings.text['2'].text end,
+								set = function(_, val)
+									ElementSettings.text['2'].text = val
+									UserSetting.text['2'].text = val
+									module:UpdateNameplates()
+								end,
+							},
+							size = {
+								name = L['Font Size'] or 'Font Size',
+								type = 'range',
+								order = 3,
+								min = 6,
+								max = 32,
+								step = 1,
+								disabled = function() return not ElementSettings.text['2'].enabled end,
+								get = function() return ElementSettings.text['2'].size end,
+								set = function(_, val)
+									ElementSettings.text['2'].size = val
+									UserSetting.text['2'].size = val
+									module:UpdateNameplates()
+								end,
+							},
+						},
 					},
 				},
 			}
