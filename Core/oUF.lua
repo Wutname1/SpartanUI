@@ -217,7 +217,11 @@ local function calculateResult(currentVal, maxVal, isDead, ...)
 		local var = tostring(select(i, ...))
 
 		if var == 'percentage' then
-			returnVal = math.floor(currentVal / maxVal * 100 + 0.5) .. '%'
+			if maxVal > 0 then
+				returnVal = math.floor(currentVal / maxVal * 100 + 0.5) .. '%'
+			else
+				returnVal = '0%'
+			end
 		elseif var == 'dynamic' then
 			returnVal = dynamicCalc(num)
 		elseif var == 'short' then
