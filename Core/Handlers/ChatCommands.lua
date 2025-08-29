@@ -31,12 +31,13 @@ function SUI:ChatCommand(input)
 	end
 end
 
-AddonCompartmentFrame:RegisterAddon({
-	text = 'Spartan|cffe21f1fUI',
-	icon = 'Interface\\AddOns\\SpartanUI\\images\\Spartan-Helm',
-	registerForAnyClick = true,
-	notCheckable = true,
-	func = function(btn, arg1, arg2, checked, mouseButton)
+if AddonCompartmentFrame then
+	AddonCompartmentFrame:RegisterAddon({
+		text = 'Spartan|cffe21f1fUI',
+		icon = 'Interface\\AddOns\\SpartanUI\\images\\Spartan-Helm',
+		registerForAnyClick = true,
+		notCheckable = true,
+		func = function(btn, arg1, arg2, checked, mouseButton)
 		if IsShiftKeyDown() then
 			SUI.MoveIt:MoveIt()
 			return
@@ -57,7 +58,8 @@ AddonCompartmentFrame:RegisterAddon({
 		GameTooltip:AddLine('|cffeda55fShift-Click|r to toggle the movement system.', 1, 1, 1)
 		GameTooltip:Show()
 	end,
-})
+	})
+end
 
 local function AddToOptions(arg)
 	local settings = CommandDetails[arg]

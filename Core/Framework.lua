@@ -14,11 +14,13 @@ SUI.IsRetail = (WOW_PROJECT_ID == WOW_PROJECT_MAINLINE) ---@type boolean
 SUI.IsClassic = (WOW_PROJECT_ID == WOW_PROJECT_CLASSIC) ---@type boolean
 SUI.IsTBC = (WOW_PROJECT_ID == WOW_PROJECT_BURNING_CRUSADE_CLASSIC) ---@type boolean
 SUI.IsWrath = (WOW_PROJECT_ID == WOW_PROJECT_WRATH_CLASSIC) ---@type boolean
+SUI.IsMOP = (WOW_PROJECT_ID == WOW_PROJECT_MISTS_CLASSIC) ---@type boolean
 SUI.GitHash = '@project-abbreviated-hash@' -- The ZIP packager will replace this with the Git hash.
 SUI.wowVersion = 'Retail'
 if SUI.IsClassic then SUI.wowVersion = 'Classic' end
 if SUI.IsTBC then SUI.wowVersion = 'TBC' end
 if SUI.IsWrath then SUI.wowVersion = 'Wrath' end
+if SUI.IsMOP then SUI.wowVersion = 'MOP' end
 --@alpha@
 SUI.releaseType = 'ALPHA ' .. SUI.BuildNum
 --@end-alpha@
@@ -1678,7 +1680,8 @@ function SUI:OnEnable()
 	})
 
 	--hooking to blizz button add function for game menu, since the list of those is reset every time menu is opened
-	hooksecurefunc(GameMenuFrame, 'AddButton', function(text, callback, isDisabled)
+	if GameMenuFrame.AddButton then
+		hooksecurefunc(GameMenuFrame, 'AddButton', function(text, callback, isDisabled)
 		if text == MACROS then --check for text "Macros". That button is the last before logout in default so we insert our stuff in between
 			for i, data in next, GameMenuButtonsStore do --Go through buttons in the tabe and adding them based on data provided
 				if i == 1 then
@@ -1688,7 +1691,8 @@ function SUI:OnEnable()
 				GameMenuFrame:AddButton(data.text, data.callback, data.isDisabled, data.disabledText)
 			end
 		end
-	end)
+		end)
+	end
 end
 
 -- For Setting a unifid skin across all registered Skinable modules

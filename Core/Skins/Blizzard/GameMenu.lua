@@ -70,10 +70,12 @@ function SUIGameMenu:OnEnable()
 	MenuSkin.BottomLine:SetAtlas('gearUpdate-glow-filigree', true)
 	MenuSkin.BottomLine:SetAlpha(0.5)
 
-	hooksecurefunc(GameMenuFrame, 'Layout', function()
-		if SUIGameMenu:IsDisabled() then return end
-		MenuSkin:OnFrameShown(GameMenuFrame:IsShown())
-	end)
+	if GameMenuFrame.Layout then
+		hooksecurefunc(GameMenuFrame, 'Layout', function()
+			if SUIGameMenu:IsDisabled() then return end
+			MenuSkin:OnFrameShown(GameMenuFrame:IsShown())
+		end)
+	end
 end
 
 local function CreateMenuSkin()

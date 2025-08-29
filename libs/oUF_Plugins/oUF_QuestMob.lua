@@ -282,12 +282,25 @@ frame:SetScript(
 		wipe(questIcons.indexByID)
 		wipe(questIcons.activeQuests)
 
-		for i = 1, C_QuestLog.GetNumQuestLogEntries() do
-			local id = C_QuestLog.GetQuestIDForLogIndex(i)
+		local numQuests
+		local getQuestID
+		local getTitle
+		if C_QuestLog and C_QuestLog.GetNumQuestLogEntries then
+			numQuests = C_QuestLog.GetNumQuestLogEntries()
+			getQuestID = C_QuestLog.GetQuestIDForLogIndex
+			getTitle = C_QuestLog.GetTitleForLogIndex
+		else
+			numQuests = GetNumQuestLogEntries()
+			getQuestID = function(i) return select(8, GetQuestLogTitle(i)) end
+			getTitle = function(i) return GetQuestLogTitle(i) end
+		end
+		
+		for i = 1, numQuests do
+			local id = getQuestID(i)
 			if id and id > 0 then
 				questIcons.indexByID[id] = i
 
-				local title = C_QuestLog.GetTitleForLogIndex(i)
+				local title = getTitle(i)
 				if title then
 					questIcons.activeQuests[title] = id
 				end

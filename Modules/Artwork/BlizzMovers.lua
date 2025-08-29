@@ -83,6 +83,7 @@ end
 ---@param holder Frame
 ---@param pos? FramePoint
 local function AttachToHolder(frame, holder, pos)
+	if not frame then return end
 	frame:ClearAllPoints()
 	frame:SetPoint(pos or 'CENTER', holder)
 	frame.SUIHolder = holder
@@ -145,10 +146,12 @@ local function AbilityBars()
 	ExtraActionBarFrame.ignoreInLayout = true
 
 	-- Set up ZoneAbilityFrame
-	ZoneAbilityFrame:SetParent(ZoneAbilityHolder)
-	ZoneAbilityFrame:ClearAllPoints()
-	ZoneAbilityFrame:SetPoint('CENTER', ZoneAbilityHolder, 'CENTER')
-	ZoneAbilityFrame.ignoreInLayout = true
+	if ZoneAbilityFrame then
+		ZoneAbilityFrame:SetParent(ZoneAbilityHolder)
+		ZoneAbilityFrame:ClearAllPoints()
+		ZoneAbilityFrame:SetPoint('CENTER', ZoneAbilityHolder, 'CENTER')
+		ZoneAbilityFrame.ignoreInLayout = true
+	end
 
 	-- Set up ExtraAbilityContainer
 	if ExtraAbilityContainer then
@@ -168,12 +171,14 @@ local function AbilityBars()
 		end
 	end)
 
-	hooksecurefunc(ZoneAbilityFrame, 'SetPoint', function(self)
-		if self:GetParent() ~= ZoneAbilityHolder then
-			self:ClearAllPoints()
-			self:SetPoint('CENTER', ZoneAbilityHolder, 'CENTER')
-		end
-	end)
+	if ZoneAbilityFrame then
+		hooksecurefunc(ZoneAbilityFrame, 'SetPoint', function(self)
+			if self:GetParent() ~= ZoneAbilityHolder then
+				self:ClearAllPoints()
+				self:SetPoint('CENTER', ZoneAbilityHolder, 'CENTER')
+			end
+		end)
+	end
 
 	-- Create movers
 	MoveIt:CreateMover(ExtraActionBarHolder, 'ExtraActionBar', 'Extra action button', nil, 'Blizzard UI')
