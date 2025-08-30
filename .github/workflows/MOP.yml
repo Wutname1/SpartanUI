@@ -3,7 +3,7 @@ name: Classic - CI/CD
 on:
   push:
     tags: ["**"]
-    branches: ["Classic"]
+    branches: ["MOP"]
 
 jobs:
   release:
