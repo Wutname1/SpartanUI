@@ -409,7 +409,9 @@
     "MACROS",
     "GameTooltip_SetDefaultAnchor",
     "PlayerPowerBarAlt",
-    "PowerBarColor"
+    "PowerBarColor",
+    "WarlockPowerFrame",
+    "SPEC_WARLOCK_DESTRUCTION"
   ],
   "Lua.workspace.ignoreDir": [".vscode", "libs/*"],
   "Lua.diagnostics.enable": true,
