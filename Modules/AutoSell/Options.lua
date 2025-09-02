@@ -2,7 +2,7 @@ local SUI, L, print = SUI, SUI.L, SUI.print
 ---@class SUI.Module.AutoSell : SUI.Module
 local module = SUI:GetModule('AutoSell')
 
-local buildItemList, OptionTable
+local buildItemList, buildCharacterList, OptionTable
 
 local function SetupPage()
 	---@type SUI.SetupWizard.PageData
@@ -166,6 +166,46 @@ local function BuildOptions()
 					buildItemList(mode)
 				end,
 			}
+		end
+	end
+
+	buildCharacterList = function(mode)
+		local listType = mode == 'Whitelist' and 'CharacterWhitelist' or 'CharacterBlacklist'
+		local listOpt = OptionTable.args[listType].args.list.args
+		table.wipe(listOpt)
+
+		local charList = module.CharDB[mode]
+		local orderCounter = 1
+		for itemId, enabled in pairs(charList) do
+			if enabled then
+				local itemName, _, itemQuality = C_Item.GetItemInfo(itemId)
+				local label
+				if itemName then
+					local qualityColor = ITEM_QUALITY_COLORS[itemQuality] and ITEM_QUALITY_COLORS[itemQuality].hex or 'ffffffff'
+					label = string.format('|c%s%s|r (%d)', qualityColor, itemName, itemId)
+				else
+					label = string.format('Item ID: %d (not cached)', itemId)
+				end
+
+				listOpt[itemId .. 'label'] = {
+					type = 'description',
+					width = 'double',
+					fontSize = 'medium',
+					order = orderCounter,
+					name = label,
+				}
+				listOpt[tostring(itemId)] = {
+					type = 'execute',
+					name = L['Delete'],
+					width = 'half',
+					order = orderCounter + 0.1,
+					func = function(info)
+						module.CharDB[mode][itemId] = nil
+						buildCharacterList(mode)
+					end,
+				}
+				orderCounter = orderCounter + 1
+			end
 		end
 	end
 
@@ -352,9 +392,101 @@ local function BuildOptions()
 				},
 			},
 		},
+		CharacterWhitelist = {
+			type = 'group',
+			name = 'Character Whitelist',
+			order = 60,
+			get = function(info)
+				return module.CharDB[info[#info]]
+			end,
+			set = function(info, val)
+				module.CharDB[info[#info]] = val
+			end,
+			args = {
+				desc = {
+					name = 'Character-specific whitelist items will always be sold (overrides all other settings for this character only)',
+					type = 'description',
+					order = 1,
+				},
+				create = {
+					name = 'Add Item ID',
+					type = 'input',
+					order = 2,
+					width = 'full',
+					set = function(info, input)
+						local itemID = tonumber(input)
+						if not itemID then
+							SUI:Print('Invalid item ID: ' .. input)
+							return
+						end
+						local itemLink = C_Item.GetItemInfo(itemID)
+						if not itemLink then
+							SUI:Print('Could not load item ID: ' .. input .. ' this can happen if the item is not in your cache, please try again in a few seconds.')
+							return
+						end
+						module.CharDB.Whitelist[itemID] = true
+						buildCharacterList('Whitelist')
+					end,
+				},
+				list = {
+					order = 3,
+					type = 'group',
+					inline = true,
+					name = 'Whitelisted items',
+					args = {},
+				},
+			},
+		},
+		CharacterBlacklist = {
+			type = 'group',
+			name = 'Character Blacklist',
+			order = 70,
+			get = function(info)
+				return module.CharDB[info[#info]]
+			end,
+			set = function(info, val)
+				module.CharDB[info[#info]] = val
+			end,
+			args = {
+				desc = {
+					name = 'Character-specific blacklist items will never be sold (overrides all other settings for this character only)',
+					type = 'description',
+					order = 1,
+				},
+				create = {
+					name = 'Add Item ID',
+					type = 'input',
+					order = 2,
+					width = 'full',
+					set = function(info, input)
+						local itemID = tonumber(input)
+						if not itemID then
+							SUI:Print('Invalid item ID: ' .. input)
+							return
+						end
+						local itemLink = C_Item.GetItemInfo(itemID)
+						if not itemLink then
+							SUI:Print('Could not load item ID: ' .. input .. ' this can happen if the item is not in your cache, please try again in a few seconds.')
+							return
+						end
+						module.CharDB.Blacklist[itemID] = true
+						buildCharacterList('Blacklist')
+					end,
+				},
+				list = {
+					order = 3,
+					type = 'group',
+					inline = true,
+					name = 'Blacklisted items',
+					args = {},
+				},
+			},
+		},
 	}
 	buildItemList('Items')
 	buildItemList('Types')
+	buildCharacterList('Whitelist')
+	buildCharacterList('Blacklist')
 	SUI.Options:AddOptions(OptionTable, 'AutoSell')
 end
 

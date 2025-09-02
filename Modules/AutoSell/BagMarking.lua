@@ -7,6 +7,9 @@ local markCounter = 0
 local countLimit = 30
 local usingDefaultBags = false
 local markingFrame = nil
+local lastMarkTime = 0
+local MARK_THROTTLE = 0.5 -- Minimum time between marking operations (in seconds)
+local vendorOpen = false
 
 local function debugMsg(msg)
 	SUI.Debug(msg, 'AutoSell.BagMarking')
@@ -19,8 +22,8 @@ local function showSellIcon(itemButton)
 		texture:SetAtlas('Levelup-Icon-Bag')
 		texture:SetSize(16, 16)
 
-		-- Position in bottom-left corner with padding
-		texture:SetPoint('BOTTOMLEFT', 2, 2)
+		-- Position in top-right corner with padding
+		texture:SetPoint('TOPRIGHT', -2, -2)
 
 		itemButton.autoSellIcon = texture
 	end
@@ -337,12 +340,20 @@ end
 -- Main marking function that determines which bag addon is active
 local function markItems()
 	if SUI:IsModuleDisabled('AutoSell') then return end
+	
+	-- Throttle marking operations to prevent performance issues
+	local currentTime = GetTime()
+	local throttleTime = vendorOpen and 1.0 or MARK_THROTTLE -- More aggressive throttling when vendor is open
+	if currentTime - lastMarkTime < throttleTime then
+		return
+	end
+	lastMarkTime = currentTime
 
 	debugMsg('Marking items for sale')
 
 	if C_AddOns.IsAddOnLoaded('Baganator') then
-		-- Baganator uses API-based corner widgets, no need for manual marking
-		-- The corner widget is registered during initialization
+		-- Baganator uses junk plugin API, no need for manual marking
+		-- The junk plugin is registered during initialization and handles its own display
 		return
 	elseif C_AddOns.IsAddOnLoaded('Baggins') then
 		markBagginsBags()
@@ -400,42 +411,33 @@ local function handleBagginsOpened()
 	if markCounter == 0 then markingFrame:SetScript('OnUpdate', onUpdate) end
 end
 
--- Register Baganator corner widget
-local function registerBaganatorWidget()
-	if not Baganator or not Baganator.API then return end
-	
-	local function onUpdate(cornerFrame, itemDetails)
-		if not itemDetails or not itemDetails.itemID then
-			return nil
-		end
-		
-		local isSellable = module:IsSellable(itemDetails.itemID, itemDetails.itemLink, itemDetails.bagID, itemDetails.slotID)
-		if isSellable then
-			cornerFrame:Show()
-			return true
-		else
-			cornerFrame:Hide()
-			return false
-		end
+-- Baganator junk plugin callback
+local function baganatorJunkCallback(bagID, slotID, itemID, itemLink)
+	-- Use the module's IsSellable logic to determine if item should show junk coin
+	local isSellable = module:IsSellable(itemID, itemLink, bagID, slotID)
+	return isSellable -- true = show junk coin, false/nil = don't show
+end
+
+-- Register Baganator junk plugin
+local function registerBaganatorPlugin()
+	if not Baganator or not Baganator.API then 
+		debugMsg('Baganator API not available')
+		return 
 	end
 	
-	local function onInit(itemButton)
-		local texture = itemButton:CreateTexture(nil, 'OVERLAY')
-		texture:SetAtlas('Levelup-Icon-Bag')
-		texture:SetSize(16, 16)
-		return texture
+	local success, err = pcall(function()
+		Baganator.API.RegisterJunkPlugin(
+			'SpartanUI AutoSell', -- label (shown in Baganator settings)
+			'SpartanUI_AutoSell', -- id (unique identifier)
+			baganatorJunkCallback -- callback function
+		)
+	end)
+	
+	if success then
+		debugMsg('Baganator junk plugin registered')
+	else
+		debugMsg('Baganator junk plugin registration failed: ' .. tostring(err))
 	end
-	
-	Baganator.API.RegisterCornerWidget(
-		'AutoSell', -- label
-		'SpartanUI_AutoSell', -- id
-		onUpdate, -- onUpdate callback
-		onInit, -- onInit callback
-		{corner = 'bottom_left', priority = 1}, -- defaultPosition
-		false -- isFast
-	)
-	
-	debugMsg('Baganator corner widget registered')
 end
 
 -- Initialize bag marking system
@@ -446,6 +448,8 @@ function module:InitializeBagMarking()
 	markingFrame:RegisterEvent('PLAYER_ENTERING_WORLD')
 	markingFrame:RegisterEvent('BAG_UPDATE')
 	markingFrame:RegisterEvent('BAG_UPDATE_DELAYED')
+	markingFrame:RegisterEvent('MERCHANT_SHOW')
+	markingFrame:RegisterEvent('MERCHANT_CLOSED')
 
 	-- Initial marking setup with delay
 	countLimit = 400
@@ -454,22 +458,35 @@ function module:InitializeBagMarking()
 	-- Set up Baggins support if available
 	if C_AddOns.IsAddOnLoaded('Baggins') and Baggins then Baggins:RegisterSignal('Baggins_BagOpened', handleBagginsOpened, Baggins) end
 
-	-- Register Baganator widget if available
+	-- Register Baganator junk plugin if available
 	if C_AddOns.IsAddOnLoaded('Baganator') then
-		registerBaganatorWidget()
+		registerBaganatorPlugin()
 	end
+	
 
 	markingFrame:SetScript('OnEvent', function(self, event, ...)
 		if event == 'PLAYER_ENTERING_WORLD' then
 			-- Register for bag updates after entering world
 			debugMsg('Player entering world, setting up bag marking')
-			-- Try to register Baganator widget again in case it wasn't loaded yet
+			-- Try to register Baganator plugin again in case it wasn't loaded yet
 			if C_AddOns.IsAddOnLoaded('Baganator') then
-				registerBaganatorWidget()
+				registerBaganatorPlugin()
 			end
+		elseif event == 'MERCHANT_SHOW' then
+			vendorOpen = true
+			-- Mark items when vendor opens (but throttled)
+			markItems()
+		elseif event == 'MERCHANT_CLOSED' then
+			vendorOpen = false
 		elseif event == 'BAG_UPDATE' or event == 'BAG_UPDATE_DELAYED' then
-			-- Delay marking slightly to allow bag contents to update
-			C_Timer.After(0.1, markItems)
+			-- When vendor is open, be much more conservative about marking
+			if vendorOpen then
+				-- Use longer delay and throttling when vendor is open to prevent spam
+				C_Timer.After(0.5, markItems)
+			else
+				-- Normal marking when vendor is closed
+				C_Timer.After(0.1, markItems)
+			end
 		end
 	end)
 
