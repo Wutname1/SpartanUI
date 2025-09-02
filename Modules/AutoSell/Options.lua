@@ -260,6 +260,20 @@ local function BuildOptions()
 			type = 'toggle',
 			order = 202,
 		},
+		ShowBagMarking = {
+			name = 'Show bag item marking',
+			desc = 'Show icons on items in your bags that will be auto-sold',
+			type = 'toggle',
+			order = 203,
+			set = function(info, val)
+				module.DB[info[#info]] = val
+				if val then
+					module:InitializeBagMarking()
+				else
+					module:CleanupBagMarking()
+				end
+			end,
+		},
 		Items = {
 			type = 'group',
 			name = 'Blacklisted Items',

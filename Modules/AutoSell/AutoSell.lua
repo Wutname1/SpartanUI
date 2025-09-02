@@ -26,6 +26,7 @@ local DbDefaults = {
 	GearTokens = false,
 	AutoRepair = false,
 	UseGuildBankRepair = false,
+	ShowBagMarking = true,
 	Blacklist = {
 		Items = {
 			-- Shadowlands
@@ -433,6 +434,11 @@ function module:OnEnable()
 	module:RegisterEvent('MERCHANT_CLOSED')
 
 	module:CreateMiniVendorPanels()
+	
+	-- Initialize bag marking system if enabled
+	if module.DB.ShowBagMarking then
+		module:InitializeBagMarking()
+	end
 
 	LoadedOnce = true
 end
@@ -441,6 +447,9 @@ function module:OnDisable()
 	SUI:Print('Autosell disabled')
 	module:UnregisterEvent('MERCHANT_SHOW')
 	module:UnregisterEvent('MERCHANT_CLOSED')
+
+	-- Cleanup bag marking system
+	module:CleanupBagMarking()
 
 	-- Hide and cleanup vendor panels
 	if module.VendorPanels then
