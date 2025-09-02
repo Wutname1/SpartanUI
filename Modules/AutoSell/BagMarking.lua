@@ -309,29 +309,65 @@ end
 
 -- Default WoW bags (and compatible addons like bBag)
 local function markNormalBags()
+	debugMsg('markNormalBags() called')
+	
+	local combinedBags = _G['ContainerFrameCombinedBags']
+	debugMsg('CombinedBags frame: ' .. tostring(combinedBags))
+	debugMsg('CombinedBags shown: ' .. tostring(combinedBags and combinedBags:IsShown()))
+	
+	-- Check individual containers first
+	local anyContainerShown = false
 	for containerNumber = 0, BAG_COUNT do
 		local container = _G['ContainerFrame' .. containerNumber + 1]
-		local combinedBags = _G['ContainerFrameCombinedBags']
-
-		if container and container:IsShown() then
-			local bagsSlotCount = C_Container.GetContainerNumSlots(containerNumber)
-			for slotNumber = 1, bagsSlotCount do
-				local itemButton = _G['ContainerFrame' .. containerNumber + 1 .. 'Item' .. bagsSlotCount - slotNumber + 1]
-
-				if itemButton then
-					local bagNumber = itemButton:GetParent():GetID()
-					local actualSlotNumber = itemButton:GetID()
-					displaySellIcon(bagNumber, actualSlotNumber, itemButton)
-				end
+		local isShown = container and container:IsShown()
+		debugMsg('Container ' .. containerNumber .. ': frame=' .. tostring(container) .. ', shown=' .. tostring(isShown))
+		if isShown then anyContainerShown = true end
+	end
+	debugMsg('Any individual container shown: ' .. tostring(anyContainerShown))
+	
+	-- Use the proper WoW API method to enumerate item buttons
+	if combinedBags and combinedBags:IsShown() then
+		debugMsg('Combined bags are shown - using EnumerateValidItems')
+		
+		-- Use the WoW API method to get all item buttons
+		if combinedBags.EnumerateValidItems then
+			local itemCount = 0
+			for i, itemButton in combinedBags:EnumerateValidItems() do
+				itemCount = itemCount + 1
+				local bagID = itemButton:GetBagID()
+				local slotID = itemButton:GetID()
+				
+				debugMsg('Item button ' .. itemCount .. ': bagID=' .. tostring(bagID) .. ', slotID=' .. tostring(slotID))
+				displaySellIcon(bagID, slotID, itemButton)
 			end
-		elseif combinedBags and combinedBags:IsShown() then
-			local bagsSlotCount = C_Container.GetContainerNumSlots(containerNumber)
-			for slotNumber = 1, bagsSlotCount do
-				local itemButton = _G['ContainerFrame' .. containerNumber + 1 .. 'Item' .. bagsSlotCount - slotNumber + 1]
-				if itemButton then
-					local actualSlotNumber = itemButton:GetID()
-					displaySellIcon(containerNumber, actualSlotNumber, itemButton)
+			debugMsg('Processed ' .. itemCount .. ' item buttons via EnumerateValidItems')
+		else
+			debugMsg('Combined bags frame does not have EnumerateValidItems method')
+		end
+	else
+		-- Handle individual container frames
+		for containerNumber = 0, BAG_COUNT do
+			local container = _G['ContainerFrame' .. containerNumber + 1]
+			
+			if container and container:IsShown() then
+				debugMsg('Processing individual container ' .. containerNumber .. ' with EnumerateValidItems')
+				
+				if container.EnumerateValidItems then
+					local itemCount = 0
+					for i, itemButton in container:EnumerateValidItems() do
+						itemCount = itemCount + 1
+						local bagID = itemButton:GetBagID()
+						local slotID = itemButton:GetID()
+						
+						debugMsg('Container ' .. containerNumber .. ' item ' .. itemCount .. ': bagID=' .. tostring(bagID) .. ', slotID=' .. tostring(slotID))
+						displaySellIcon(bagID, slotID, itemButton)
+					end
+					debugMsg('Processed ' .. itemCount .. ' items in container ' .. containerNumber)
+				else
+					debugMsg('Container ' .. containerNumber .. ' does not have EnumerateValidItems method')
 				end
+			else
+				debugMsg('Skipping container ' .. containerNumber .. ' - not shown')
 			end
 		end
 	end
@@ -444,15 +480,20 @@ end
 function module:InitializeBagMarking()
 	if markingFrame then return end
 
+	debugMsg('InitializeBagMarking() called')
 	markingFrame = CreateFrame('Frame', 'AutoSellBagMarking', UIParent)
 	markingFrame:RegisterEvent('PLAYER_ENTERING_WORLD')
 	markingFrame:RegisterEvent('BAG_UPDATE')
 	markingFrame:RegisterEvent('BAG_UPDATE_DELAYED')
 	markingFrame:RegisterEvent('MERCHANT_SHOW')
 	markingFrame:RegisterEvent('MERCHANT_CLOSED')
+	
+	-- Register for bag open/close events to mark immediately
+	markingFrame:RegisterEvent('BAG_OPEN')
+	markingFrame:RegisterEvent('BAG_CLOSED')
 
-	-- Initial marking setup with delay
-	countLimit = 400
+	-- Reduced initial marking delay for faster response
+	countLimit = 30  -- Much faster initial marking (was 400)
 	markingFrame:SetScript('OnUpdate', onUpdate)
 
 	-- Set up Baggins support if available
@@ -472,6 +513,13 @@ function module:InitializeBagMarking()
 			if C_AddOns.IsAddOnLoaded('Baganator') then
 				registerBaganatorPlugin()
 			end
+		elseif event == 'BAG_OPEN' then
+			debugMsg('BAG_OPEN event - marking items immediately')
+			-- Mark items immediately when bags are opened
+			markItems()
+		elseif event == 'BAG_CLOSED' then
+			debugMsg('BAG_CLOSED event')
+			-- Could clean up icons here if needed
 		elseif event == 'MERCHANT_SHOW' then
 			vendorOpen = true
 			-- Mark items when vendor opens (but throttled)
