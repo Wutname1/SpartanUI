@@ -3,7 +3,7 @@
 ..\..\FrameXML\UI.xsd">
 	<Script file="MoveIt.lua" />
 	<Script file="AutoTurnIn.lua" />
-	<Script file="AutoSell.lua" />
+	<Include file="AutoSell\Loader.xml" />
 	<Script file="Minimap\Minimap.lua" />
 	<Script file="Minimap\Options.lua" />
 	<Script file="ExpandedExpansionButton.lua" />
