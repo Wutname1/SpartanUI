@@ -20,14 +20,16 @@
       "Bash(tail:*)",
       "Bash(for file in *",
       "Bash(git add:*)",
-      "Bash(git commit:*)"
+      "Bash(git commit:*)",
+      "Read(*)"
     ],
     "deny": [],
     "ask": [],
     "defaultMode": "acceptEdits",
     "additionalDirectories": [
-      "C:\\Users\\jerem\\Syncthing\\WOWUICode\\wow-ui-source\\Interface\\AddOns",
       "C:\\Users\\jerem\\Syncthing\\WoW\\AppData\\_retail_\\Interface\\Addons",
+      "C:\\Users\\jerem\\Syncthing\\WOW\\MyCode",
+      "C:\\Users\\jerem\\Syncthing\\WOW\\WOWUICode",
       "C:\\Users\\jerem\\OneDrive\\WoW\\Examples"
     ]
   },
