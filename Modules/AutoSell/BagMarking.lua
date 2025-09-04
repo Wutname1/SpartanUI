@@ -3,13 +3,12 @@ local SUI, L, print = SUI, SUI.L, SUI.print
 local module = SUI:GetModule('AutoSell')
 
 local BAG_COUNT = 4
-local markCounter = 0
-local countLimit = 30
 local usingDefaultBags = false
 local markingFrame = nil
 local lastMarkTime = 0
 local MARK_THROTTLE = 0.5 -- Minimum time between marking operations (in seconds)
 local vendorOpen = false
+local markingTimer = nil -- Ace3 timer handle
 
 local function debugMsg(msg)
 	SUI.Debug(msg, 'AutoSell.BagMarking')
@@ -431,20 +430,26 @@ local function markItems()
 	end
 end
 
--- OnUpdate handler for continuous marking
-local function onUpdate()
-	markCounter = markCounter + 1
-	if markCounter <= countLimit then
-		return
-	else
-		markCounter = 0
-		markItems()
+-- Start the marking timer when bags are opened
+local function startMarkingTimer()
+	if not markingTimer then
+		debugMsg('Starting marking timer (1 second interval)')
+		markingTimer = module:ScheduleRepeatingTimer(markItems, 1.0) -- Mark every second
+	end
+end
+
+-- Stop the marking timer when bags are closed
+local function stopMarkingTimer()
+	if markingTimer then
+		debugMsg('Stopping marking timer')
+		module:CancelTimer(markingTimer)
+		markingTimer = nil
 	end
 end
 
 -- Handle Baggins specific events
 local function handleBagginsOpened()
-	if markCounter == 0 then markingFrame:SetScript('OnUpdate', onUpdate) end
+	startMarkingTimer()
 end
 
 -- Baganator junk plugin callback
@@ -488,13 +493,9 @@ function module:InitializeBagMarking()
 	markingFrame:RegisterEvent('MERCHANT_SHOW')
 	markingFrame:RegisterEvent('MERCHANT_CLOSED')
 	
-	-- Register for bag open/close events to mark immediately
+	-- Register for bag open/close events to manage timer
 	markingFrame:RegisterEvent('BAG_OPEN')
 	markingFrame:RegisterEvent('BAG_CLOSED')
-
-	-- Reduced initial marking delay for faster response
-	countLimit = 30  -- Much faster initial marking (was 400)
-	markingFrame:SetScript('OnUpdate', onUpdate)
 
 	-- Set up Baggins support if available
 	if C_AddOns.IsAddOnLoaded('Baggins') and Baggins then Baggins:RegisterSignal('Baggins_BagOpened', handleBagginsOpened, Baggins) end
@@ -514,26 +515,47 @@ function module:InitializeBagMarking()
 				registerBaganatorPlugin()
 			end
 		elseif event == 'BAG_OPEN' then
-			debugMsg('BAG_OPEN event - marking items immediately')
+			debugMsg('BAG_OPEN event - starting marking timer and marking immediately')
 			-- Mark items immediately when bags are opened
 			markItems()
+			-- Start the repeating timer for continuous marking
+			startMarkingTimer()
 		elseif event == 'BAG_CLOSED' then
-			debugMsg('BAG_CLOSED event')
-			-- Could clean up icons here if needed
+			debugMsg('BAG_CLOSED event - stopping marking timer')
+			-- Stop the repeating timer when bags are closed
+			stopMarkingTimer()
 		elseif event == 'MERCHANT_SHOW' then
 			vendorOpen = true
 			-- Mark items when vendor opens (but throttled)
 			markItems()
+			-- Start timer if not already running
+			startMarkingTimer()
 		elseif event == 'MERCHANT_CLOSED' then
 			vendorOpen = false
+			-- Keep timer running if bags are still open, otherwise stop it
+			local combinedBags = _G['ContainerFrameCombinedBags']
+			local anyBagOpen = false
+			for i = 0, BAG_COUNT do
+				local container = _G['ContainerFrame' .. i + 1]
+				if (container and container:IsShown()) or (combinedBags and combinedBags:IsShown()) then
+					anyBagOpen = true
+					break
+				end
+			end
+			if not anyBagOpen then
+				stopMarkingTimer()
+			end
 		elseif event == 'BAG_UPDATE' or event == 'BAG_UPDATE_DELAYED' then
-			-- When vendor is open, be much more conservative about marking
-			if vendorOpen then
-				-- Use longer delay and throttling when vendor is open to prevent spam
-				C_Timer.After(0.5, markItems)
-			else
-				-- Normal marking when vendor is closed
-				C_Timer.After(0.1, markItems)
+			-- Only trigger immediate marking if timer isn't running
+			if not markingTimer then
+				-- When vendor is open, be much more conservative about marking
+				if vendorOpen then
+					-- Use longer delay and throttling when vendor is open to prevent spam
+					C_Timer.After(0.5, markItems)
+				else
+					-- Normal marking when vendor is closed
+					C_Timer.After(0.1, markItems)
+				end
 			end
 		end
 	end)
@@ -543,9 +565,11 @@ end
 
 -- Cleanup function
 function module:CleanupBagMarking()
+	-- Stop any running timers
+	stopMarkingTimer()
+	
 	if markingFrame then
 		markingFrame:UnregisterAllEvents()
-		markingFrame:SetScript('OnUpdate', nil)
 		markingFrame:SetScript('OnEvent', nil)
 		markingFrame = nil
 	end
