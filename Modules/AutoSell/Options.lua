@@ -163,6 +163,7 @@ local function BuildOptions()
 				order = itemId + 0.05,
 				func = function(info)
 					module.DB.Blacklist[mode][itemId] = nil
+					module:InvalidateBlacklistCache()
 					buildItemList(mode)
 				end,
 			}
@@ -201,6 +202,7 @@ local function BuildOptions()
 					order = orderCounter + 0.1,
 					func = function(info)
 						module.CharDB[mode][itemId] = nil
+						module:InvalidateBlacklistCache()
 						buildCharacterList(mode)
 					end,
 				}
@@ -344,6 +346,7 @@ local function BuildOptions()
 						end
 						-- Add the item ID to the blacklist
 						module.DB.Blacklist.Items[#info - 1] = input
+						module:InvalidateBlacklistCache()
 						buildItemList(info[#info - 1])
 					end,
 				},
@@ -380,6 +383,7 @@ local function BuildOptions()
 						end
 						-- Add the item class to the blacklist
 						module.DB.Blacklist.Types[#info - 1] = input
+						module:InvalidateBlacklistCache()
 						buildItemList(info[#info - 1])
 					end,
 				},
@@ -425,6 +429,7 @@ local function BuildOptions()
 							return
 						end
 						module.CharDB.Whitelist[itemID] = true
+						module:InvalidateBlacklistCache()
 						buildCharacterList('Whitelist')
 					end,
 				},
@@ -470,6 +475,7 @@ local function BuildOptions()
 							return
 						end
 						module.CharDB.Blacklist[itemID] = true
+						module:InvalidateBlacklistCache()
 						buildCharacterList('Blacklist')
 					end,
 				},

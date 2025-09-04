@@ -9,6 +9,13 @@ local Tooltip = CreateFrame('GameTooltip', 'AutoSellTooltip', nil, 'GameTooltipT
 local LoadedOnce = false
 local totalValue = 0
 
+-- Performance cache for blacklist lookups
+local blacklistLookup = {
+	items = {},
+	types = {},
+	valid = false
+}
+
 ---@class SUI.Module.AutoSell.DB
 local DbDefaults = {
 	FirstLaunch = true,
@@ -108,6 +115,37 @@ local DbDefaults = {
 
 local function debugMsg(msg)
 	SUI.Debug(msg, 'AutoSell')
+end
+
+-- Build fast blacklist lookup tables
+local function buildBlacklistLookup()
+	if blacklistLookup.valid then return end
+	
+	-- Reset tables
+	blacklistLookup.items = {}
+	blacklistLookup.types = {}
+	
+	-- Build item blacklist lookup
+	for _, itemID in ipairs(module.DB.Blacklist.Items) do
+		blacklistLookup.items[itemID] = true
+	end
+	
+	-- Build type blacklist lookup  
+	for _, itemType in ipairs(module.DB.Blacklist.Types) do
+		blacklistLookup.types[itemType] = true
+	end
+	
+	blacklistLookup.valid = true
+end
+
+-- Invalidate lookup cache when settings change
+local function invalidateBlacklistLookup()
+	blacklistLookup.valid = false
+end
+
+-- Module function to invalidate cache (accessible from Options.lua)
+function module:InvalidateBlacklistCache()
+	invalidateBlacklistLookup()
 end
 
 local function IsInGearset(bag, slot)
@@ -217,8 +255,9 @@ function module:IsSellable(item, ilink, bag, slot)
 
 	if string.find(name, '') and quality == 1 then return false end
 
-	-- Check profile blacklists
-	if not SUI:IsInTable(module.DB.Blacklist.Items, item) and not SUI:IsInTable(module.DB.Blacklist.Types, itemType) and not SUI:IsInTable(module.DB.Blacklist.Types, itemSubType) then
+	-- Check profile blacklists (optimized lookups)
+	buildBlacklistLookup()
+	if not blacklistLookup.items[item] and not blacklistLookup.types[itemType] and not blacklistLookup.types[itemSubType] then
 		debugMsg('--Decision: Selling--')
 		debugMsg('Item: ' .. (name or 'Unknown') .. ' (Link: ' .. ilink .. ')')
 		debugMsg('Expansion ID: ' .. tostring(expacID))
@@ -691,6 +730,9 @@ function module:OnEnable()
 	if module.DB.ShowBagMarking then
 		module:InitializeBagMarking()
 	end
+	
+	-- Build blacklist cache on enable for better performance
+	buildBlacklistLookup()
 
 	LoadedOnce = true
 end
