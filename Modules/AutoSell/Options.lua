@@ -660,6 +660,7 @@ function module:CreateMiniVendorPanels()
 					local value = math.floor(control:GetValue())
 					module.DB.MaxILVL = value
 					if options.MaxILVLInput.SetValue then options.MaxILVLInput:SetValue(value) end
+					module:InvalidateBlacklistCache()
 					UpdateSellButton() -- Update sell button when slider changes
 				end
 			elseif setting == 'MaxILVLInput' then
@@ -675,6 +676,7 @@ function module:CreateMiniVendorPanels()
 						local value = math.floor(control:GetValue())
 						module.DB.MaxILVL = value
 						options.MaxILVLSlider:SetValue(value)
+						module:InvalidateBlacklistCache()
 						UpdateSellButton() -- Update sell button when input changes
 					end
 				end
@@ -688,6 +690,7 @@ function module:CreateMiniVendorPanels()
 					end
 
 					module.DB[setting] = control:GetChecked()
+					module:InvalidateBlacklistCache()
 					UpdateSellButton() -- Update sell button when checkboxes change
 				end)
 			end
