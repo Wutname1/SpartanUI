@@ -146,6 +146,16 @@ end
 -- Module function to invalidate cache (accessible from Options.lua)
 function module:InvalidateBlacklistCache()
 	invalidateBlacklistLookup()
+	
+	-- Refresh bag markings when cache is invalidated
+	if module.DB.ShowBagMarking and module.markItems then
+		module.markItems()
+	end
+	
+	-- Refresh Baganator when cache is invalidated
+	if C_AddOns.IsAddOnLoaded('Baganator') and Baganator and Baganator.API then
+		Baganator.API.RequestItemButtonsRefresh()
+	end
 end
 
 local function IsInGearset(bag, slot)
