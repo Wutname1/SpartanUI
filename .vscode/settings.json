@@ -1168,7 +1168,9 @@
     "ToggleBag",
     "TIME_TWENTYFOURHOURS",
     "TIME_TWELVEHOURAM",
-    "TIME_TWELVEHOURPM"
+    "TIME_TWELVEHOURPM",
+    "ITEM_QUALITY_COLORS",
+    "NUM_CONTAINER_FRAMES"
   ],
   "Lua.workspace.ignoreDir": [".vscode", "libs/*"],
   "Lua.diagnostics.enable": true,

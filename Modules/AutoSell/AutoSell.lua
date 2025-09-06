@@ -5,6 +5,9 @@ module.DisplayName = L['Auto sell']
 module.description = 'Auto sells junk and more'
 
 ----------------------------------------------------------------------------------------------------
+-- Configuration constants
+local MAX_BAG_SLOTS = 12  -- Maximum number of bag slots to scan (0-12 covers all normal bags plus extras)
+
 local Tooltip = CreateFrame('GameTooltip', 'AutoSellTooltip', nil, 'GameTooltipTemplate')
 local LoadedOnce = false
 local totalValue = 0
@@ -198,9 +201,15 @@ function module:WouldBlizzardSell(item, quality)
 end
 
 function module:IsSellable(item, ilink, bag, slot)
-	if not item then return false end
+	if not item then 
+		debugMsg('IsSellable: item is nil, returning false')
+		return false 
+	end
 	local name, _, quality, _, _, itemType, itemSubType, _, equipSlot, _, vendorPrice, _, _, _, expacID, _, isCraftingReagent = C_Item.GetItemInfo(ilink)
-	if vendorPrice == 0 or name == nil then return false end
+	if vendorPrice == 0 or name == nil then 
+		debugMsg('IsSellable: no vendor price or name for item ' .. tostring(item))
+		return false 
+	end
 	
 	-- Check character-specific blacklist FIRST (highest priority)
 	if module.CharDB.Blacklist[item] then
@@ -208,9 +217,9 @@ function module:IsSellable(item, ilink, bag, slot)
 		return false
 	end
 	
-	-- Check character-specific whitelist (overrides all normal rules)
+	-- Check character-specific whitelist (overrides ALL other rules)
 	if module.CharDB.Whitelist[item] then
-		debugMsg('--Decision: Selling (character whitelist)--')
+		debugMsg('--Decision: Selling (character whitelist overrides all rules)--')
 		debugMsg('Item: ' .. (name or 'Unknown') .. ' (Link: ' .. ilink .. ')')
 		debugMsg('Vendor Price: ' .. tostring(vendorPrice))
 		return true
@@ -239,7 +248,7 @@ function module:IsSellable(item, ilink, bag, slot)
 	end
 
 	--Gearset detection
-	if C_EquipmentSet.CanUseEquipmentSets() and IsInGearset(bag, slot) then return false end
+	if module.DB.NotInGearset and C_EquipmentSet.CanUseEquipmentSets() and IsInGearset(bag, slot) then return false end
 	-- Gear Tokens
 	if quality == 4 and itemType == 'Miscellaneous' and itemSubType == 'Junk' and equipSlot == '' and not module.DB.GearTokens then return false end
 
@@ -293,7 +302,7 @@ function module:SellTrash()
 		if C_MerchantFrame.IsSellAllJunkEnabled() then
 			-- Count gray items that Blizzard will sell
 			local grayItemCount = 0
-			for bag = 0, 4 do
+			for bag = 0, MAX_BAG_SLOTS do
 				for slot = 1, C_Container.GetContainerNumSlots(bag) do
 					local itemInfo = C_Container.GetContainerItemInfo(bag, slot)
 					if itemInfo then
@@ -317,26 +326,31 @@ function module:SellTrash()
 	end
 
 	--Find Items to sell and track highest iLVL
-	for bag = 0, 4 do
+	debugMsg('Starting to scan bags for sellable items...')
+	-- Scan through all possible bag slots (0-12 covers all normal bags plus extras)
+	for bag = 0, MAX_BAG_SLOTS do
 		for slot = 1, C_Container.GetContainerNumSlots(bag) do
 			local itemInfo, _, _, _, _, _, link, _, _, itemID = C_Container.GetContainerItemInfo(bag, slot)
 			if SUI.IsRetail and itemInfo then
 				local iLevel = SUI:GetiLVL(itemInfo.hyperlink)
 				if iLevel and iLevel > highestILVL then highestILVL = iLevel end
-				if module:IsSellable(itemInfo.itemID, itemInfo.hyperlink, bag, slot) then
+				local sellable = module:IsSellable(itemInfo.itemID, itemInfo.hyperlink, bag, slot)
+				if sellable then
 					ItemToSell[#ItemToSell + 1] = { bag, slot }
 					totalValue = totalValue + (select(11, C_Item.GetItemInfo(itemInfo.itemID)) * itemInfo.stackCount)
 				end
 			elseif not SUI.IsRetail and itemID then
 				local iLevel = SUI:GetiLVL(link)
 				if iLevel and iLevel > highestILVL then highestILVL = iLevel end
-				if module:IsSellable(itemID, link, bag, slot) then
+				local sellable = module:IsSellable(itemID, link, bag, slot)
+				if sellable then
 					ItemToSell[#ItemToSell + 1] = { bag, slot }
 					totalValue = totalValue + (select(11, C_Item.GetItemInfo(itemID)) * select(2, C_Container.GetContainerItemInfo(bag, slot)))
 				end
 			end
 		end
 	end
+	debugMsg('Finished scanning bags. Found ' .. #ItemToSell .. ' items to sell.')
 
 	-- Auto-increase MaximumiLVL if we detected higher iLVL items
 	if highestILVL > 0 and (highestILVL + 50) > module.DB.MaximumiLVL then
@@ -360,7 +374,8 @@ function module:SellAdditionalItems()
 	local highestILVL = 0
 
 	--Find Items to sell and track highest iLVL (excluding gray items already sold by Blizzard)
-	for bag = 0, 4 do
+	-- Scan through all possible bag slots (0-12 covers all normal bags plus extras)
+	for bag = 0, MAX_BAG_SLOTS do
 		for slot = 1, C_Container.GetContainerNumSlots(bag) do
 			local itemInfo, _, _, _, _, _, link, _, _, itemID = C_Container.GetContainerItemInfo(bag, slot)
 			if SUI.IsRetail and itemInfo then
@@ -453,7 +468,7 @@ local function HandleItemLevelSquish()
 
 		-- Scan all items to find the new highest item level
 		local newHighestILVL = 0
-		for bag = 0, 4 do
+		for bag = 0, MAX_BAG_SLOTS do
 			for slot = 1, C_Container.GetContainerNumSlots(bag) do
 				local itemInfo, _, _, _, _, _, link, _, _, itemID = C_Container.GetContainerItemInfo(bag, slot)
 				local iLevel = 0
@@ -512,6 +527,19 @@ function module:DebugItemSellability(link)
 		return
 	end
 	
+	-- Find the actual bag/slot for this item to use exact same call as marking/selling
+	local actualBag, actualSlot = nil, nil
+	for bag = 0, MAX_BAG_SLOTS do
+		for slot = 1, C_Container.GetContainerNumSlots(bag) do
+			local itemInfo = C_Container.GetContainerItemInfo(bag, slot)
+			if itemInfo and itemInfo.itemID == itemID then
+				actualBag, actualSlot = bag, slot
+				break
+			end
+		end
+		if actualBag then break end
+	end
+	
 	local iLevel = SUI:GetiLVL(link)
 	local qualityColor = ITEM_QUALITY_COLORS[quality] and ITEM_QUALITY_COLORS[quality].hex or 'ffffffff'
 	
@@ -541,8 +569,21 @@ function module:DebugItemSellability(link)
 	end
 	
 	-- Character whitelist
+	print("Debug: Checking CharDB.Whitelist[" .. tostring(itemID) .. "] = " .. tostring(module.CharDB.Whitelist[itemID]))
 	if module.CharDB.Whitelist[itemID] then
 		print("|cff00FF00ALLOWED:|r In character whitelist (overrides all rules)")
+		print("|cff00FF00RESULT:|r Item should be marked with sell icon")
+		
+		-- Final decision check to verify the actual function using EXACT same parameters as marking/selling
+		if actualBag and actualSlot then
+			local itemInfo = C_Container.GetContainerItemInfo(actualBag, actualSlot)
+			if itemInfo then
+				local finalDecision = module:IsSellable(itemInfo.itemID, itemInfo.hyperlink, actualBag, actualSlot)
+				print(string.format("|cffFFFFFF--- FINAL DECISION (exact call): %s ---|r", finalDecision and "|cff00FF00WILL SELL|r" or "|cffFF0000WILL NOT SELL|r"))
+			end
+		else
+			print("|cffFFFF00WARNING:|r Could not find item in bags for exact test")
+		end
 		return
 	end
 	
@@ -667,10 +708,26 @@ function module:HandleItemClick(link)
 	local itemName, _, quality = C_Item.GetItemInfo(itemID)
 	if not itemName then return end
 	
+	-- Find the actual bag/slot for this item to use exact same call as marking/selling
+	local actualBag, actualSlot, actualItemInfo = nil, nil, nil
+	for bag = 0, MAX_BAG_SLOTS do
+		for slot = 1, C_Container.GetContainerNumSlots(bag) do
+			local itemInfo = C_Container.GetContainerItemInfo(bag, slot)
+			if itemInfo and itemInfo.itemID == itemID then
+				actualBag, actualSlot, actualItemInfo = bag, slot, itemInfo
+				break
+			end
+		end
+		if actualBag then break end
+	end
+
 	-- Check current state of this item
 	local isInCharBlacklist = module.CharDB.Blacklist[itemID]
 	local isInCharWhitelist = module.CharDB.Whitelist[itemID]
-	local isSellable = module:IsSellable(itemID, link, 0, 1)
+	local isSellable = false
+	if actualItemInfo then
+		isSellable = module:IsSellable(actualItemInfo.itemID, actualItemInfo.hyperlink, actualBag, actualSlot)
+	end
 	
 	if isInCharWhitelist then
 		-- State 1: In whitelist -> Move to blacklist
