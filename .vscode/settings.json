@@ -1172,7 +1172,9 @@
     "ITEM_QUALITY_COLORS",
     "NUM_CONTAINER_FRAMES",
     "LiteBagInventoryPanel",
-    "Baganator"
+    "Baganator",
+    "ScrollingEdit_OnTextChanged",
+    "ScrollingEdit_OnCursorChanged"
   ],
   "Lua.workspace.ignoreDir": [".vscode", "libs/*"],
   "Lua.diagnostics.enable": true,

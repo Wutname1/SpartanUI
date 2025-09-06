@@ -15,7 +15,7 @@ local function ConfigOpened(self, name)
 	if not frame or frame.Close then return end
 	for i = 1, frame:GetNumChildren() do
 		local child = select(i, frame:GetChildren())
-		SUI.Debug('Child ' .. (child:GetName() or 'NoName') .. ' ' .. (child:GetObjectType() or 'NoType'), 'Skiner')
+		SUI.Log('Child ' .. (child:GetName() or 'NoName') .. ' ' .. (child:GetObjectType() or 'NoType'), 'Skiner')
 		if child:IsObjectType('Button') then
 			if child:IsObjectType('Button') and child:GetText() == _G['CLOSE'] then
 				SUI.Skins.SkinObj(child:GetObjectType(), child, 'Light')
@@ -293,7 +293,7 @@ local function SkinAce3()
 
 			if widget.scrollbar then Skin('ScrollBar', widget.scrollBar) end
 			-- else
-			-- 	SUI.Debug('No Widget skin ' .. widgetType, 'Skinning')
+			-- 	SUI.Log('No Widget skin ' .. widgetType, 'Skinning')
 		end
 		return regContainer(self, widget)
 	end

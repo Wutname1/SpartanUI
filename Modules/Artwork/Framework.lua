@@ -276,14 +276,14 @@ function module:updateOffset()
 	else
 		SpartanUI:SetPoint('BOTTOMLEFT', UIParent, 'BOTTOMLEFT', 0, SUI.DB.Artwork.Offset.Bottom)
 	end
-	
+
 	-- Notify LibsDataBar API of offset changes if available
 	if _G.LibsDataBar_NotifyOffsetChange then
 		_G.LibsDataBar_NotifyOffsetChange('spartanui', {
 			top = SUI.DB.Artwork.Offset.Top,
 			bottom = SUI.DB.Artwork.Offset.Bottom,
 			left = 0,
-			right = 0
+			right = 0,
 		})
 	end
 end
@@ -350,7 +350,7 @@ function module:OnEnable()
 	StyleUpdate()
 	module:RegisterEvent('ADDON_LOADED', StyleUpdate)
 	module:RegisterEvent('PLAYER_ENTERING_WORLD', StyleUpdate)
-	
+
 	-- Register with LibsDataBar API if available
 	local function tryRegisterIntegration()
 		if _G.LibsDataBar_RegisterIntegration then
@@ -359,47 +359,45 @@ function module:OnEnable()
 				name = 'SpartanUI Artwork Integration',
 				version = '1.0.0',
 				addon = 'SpartanUI',
-				
+
 				-- Called when LibsDataBar bar positions change
 				onBarPositionChanged = function(data)
-					if data.changeType == "move" or data.changeType == "resize" then
-						module:updateOffset()
-					end
+					if data.changeType == 'move' or data.changeType == 'resize' then module:updateOffset() end
 				end,
-				
+
 				-- Called when bars are created/destroyed
 				onBarCreated = function(barId, bar)
 					module:updateOffset()
 				end,
-				
+
 				onBarDestroyed = function(barId, bar)
 					module:updateOffset()
 				end,
-				
+
 				-- Called when bars are shown/hidden
 				onBarShown = function(barId)
 					module:updateOffset()
 				end,
-				
+
 				onBarHidden = function(barId)
 					module:updateOffset()
 				end,
-				
+
 				-- Function LibsDataBar can call to get current SpartanUI offsets
 				getOffsets = function()
 					return {
 						top = SUI.DB.Artwork.Offset.Top or 0,
 						bottom = SUI.DB.Artwork.Offset.Bottom or 0,
 						left = 0,
-						right = 0
+						right = 0,
 					}
-				end
+				end,
 			})
-			
+
 			if success then
-				SUI.Debug('LibsDataBar integration registered successfully', 'Artwork')
+				SUI.Log('LibsDataBar integration registered successfully', 'Artwork')
 			else
-				SUI.Debug('Failed to register LibsDataBar integration, retrying in 2 seconds', 'Artwork')
+				SUI.Log('Failed to register LibsDataBar integration, retrying in 2 seconds', 'Artwork')
 				C_Timer.After(2, tryRegisterIntegration)
 			end
 		else
@@ -407,7 +405,7 @@ function module:OnEnable()
 			C_Timer.After(1, tryRegisterIntegration)
 		end
 	end
-	
+
 	-- Start registration attempts after a delay
 	C_Timer.After(2, tryRegisterIntegration)
 end
@@ -454,7 +452,7 @@ function module:UpdateBarBG()
 					local texture = usersettings[i].customTexture or 'Blizzard'
 					bgFrame.BG:SetTexture(LSM:Fetch('statusbar', texture))
 					bgFrame.BG:SetAlpha((bgFrame.skinSettings.alpha or 1) * usersettings[i].alpha)
-					
+
 					-- Apply texture color/tint
 					local useSkinColors = usersettings[i].useSkinColors ~= false -- Default to true
 					if usersettings[i].classColorBG then
@@ -481,7 +479,7 @@ function module:UpdateBarBG()
 					bgFrame.BG:SetTexture(bgFrame.skinSettings.TexturePath)
 					bgFrame.BG:SetTexCoord(unpack(bgFrame.skinSettings.TexCoord or { 0, 1, 0, 1 }))
 					bgFrame.BG:SetAlpha((bgFrame.skinSettings.alpha or 1) * usersettings[i].alpha)
-					
+
 					-- Apply texture color/tint or use skin defaults
 					local useSkinColors = usersettings[i].useSkinColors ~= false -- Default to true
 					if usersettings[i].classColorBG then
@@ -508,9 +506,7 @@ function module:UpdateBarBG()
 				-- Handle borders with individual side support
 				if usersettings[i].borderEnabled then
 					-- Initialize border container if not exists
-					if not bgFrame.Borders then
-						bgFrame.Borders = {}
-					end
+					if not bgFrame.Borders then bgFrame.Borders = {} end
 
 					local borderSize = usersettings[i].borderSize or 1
 					local borderColors = usersettings[i].borderColors or {}
@@ -530,22 +526,20 @@ function module:UpdateBarBG()
 
 							-- Get individual border color for this side
 							local sideColor = borderColors[side] or { 1, 1, 1, 1 }
-							
+
 							-- Use class color if enabled for this specific side
 							local classColorBorders = usersettings[i].classColorBorders or {}
 							if classColorBorders[side] then
 								local _, class = UnitClass('player')
 								local classColor = RAID_CLASS_COLORS[class]
-								if classColor then
-									sideColor = { classColor.r, classColor.g, classColor.b, sideColor[4] or 1 }
-								end
+								if classColor then sideColor = { classColor.r, classColor.g, classColor.b, sideColor[4] or 1 } end
 							end
 
 							-- Position border sides outside the background frame
 							-- Horizontal borders (top/bottom) extend to cover vertical border areas for proper corners
 							local border = bgFrame.Borders[side]
 							border:ClearAllPoints()
-							
+
 							if side == 'top' then
 								-- Extend left/right to cover vertical border areas
 								local leftExtend = (borderSides.left and borderSize) or 0
@@ -583,9 +577,7 @@ function module:UpdateBarBG()
 				elseif bgFrame.Borders then
 					-- Hide all border sides and reset background positioning
 					for _, side in ipairs({ 'top', 'bottom', 'left', 'right' }) do
-						if bgFrame.Borders[side] then
-							bgFrame.Borders[side]:Hide()
-						end
+						if bgFrame.Borders[side] then bgFrame.Borders[side]:Hide() end
 					end
 					-- Reset background to default positioning when borders are disabled
 					bgFrame.BG:ClearAllPoints()
@@ -601,9 +593,7 @@ function module:UpdateBarBG()
 				if bgFrame.Border then bgFrame.Border:Hide() end
 				if bgFrame.Borders then
 					for _, side in ipairs({ 'top', 'bottom', 'left', 'right' }) do
-						if bgFrame.Borders[side] then
-							bgFrame.Borders[side]:Hide()
-						end
+						if bgFrame.Borders[side] then bgFrame.Borders[side]:Hide() end
 					end
 				end
 				-- Reset background positioning when disabled
@@ -692,5 +682,4 @@ function module:RegisterThemeTextures()
 			LSM:Register('statusbar', texture.name, texture.file)
 		end
 	end
-	
 end

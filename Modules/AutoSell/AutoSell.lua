@@ -6,7 +6,7 @@ module.description = 'Auto sells junk and more'
 
 ----------------------------------------------------------------------------------------------------
 -- Configuration constants
-local MAX_BAG_SLOTS = 12  -- Maximum number of bag slots to scan (0-12 covers all normal bags plus extras)
+local MAX_BAG_SLOTS = 12 -- Maximum number of bag slots to scan (0-12 covers all normal bags plus extras)
 
 local Tooltip = CreateFrame('GameTooltip', 'AutoSellTooltip', nil, 'GameTooltipTemplate')
 local LoadedOnce = false
@@ -16,7 +16,7 @@ local totalValue = 0
 local blacklistLookup = {
 	items = {},
 	types = {},
-	valid = false
+	valid = false,
 }
 
 ---@class SUI.Module.AutoSell.DB
@@ -117,27 +117,27 @@ local DbDefaults = {
 ---@field Blacklist table<number, boolean> Character-specific blacklist items
 
 local function debugMsg(msg)
-	SUI.Debug(msg, 'AutoSell')
+	SUI.Log(msg, 'AutoSell')
 end
 
 -- Build fast blacklist lookup tables
 local function buildBlacklistLookup()
 	if blacklistLookup.valid then return end
-	
+
 	-- Reset tables
 	blacklistLookup.items = {}
 	blacklistLookup.types = {}
-	
+
 	-- Build item blacklist lookup
 	for _, itemID in ipairs(module.DB.Blacklist.Items) do
 		blacklistLookup.items[itemID] = true
 	end
-	
-	-- Build type blacklist lookup  
+
+	-- Build type blacklist lookup
 	for _, itemType in ipairs(module.DB.Blacklist.Types) do
 		blacklistLookup.types[itemType] = true
 	end
-	
+
 	blacklistLookup.valid = true
 end
 
@@ -149,24 +149,18 @@ end
 -- Module function to invalidate cache (accessible from Options.lua)
 function module:InvalidateBlacklistCache()
 	invalidateBlacklistLookup()
-	
+
 	-- Refresh bag markings when cache is invalidated
-	if module.DB.ShowBagMarking and module.markItems then
-		module.markItems()
-	end
-	
+	if module.DB.ShowBagMarking and module.markItems then module.markItems() end
+
 	-- Refresh Baganator when cache is invalidated
-	if C_AddOns.IsAddOnLoaded('Baganator') and Baganator and Baganator.API then
-		Baganator.API.RequestItemButtonsRefresh()
-	end
+	if C_AddOns.IsAddOnLoaded('Baganator') and Baganator and Baganator.API then Baganator.API.RequestItemButtonsRefresh() end
 end
 
 local function IsInGearset(bag, slot)
 	-- Skip gearset check if called without valid bag/slot (like from Baganator)
-	if not bag or not slot or bag < 0 or slot < 1 then
-		return false
-	end
-	
+	if not bag or not slot or bag < 0 or slot < 1 then return false end
+
 	local success, result = pcall(function()
 		local line
 		Tooltip:SetOwner(UIParent, 'ANCHOR_NONE')
@@ -174,18 +168,16 @@ local function IsInGearset(bag, slot)
 
 		for i = 1, Tooltip:NumLines() do
 			line = _G['AutoSellTooltipTextLeft' .. i]
-			if line and line:GetText() and line:GetText():find(EQUIPMENT_SETS:format('.*')) then 
-				return true 
-			end
+			if line and line:GetText() and line:GetText():find(EQUIPMENT_SETS:format('.*')) then return true end
 		end
 		return false
 	end)
-	
+
 	if not success then
 		debugMsg('IsInGearset error: ' .. tostring(result))
 		return false
 	end
-	
+
 	return result
 end
 
@@ -201,22 +193,22 @@ function module:WouldBlizzardSell(item, quality)
 end
 
 function module:IsSellable(item, ilink, bag, slot)
-	if not item then 
+	if not item then
 		debugMsg('IsSellable: item is nil, returning false')
-		return false 
+		return false
 	end
 	local name, _, quality, _, _, itemType, itemSubType, _, equipSlot, _, vendorPrice, _, _, _, expacID, _, isCraftingReagent = C_Item.GetItemInfo(ilink)
-	if vendorPrice == 0 or name == nil then 
+	if vendorPrice == 0 or name == nil then
 		debugMsg('IsSellable: no vendor price or name for item ' .. tostring(item))
-		return false 
+		return false
 	end
-	
+
 	-- Check character-specific blacklist FIRST (highest priority)
 	if module.CharDB.Blacklist[item] then
 		debugMsg('--Decision: Not selling (character blacklist)--')
 		return false
 	end
-	
+
 	-- Check character-specific whitelist (overrides ALL other rules)
 	if module.CharDB.Whitelist[item] then
 		debugMsg('--Decision: Selling (character whitelist overrides all rules)--')
@@ -224,7 +216,7 @@ function module:IsSellable(item, ilink, bag, slot)
 		debugMsg('Vendor Price: ' .. tostring(vendorPrice))
 		return true
 	end
-	
+
 	-- 0. Poor (gray): Broken I.W.I.N. Button
 	-- 1. Common (white): Archmage Vargoth's Staff
 	-- 2. Uncommon (green): X-52 Rocket Helmet
@@ -515,18 +507,18 @@ end
 
 ---Debug item sellability with detailed output
 function module:DebugItemSellability(link)
-	local itemID = tonumber(string.match(link, "item:(%d+)"))
-	if not itemID then 
-		print("|cffFFFF00AutoSell Debug:|r Could not extract item ID from link")
-		return 
-	end
-	
-	local name, _, quality, _, _, itemType, itemSubType, _, equipSlot, _, vendorPrice, _, _, _, expacID, _, isCraftingReagent = C_Item.GetItemInfo(link)
-	if not name then
-		print("|cffFFFF00AutoSell Debug:|r Item info not available")
+	local itemID = tonumber(string.match(link, 'item:(%d+)'))
+	if not itemID then
+		print('|cffFFFF00AutoSell Debug:|r Could not extract item ID from link')
 		return
 	end
-	
+
+	local name, _, quality, _, _, itemType, itemSubType, _, equipSlot, _, vendorPrice, _, _, _, expacID, _, isCraftingReagent = C_Item.GetItemInfo(link)
+	if not name then
+		print('|cffFFFF00AutoSell Debug:|r Item info not available')
+		return
+	end
+
 	-- Find the actual bag/slot for this item to use exact same call as marking/selling
 	local actualBag, actualSlot = nil, nil
 	for bag = 0, MAX_BAG_SLOTS do
@@ -539,136 +531,136 @@ function module:DebugItemSellability(link)
 		end
 		if actualBag then break end
 	end
-	
+
 	local iLevel = SUI:GetiLVL(link)
 	local qualityColor = ITEM_QUALITY_COLORS[quality] and ITEM_QUALITY_COLORS[quality].hex or 'ffffffff'
-	
-	print("|cffFFFF00=== AutoSell Debug ===|r")
-	print(string.format("Item: |c%s%s|r (ID: %d)", qualityColor, name, itemID))
-	print(string.format("Quality: %d (%s)", quality, _G["ITEM_QUALITY"..quality.."_DESC"] or "Unknown"))
-	print(string.format("Type: %s / %s", itemType or "nil", itemSubType or "nil"))
-	print(string.format("iLevel: %s", iLevel and tostring(iLevel) or "nil"))
-	print(string.format("Vendor Price: %s", vendorPrice and tostring(vendorPrice) or "0"))
-	print(string.format("Equip Slot: %s", equipSlot or "none"))
-	print(string.format("Expansion ID: %s", expacID and tostring(expacID) or "nil"))
-	print(string.format("Is Crafting Reagent: %s", isCraftingReagent and "Yes" or "No"))
-	
+
+	print('|cffFFFF00=== AutoSell Debug ===|r')
+	print(string.format('Item: |c%s%s|r (ID: %d)', qualityColor, name, itemID))
+	print(string.format('Quality: %d (%s)', quality, _G['ITEM_QUALITY' .. quality .. '_DESC'] or 'Unknown'))
+	print(string.format('Type: %s / %s', itemType or 'nil', itemSubType or 'nil'))
+	print(string.format('iLevel: %s', iLevel and tostring(iLevel) or 'nil'))
+	print(string.format('Vendor Price: %s', vendorPrice and tostring(vendorPrice) or '0'))
+	print(string.format('Equip Slot: %s', equipSlot or 'none'))
+	print(string.format('Expansion ID: %s', expacID and tostring(expacID) or 'nil'))
+	print(string.format('Is Crafting Reagent: %s', isCraftingReagent and 'Yes' or 'No'))
+
 	-- Check each condition
-	print("|cffFFFF00--- Sell Decision Process ------|r")
-	
+	print('|cffFFFF00--- Sell Decision Process ------|r')
+
 	-- Basic checks
 	if vendorPrice == 0 then
-		print("|cffFF0000BLOCKED:|r No vendor value")
+		print('|cffFF0000BLOCKED:|r No vendor value')
 		return
 	end
-	
+
 	-- Character blacklist
 	if module.CharDB.Blacklist[itemID] then
-		print("|cffFF0000BLOCKED:|r In character blacklist")
+		print('|cffFF0000BLOCKED:|r In character blacklist')
 		return
 	end
-	
+
 	-- Character whitelist
-	print("Debug: Checking CharDB.Whitelist[" .. tostring(itemID) .. "] = " .. tostring(module.CharDB.Whitelist[itemID]))
+	print('Debug: Checking CharDB.Whitelist[' .. tostring(itemID) .. '] = ' .. tostring(module.CharDB.Whitelist[itemID]))
 	if module.CharDB.Whitelist[itemID] then
-		print("|cff00FF00ALLOWED:|r In character whitelist (overrides all rules)")
-		print("|cff00FF00RESULT:|r Item should be marked with sell icon")
-		
+		print('|cff00FF00ALLOWED:|r In character whitelist (overrides all rules)')
+		print('|cff00FF00RESULT:|r Item should be marked with sell icon')
+
 		-- Final decision check to verify the actual function using EXACT same parameters as marking/selling
 		if actualBag and actualSlot then
 			local itemInfo = C_Container.GetContainerItemInfo(actualBag, actualSlot)
 			if itemInfo then
 				local finalDecision = module:IsSellable(itemInfo.itemID, itemInfo.hyperlink, actualBag, actualSlot)
-				print(string.format("|cffFFFFFF--- FINAL DECISION (exact call): %s ---|r", finalDecision and "|cff00FF00WILL SELL|r" or "|cffFF0000WILL NOT SELL|r"))
+				print(string.format('|cffFFFFFF--- FINAL DECISION (exact call): %s ---|r', finalDecision and '|cff00FF00WILL SELL|r' or '|cffFF0000WILL NOT SELL|r'))
 			end
 		else
-			print("|cffFFFF00WARNING:|r Could not find item in bags for exact test")
+			print('|cffFFFF00WARNING:|r Could not find item in bags for exact test')
 		end
 		return
 	end
-	
+
 	-- Quality checks
 	local qualityBlocked = false
 	if quality == 0 and not module.DB.Gray then
-		print("|cffFF0000BLOCKED:|r Gray quality disabled")
+		print('|cffFF0000BLOCKED:|r Gray quality disabled')
 		qualityBlocked = true
 	elseif quality == 1 and not module.DB.White then
-		print("|cffFF0000BLOCKED:|r White quality disabled")
+		print('|cffFF0000BLOCKED:|r White quality disabled')
 		qualityBlocked = true
 	elseif quality == 2 and not module.DB.Green then
-		print("|cffFF0000BLOCKED:|r Green quality disabled")
+		print('|cffFF0000BLOCKED:|r Green quality disabled')
 		qualityBlocked = true
 	elseif quality == 3 and not module.DB.Blue then
-		print("|cffFF0000BLOCKED:|r Blue quality disabled")
+		print('|cffFF0000BLOCKED:|r Blue quality disabled')
 		qualityBlocked = true
 	elseif quality == 4 and not module.DB.Purple then
-		print("|cffFF0000BLOCKED:|r Purple quality disabled")
+		print('|cffFF0000BLOCKED:|r Purple quality disabled')
 		qualityBlocked = true
 	else
-		print("|cff00FF00PASSED:|r Quality check")
+		print('|cff00FF00PASSED:|r Quality check')
 	end
-	
+
 	-- iLevel check
 	if iLevel and iLevel > module.DB.MaxILVL then
-		print(string.format("|cffFF0000BLOCKED:|r iLevel %d > max %d", iLevel, module.DB.MaxILVL))
+		print(string.format('|cffFF0000BLOCKED:|r iLevel %d > max %d', iLevel, module.DB.MaxILVL))
 		qualityBlocked = true
 	else
-		print(string.format("|cff00FF00PASSED:|r iLevel check (max: %d)", module.DB.MaxILVL))
+		print(string.format('|cff00FF00PASSED:|r iLevel check (max: %d)', module.DB.MaxILVL))
 	end
-	
+
 	if qualityBlocked then return end
-	
+
 	-- Gearset check (can't easily test without bag/slot)
-	print("|cffFFFFFF SKIPPED:|r Gearset check (requires bag position)")
-	
+	print('|cffFFFFFF SKIPPED:|r Gearset check (requires bag position)')
+
 	-- Gear tokens check
 	if quality == 4 and itemType == 'Miscellaneous' and itemSubType == 'Junk' and equipSlot == '' and not module.DB.GearTokens then
-		print("|cffFF0000BLOCKED:|r Gear tokens disabled")
+		print('|cffFF0000BLOCKED:|r Gear tokens disabled')
 		return
 	else
-		print("|cff00FF00PASSED:|r Gear token check")
+		print('|cff00FF00PASSED:|r Gear token check')
 	end
-	
+
 	-- Crafting check
 	local isCraftingItem = (itemType == 'Gem' or itemType == 'Reagent' or itemType == 'Recipes' or itemType == 'Trade Goods' or itemType == 'Tradeskill')
 		or (itemType == 'Miscellaneous' and itemSubType == 'Reagent')
 		or (itemType == 'Item Enhancement')
 		or isCraftingReagent
-		
+
 	if isCraftingItem and module.DB.NotCrafting then
-		print("|cffFF0000BLOCKED:|r Crafting items disabled (NotCrafting = " .. tostring(module.DB.NotCrafting) .. ")")
+		print('|cffFF0000BLOCKED:|r Crafting items disabled (NotCrafting = ' .. tostring(module.DB.NotCrafting) .. ')')
 		return
 	else
-		print("|cff00FF00PASSED:|r Crafting check (NotCrafting = " .. tostring(module.DB.NotCrafting) .. ")")
+		print('|cff00FF00PASSED:|r Crafting check (NotCrafting = ' .. tostring(module.DB.NotCrafting) .. ')')
 	end
-	
+
 	-- Pet check
 	if itemSubType == 'Companion Pets' then
-		print("|cffFF0000BLOCKED:|r Companion pets never sold")
+		print('|cffFF0000BLOCKED:|r Companion pets never sold')
 		return
 	else
-		print("|cff00FF00PASSED:|r Pet check")
+		print('|cff00FF00PASSED:|r Pet check')
 	end
-	
+
 	-- Transmog tokens check
 	if expacID == 9 and (itemType == 'Miscellaneous' or (itemType == 'Armor' and itemSubType == 'Miscellaneous')) and iLevel == 0 and quality >= 2 then
-		print("|cffFF0000BLOCKED:|r Transmog token protection")
+		print('|cffFF0000BLOCKED:|r Transmog token protection')
 		return
 	else
-		print("|cff00FF00PASSED:|r Transmog token check")
+		print('|cff00FF00PASSED:|r Transmog token check')
 	end
-	
+
 	-- Consumables check
 	if module.DB.NotConsumables and (itemType == 'Consumable' or itemSubType == 'Consumables') and quality ~= 0 then
-		print("|cffFF0000BLOCKED:|r Consumables disabled (NotConsumables = " .. tostring(module.DB.NotConsumables) .. ")")
+		print('|cffFF0000BLOCKED:|r Consumables disabled (NotConsumables = ' .. tostring(module.DB.NotConsumables) .. ')')
 		return
 	else
-		print("|cff00FF00PASSED:|r Consumables check (NotConsumables = " .. tostring(module.DB.NotConsumables) .. ")")
+		print('|cff00FF00PASSED:|r Consumables check (NotConsumables = ' .. tostring(module.DB.NotConsumables) .. ')')
 	end
-	
+
 	-- Profile blacklist checks
 	if SUI:IsInTable(module.DB.Blacklist.Items, itemID) then
-		print("|cffFF0000BLOCKED:|r In profile item blacklist")
+		print('|cffFF0000BLOCKED:|r In profile item blacklist')
 		return
 	elseif SUI:IsInTable(module.DB.Blacklist.Types, itemType) then
 		print("|cffFF0000BLOCKED:|r Item type '" .. itemType .. "' in profile type blacklist")
@@ -677,37 +669,37 @@ function module:DebugItemSellability(link)
 		print("|cffFF0000BLOCKED:|r Item subtype '" .. itemSubType .. "' in profile type blacklist")
 		return
 	else
-		print("|cff00FF00PASSED:|r Profile blacklist checks")
+		print('|cff00FF00PASSED:|r Profile blacklist checks')
 	end
-	
+
 	-- Final decision
 	local finalDecision = module:IsSellable(itemID, link, 0, 1)
-	print(string.format("|cffFFFFFF--- FINAL DECISION: %s ---|r", finalDecision and "|cff00FF00WILL SELL|r" or "|cffFF0000WILL NOT SELL|r"))
-	
+	print(string.format('|cffFFFFFF--- FINAL DECISION: %s ---|r', finalDecision and '|cff00FF00WILL SELL|r' or '|cffFF0000WILL NOT SELL|r'))
+
 	if finalDecision then
-		print("|cff00FF00RESULT:|r Item should be marked with sell icon")
+		print('|cff00FF00RESULT:|r Item should be marked with sell icon')
 	else
-		print("|cffFF0000RESULT:|r Item should NOT be marked with sell icon")
+		print('|cffFF0000RESULT:|r Item should NOT be marked with sell icon')
 	end
 end
 
 ---Handle Alt+Right Click on items to add/remove from character-specific lists
 function module:HandleItemClick(link)
 	if not IsAltKeyDown() then return end
-	
+
 	-- Control+Alt+Right Click for debugging
 	if IsControlKeyDown() then
 		module:DebugItemSellability(link)
 		return
 	end
-	
+
 	-- Extract item ID from hyperlink using string matching
-	local itemID = tonumber(string.match(link, "item:(%d+)"))
+	local itemID = tonumber(string.match(link, 'item:(%d+)'))
 	if not itemID then return end
-	
+
 	local itemName, _, quality = C_Item.GetItemInfo(itemID)
 	if not itemName then return end
-	
+
 	-- Find the actual bag/slot for this item to use exact same call as marking/selling
 	local actualBag, actualSlot, actualItemInfo = nil, nil, nil
 	for bag = 0, MAX_BAG_SLOTS do
@@ -725,33 +717,26 @@ function module:HandleItemClick(link)
 	local isInCharBlacklist = module.CharDB.Blacklist[itemID]
 	local isInCharWhitelist = module.CharDB.Whitelist[itemID]
 	local isSellable = false
-	if actualItemInfo then
-		isSellable = module:IsSellable(actualItemInfo.itemID, actualItemInfo.hyperlink, actualBag, actualSlot)
-	end
-	
+	if actualItemInfo then isSellable = module:IsSellable(actualItemInfo.itemID, actualItemInfo.hyperlink, actualBag, actualSlot) end
+
 	if isInCharWhitelist then
 		-- State 1: In whitelist -> Move to blacklist
 		module.CharDB.Whitelist[itemID] = nil
 		module.CharDB.Blacklist[itemID] = true
-		print(string.format('|cffFFFF00AutoSell:|r %s added to character blacklist (will not be sold)', 
-			ITEM_QUALITY_COLORS[quality].hex .. (itemName or 'Unknown') .. '|r'))
+		print(string.format('|cffFFFF00AutoSell:|r %s added to character blacklist (will not be sold)', ITEM_QUALITY_COLORS[quality].hex .. (itemName or 'Unknown') .. '|r'))
 	elseif isInCharBlacklist then
 		-- State 2: In blacklist -> Remove from all lists (use default behavior)
 		module.CharDB.Blacklist[itemID] = nil
-		print(string.format('|cffFFFF00AutoSell:|r %s removed from character lists (using default rules)', 
-			ITEM_QUALITY_COLORS[quality].hex .. (itemName or 'Unknown') .. '|r'))
+		print(string.format('|cffFFFF00AutoSell:|r %s removed from character lists (using default rules)', ITEM_QUALITY_COLORS[quality].hex .. (itemName or 'Unknown') .. '|r'))
 	else
 		-- State 3: Not in any character list -> Add to whitelist
 		module.CharDB.Whitelist[itemID] = true
-		print(string.format('|cffFFFF00AutoSell:|r %s added to character whitelist (will be sold)', 
-			ITEM_QUALITY_COLORS[quality].hex .. (itemName or 'Unknown') .. '|r'))
+		print(string.format('|cffFFFF00AutoSell:|r %s added to character whitelist (will be sold)', ITEM_QUALITY_COLORS[quality].hex .. (itemName or 'Unknown') .. '|r'))
 	end
-	
+
 	-- Refresh bag markings if enabled
-	if module.DB.ShowBagMarking and module.markItems then
-		module.markItems()
-	end
-	
+	if module.DB.ShowBagMarking and module.markItems then module.markItems() end
+
 	-- Request refresh for Baganator if loaded
 	if C_AddOns.IsAddOnLoaded('Baganator') and Baganator and Baganator.API then
 		-- Request refresh so junk plugin can re-evaluate all items
@@ -772,14 +757,14 @@ function module:OnInitialize()
 		Whitelist = {},
 		Blacklist = {},
 	}
-	
+
 	module.Database = SUI.SpartanUIDB:RegisterNamespace('AutoSell', { profile = DbDefaults, char = CharDbDefaults })
 	module.DB = module.Database.profile ---@type SUI.Module.AutoSell.DB
 	module.CharDB = module.Database.char ---@type SUI.Module.AutoSell.CharDB
 
 	-- Handle potential item level squish after DB is initialized
 	HandleItemLevelSquish()
-	
+
 	-- Set up Alt+Right Click handling
 	module:SetupClickHandler()
 end
@@ -792,12 +777,10 @@ function module:OnEnable()
 	module:RegisterEvent('MERCHANT_CLOSED')
 
 	module:CreateMiniVendorPanels()
-	
+
 	-- Initialize bag marking system if enabled
-	if module.DB.ShowBagMarking then
-		module:InitializeBagMarking()
-	end
-	
+	if module.DB.ShowBagMarking then module:InitializeBagMarking() end
+
 	-- Build blacklist cache on enable for better performance
 	buildBlacklistLookup()
 

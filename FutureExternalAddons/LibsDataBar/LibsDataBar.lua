@@ -528,19 +528,19 @@ end
 ---Initialize enhanced theme system with LibSharedMedia-3.0 integration
 function LibsDataBar:InitializeThemeSystem()
 	self:DebugLog('info', 'Initializing enhanced theme system...')
-	
+
 	-- Initialize theme manager
 	self.themes = self.themes or {}
-	
+
 	-- Register default LibSharedMedia-3.0 fonts and textures if available
 	if LibSharedMedia then
 		self:RegisterSharedMediaDefaults()
 		self:DebugLog('info', 'LibSharedMedia-3.0 integration enabled')
 	end
-	
+
 	-- Initialize theme configuration
 	self:InitializeThemeDefaults()
-	
+
 	-- Apply current theme
 	local currentTheme = self.db.profile.appearance.theme or 'default'
 	self:ApplyTheme(currentTheme)
@@ -549,11 +549,11 @@ end
 ---Register default fonts and textures with LibSharedMedia-3.0
 function LibsDataBar:RegisterSharedMediaDefaults()
 	if not LibSharedMedia then return end
-	
+
 	-- Register custom fonts for LibsDataBar
 	LibSharedMedia:Register('font', 'LibsDataBar Default', [[Interface\AddOns\LibsDataBar\Media\Fonts\Default.ttf]])
 	LibSharedMedia:Register('font', 'LibsDataBar Condensed', [[Interface\AddOns\LibsDataBar\Media\Fonts\Condensed.ttf]])
-	
+
 	-- Register custom textures for LibsDataBar
 	LibSharedMedia:Register('statusbar', 'LibsDataBar Clean', [[Interface\AddOns\LibsDataBar\Media\Textures\Clean.tga]])
 	LibSharedMedia:Register('statusbar', 'LibsDataBar Modern', [[Interface\AddOns\LibsDataBar\Media\Textures\Modern.tga]])
@@ -570,8 +570,8 @@ function LibsDataBar:InitializeThemeDefaults()
 			fontSize = 12,
 			fontFlags = 'OUTLINE',
 			texture = [[Interface\TargetingFrame\UI-StatusBar]],
-			backgroundColor = {0, 0, 0, 0.8},
-			borderColor = {0.5, 0.5, 0.5, 1},
+			backgroundColor = { 0, 0, 0, 0.8 },
+			borderColor = { 0.5, 0.5, 0.5, 1 },
 		},
 		modern = {
 			name = 'Modern',
@@ -580,8 +580,8 @@ function LibsDataBar:InitializeThemeDefaults()
 			fontSize = 11,
 			fontFlags = 'OUTLINE',
 			texture = [[Interface\RaidFrame\Raid-Bar-Hp-Fill]],
-			backgroundColor = {0.1, 0.1, 0.1, 0.9},
-			borderColor = {0.3, 0.6, 1, 1},
+			backgroundColor = { 0.1, 0.1, 0.1, 0.9 },
+			borderColor = { 0.3, 0.6, 1, 1 },
 		},
 		classic = {
 			name = 'Classic',
@@ -590,11 +590,11 @@ function LibsDataBar:InitializeThemeDefaults()
 			fontSize = 13,
 			fontFlags = 'OUTLINE',
 			texture = [[Interface\TargetingFrame\UI-StatusBar]],
-			backgroundColor = {0.2, 0.1, 0, 0.8},
-			borderColor = {0.8, 0.6, 0.2, 1},
+			backgroundColor = { 0.2, 0.1, 0, 0.8 },
+			borderColor = { 0.8, 0.6, 0.2, 1 },
 		},
 	}
-	
+
 	-- Add LibSharedMedia fonts and textures to theme options if available
 	if LibSharedMedia then
 		for themeName, theme in pairs(self.themes.available) do
@@ -613,18 +613,18 @@ function LibsDataBar:ApplyTheme(themeName)
 		self:DebugLog('error', 'Theme not found: ' .. tostring(themeName))
 		return
 	end
-	
+
 	self:DebugLog('info', 'Applying theme: ' .. themeName)
-	
+
 	-- Store current theme
 	self.themes.current = theme
 	self.db.profile.appearance.theme = themeName
-	
+
 	-- Apply theme to all existing bars
 	for barName, bar in pairs(self.bars) do
 		self:ApplyThemeToBar(bar, theme)
 	end
-	
+
 	-- Fire theme changed callback
 	self.callbacks:Fire('ThemeChanged', themeName, theme)
 end
@@ -634,7 +634,7 @@ end
 ---@param theme table Theme configuration
 function LibsDataBar:ApplyThemeToBar(bar, theme)
 	if not bar or not theme then return end
-	
+
 	-- Apply font settings with LibSharedMedia override support
 	local fontPath = theme.font
 	-- Check for user custom font override first
@@ -644,11 +644,9 @@ function LibsDataBar:ApplyThemeToBar(bar, theme)
 	elseif LibSharedMedia and theme.sharedMediaFont then
 		fontPath = LibSharedMedia:Fetch('font', theme.sharedMediaFont)
 	end
-	
-	if bar.text then
-		bar.text:SetFont(fontPath, theme.fontSize, theme.fontFlags)
-	end
-	
+
+	if bar.text then bar.text:SetFont(fontPath, theme.fontSize, theme.fontFlags) end
+
 	-- Apply texture settings with LibSharedMedia override support
 	local texturePath = theme.texture
 	-- Check for user custom texture override first
@@ -658,17 +656,15 @@ function LibsDataBar:ApplyThemeToBar(bar, theme)
 	elseif LibSharedMedia and theme.sharedMediaTexture then
 		texturePath = LibSharedMedia:Fetch('statusbar', theme.sharedMediaTexture)
 	end
-	
-	if bar.texture then
-		bar.texture:SetTexture(texturePath)
-	end
-	
+
+	if bar.texture then bar.texture:SetTexture(texturePath) end
+
 	-- Apply colors
 	if bar.background then
 		local bg = theme.backgroundColor
 		bar.background:SetColorTexture(bg[1], bg[2], bg[3], bg[4])
 	end
-	
+
 	if bar.border then
 		local border = theme.borderColor
 		bar.border:SetColorTexture(border[1], border[2], border[3], border[4])
@@ -682,7 +678,7 @@ function LibsDataBar:GetAvailableThemes()
 	for name, theme in pairs(self.themes.available) do
 		themes[name] = {
 			name = theme.name,
-			description = theme.description
+			description = theme.description,
 		}
 	end
 	return themes
@@ -701,13 +697,13 @@ function LibsDataBar:SyncWithSpartanUITheme()
 		self:DebugLog('info', 'SpartanUI not found - cannot sync themes')
 		return
 	end
-	
+
 	local suiTheme = _G.SUI.DB.profile.theme
 	if not suiTheme then
 		self:DebugLog('info', 'SpartanUI theme not found in profile')
 		return
 	end
-	
+
 	-- Map SpartanUI themes to LibsDataBar themes
 	local themeMapping = {
 		['Classic'] = 'classic',
@@ -716,11 +712,11 @@ function LibsDataBar:SyncWithSpartanUITheme()
 		['Digital'] = 'modern',
 		['Default'] = 'default',
 	}
-	
+
 	local mappedTheme = themeMapping[suiTheme] or 'default'
-	
+
 	self:DebugLog('info', 'Syncing with SpartanUI theme: ' .. suiTheme .. ' -> ' .. mappedTheme)
-	
+
 	if mappedTheme ~= self:GetCurrentTheme() then
 		self:ApplyTheme(mappedTheme)
 		self:Print('Theme synced with SpartanUI: ' .. suiTheme)
@@ -734,20 +730,20 @@ function LibsDataBar:InitializeCommunication()
 		self:DebugLog('info', 'Communication libraries not available - configuration sharing disabled')
 		return
 	end
-	
+
 	-- Register communication channel (max 16 characters for AceComm)
 	self:RegisterComm('LibsDataBar', 'OnCommReceived')
 	self:DebugLog('info', 'Communication system initialized for configuration sharing')
 end
 
 ---Export configuration for sharing (internal use)
----@return string|nil Encoded configuration string or nil on error  
+---@return string|nil Encoded configuration string or nil on error
 function LibsDataBar:ExportConfigurationForSharing()
 	if not AceSerializer then
 		self:Print('AceSerializer-3.0 not available - cannot export configuration')
 		return nil
 	end
-	
+
 	-- Create export package with all configuration scopes for sharing
 	local exportData = {
 		version = LIBSDATABAR_VERSION,
@@ -759,9 +755,9 @@ function LibsDataBar:ExportConfigurationForSharing()
 			performance = self.db.profile.performance,
 			plugins = {},
 			bars = {},
-		}
+		},
 	}
-	
+
 	-- Export enabled plugins
 	for pluginName, pluginConfig in pairs(self.db.profile.plugins) do
 		if pluginConfig.enabled then
@@ -775,8 +771,8 @@ function LibsDataBar:ExportConfigurationForSharing()
 			}
 		end
 	end
-	
-	-- Export bar configurations  
+
+	-- Export bar configurations
 	for barName, barConfig in pairs(self.db.profile.bars) do
 		exportData.scopes.bars[barName] = {
 			enabled = barConfig.enabled,
@@ -786,15 +782,14 @@ function LibsDataBar:ExportConfigurationForSharing()
 			behavior = barConfig.behavior,
 		}
 	end
-	
+
 	-- Serialize and encode
 	local serializedData = AceSerializer:Serialize(exportData)
 	local encodedData = LibStub('AceComm-3.0'):Encode(serializedData)
-	
+
 	self:DebugLog('info', 'Configuration exported for sharing')
 	return encodedData
 end
-
 
 ---Share configuration with guild members
 ---@param target string|nil Target channel ('GUILD', 'WHISPER', etc.) or nil for guild
@@ -803,13 +798,13 @@ function LibsDataBar:ShareConfiguration(target)
 		self:Print('Communication libraries not available - cannot share configuration')
 		return
 	end
-	
+
 	local exportData = self:ExportConfigurationForSharing()
 	if not exportData then
 		self:Print('Failed to export configuration for sharing')
 		return
 	end
-	
+
 	-- Create sharing message
 	local message = {
 		action = 'SHARE_CONFIG',
@@ -817,12 +812,12 @@ function LibsDataBar:ShareConfiguration(target)
 		sender = UnitName('player'),
 		timestamp = time(),
 	}
-	
+
 	local serializedMessage = AceSerializer:Serialize(message)
-	
+
 	-- Default to guild channel
 	target = target or 'GUILD'
-	
+
 	self:SendCommMessage('LibsDataBar', serializedMessage, target)
 	self:Print('Configuration shared to ' .. target)
 end
@@ -836,17 +831,13 @@ function LibsDataBar:OnCommReceived(prefix, message, distribution, sender)
 	if prefix ~= 'LibsDataBar' or sender == UnitName('player') then
 		return -- Ignore own messages
 	end
-	
-	if not AceSerializer then
-		return
-	end
-	
+
+	if not AceSerializer then return end
+
 	-- Deserialize message
 	local success, data = AceSerializer:Deserialize(message)
-	if not success or not data then
-		return
-	end
-	
+	if not success or not data then return end
+
 	if data.action == 'SHARE_CONFIG' and data.data then
 		-- Someone shared their configuration
 		self:Print(string.format('%s shared their LibsDataBar configuration. Use /libsdatabar import <data> to import it.', sender))
@@ -874,14 +865,12 @@ function LibsDataBar:RefreshAllBarsAndPlugins()
 			self:UpdateBar(barName)
 		end
 	end
-	
+
 	-- Refresh all plugins
 	for pluginName, plugin in pairs(self.plugins) do
-		if plugin.UpdateDisplay then
-			plugin:UpdateDisplay()
-		end
+		if plugin.UpdateDisplay then plugin:UpdateDisplay() end
 	end
-	
+
 	-- Apply current theme
 	local currentTheme = self.db.profile.appearance.theme or 'default'
 	self:ApplyTheme(currentTheme)
@@ -894,7 +883,7 @@ function LibsDataBar:CreateExportImportWindow()
 		self.exportImportFrame:Show()
 		return
 	end
-	
+
 	-- Main Window
 	local frame = CreateFrame('Frame', 'LibsDataBarExportImportFrame', UIParent, 'BasicFrameTemplateWithInset')
 	frame:SetSize(800, 600)
@@ -909,26 +898,26 @@ function LibsDataBar:CreateExportImportWindow()
 	frame:RegisterForDrag('LeftButton')
 	frame:SetScript('OnDragStart', frame.StartMoving)
 	frame:SetScript('OnDragStop', frame.StopMovingOrSizing)
-	
+
 	self.exportImportFrame = frame
-	
+
 	-- Mode switching tabs
 	local exportTab = CreateFrame('Button', nil, frame, 'TabButtonTemplate')
 	exportTab:SetPoint('TOPLEFT', frame, 'BOTTOMLEFT', 5, 2)
 	exportTab:SetText('Export Configuration')
 	exportTab:SetWidth(160)
 	frame.exportTab = exportTab
-	
+
 	local importTab = CreateFrame('Button', nil, frame, 'TabButtonTemplate')
 	importTab:SetPoint('LEFT', exportTab, 'RIGHT', 0, 0)
-	importTab:SetText('Import Configuration')  
+	importTab:SetText('Import Configuration')
 	importTab:SetWidth(160)
 	frame.importTab = importTab
-	
+
 	-- Content frames
 	frame.exportFrame = self:CreateExportFrame(frame)
 	frame.importFrame = self:CreateImportFrame(frame)
-	
+
 	-- Tab switching logic
 	local function switchToExport()
 		frame.exportFrame:Show()
@@ -937,7 +926,7 @@ function LibsDataBar:CreateExportImportWindow()
 		PanelTemplates_SelectTab(exportTab)
 		frame.mode = 'export'
 	end
-	
+
 	local function switchToImport()
 		frame.exportFrame:Hide()
 		frame.importFrame:Show()
@@ -945,13 +934,13 @@ function LibsDataBar:CreateExportImportWindow()
 		PanelTemplates_SelectTab(importTab)
 		frame.mode = 'import'
 	end
-	
+
 	exportTab:SetScript('OnClick', switchToExport)
 	importTab:SetScript('OnClick', switchToImport)
-	
+
 	-- Default to export mode
 	switchToExport()
-	
+
 	return frame
 end
 
@@ -962,28 +951,28 @@ function LibsDataBar:CreateExportFrame(parent)
 	local frame = CreateFrame('Frame', nil, parent)
 	frame:SetPoint('TOPLEFT', 10, -35)
 	frame:SetPoint('BOTTOMRIGHT', -10, 10)
-	
+
 	-- Left side: Configuration options
 	local optionFrame = CreateFrame('Frame', nil, frame, 'InsetFrameTemplate')
 	optionFrame:SetPoint('TOPLEFT', 0, 0)
 	optionFrame:SetPoint('BOTTOMLEFT', 0, 0)
 	optionFrame:SetWidth(250)
-	
+
 	local optionTitle = optionFrame:CreateFontString(nil, 'OVERLAY', 'GameFontHighlight')
 	optionTitle:SetPoint('TOP', 0, -10)
 	optionTitle:SetText('Export Options')
-	
+
 	-- Export scope checkboxes
 	local yOffset = -40
 	local checkboxes = {}
-	
+
 	local exportScopes = {
-		{key = 'appearance', label = 'Theme & Appearance Settings', desc = 'Current theme, fonts, and visual customizations'},
-		{key = 'bars', label = 'Data Bar Configurations', desc = 'Bar positioning, size, and display settings'},
-		{key = 'plugins', label = 'Plugin Configurations', desc = 'All plugin settings and enabled states'},
-		{key = 'performance', label = 'Performance Settings', desc = 'Update intervals and optimization settings'},
+		{ key = 'appearance', label = 'Theme & Appearance Settings', desc = 'Current theme, fonts, and visual customizations' },
+		{ key = 'bars', label = 'Data Bar Configurations', desc = 'Bar positioning, size, and display settings' },
+		{ key = 'plugins', label = 'Plugin Configurations', desc = 'All plugin settings and enabled states' },
+		{ key = 'performance', label = 'Performance Settings', desc = 'Update intervals and optimization settings' },
 	}
-	
+
 	for i, scope in ipairs(exportScopes) do
 		local checkbox = CreateFrame('CheckButton', nil, optionFrame, 'ChatConfigCheckButtonTemplate')
 		checkbox:SetPoint('TOPLEFT', 15, yOffset)
@@ -992,7 +981,7 @@ function LibsDataBar:CreateExportFrame(parent)
 		checkbox:SetChecked(true) -- Default to all selected
 		checkbox.scope = scope.key
 		checkboxes[scope.key] = checkbox
-		
+
 		-- Tooltip
 		checkbox:SetScript('OnEnter', function(self)
 			GameTooltip:SetOwner(self, 'ANCHOR_RIGHT')
@@ -1001,12 +990,12 @@ function LibsDataBar:CreateExportFrame(parent)
 			GameTooltip:Show()
 		end)
 		checkbox:SetScript('OnLeave', GameTooltip_Hide)
-		
+
 		yOffset = yOffset - 30
 	end
-	
+
 	frame.exportCheckboxes = checkboxes
-	
+
 	-- Select All / Deselect All buttons
 	local selectAllBtn = CreateFrame('Button', nil, optionFrame, 'UIPanelButtonTemplate')
 	selectAllBtn:SetPoint('TOPLEFT', 15, yOffset - 10)
@@ -1017,7 +1006,7 @@ function LibsDataBar:CreateExportFrame(parent)
 			cb:SetChecked(true)
 		end
 	end)
-	
+
 	local deselectAllBtn = CreateFrame('Button', nil, optionFrame, 'UIPanelButtonTemplate')
 	deselectAllBtn:SetPoint('LEFT', selectAllBtn, 'RIGHT', 5, 0)
 	deselectAllBtn:SetSize(100, 22)
@@ -1027,7 +1016,7 @@ function LibsDataBar:CreateExportFrame(parent)
 			cb:SetChecked(false)
 		end
 	end)
-	
+
 	-- Export button
 	local exportBtn = CreateFrame('Button', nil, optionFrame, 'UIPanelButtonTemplate')
 	exportBtn:SetPoint('BOTTOM', 0, 15)
@@ -1036,31 +1025,33 @@ function LibsDataBar:CreateExportFrame(parent)
 	exportBtn:SetScript('OnClick', function()
 		self:GenerateConfigurationExport(frame)
 	end)
-	
+
 	-- Right side: Export text display
 	local textFrame = CreateFrame('Frame', nil, frame, 'InsetFrameTemplate')
 	textFrame:SetPoint('TOPLEFT', optionFrame, 'TOPRIGHT', 5, 0)
 	textFrame:SetPoint('BOTTOMRIGHT', 0, 0)
-	
+
 	local textTitle = textFrame:CreateFontString(nil, 'OVERLAY', 'GameFontHighlight')
 	textTitle:SetPoint('TOP', 0, -10)
 	textTitle:SetText('Exported Configuration')
-	
+
 	-- Scrollable text area
 	local scrollFrame = CreateFrame('ScrollFrame', nil, textFrame, 'UIPanelScrollFrameTemplate')
 	scrollFrame:SetPoint('TOPLEFT', 10, -35)
 	scrollFrame:SetPoint('BOTTOMRIGHT', -30, 40)
-	
+
 	local editBox = CreateFrame('EditBox', nil, scrollFrame)
 	editBox:SetMultiLine(true)
 	editBox:SetFontObject('ChatFontNormal')
 	editBox:SetWidth(scrollFrame:GetWidth())
 	editBox:SetAutoFocus(false)
-	editBox:SetScript('OnEscapePressed', function() editBox:ClearFocus() end)
+	editBox:SetScript('OnEscapePressed', function()
+		editBox:ClearFocus()
+	end)
 	scrollFrame:SetScrollChild(editBox)
-	
+
 	frame.exportTextBox = editBox
-	
+
 	-- Copy button
 	local copyBtn = CreateFrame('Button', nil, textFrame, 'UIPanelButtonTemplate')
 	copyBtn:SetPoint('BOTTOM', 0, 15)
@@ -1070,7 +1061,7 @@ function LibsDataBar:CreateExportFrame(parent)
 		editBox:SetFocus()
 		editBox:HighlightText()
 	end)
-	
+
 	return frame
 end
 
@@ -1081,51 +1072,53 @@ function LibsDataBar:CreateImportFrame(parent)
 	local frame = CreateFrame('Frame', nil, parent)
 	frame:SetPoint('TOPLEFT', 10, -35)
 	frame:SetPoint('BOTTOMRIGHT', -10, 10)
-	
+
 	-- Instructions
 	local instructionText = frame:CreateFontString(nil, 'OVERLAY', 'GameFontNormal')
 	instructionText:SetPoint('TOP', 0, -10)
 	instructionText:SetText('Paste exported configuration string below:')
 	instructionText:SetJustifyH('CENTER')
-	
+
 	-- Import text area
 	local scrollFrame = CreateFrame('ScrollFrame', nil, frame, 'UIPanelScrollFrameTemplate')
 	scrollFrame:SetPoint('TOPLEFT', 10, -35)
 	scrollFrame:SetPoint('BOTTOMRIGHT', -30, 120)
-	
+
 	local editBox = CreateFrame('EditBox', nil, scrollFrame)
 	editBox:SetMultiLine(true)
 	editBox:SetFontObject('ChatFontNormal')
 	editBox:SetWidth(scrollFrame:GetWidth())
 	editBox:SetAutoFocus(false)
-	editBox:SetScript('OnEscapePressed', function() editBox:ClearFocus() end)
+	editBox:SetScript('OnEscapePressed', function()
+		editBox:ClearFocus()
+	end)
 	editBox:SetScript('OnTextChanged', function()
 		-- Enable preview button when text is entered
 		frame.previewBtn:SetEnabled(editBox:GetText():len() > 0)
 		frame.importBtn:SetEnabled(false) -- Reset import button
 	end)
 	scrollFrame:SetScrollChild(editBox)
-	
+
 	frame.importTextBox = editBox
-	
+
 	-- Preview area
 	local previewFrame = CreateFrame('Frame', nil, frame, 'InsetFrameTemplate')
 	previewFrame:SetPoint('TOPLEFT', 10, -scrollFrame:GetHeight() - 45)
 	previewFrame:SetPoint('BOTTOMRIGHT', -10, 80)
-	
+
 	local previewTitle = previewFrame:CreateFontString(nil, 'OVERLAY', 'GameFontHighlight')
 	previewTitle:SetPoint('TOP', 0, -10)
 	previewTitle:SetText('Import Preview')
-	
+
 	local previewText = previewFrame:CreateFontString(nil, 'OVERLAY', 'GameFontNormal')
 	previewText:SetPoint('TOPLEFT', 10, -35)
 	previewText:SetPoint('BOTTOMRIGHT', -10, 10)
 	previewText:SetJustifyH('LEFT')
 	previewText:SetJustifyV('TOP')
 	previewText:SetText('Preview will appear here after validation...')
-	
+
 	frame.previewText = previewText
-	
+
 	-- Buttons
 	local previewBtn = CreateFrame('Button', nil, frame, 'UIPanelButtonTemplate')
 	previewBtn:SetPoint('BOTTOMLEFT', 10, 15)
@@ -1136,7 +1129,7 @@ function LibsDataBar:CreateImportFrame(parent)
 		self:PreviewConfigurationImport(frame)
 	end)
 	frame.previewBtn = previewBtn
-	
+
 	local importBtn = CreateFrame('Button', nil, frame, 'UIPanelButtonTemplate')
 	importBtn:SetPoint('LEFT', previewBtn, 'RIGHT', 10, 0)
 	importBtn:SetSize(100, 25)
@@ -1146,7 +1139,7 @@ function LibsDataBar:CreateImportFrame(parent)
 		self:ExecuteConfigurationImport(frame)
 	end)
 	frame.importBtn = importBtn
-	
+
 	local clearBtn = CreateFrame('Button', nil, frame, 'UIPanelButtonTemplate')
 	clearBtn:SetPoint('LEFT', importBtn, 'RIGHT', 10, 0)
 	clearBtn:SetSize(80, 25)
@@ -1158,7 +1151,7 @@ function LibsDataBar:CreateImportFrame(parent)
 		importBtn:SetEnabled(false)
 		frame.validatedImport = nil
 	end)
-	
+
 	return frame
 end
 
@@ -1166,14 +1159,12 @@ end
 ---@param exportFrame Frame Export frame with checkboxes
 function LibsDataBar:GenerateConfigurationExport(exportFrame)
 	local selectedScopes = {}
-	
+
 	-- Check which scopes are selected
 	for scope, checkbox in pairs(exportFrame.exportCheckboxes) do
-		if checkbox:GetChecked() then
-			selectedScopes[scope] = true
-		end
+		if checkbox:GetChecked() then selectedScopes[scope] = true end
 	end
-	
+
 	-- Build export data
 	local exportData = {
 		version = LIBSDATABAR_VERSION,
@@ -1182,16 +1173,12 @@ function LibsDataBar:GenerateConfigurationExport(exportFrame)
 		realmName = GetRealmName(),
 		scopes = {},
 	}
-	
+
 	-- Export selected scopes
-	if selectedScopes.appearance then
-		exportData.scopes.appearance = self.db.profile.appearance
-	end
-	
-	if selectedScopes.bars then
-		exportData.scopes.bars = self.db.profile.bars
-	end
-	
+	if selectedScopes.appearance then exportData.scopes.appearance = self.db.profile.appearance end
+
+	if selectedScopes.bars then exportData.scopes.bars = self.db.profile.bars end
+
 	if selectedScopes.plugins then
 		-- Only export enabled plugins
 		exportData.scopes.plugins = {}
@@ -1208,20 +1195,18 @@ function LibsDataBar:GenerateConfigurationExport(exportFrame)
 			end
 		end
 	end
-	
-	if selectedScopes.performance then
-		exportData.scopes.performance = self.db.profile.performance
-	end
-	
+
+	if selectedScopes.performance then exportData.scopes.performance = self.db.profile.performance end
+
 	-- Serialize and encode
 	if AceSerializer then
 		local serializedData = AceSerializer:Serialize(exportData)
 		local encodedData = LibStub('AceComm-3.0'):Encode(serializedData)
-		
+
 		exportFrame.exportTextBox:SetText(encodedData)
 		exportFrame.exportTextBox:SetFocus()
 		exportFrame.exportTextBox:HighlightText()
-		
+
 		self:Print('Configuration exported successfully!')
 	else
 		self:Print('AceSerializer-3.0 not available - cannot export')
@@ -1232,21 +1217,21 @@ end
 ---@param importFrame Frame Import frame
 function LibsDataBar:PreviewConfigurationImport(importFrame)
 	local importText = importFrame.importTextBox:GetText()
-	
+
 	if not importText or importText:len() == 0 then
 		importFrame.previewText:SetText('|cffff0000Error: No import data provided|r')
 		return
 	end
-	
+
 	-- Validate and deserialize
 	local success, importData = self:ValidateImportData(importText)
-	
+
 	if not success then
 		importFrame.previewText:SetText('|cffff0000Error: Invalid import data\n' .. (importData or 'Unknown error') .. '|r')
 		importFrame.importBtn:SetEnabled(false)
 		return
 	end
-	
+
 	-- Generate preview text
 	local previewLines = {
 		'|cff00ff00Import Validation Successful|r',
@@ -1257,17 +1242,19 @@ function LibsDataBar:PreviewConfigurationImport(importFrame)
 		'',
 		'Configuration Scopes:',
 	}
-	
+
 	if importData.scopes then
 		for scope, data in pairs(importData.scopes) do
 			local count = 0
 			if type(data) == 'table' then
-				for _ in pairs(data) do count = count + 1 end
+				for _ in pairs(data) do
+					count = count + 1
+				end
 			end
 			table.insert(previewLines, '  • ' .. scope:gsub('^%l', string.upper) .. ': ' .. count .. ' items')
 		end
 	end
-	
+
 	importFrame.previewText:SetText(table.concat(previewLines, '\n'))
 	importFrame.validatedImport = importData
 	importFrame.importBtn:SetEnabled(true)
@@ -1277,12 +1264,12 @@ end
 ---@param importFrame Frame Import frame
 function LibsDataBar:ExecuteConfigurationImport(importFrame)
 	local importData = importFrame.validatedImport
-	
+
 	if not importData then
 		self:Print('No validated import data available')
 		return
 	end
-	
+
 	-- Apply imported scopes
 	if importData.scopes then
 		if importData.scopes.appearance then
@@ -1290,41 +1277,37 @@ function LibsDataBar:ExecuteConfigurationImport(importFrame)
 				self.db.profile.appearance[key] = value
 			end
 		end
-		
+
 		if importData.scopes.bars then
 			for barName, barConfig in pairs(importData.scopes.bars) do
-				if not self.db.profile.bars[barName] then
-					self.db.profile.bars[barName] = {}
-				end
+				if not self.db.profile.bars[barName] then self.db.profile.bars[barName] = {} end
 				for key, value in pairs(barConfig) do
 					self.db.profile.bars[barName][key] = value
 				end
 			end
 		end
-		
+
 		if importData.scopes.plugins then
 			for pluginName, pluginConfig in pairs(importData.scopes.plugins) do
-				if not self.db.profile.plugins[pluginName] then
-					self.db.profile.plugins[pluginName] = {}
-				end
+				if not self.db.profile.plugins[pluginName] then self.db.profile.plugins[pluginName] = {} end
 				for key, value in pairs(pluginConfig) do
 					self.db.profile.plugins[pluginName][key] = value
 				end
 			end
 		end
-		
+
 		if importData.scopes.performance then
 			for key, value in pairs(importData.scopes.performance) do
 				self.db.profile.performance[key] = value
 			end
 		end
 	end
-	
+
 	-- Refresh everything
 	self:RefreshAllBarsAndPlugins()
-	
+
 	self:Print('Configuration imported successfully!')
-	
+
 	-- Close the window
 	self.exportImportFrame:Hide()
 end
@@ -1333,31 +1316,21 @@ end
 ---@param importText string Encoded import string
 ---@return boolean success, table|string data_or_error
 function LibsDataBar:ValidateImportData(importText)
-	if not AceSerializer then
-		return false, 'AceSerializer-3.0 not available'
-	end
-	
+	if not AceSerializer then return false, 'AceSerializer-3.0 not available' end
+
 	-- Decode
 	local success, serializedData = LibStub('AceComm-3.0'):Decode(importText)
-	if not success then
-		return false, 'Failed to decode import string'
-	end
-	
+	if not success then return false, 'Failed to decode import string' end
+
 	-- Deserialize
 	success, importData = AceSerializer:Deserialize(serializedData)
-	if not success or not importData then
-		return false, 'Failed to deserialize import data'
-	end
-	
+	if not success or not importData then return false, 'Failed to deserialize import data' end
+
 	-- Validate structure
-	if not importData.version then
-		return false, 'Missing version information'
-	end
-	
-	if not importData.scopes then
-		return false, 'Missing configuration scopes'
-	end
-	
+	if not importData.version then return false, 'Missing version information' end
+
+	if not importData.scopes then return false, 'Missing configuration scopes' end
+
 	return true, importData
 end
 
@@ -1854,16 +1827,16 @@ end
 ---@param category? string Optional category for organization
 function lib:Debug(message, level, category)
 	level = level or 'info'
-	
+
 	-- Format message with level and category
 	local levelColor = level == 'error' and '|cFFFF0000' or level == 'warning' and '|cFFFFFF00' or level == 'debug' and '|cff888888' or '|cFFFFFFFF'
 	local categoryText = category and ('[' .. category .. '] ') or ''
 	local formattedMessage = levelColor .. '[' .. level:upper() .. ']|r ' .. categoryText .. message
-	
+
 	-- Route to appropriate output system
-	if SUI and SUI.Debug then
+	if SUI and SUI.Log then
 		-- Use SpartanUI debug window
-		SUI.Debug(formattedMessage, "LibsDataBar")
+		SUI.Log(formattedMessage, 'LibsDataBar')
 	else
 		-- Fallback to chat
 		if level == 'debug' and not LIBSDATABAR_DEBUG then
@@ -2015,10 +1988,10 @@ function LibsDataBar:OnInitialize()
 
 	-- Initialize core systems
 	self:InitializeSystems()
-	
+
 	-- Phase 4: Initialize enhanced theme system with LibSharedMedia-3.0
 	self:InitializeThemeSystem()
-	
+
 	-- Phase 4: Initialize communication system for configuration sharing
 	self:InitializeCommunication()
 
@@ -2261,16 +2234,30 @@ function LibsDataBar:SetupEventBuckets()
 	if not self.RegisterBucket then
 		self:DebugLog('warning', 'AceBucket-3.0 not available - using fallback event throttling')
 		-- Fallback to regular AceEvent with our existing throttling
-		self:RegisterEvent('BAG_UPDATE', function() self:ScheduleUpdate(0.5, 'bag_fallback') end)
-		self:RegisterEvent('BAG_UPDATE_DELAYED', function() self:ScheduleUpdate(0.5, 'bag_fallback') end)
-		self:RegisterEvent('PLAYER_MONEY', function() self:ScheduleUpdate(0.3, 'money_fallback') end)
-		self:RegisterEvent('PLAYER_XP_UPDATE', function() self:ScheduleUpdate(1.0, 'xp_fallback') end)
-		self:RegisterEvent('UPDATE_EXHAUSTION', function() self:ScheduleUpdate(1.0, 'xp_fallback') end)
-		self:RegisterEvent('UPDATE_FACTION', function() self:ScheduleUpdate(2.0, 'reputation_fallback') end)
-		self:RegisterEvent('QUEST_TURNED_IN', function() self:ScheduleUpdate(2.0, 'reputation_fallback') end)
+		self:RegisterEvent('BAG_UPDATE', function()
+			self:ScheduleUpdate(0.5, 'bag_fallback')
+		end)
+		self:RegisterEvent('BAG_UPDATE_DELAYED', function()
+			self:ScheduleUpdate(0.5, 'bag_fallback')
+		end)
+		self:RegisterEvent('PLAYER_MONEY', function()
+			self:ScheduleUpdate(0.3, 'money_fallback')
+		end)
+		self:RegisterEvent('PLAYER_XP_UPDATE', function()
+			self:ScheduleUpdate(1.0, 'xp_fallback')
+		end)
+		self:RegisterEvent('UPDATE_EXHAUSTION', function()
+			self:ScheduleUpdate(1.0, 'xp_fallback')
+		end)
+		self:RegisterEvent('UPDATE_FACTION', function()
+			self:ScheduleUpdate(2.0, 'reputation_fallback')
+		end)
+		self:RegisterEvent('QUEST_TURNED_IN', function()
+			self:ScheduleUpdate(2.0, 'reputation_fallback')
+		end)
 		return
 	end
-	
+
 	-- Register buckets for high-frequency events to batch updates
 
 	-- Bag update bucket - batch bag changes every 0.5 seconds
@@ -2592,16 +2579,14 @@ function LibsDataBar:HandleChatCommand(input)
 		if window and window.importTab then
 			window.importTab:Click() -- Ensure import tab is selected
 		end
-		
+
 		-- If user provided import data, populate the text field
 		local importData = args[2]
 		if importData and window and window.importFrame and window.importFrame.importTextBox then
 			window.importFrame.importTextBox:SetText(importData)
 			window.importFrame.importTextBox:SetFocus()
 			-- Trigger validation automatically
-			if window.importFrame.previewBtn then
-				window.importFrame.previewBtn:SetEnabled(true)
-			end
+			if window.importFrame.previewBtn then window.importFrame.previewBtn:SetEnabled(true) end
 		end
 	elseif command == 'share' then
 		-- Phase 4: Share configuration with guild
@@ -2963,9 +2948,7 @@ function LibsDataBar:SetupConfigOptions()
 					name = function()
 						local currentTheme = self.db.profile.appearance.theme or 'default'
 						local theme = self.themes and self.themes.available and self.themes.available[currentTheme]
-						if theme then
-							return 'Current Theme: |cff00ff00' .. theme.name .. '|r\n' .. theme.description
-						end
+						if theme then return 'Current Theme: |cff00ff00' .. theme.name .. '|r\n' .. theme.description end
 						return 'Theme information not available'
 					end,
 					order = 2,
@@ -2985,9 +2968,7 @@ function LibsDataBar:SetupConfigOptions()
 					name = 'Custom Font',
 					desc = 'Override the theme font with a LibSharedMedia font',
 					values = function()
-						if LibSharedMedia then
-							return LibSharedMedia:HashTable('font')
-						end
+						if LibSharedMedia then return LibSharedMedia:HashTable('font') end
 						return {}
 					end,
 					get = function()
@@ -3003,7 +2984,9 @@ function LibsDataBar:SetupConfigOptions()
 						local currentTheme = self.db.profile.appearance.theme or 'default'
 						self:ApplyTheme(currentTheme)
 					end,
-					disabled = function() return not LibSharedMedia end,
+					disabled = function()
+						return not LibSharedMedia
+					end,
 					order = 5,
 				},
 				customTexture = {
@@ -3011,9 +2994,7 @@ function LibsDataBar:SetupConfigOptions()
 					name = 'Custom Status Bar Texture',
 					desc = 'Override the theme texture with a LibSharedMedia texture',
 					values = function()
-						if LibSharedMedia then
-							return LibSharedMedia:HashTable('statusbar')
-						end
+						if LibSharedMedia then return LibSharedMedia:HashTable('statusbar') end
 						return {}
 					end,
 					get = function()
@@ -3029,7 +3010,9 @@ function LibsDataBar:SetupConfigOptions()
 						local currentTheme = self.db.profile.appearance.theme or 'default'
 						self:ApplyTheme(currentTheme)
 					end,
-					disabled = function() return not LibSharedMedia end,
+					disabled = function()
+						return not LibSharedMedia
+					end,
 					order = 6,
 				},
 				spartanUIIntegration = {
@@ -3079,7 +3062,9 @@ function LibsDataBar:SetupConfigOptions()
 					func = function()
 						self:ShareConfiguration('GUILD')
 					end,
-					disabled = function() return not AceComm or not AceSerializer end,
+					disabled = function()
+						return not AceComm or not AceSerializer
+					end,
 					order = 12,
 				},
 			},
@@ -3220,9 +3205,7 @@ end
 
 ---Register as SpartanUI module
 function LibsDataBar:RegisterSpartanUIModule()
-	if not SUI or not SUI.opt or not SUI.opt.args or not SUI.opt.args.Modules then
-		return
-	end
+	if not SUI or not SUI.opt or not SUI.opt.args or not SUI.opt.args.Modules then return end
 
 	-- Create options table for SpartanUI integration
 	local optionsTable = {
@@ -3235,8 +3218,10 @@ function LibsDataBar:RegisterSpartanUIModule()
 				desc = 'Enable or disable the data bar addon',
 				type = 'toggle',
 				order = 10,
-				get = function() return self.db.profile.enabled end,
-				set = function(_, val) 
+				get = function()
+					return self.db.profile.enabled
+				end,
+				set = function(_, val)
 					self.db.profile.enabled = val
 					if val then
 						self:Enable()
@@ -3258,8 +3243,10 @@ function LibsDataBar:RegisterSpartanUIModule()
 				max = 30.0,
 				step = 0.5,
 				order = 30,
-				get = function() return self.db.profile.performance.updateInterval end,
-				set = function(_, val) 
+				get = function()
+					return self.db.profile.performance.updateInterval
+				end,
+				set = function(_, val)
 					self.db.profile.performance.updateInterval = val
 					if self.refreshTimer then
 						self:CancelTimer(self.refreshTimer)
@@ -3281,8 +3268,10 @@ function LibsDataBar:RegisterSpartanUIModule()
 					end
 					return themes
 				end,
-				get = function() return self.db.profile.appearance.theme or 'default' end,
-				set = function(_, val) 
+				get = function()
+					return self.db.profile.appearance.theme or 'default'
+				end,
+				set = function(_, val)
 					self.db.profile.appearance.theme = val
 					self:ApplyTheme(val)
 				end,
@@ -3292,12 +3281,12 @@ function LibsDataBar:RegisterSpartanUIModule()
 				desc = 'Automatically match SpartanUI theme changes',
 				type = 'toggle',
 				order = 50,
-				get = function() return self.db.profile.appearance.syncWithSpartanUI or false end,
-				set = function(_, val) 
+				get = function()
+					return self.db.profile.appearance.syncWithSpartanUI or false
+				end,
+				set = function(_, val)
 					self.db.profile.appearance.syncWithSpartanUI = val
-					if val then
-						self:SyncWithSpartanUITheme()
-					end
+					if val then self:SyncWithSpartanUITheme() end
 				end,
 			},
 			spacer2 = {

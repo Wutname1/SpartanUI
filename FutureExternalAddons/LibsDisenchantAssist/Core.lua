@@ -214,34 +214,34 @@ end
 ---Debug print function - uses SpartanUI debug window if available, otherwise chat
 ---@param message string
 function LibsDisenchantAssist:DebugPrint(message)
-	if SUI and SUI.Debug then
-		SUI.Debug(message, "Disenchant Assist")
+	if SUI and SUI.Log then
+		SUI.Log(message, 'Disenchant Assist')
 	else
-		self:Print("[DEBUG] " .. message)
+		self:Print('[DEBUG] ' .. message)
 	end
 end
 
 ---Debug output function - outputs all detection and decision logic
 function LibsDisenchantAssist:DebugOutput()
-	self:DebugPrint("=== DEBUG OUTPUT START ===")
-	
+	self:DebugPrint('=== DEBUG OUTPUT START ===')
+
 	-- Show current settings
-	self:DebugPrint("Current Settings:")
-	self:DebugPrint("- Enabled: " .. tostring(self.DB.enabled))
-	self:DebugPrint("- Exclude Today: " .. tostring(self.DB.excludeToday))
-	self:DebugPrint("- Exclude Higher iLvl: " .. tostring(self.DB.excludeHigherIlvl))
-	self:DebugPrint("- Exclude Gear Sets: " .. tostring(self.DB.excludeGearSets))
-	self:DebugPrint("- Exclude Warbound: " .. tostring(self.DB.excludeWarbound))
-	self:DebugPrint("- Exclude BOE: " .. tostring(self.DB.excludeBOE))
-	self:DebugPrint("- Min iLvl: " .. self.DB.minIlvl)
-	self:DebugPrint("- Max iLvl: " .. self.DB.maxIlvl)
-	
+	self:DebugPrint('Current Settings:')
+	self:DebugPrint('- Enabled: ' .. tostring(self.DB.enabled))
+	self:DebugPrint('- Exclude Today: ' .. tostring(self.DB.excludeToday))
+	self:DebugPrint('- Exclude Higher iLvl: ' .. tostring(self.DB.excludeHigherIlvl))
+	self:DebugPrint('- Exclude Gear Sets: ' .. tostring(self.DB.excludeGearSets))
+	self:DebugPrint('- Exclude Warbound: ' .. tostring(self.DB.excludeWarbound))
+	self:DebugPrint('- Exclude BOE: ' .. tostring(self.DB.excludeBOE))
+	self:DebugPrint('- Min iLvl: ' .. self.DB.minIlvl)
+	self:DebugPrint('- Max iLvl: ' .. self.DB.maxIlvl)
+
 	-- Scan all bags and show detailed item analysis
-	self:DebugPrint("Scanning bags for items...")
+	self:DebugPrint('Scanning bags for items...')
 	local totalItems = 0
 	local disenchantableItems = 0
 	local filteredOutItems = 0
-	
+
 	for bag = 0, 4 do
 		local numSlots = C_Container.GetContainerNumSlots(bag)
 		if numSlots and numSlots > 0 then
@@ -253,118 +253,94 @@ function LibsDisenchantAssist:DebugOutput()
 					if item then
 						local canDisenchant = self.FilterSystem:CanDisenchantItem(item)
 						local passesFilters = self.FilterSystem:PassesAllFilters(item, self.DB)
-						
-						self:DebugPrint("Item: " .. (item.itemLink or "Unknown") .. " (Bag " .. bag .. ", Slot " .. slot .. ")")
-						self:DebugPrint("  - Item ID: " .. item.itemID)
-						self:DebugPrint("  - Class ID: " .. (item.classID or "nil"))
-						self:DebugPrint("  - Quality: " .. (item.quality or "nil"))
-						self:DebugPrint("  - iLvl: " .. (item.itemLevel or "nil"))
-						self:DebugPrint("  - Can Disenchant: " .. tostring(canDisenchant))
-						
+
+						self:DebugPrint('Item: ' .. (item.itemLink or 'Unknown') .. ' (Bag ' .. bag .. ', Slot ' .. slot .. ')')
+						self:DebugPrint('  - Item ID: ' .. item.itemID)
+						self:DebugPrint('  - Class ID: ' .. (item.classID or 'nil'))
+						self:DebugPrint('  - Quality: ' .. (item.quality or 'nil'))
+						self:DebugPrint('  - iLvl: ' .. (item.itemLevel or 'nil'))
+						self:DebugPrint('  - Can Disenchant: ' .. tostring(canDisenchant))
+
 						if canDisenchant then
 							disenchantableItems = disenchantableItems + 1
-							
+
 							-- Test each filter individually
 							local reasons = {}
-							if not self.DB.enabled then
-								table.insert(reasons, "Addon disabled")
-							end
-							
-							if self.DB.excludeToday and item.seenToday then
-								table.insert(reasons, "Seen today")
-							end
-							
-							if item.itemLevel < self.DB.minIlvl then
-								table.insert(reasons, "Below min iLvl")
-							end
-							
-							if item.itemLevel > self.DB.maxIlvl then
-								table.insert(reasons, "Above max iLvl")
-							end
-							
-							if self.DB.excludeHigherIlvl and self.FilterSystem:IsHigherThanEquipped(item) then
-								table.insert(reasons, "Higher than equipped")
-							end
-							
-							if self.DB.excludeGearSets and self.FilterSystem:IsInGearSet(item) then
-								table.insert(reasons, "In gear set")
-							end
-							
-							if self.DB.excludeWarbound and self.FilterSystem:IsWarbound(item) then
-								table.insert(reasons, "Warbound")
-							end
-							
-							if self.DB.excludeBOE and self.FilterSystem:IsBOE(item) then
-								table.insert(reasons, "BOE")
-							end
-							
+							if not self.DB.enabled then table.insert(reasons, 'Addon disabled') end
+
+							if self.DB.excludeToday and item.seenToday then table.insert(reasons, 'Seen today') end
+
+							if item.itemLevel < self.DB.minIlvl then table.insert(reasons, 'Below min iLvl') end
+
+							if item.itemLevel > self.DB.maxIlvl then table.insert(reasons, 'Above max iLvl') end
+
+							if self.DB.excludeHigherIlvl and self.FilterSystem:IsHigherThanEquipped(item) then table.insert(reasons, 'Higher than equipped') end
+
+							if self.DB.excludeGearSets and self.FilterSystem:IsInGearSet(item) then table.insert(reasons, 'In gear set') end
+
+							if self.DB.excludeWarbound and self.FilterSystem:IsWarbound(item) then table.insert(reasons, 'Warbound') end
+
+							if self.DB.excludeBOE and self.FilterSystem:IsBOE(item) then table.insert(reasons, 'BOE') end
+
 							if #reasons > 0 then
 								filteredOutItems = filteredOutItems + 1
-								self:DebugPrint("  - FILTERED OUT: " .. table.concat(reasons, ", "))
+								self:DebugPrint('  - FILTERED OUT: ' .. table.concat(reasons, ', '))
 							else
-								self:DebugPrint("  - PASSES ALL FILTERS")
+								self:DebugPrint('  - PASSES ALL FILTERS')
 							end
 						else
 							-- Show why it can't be disenchanted
 							local reasons = {}
-							if item.classID ~= 2 and item.classID ~= 4 then
-								table.insert(reasons, "Wrong item class (not Weapons/Armor)")
-							end
-							if item.quality < 2 or item.quality > 4 then
-								table.insert(reasons, "Wrong quality (not Uncommon-Epic)")
-							end
-							if not item.itemLevel or item.itemLevel < 1 then
-								table.insert(reasons, "No item level")
-							end
-							
-							self:DebugPrint("  - Cannot disenchant: " .. table.concat(reasons, ", "))
+							if item.classID ~= 2 and item.classID ~= 4 then table.insert(reasons, 'Wrong item class (not Weapons/Armor)') end
+							if item.quality < 2 or item.quality > 4 then table.insert(reasons, 'Wrong quality (not Uncommon-Epic)') end
+							if not item.itemLevel or item.itemLevel < 1 then table.insert(reasons, 'No item level') end
+
+							self:DebugPrint('  - Cannot disenchant: ' .. table.concat(reasons, ', '))
 						end
-						
-						self:DebugPrint("  ---")
+
+						self:DebugPrint('  ---')
 					end
 				end
 			end
 		end
 	end
-	
+
 	-- Show final results
-	self:DebugPrint("=== SUMMARY ===")
-	self:DebugPrint("Total items in bags: " .. totalItems)
-	self:DebugPrint("Items that can be disenchanted: " .. disenchantableItems)
-	self:DebugPrint("Items filtered out: " .. filteredOutItems)
-	self:DebugPrint("Items that would be shown: " .. (disenchantableItems - filteredOutItems))
-	
+	self:DebugPrint('=== SUMMARY ===')
+	self:DebugPrint('Total items in bags: ' .. totalItems)
+	self:DebugPrint('Items that can be disenchanted: ' .. disenchantableItems)
+	self:DebugPrint('Items filtered out: ' .. filteredOutItems)
+	self:DebugPrint('Items that would be shown: ' .. (disenchantableItems - filteredOutItems))
+
 	-- Get final filtered list
 	local finalItems = self.FilterSystem:GetDisenchantableItems()
-	self:DebugPrint("Final filtered list count: " .. #finalItems)
-	
+	self:DebugPrint('Final filtered list count: ' .. #finalItems)
+
 	if #finalItems > 0 then
-		self:DebugPrint("Final items to disenchant:")
+		self:DebugPrint('Final items to disenchant:')
 		for i, item in ipairs(finalItems) do
-			self:DebugPrint("  " .. i .. ". " .. item.itemLink .. " (iLvl: " .. item.itemLevel .. ")")
+			self:DebugPrint('  ' .. i .. '. ' .. item.itemLink .. ' (iLvl: ' .. item.itemLevel .. ')')
 		end
 	else
-		self:DebugPrint("No items in final list!")
+		self:DebugPrint('No items in final list!')
 	end
-	
-	self:DebugPrint("=== DEBUG OUTPUT END ===")
+
+	self:DebugPrint('=== DEBUG OUTPUT END ===')
 end
 
 ---Add an item to the blacklist
 ---@param item table The item to blacklist
 function LibsDisenchantAssist:BlacklistItem(item)
-	if not item or not item.itemID then 
-		self:Print("Error: Invalid item for blacklisting")
-		return 
+	if not item or not item.itemID then
+		self:Print('Error: Invalid item for blacklisting')
+		return
 	end
-	
+
 	-- Add to character-specific blacklist (stored by itemID)
-	if not self.DBC.blacklist then
-		self.DBC.blacklist = {}
-	end
-	
+	if not self.DBC.blacklist then self.DBC.blacklist = {} end
+
 	self.DBC.blacklist[item.itemID] = true
-	self:Print("Blacklisted: " .. (item.itemLink or item.itemName or "Unknown Item"))
+	self:Print('Blacklisted: ' .. (item.itemLink or item.itemName or 'Unknown Item'))
 end
 
 ---Check if an item is blacklisted

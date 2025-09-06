@@ -136,15 +136,15 @@ function Debugger:Log(level, message, category, source)
 	local detailedMessage = string.format('[%s] %s%s', timestamp, message, sourceText)
 
 	-- Use the main LibsDataBar unified debug system, but bypass the hook to avoid infinite recursion
-	if GetNumGroupMembers() == 0 or level == 'error' or level == 'critical' then 
+	if GetNumGroupMembers() == 0 or level == 'error' or level == 'critical' then
 		if LibsDataBar._originalDebug then
 			LibsDataBar._originalDebug(LibsDataBar, detailedMessage, level, category)
 		else
 			-- Fallback to direct output if hook isn't active yet
-			if SUI and SUI.Debug then
+			if SUI and SUI.Log then
 				local levelColor = levelConfig.color
 				local formattedMessage = string.format('%s[%s]|r %s', levelColor, level:upper(), detailedMessage)
-				SUI.Debug(formattedMessage, "LibsDataBar-Debug")
+				SUI.Log(formattedMessage, 'LibsDataBar-Debug')
 			else
 				local levelColor = levelConfig.color
 				local formattedMessage = string.format('%s[%s]|r %s', levelColor, level:upper(), detailedMessage)
