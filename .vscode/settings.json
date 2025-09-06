@@ -1170,7 +1170,9 @@
     "TIME_TWELVEHOURAM",
     "TIME_TWELVEHOURPM",
     "ITEM_QUALITY_COLORS",
-    "NUM_CONTAINER_FRAMES"
+    "NUM_CONTAINER_FRAMES",
+    "LiteBagInventoryPanel",
+    "Baganator"
   ],
   "Lua.workspace.ignoreDir": [".vscode", "libs/*"],
   "Lua.diagnostics.enable": true,

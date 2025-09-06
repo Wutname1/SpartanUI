@@ -67,11 +67,44 @@ end
 ---@param item table
 ---@return boolean
 function FilterSystem:CanDisenchantItem(item)
-	if item.classID ~= 2 and item.classID ~= 4 then return false end
+	-- First check if player knows the Disenchant spell (spell ID 13262)
+	if not IsSpellKnown(13262) then
+		return false
+	end
 
-	if item.quality < 2 or item.quality > 4 then return false end
+	-- Try using the WoW API first if available (more reliable than manual checks)
+	if C_Item and C_Item.IsDisenchantable then
+		local isDisenchantable = C_Item.IsDisenchantable(item.itemID)
+		if isDisenchantable ~= nil then
+			return isDisenchantable
+		end
+	end
 
-	return C_Item.GetItemDisenchantInfo and C_Item.GetItemDisenchantInfo(item.itemID) ~= nil
+	-- Fallback to manual checks (for older clients or when API fails)
+	-- Must be Weapon (2) or Armor (4)
+	if item.classID ~= 2 and item.classID ~= 4 then 
+		return false 
+	end
+
+	-- Must be Uncommon (2), Rare (3), or Epic (4) quality
+	if item.quality < 2 or item.quality > 4 then 
+		return false 
+	end
+
+	-- Must have an item level (basic sanity check)
+	if not item.itemLevel or item.itemLevel < 1 then 
+		return false 
+	end
+
+	-- Additional checks for items that definitely can't be disenchanted
+	-- Skip items with no equipment slot (usually misc items incorrectly classified)
+	if item.classID == 4 and (not item.equipLoc or item.equipLoc == '') then
+		-- Some armor items don't have equipLoc but are still disenchantable (like off-hand items)
+		-- So we don't automatically exclude these, but we're more cautious
+	end
+
+	-- If we get here, the item should be disenchantable based on class and quality
+	return true
 end
 
 ---Apply filters to item list
@@ -99,6 +132,9 @@ end
 ---@return boolean
 function FilterSystem:PassesAllFilters(item, options)
 	if not options.enabled then return false end
+
+	-- Check blacklist first (highest priority exclusion)
+	if LibsDisenchantAssist:IsItemBlacklisted(item.itemID) then return false end
 
 	if options.excludeToday and item.seenToday then return false end
 

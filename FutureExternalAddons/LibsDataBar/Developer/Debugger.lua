@@ -90,12 +90,12 @@ function Debugger:Initialize()
 	LibsDataBar:DebugLog('info', 'Enhanced debugger initialized', 'core')
 end
 
----Hook the core DebugLog function
+---Hook the core Debug function to use advanced logging
 function Debugger:HookDebugLog()
-	if not LibsDataBar._originalDebugLog then LibsDataBar._originalDebugLog = LibsDataBar.DebugLog end
+	if not LibsDataBar._originalDebug then LibsDataBar._originalDebug = LibsDataBar.Debug end
 
-	LibsDataBar.DebugLog = function(lib, level, message, category, source)
-		LibsDataBar.debugger:Log(level, message, category or 'core', source)
+	LibsDataBar.Debug = function(lib, message, level, category, source)
+		LibsDataBar.debugger:Log(level or 'info', message, category or 'core', source)
 	end
 end
 
@@ -130,14 +130,28 @@ function Debugger:Log(level, message, category, source)
 	table.insert(self.logHistory, entry)
 	if #self.logHistory > self.maxHistorySize then table.remove(self.logHistory, 1) end
 
-	-- Format and output message
+	-- Format and output message using unified system
 	local timestamp = date('%H:%M:%S', entry.timestamp)
-	local categoryText = category:upper()
 	local sourceText = source and (' [' .. source .. ']') or ''
-	local formattedMessage = string.format('%s[%s] %s%s: %s|r', levelConfig.color, timestamp, categoryText, sourceText, message)
+	local detailedMessage = string.format('[%s] %s%s', timestamp, message, sourceText)
 
-	-- Output to chat
-	if GetNumGroupMembers() == 0 or level == 'error' or level == 'critical' then print('LDB-Debug: ' .. formattedMessage) end
+	-- Use the main LibsDataBar unified debug system, but bypass the hook to avoid infinite recursion
+	if GetNumGroupMembers() == 0 or level == 'error' or level == 'critical' then 
+		if LibsDataBar._originalDebug then
+			LibsDataBar._originalDebug(LibsDataBar, detailedMessage, level, category)
+		else
+			-- Fallback to direct output if hook isn't active yet
+			if SUI and SUI.Debug then
+				local levelColor = levelConfig.color
+				local formattedMessage = string.format('%s[%s]|r %s', levelColor, level:upper(), detailedMessage)
+				SUI.Debug(formattedMessage, "LibsDataBar-Debug")
+			else
+				local levelColor = levelConfig.color
+				local formattedMessage = string.format('%s[%s]|r %s', levelColor, level:upper(), detailedMessage)
+				print('LDB-Debug: ' .. formattedMessage)
+			end
+		end
+	end
 
 	-- Write to log file if enabled
 	if self.logFile then self:WriteToFile(entry) end
@@ -402,6 +416,12 @@ function Debugger:DumpObject(obj, name, maxDepth)
 	return result
 end
 
+---Print a message using unified debug system
+---@param message string Message to print
+local function DebugPrint(message)
+	LibsDataBar:Debug(message, 'info', 'commands')
+end
+
 -- Add slash commands for debugging
 SLASH_LDB_DEBUG1 = '/ldb-debug'
 SlashCmdList['LDB_DEBUG'] = function(msg)
@@ -410,42 +430,42 @@ SlashCmdList['LDB_DEBUG'] = function(msg)
 
 	if command == 'on' then
 		LibsDataBar.debugger:SetEnabled(true)
-		print('LibsDataBar debugging enabled')
+		DebugPrint('LibsDataBar debugging enabled')
 	elseif command == 'off' then
 		LibsDataBar.debugger:SetEnabled(false)
-		print('LibsDataBar debugging disabled')
+		DebugPrint('LibsDataBar debugging disabled')
 	elseif command == 'clear' then
 		LibsDataBar.debugger:ClearHistory()
-		print('LibsDataBar debug history cleared')
+		DebugPrint('LibsDataBar debug history cleared')
 	elseif command == 'report' then
 		local report = LibsDataBar.debugger:GenerateReport()
-		print(report)
+		DebugPrint(report)
 	elseif command == 'categories' then
-		print('LibsDataBar Debug Categories:')
+		DebugPrint('LibsDataBar Debug Categories:')
 		for category, enabled in pairs(LibsDataBar.debugger:GetCategories()) do
-			print(string.format('  %s: %s', category, enabled and 'ENABLED' or 'DISABLED'))
+			DebugPrint(string.format('  %s: %s', category, enabled and 'ENABLED' or 'DISABLED'))
 		end
 	elseif command == 'enable' then
 		local category = args[2]
 		if category then
 			LibsDataBar.debugger:SetCategoryEnabled(category, true)
 		else
-			print('Usage: /ldb-debug enable <category>')
+			DebugPrint('Usage: /ldb-debug enable <category>')
 		end
 	elseif command == 'disable' then
 		local category = args[2]
 		if category then
 			LibsDataBar.debugger:SetCategoryEnabled(category, false)
 		else
-			print('Usage: /ldb-debug disable <category>')
+			DebugPrint('Usage: /ldb-debug disable <category>')
 		end
 	else
-		print('LibsDataBar Debug Commands:')
-		print('  /ldb-debug on/off - Enable/disable debugging')
-		print('  /ldb-debug clear - Clear debug history')
-		print('  /ldb-debug report - Generate debug report')
-		print('  /ldb-debug categories - List debug categories')
-		print('  /ldb-debug enable/disable <category> - Toggle category')
+		DebugPrint('LibsDataBar Debug Commands:')
+		DebugPrint('  /ldb-debug on/off - Enable/disable debugging')
+		DebugPrint('  /ldb-debug clear - Clear debug history')
+		DebugPrint('  /ldb-debug report - Generate debug report')
+		DebugPrint('  /ldb-debug categories - List debug categories')
+		DebugPrint('  /ldb-debug enable/disable <category> - Toggle category')
 	end
 end
 

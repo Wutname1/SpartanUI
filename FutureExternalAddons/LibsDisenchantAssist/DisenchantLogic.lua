@@ -118,25 +118,51 @@ end
 
 ---Disenchant all filtered items
 function DisenchantLogic:DisenchantAll()
+	LibsDisenchantAssist:Print("=== DISENCHANT ALL DEBUG START ===")
+	
 	if self.isDisenchanting then
 		LibsDisenchantAssist:Print('Already disenchanting an item.')
+		LibsDisenchantAssist:Print("=== DISENCHANT ALL DEBUG END ===")
 		return
 	end
 
+	-- Check if we can disenchant at all
+	if not self:CanDisenchant() then
+		LibsDisenchantAssist:Print('Cannot disenchant right now (see previous messages)')
+		LibsDisenchantAssist:Print("=== DISENCHANT ALL DEBUG END ===")
+		return
+	end
+
+	LibsDisenchantAssist:Print('Getting disenchantable items...')
 	local items = LibsDisenchantAssist.FilterSystem:GetDisenchantableItems()
+	LibsDisenchantAssist:Print('Found ' .. #items .. ' items to disenchant')
 
 	if #items == 0 then
 		LibsDisenchantAssist:Print('No items to disenchant.')
+		LibsDisenchantAssist:Print("=== DISENCHANT ALL DEBUG END ===")
 		return
 	end
 
+	-- Debug: Show the items we're about to disenchant
+	LibsDisenchantAssist:Print('Items to disenchant:')
+	for i, item in ipairs(items) do
+		LibsDisenchantAssist:Print('  ' .. i .. '. ' .. (item.itemLink or item.itemName or 'Unknown') .. ' (Bag: ' .. item.bag .. ', Slot: ' .. item.slot .. ')')
+	end
+
+	LibsDisenchantAssist:Print('Confirmation setting: ' .. tostring(LibsDisenchantAssist.DB.confirmDisenchant))
+
 	if LibsDisenchantAssist.DB.confirmDisenchant then
+		LibsDisenchantAssist:Print('Showing confirmation dialog...')
 		StaticPopupDialogs['LIBS_DISENCHANT_ALL_CONFIRM'] = {
 			text = 'Disenchant ' .. #items .. ' items?',
 			button1 = 'Yes',
 			button2 = 'No',
 			OnAccept = function()
+				LibsDisenchantAssist:Print('User confirmed - starting batch disenchant')
 				self:StartBatchDisenchant(items)
+			end,
+			OnCancel = function()
+				LibsDisenchantAssist:Print('User cancelled disenchant')
 			end,
 			timeout = 0,
 			whileDead = true,
@@ -144,8 +170,11 @@ function DisenchantLogic:DisenchantAll()
 		}
 		StaticPopup_Show('LIBS_DISENCHANT_ALL_CONFIRM')
 	else
+		LibsDisenchantAssist:Print('No confirmation needed - starting batch disenchant')
 		self:StartBatchDisenchant(items)
 	end
+	
+	LibsDisenchantAssist:Print("=== DISENCHANT ALL DEBUG END ===")
 end
 
 ---Start batch disenchant process

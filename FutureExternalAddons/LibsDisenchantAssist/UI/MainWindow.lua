@@ -91,6 +91,14 @@ function UI:CreateControlButtons()
 	end)
 	frame.OptionsButton = optionsButton
 
+	-- Debug button (SpartanUI AH style)
+	local debugButton = self:CreateSUIButton(frame, 'Debug', 60, 25)
+	debugButton:SetPoint('TOP', 0, -45)
+	debugButton:SetScript('OnClick', function()
+		LibsDisenchantAssist:DebugOutput()
+	end)
+	frame.DebugButton = debugButton
+
 	-- Disenchant button (SpartanUI AH style)
 	local disenchantButton = self:CreateSUIButton(frame, 'Disenchant All', 100, 25)
 	disenchantButton:SetPoint('TOPRIGHT', -15, -45)
@@ -273,15 +281,41 @@ function UI:CreateItemButton(index)
 	highlight:SetColorTexture(0.3, 0.3, 0.3, 0.5) -- Subtle highlight
 	button:SetHighlightTexture(highlight)
 
+	-- DE (Disenchant) button
+	local deButton = self:CreateSUIButton(button, 'DE', 25, 18)
+	deButton:SetPoint('LEFT', 2, 0)
+	deButton:SetScript('OnClick', function()
+		if button.item then
+			LibsDisenchantAssist.DisenchantLogic:DisenchantItem(button.item)
+		end
+	end)
+	button.DEButton = deButton
+
+	-- NO (Blacklist) button
+	local noButton = self:CreateSUIButton(button, 'NO', 25, 18)
+	noButton:SetPoint('LEFT', deButton, 'RIGHT', 2, 0)
+	noButton:SetScript('OnClick', function()
+		if button.item then
+			-- Add to blacklist (we'll implement this)
+			LibsDisenchantAssist:BlacklistItem(button.item)
+			-- Refresh the list to remove this item
+			if LibsDisenchantAssist.UI then
+				LibsDisenchantAssist.UI:RefreshItemList()
+			end
+		end
+	end)
+	button.NOButton = noButton
+
 	-- Item icon (slightly larger)
 	local icon = button:CreateTexture(nil, 'ARTWORK')
 	icon:SetSize(18, 18)
-	icon:SetPoint('LEFT', 3, 0)
+	icon:SetPoint('LEFT', noButton, 'RIGHT', 6, 0)
 	button.Icon = icon
 
-	-- Item name with better contrast
+	-- Item name with better contrast (adjusted position)
 	local name = button:CreateFontString(nil, 'ARTWORK', 'GameFontNormal')
 	name:SetPoint('LEFT', icon, 'RIGHT', 6, 0)
+	name:SetPoint('RIGHT', -150, 0) -- Limit width to make room for other elements
 	name:SetJustifyH('LEFT')
 	name:SetTextColor(1, 1, 1, 1) -- White text for contrast
 	button.Name = name

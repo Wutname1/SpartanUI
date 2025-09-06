@@ -1846,18 +1846,47 @@ function lib:GetBars()
 	return self.bars
 end
 
----Debug logging function
+---Unified debug output system - uses SpartanUI debug window if available, otherwise chat
+---This is the main debug function that all debug output should eventually migrate to.
+---The advanced debugger hooks this function for enhanced logging with history and categories.
+---@param message string Message to output
+---@param level? string Log level (info, warning, error, debug) - defaults to 'info'
+---@param category? string Optional category for organization
+function lib:Debug(message, level, category)
+	level = level or 'info'
+	
+	-- Format message with level and category
+	local levelColor = level == 'error' and '|cFFFF0000' or level == 'warning' and '|cFFFFFF00' or level == 'debug' and '|cff888888' or '|cFFFFFFFF'
+	local categoryText = category and ('[' .. category .. '] ') or ''
+	local formattedMessage = levelColor .. '[' .. level:upper() .. ']|r ' .. categoryText .. message
+	
+	-- Route to appropriate output system
+	if SUI and SUI.Debug then
+		-- Use SpartanUI debug window
+		SUI.Debug(formattedMessage, "LibsDataBar")
+	else
+		-- Fallback to chat
+		if level == 'debug' and not LIBSDATABAR_DEBUG then
+			return -- Skip debug messages when debug mode is off
+		end
+		local prefix = '|cFF00FF00LibsDataBar|r'
+		print(prefix .. ' ' .. formattedMessage)
+	end
+end
+
+---Legacy debug logging function for backward compatibility
 ---@param level string Log level (info, warning, error)
 ---@param message string Log message
 ---@param category? string Optional category
 function lib:DebugLog(level, message, category)
 	if not LIBSDATABAR_DEBUG then return end
+	self:Debug(message, level, category)
+end
 
-	local prefix = '|cFF00FF00LibsDataBar|r'
-	local levelColor = level == 'error' and '|cFFFF0000' or level == 'warning' and '|cFFFFFF00' or '|cFFFFFFFF'
-	local categoryText = category and ('[' .. category .. '] ') or ''
-
-	print(prefix .. ' ' .. levelColor .. '[' .. level:upper() .. ']|r ' .. categoryText .. message)
+---Debug print function for convenience - uses info level
+---@param message string Message to print
+function lib:DebugPrint(message)
+	self:Debug(message, 'info')
 end
 
 ----------------------------------------------------------------------------------------------------
@@ -2517,7 +2546,7 @@ function LibsDataBar:SetupConsoleCommands()
 	self:RegisterChatCommand('libsdatabar', 'HandleChatCommand')
 	self:RegisterChatCommand('ldb', 'HandleChatCommand')
 
-	self:DebugLog('info', 'Phase 3: AceConsole-3.0 command system registered')
+	self:Debug('Phase 3: AceConsole-3.0 command system registered', 'info', 'core')
 end
 
 ---Phase 3: Handle chat commands with AceConsole-3.0
@@ -2602,14 +2631,14 @@ end
 ---Phase 3: Initialize LibQTip-1.0 enhanced tooltip system
 function LibsDataBar:InitializeTooltipSystem()
 	if not LibQTip then
-		self:DebugLog('warning', 'LibQTip-1.0 not available - using basic tooltips')
+		self:Debug('LibQTip-1.0 not available - using basic tooltips', 'warning', 'tooltips')
 		return
 	end
 
 	-- Create tooltip registry for cleanup
 	self.tooltips = self.tooltips or {}
 
-	self:DebugLog('info', 'Phase 3: Enhanced LibQTip-1.0 tooltip system initialized')
+	self:Debug('Phase 3: Enhanced LibQTip-1.0 tooltip system initialized', 'info', 'tooltips')
 end
 
 ---Phase 3: Create enhanced multi-column tooltip for plugins

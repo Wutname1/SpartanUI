@@ -1,4 +1,5 @@
 {
+  "includeCoAuthoredBy": false,
   "permissions": {
     "allow": [
       "Bash(grep)",
@@ -19,7 +20,10 @@
       "WebFetch(domain:github.com)",
       "Read(**/*.lua)",
       "Write(**/*.lua)",
-      "Edit(**/*.lua)"
+      "Edit(**/*.lua)",
+      "Bash(find:*)",
+      "mcp__ide__getDiagnostics",
+      "Bash(git add:*)"
     ],
     "deny": [],
     "ask": [],
@@ -31,6 +35,5 @@
       "C:/Users/jerem/OneDrive/WoW/Examples"
     ]
   },
-  "outputStyle": "default",
-  "includeCoAuthoredBy": false
+  "outputStyle": "default"
 }

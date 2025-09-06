@@ -21,6 +21,7 @@ local function Build(frame, DB)
 	health.TextElements = {}
 	for i, key in pairs(DB.text) do
 		local NewString = health:CreateFontString(nil, 'OVERLAY')
+		NewString:SetDrawLayer('OVERLAY', 7) -- Ensure text is above all bars
 		SUI.Font:Format(NewString, key.size, 'UnitFrames')
 		NewString:SetJustifyH(key.SetJustifyH)
 		NewString:SetJustifyV(key.SetJustifyV)
@@ -56,6 +57,7 @@ local function Build(frame, DB)
 
 	-- Position and size
 	local myBar = CreateFrame('StatusBar', nil, frame.Health)
+	myBar:SetFrameLevel((DB.FrameLevel or 2) - 1) -- Ensure it's below text
 	myBar:SetPoint('TOP')
 	myBar:SetPoint('BOTTOM')
 	myBar:SetPoint('LEFT', frame.Health:GetStatusBarTexture(), 'RIGHT')
@@ -65,6 +67,7 @@ local function Build(frame, DB)
 	myBar:Hide()
 
 	local otherBar = CreateFrame('StatusBar', nil, myBar)
+	otherBar:SetFrameLevel((DB.FrameLevel or 2) - 1) -- Ensure it's below text
 	otherBar:SetPoint('TOP')
 	otherBar:SetPoint('BOTTOM')
 	otherBar:SetPoint('LEFT', myBar:GetStatusBarTexture(), 'RIGHT')
@@ -74,6 +77,7 @@ local function Build(frame, DB)
 	otherBar:Hide()
 
 	local absorbBar = CreateFrame('StatusBar', nil, frame.Health)
+	absorbBar:SetFrameLevel((DB.FrameLevel or 2) - 1) -- Ensure it's below text
 	absorbBar:SetPoint('TOP')
 	absorbBar:SetPoint('BOTTOM')
 	absorbBar:SetPoint('LEFT', otherBar:GetStatusBarTexture(), 'RIGHT')
@@ -82,6 +86,7 @@ local function Build(frame, DB)
 	absorbBar:Hide()
 
 	local healAbsorbBar = CreateFrame('StatusBar', nil, frame.Health)
+	healAbsorbBar:SetFrameLevel((DB.FrameLevel or 2) - 1) -- Ensure it's below text
 	healAbsorbBar:SetPoint('TOP')
 	healAbsorbBar:SetPoint('BOTTOM')
 	healAbsorbBar:SetPoint('RIGHT', frame.Health:GetStatusBarTexture())
