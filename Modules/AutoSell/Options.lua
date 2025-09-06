@@ -2,6 +2,9 @@ local SUI, L, print = SUI, SUI.L, SUI.print
 ---@class SUI.Module.AutoSell : SUI.Module
 local module = SUI:GetModule('AutoSell')
 
+-- Configuration constants
+local MAX_BAG_SLOTS = 12  -- Maximum number of bag slots to scan (0-12 covers all normal bags plus extras)
+
 local buildItemList, buildCharacterList, OptionTable
 
 local function SetupPage()
@@ -521,7 +524,7 @@ function module:CreateMiniVendorPanels()
 			local sellableCount = 0
 
 			-- Count items that would be sold with current settings
-			for bag = 0, 4 do
+			for bag = 0, MAX_BAG_SLOTS do
 				for slot = 1, C_Container.GetContainerNumSlots(bag) do
 					local itemInfo, _, _, _, _, _, link, _, _, itemID = C_Container.GetContainerItemInfo(bag, slot)
 					if SUI.IsRetail and itemInfo then
