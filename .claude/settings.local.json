@@ -23,7 +23,8 @@
       "Edit(**/*.lua)",
       "Bash(find:*)",
       "mcp__ide__getDiagnostics",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(git commit:*)"
     ],
     "deny": [],
     "ask": [],

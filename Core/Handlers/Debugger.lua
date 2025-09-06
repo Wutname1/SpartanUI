@@ -37,6 +37,168 @@ local function GetLogLevelByPriority(priority)
 	return 'info', LOG_LEVELS['info'] -- Default fallback
 end
 
+-- Function to categorize modules like AuctionFrame categorizes items
+local function CategorizeModule(moduleName)
+	-- Define category rules (similar to AuctionFrame's item categorization)
+	local categories = {
+		['Core'] = { 'Core', 'Framework', 'Events', 'Options', 'Database', 'Profiles' },
+		['UI Modules'] = { 'UnitFrames', 'Minimap', 'Artwork', 'ActionBars', 'ChatBox', 'Tooltips' },
+		['External Addons'] = { 'LibsDataBar', 'LibsDisenchantAssist', 'Disenchant Assist', 'DataBar' },
+		['Handlers'] = { 'Handler', 'Debugger', 'ChatCommands', 'Compatibility' },
+		['Development'] = { 'Debug', 'Test', 'Dev', 'Plugin' }
+	}
+	
+	-- Check each category for module matches
+	for category, keywords in pairs(categories) do
+		for _, keyword in ipairs(keywords) do
+			if moduleName:find(keyword) then
+				return category
+			end
+		end
+	end
+	
+	-- Default category for unmatched modules
+	return 'Other Modules'
+end
+
+-- Function to create hierarchical module tree (like AuctionFrame categories)
+function CreateModuleCategories()
+	if not LogWindow then return end
+	
+	-- Clear existing data
+	LogWindow.Categories = {}
+	ScrollListing = {}
+	
+	-- Organize modules into categories
+	for moduleName, _ in pairs(debugger.DB.modules) do
+		local category = CategorizeModule(moduleName)
+		
+		if not LogWindow.Categories[category] then
+			LogWindow.Categories[category] = {
+				name = category,
+				modules = {},
+				expanded = false,
+				button = nil
+			}
+		end
+		
+		table.insert(LogWindow.Categories[category].modules, moduleName)
+		table.insert(ScrollListing, { text = moduleName, value = moduleName, category = category })
+	end
+	
+	-- Sort categories and modules within categories
+	local sortedCategories = {}
+	for categoryName, _ in pairs(LogWindow.Categories) do
+		table.insert(sortedCategories, categoryName)
+	end
+	table.sort(sortedCategories)
+	
+	for _, categoryName in pairs(sortedCategories) do
+		table.sort(LogWindow.Categories[categoryName].modules)
+	end
+	
+	-- Create the visual tree structure
+	CreateCategoryTree(sortedCategories)
+end
+
+-- Function to create the visual category tree (styled like AuctionFrame's category list)
+function CreateCategoryTree(sortedCategories)
+	if not LogWindow or not LogWindow.ModuleTree then return end
+	
+	-- Clear existing buttons
+	for _, button in pairs(LogWindow.categoryButtons) do
+		button:Hide()
+		button:SetParent(nil)
+	end
+	for _, button in pairs(LogWindow.moduleButtons) do
+		button:Hide() 
+		button:SetParent(nil)
+	end
+	LogWindow.categoryButtons = {}
+	LogWindow.moduleButtons = {}
+	
+	local yOffset = 0
+	local buttonHeight = 20
+	local categoryHeight = 18
+	local indentWidth = 15
+	
+	for _, categoryName in ipairs(sortedCategories) do
+		local categoryData = LogWindow.Categories[categoryName]
+		
+		-- Create category button (styled like AuctionFrame's expandable categories)
+		local categoryButton = CreateFrame('Button', nil, LogWindow.ModuleTree)
+		categoryButton:SetSize(140, categoryHeight)
+		categoryButton:SetPoint('TOPLEFT', LogWindow.ModuleTree, 'TOPLEFT', 0, yOffset)
+		
+		-- Category background (darker, like AuctionFrame headers)
+		categoryButton.bg = categoryButton:CreateTexture(nil, 'BACKGROUND')
+		categoryButton.bg:SetAllPoints()
+		categoryButton.bg:SetColorTexture(0.1, 0.1, 0.1, 0.8)
+		
+		-- Expand/collapse indicator (+ or -)
+		categoryButton.indicator = categoryButton:CreateFontString(nil, 'OVERLAY', 'GameFontNormalSmall')
+		categoryButton.indicator:SetPoint('LEFT', categoryButton, 'LEFT', 3, 0)
+		categoryButton.indicator:SetText(categoryData.expanded and '-' or '+')
+		categoryButton.indicator:SetTextColor(0.8, 0.8, 0.8)
+		
+		-- Category text
+		categoryButton.text = categoryButton:CreateFontString(nil, 'OVERLAY', 'GameFontNormalSmall')
+		categoryButton.text:SetPoint('LEFT', categoryButton.indicator, 'RIGHT', 5, 0)
+		categoryButton.text:SetText(categoryName .. ' (' .. #categoryData.modules .. ')')
+		categoryButton.text:SetTextColor(1, 0.82, 0) -- Gold like AuctionFrame headers
+		
+		-- Category button functionality
+		categoryButton:SetScript('OnClick', function(self)
+			categoryData.expanded = not categoryData.expanded
+			self.indicator:SetText(categoryData.expanded and '-' or '+')
+			CreateCategoryTree(sortedCategories) -- Rebuild tree
+		end)
+		
+		-- Hover effects like AuctionFrame
+		categoryButton:SetScript('OnEnter', function(self)
+			self.bg:SetColorTexture(0.2, 0.2, 0.2, 0.8)
+		end)
+		categoryButton:SetScript('OnLeave', function(self)
+			self.bg:SetColorTexture(0.1, 0.1, 0.1, 0.8)
+		end)
+		
+		categoryData.button = categoryButton
+		table.insert(LogWindow.categoryButtons, categoryButton)
+		yOffset = yOffset - (categoryHeight + 1)
+		
+		-- Create module buttons if category is expanded
+		if categoryData.expanded then
+			for _, moduleName in ipairs(categoryData.modules) do
+				local moduleButton = CreateFrame('Button', nil, LogWindow.ModuleTree, 'UIPanelButtonTemplate')
+				moduleButton:SetSize(125, buttonHeight)
+				moduleButton:SetPoint('TOPLEFT', LogWindow.ModuleTree, 'TOPLEFT', indentWidth, yOffset)
+				moduleButton:SetText(moduleName)
+				moduleButton:SetNormalFontObject('GameFontNormalSmall')
+				moduleButton:SetHighlightFontObject('GameFontHighlightSmall')
+				
+				-- Module selection functionality
+				moduleButton:SetScript('OnClick', function(self)
+					-- Update button states (highlight selected)
+					for _, btn in pairs(LogWindow.moduleButtons) do
+						btn:SetNormalFontObject('GameFontNormalSmall')
+					end
+					self:SetNormalFontObject('GameFontHighlightSmall')
+					
+					ActiveModule = self:GetText()
+					UpdateLogDisplay()
+				end)
+				
+				table.insert(LogWindow.moduleButtons, moduleButton)
+				yOffset = yOffset - (buttonHeight + 1)
+			end
+		end
+	end
+	
+	-- Update tree height
+	local totalHeight = math.abs(yOffset) + 20
+	LogWindow.ModuleTree:SetHeight(math.max(totalHeight, LogWindow.ModuleScrollFrame:GetHeight()))
+end
+
 
 local function CreateLogWindow()
 	if LogWindow then return end
@@ -176,10 +338,10 @@ local function CreateLogWindow()
 	LogWindow.LeftPanel:SetPoint('BOTTOMLEFT', LogWindow.MainContent, 'BOTTOMLEFT', 8, 8)
 	LogWindow.LeftPanel:SetWidth(160)
 	
-	-- Add a header for the module list
-	LogWindow.ModuleHeader = LogWindow.LeftPanel:CreateFontString(nil, 'OVERLAY', 'GameFontNormalSmall')
-	LogWindow.ModuleHeader:SetText('Modules')
-	LogWindow.ModuleHeader:SetPoint('TOP', LogWindow.LeftPanel, 'TOP', 0, -6)
+	-- Add a header for the module list (like AuctionFrame's "Browse" header)
+	LogWindow.ModuleHeader = LogWindow.LeftPanel:CreateFontString(nil, 'OVERLAY', 'GameFontNormalLarge')
+	LogWindow.ModuleHeader:SetText('Module Categories')
+	LogWindow.ModuleHeader:SetPoint('TOP', LogWindow.LeftPanel, 'TOP', 0, -8)
 	LogWindow.ModuleHeader:SetTextColor(1, 0.82, 0) -- Gold color like Blizzard headers
 
 	-- Right panel for log text (main display area like AuctionFrame's item list)
@@ -187,14 +349,14 @@ local function CreateLogWindow()
 	LogWindow.RightPanel:SetPoint('TOPLEFT', LogWindow.LeftPanel, 'TOPRIGHT', 8, 0)
 	LogWindow.RightPanel:SetPoint('BOTTOMRIGHT', LogWindow.MainContent, 'BOTTOMRIGHT', -8, 8)
 
-	-- Create scroll frame for module list in left panel (properly sized)
+	-- Create scroll frame for module tree in left panel (properly sized)
 	LogWindow.ModuleScrollFrame = CreateFrame('ScrollFrame', nil, LogWindow.LeftPanel, 'UIPanelScrollFrameTemplate')
-	LogWindow.ModuleScrollFrame:SetPoint('TOPLEFT', LogWindow.ModuleHeader, 'BOTTOMLEFT', -8, -5)
+	LogWindow.ModuleScrollFrame:SetPoint('TOPLEFT', LogWindow.ModuleHeader, 'BOTTOMLEFT', -8, -8)
 	LogWindow.ModuleScrollFrame:SetPoint('BOTTOMRIGHT', LogWindow.LeftPanel, 'BOTTOMRIGHT', -26, 8)
 	
-	LogWindow.ModuleList = CreateFrame('Frame', nil, LogWindow.ModuleScrollFrame)
-	LogWindow.ModuleScrollFrame:SetScrollChild(LogWindow.ModuleList)
-	LogWindow.ModuleList:SetSize(125, 1)
+	LogWindow.ModuleTree = CreateFrame('Frame', nil, LogWindow.ModuleScrollFrame)
+	LogWindow.ModuleScrollFrame:SetScrollChild(LogWindow.ModuleTree)
+	LogWindow.ModuleTree:SetSize(125, 1)
 
 	-- Create log text display in right panel (styled like AuctionFrame's main area)
 	LogWindow.TextPanel = CreateFrame('ScrollFrame', nil, LogWindow.RightPanel, 'UIPanelScrollFrameTemplate')
@@ -219,40 +381,12 @@ local function CreateLogWindow()
 	LogWindow.TextPanel:SetScrollChild(LogWindow.EditBox)
 
 	-- Initialize data structures
-	LogWindow.Modules = {}
+	LogWindow.Categories = {}
+	LogWindow.categoryButtons = {}
 	LogWindow.moduleButtons = {}
-
-	for moduleName, _ in pairs(debugger.DB.modules) do
-		table.insert(ScrollListing, { text = moduleName, value = moduleName })
-	end
-	LogWindow.modules = debugger.DB.modules
-
-	-- Create module buttons (styled like AuctionFrame category buttons)
-	local buttonHeight = 20
-	local buttonSpacing = 1
-	for i, moduleData in ipairs(ScrollListing) do
-		local button = CreateFrame('Button', nil, LogWindow.ModuleList, 'UIPanelButtonTemplate')
-		button:SetSize(125, buttonHeight)
-		button:SetPoint('TOPLEFT', LogWindow.ModuleList, 'TOPLEFT', 0, -(i-1) * (buttonHeight + buttonSpacing))
-		button:SetText(moduleData.text)
-		button:SetNormalFontObject('GameFontNormalSmall')
-		button:SetHighlightFontObject('GameFontHighlightSmall')
-		button:SetScript('OnClick', function(self)
-			-- Update button states (highlight selected)
-			for _, btn in pairs(LogWindow.moduleButtons) do
-				btn:SetNormalFontObject('GameFontNormalSmall')
-			end
-			self:SetNormalFontObject('GameFontHighlightSmall')
-			
-			ActiveModule = self:GetText()
-			UpdateLogDisplay()
-		end)
-		table.insert(LogWindow.moduleButtons, button)
-	end
-
-	-- Update module list height
-	local totalHeight = #ScrollListing * (buttonHeight + buttonSpacing)
-	LogWindow.ModuleList:SetHeight(math.max(totalHeight, LogWindow.ModuleScrollFrame:GetHeight()))
+	
+	-- Build module categories (like AuctionFrame's item categories)
+	CreateModuleCategories()
 
 	-- Setup dropdown functionality
 	SetupLogLevelDropdowns()
@@ -616,27 +750,42 @@ function SUI.Debug(debugText, module, level)
 	-- Initialize module if it doesn't exist
 	if not LogMessages[module] then
 		LogMessages[module] = {}
-		table.insert(ScrollListing, { text = module, value = module })
 		
-		-- Add new module button if log window exists
-		if LogWindow and LogWindow.ModuleList then
-			local buttonHeight = 20
-			local buttonSpacing = 2
-			local buttonIndex = #ScrollListing
+		-- Add new module to category system if log window exists
+		if LogWindow and LogWindow.Categories then
+			-- Determine category and add module
+			local category = CategorizeModule(module)
 			
-			local button = CreateFrame('Button', nil, LogWindow.ModuleList, 'UIPanelButtonTemplate')
-			button:SetSize(140, buttonHeight)
-			button:SetPoint('TOPLEFT', LogWindow.ModuleList, 'TOPLEFT', 0, -(buttonIndex-1) * (buttonHeight + buttonSpacing))
-			button:SetText(module)
-			button:SetScript('OnClick', function(self)
-				ActiveModule = self:GetText()
-				UpdateLogDisplay()
-			end)
-			table.insert(LogWindow.moduleButtons, button)
+			if not LogWindow.Categories[category] then
+				LogWindow.Categories[category] = {
+					name = category,
+					modules = {},
+					expanded = false,
+					button = nil
+				}
+			end
 			
-			-- Update module list height
-			local totalHeight = #ScrollListing * (buttonHeight + buttonSpacing)
-			LogWindow.ModuleList:SetHeight(math.max(totalHeight, LogWindow.ModuleScrollFrame:GetHeight()))
+			-- Add module to category if not already present
+			local moduleExists = false
+			for _, existingModule in ipairs(LogWindow.Categories[category].modules) do
+				if existingModule == module then
+					moduleExists = true
+					break
+				end
+			end
+			
+			if not moduleExists then
+				table.insert(LogWindow.Categories[category].modules, module)
+				table.sort(LogWindow.Categories[category].modules)
+				
+				-- Rebuild the category tree to include new module
+				local sortedCategories = {}
+				for categoryName, _ in pairs(LogWindow.Categories) do
+					table.insert(sortedCategories, categoryName)
+				end
+				table.sort(sortedCategories)
+				CreateCategoryTree(sortedCategories)
+			end
 		end
 		
 		debugger.DB.modules[module] = debugger.DB.enable
