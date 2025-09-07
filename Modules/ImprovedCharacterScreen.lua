@@ -9,8 +9,8 @@ local DBDefaults = {
 	fontSize = 14,
 	color = {
 		byQuality = false,
-		fontColor = { 1, 1, 1, 1 },
-	},
+		fontColor = {1, 1, 1, 1}
+	}
 }
 
 local function ButtonOverlay(button)
@@ -27,7 +27,9 @@ end
 ---@param itemQuality Enum.ItemQuality
 local function addiLvlDisplay(button, itemLevel, itemQuality)
 	if not itemLevel or SUI:IsModuleDisabled(module) then
-		if button.ilvlText then button.ilvlText:Hide() end
+		if button.ilvlText then
+			button.ilvlText:Hide()
+		end
 		return
 	end
 
@@ -55,7 +57,7 @@ end
 ---@param item ItemMixin
 local function addTimerunnerThreadCount(button, item)
 	if string.match(item:GetItemName(), 'Cloak of Infinite Potential') and SUI:IsModuleEnabled(module) then
-		local c, ThreadCount = { 0, 1, 2, 3, 4, 5, 6, 7, 148 }, 0
+		local c, ThreadCount = {0, 1, 2, 3, 4, 5, 6, 7, 148}, 0
 		for i = 1, 9 do
 			ThreadCount = ThreadCount + C_CurrencyInfo.GetCurrencyInfo(2853 + c[i]).quantity
 		end
@@ -74,7 +76,9 @@ end
 ---@param button SUI.ICS.ItemButtonFrame
 ---@param unit UnitId
 local function UpdateItemSlotButton(button, unit)
-	if button.ilvlText then button.ilvlText:Hide() end
+	if button.ilvlText then
+		button.ilvlText:Hide()
+	end
 
 	local slotID = button:GetID()
 
@@ -85,47 +89,67 @@ local function UpdateItemSlotButton(button, unit)
 		else
 			local itemID = GetInventoryItemID(unit, slotID)
 			local itemLink = GetInventoryItemLink(unit, slotID)
-			if itemLink or itemID then item = itemLink and Item:CreateFromItemLink(itemLink) or Item:CreateFromItemID(itemID) end
+			if itemLink or itemID then
+				item = itemLink and Item:CreateFromItemLink(itemLink) or Item:CreateFromItemID(itemID)
+			end
 		end
 
-		if not item or item:IsItemEmpty() then return end
+		if not item or item:IsItemEmpty() then
+			return
+		end
 
-		item:ContinueOnItemLoad(function()
-			-- Add item level text to the overlay frame
-			addiLvlDisplay(button, item:GetCurrentItemLevel(), item:GetItemQuality())
+		item:ContinueOnItemLoad(
+			function()
+				-- Add item level text to the overlay frame
+				addiLvlDisplay(button, item:GetCurrentItemLevel(), item:GetItemQuality())
 
-			--Add Text next to item if its Cloak of Infinite Potential
-			if SUI:IsTimerunner() then addTimerunnerThreadCount(button, item) end
-		end)
+				--Add Text next to item if its Cloak of Infinite Potential
+				if SUI:IsTimerunner() then
+					addTimerunnerThreadCount(button, item)
+				end
+			end
+		)
 	end
 end
 
 ---@param button SUI.ICS.ItemButtonFrame
 local function UpdateSpellFlyout(button)
-	if button.ilvlText then button.ilvlText:Hide() end
+	if button.ilvlText then
+		button.ilvlText:Hide()
+	end
 
-	if not button.location or button.location >= EQUIPMENTFLYOUT_FIRST_SPECIAL_LOCATION then return end
+	if not button.location or button.location >= EQUIPMENTFLYOUT_FIRST_SPECIAL_LOCATION then
+		return
+	end
 
-	local _, _, bags, voidStorage, slot, bag, _, _ = EquipmentManager_UnpackLocation(button.location)
+	local data = EquipmentManager_GetLocationData(button.location)
 	local item
-	if bags then
-		item = Item:CreateFromBagAndSlot(bag, slot)
-	elseif not voidStorage then
-		item = Item:CreateFromEquipmentSlot(slot)
+	if data.isBags then
+		item = Item:CreateFromBagAndSlot(data.bag, data.slot)
+	elseif not data.isPlayer then
+		item = Item:CreateFromEquipmentSlot(data.slot)
 	else
 		local itemID = EquipmentManager_GetItemInfoByLocation(button.location)
-		if itemID then item = Item:CreateFromItemID(itemID) end
+		if itemID then
+			item = Item:CreateFromItemID(itemID)
+		end
 	end
 
 	--Make sure we found the item
-	if not item or item:IsItemEmpty() then return end
+	if not item or item:IsItemEmpty() then
+		return
+	end
 
-	item:ContinueOnItemLoad(function()
-		local _, _, _, _, _, itemClass, itemSubClass = C_Item.GetItemInfoInstant(item:GetItemID())
-		if not (itemClass == Enum.ItemClass.Weapon or itemClass == Enum.ItemClass.Armor or (itemClass == Enum.ItemClass.Gem and itemSubClass == Enum.ItemGemSubclass.Artifactrelic)) then return end
-		local quality = item:GetItemQuality()
-		addiLvlDisplay(button, item:GetCurrentItemLevel(), quality)
-	end)
+	item:ContinueOnItemLoad(
+		function()
+			local _, _, _, _, _, itemClass, itemSubClass = C_Item.GetItemInfoInstant(item:GetItemID())
+			if not (itemClass == Enum.ItemClass.Weapon or itemClass == Enum.ItemClass.Armor or (itemClass == Enum.ItemClass.Gem and itemSubClass == Enum.ItemGemSubclass.Artifactrelic)) then
+				return
+			end
+			local quality = item:GetItemQuality()
+			addiLvlDisplay(button, item:GetCurrentItemLevel(), quality)
+		end
+	)
 end
 
 local function Options()
@@ -154,9 +178,9 @@ local function Options()
 						name = 'iLvL Font Size',
 						min = 5,
 						max = 24,
-						step = 1,
-					},
-				},
+						step = 1
+					}
+				}
 			},
 			Position = {
 				type = 'group',
@@ -176,10 +200,10 @@ local function Options()
 							['RIGHT'] = 'Right',
 							['BOTTOMLEFT'] = 'Bottom Left',
 							['BOTTOM'] = 'Bottom',
-							['BOTTOMRIGHT'] = 'Bottom Right',
-						},
-					},
-				},
+							['BOTTOMRIGHT'] = 'Bottom Right'
+						}
+					}
+				}
 			},
 			color = {
 				type = 'group',
@@ -196,7 +220,7 @@ local function Options()
 					byQuality = {
 						type = 'toggle',
 						name = 'Color by Quality',
-						desc = 'Color the iLvL by the item quality',
+						desc = 'Color the iLvL by the item quality'
 					},
 					fontColor = {
 						type = 'color',
@@ -209,45 +233,60 @@ local function Options()
 							return unpack(module.DB.color[info[#info]])
 						end,
 						set = function(info, r, g, b, a)
-							module.DB.color[info[#info]] = { r, g, b, a }
-						end,
-					},
-				},
-			},
-		},
+							module.DB.color[info[#info]] = {r, g, b, a}
+						end
+					}
+				}
+			}
+		}
 	}
 
 	SUI.Options:AddOptions(OptTable, 'ImprovedCharacterScreen', nil)
 end
 
 function module:OnInitialize()
-	module.Database = SUI.SpartanUIDB:RegisterNamespace('ImprovedCharacterScreen', { profile = DBDefaults })
+	module.Database = SUI.SpartanUIDB:RegisterNamespace('ImprovedCharacterScreen', {profile = DBDefaults})
 	---@type ImprovedCharacterScreenDB
 	module.DB = module.Database.profile
 end
 
 function module:OnEnable()
 	Options()
-	if SUI:IsModuleDisabled(module) then return end
+	if SUI:IsModuleDisabled(module) then
+		return
+	end
 
 	--Hook Character frame
-	hooksecurefunc('PaperDollItemSlotButton_Update', function(button)
-		UpdateItemSlotButton(button, 'player')
-	end)
+	hooksecurefunc(
+		'PaperDollItemSlotButton_Update',
+		function(button)
+			UpdateItemSlotButton(button, 'player')
+		end
+	)
 
 	--Equit item flyout
-	hooksecurefunc('EquipmentFlyout_DisplayButton', function(button)
-		UpdateSpellFlyout(button)
-	end)
+	hooksecurefunc(
+		'EquipmentFlyout_DisplayButton',
+		function(button)
+			UpdateSpellFlyout(button)
+		end
+	)
 	-- Hook Inspect frame
-	EventUtil.ContinueOnAddOnLoaded('Blizzard_InspectUI', function()
-		hooksecurefunc('InspectPaperDollItemSlotButton_Update', function(button)
-			UpdateItemSlotButton(button, InspectFrame.unit or 'target')
-		end)
-	end)
+	EventUtil.ContinueOnAddOnLoaded(
+		'Blizzard_InspectUI',
+		function()
+			hooksecurefunc(
+				'InspectPaperDollItemSlotButton_Update',
+				function(button)
+					UpdateItemSlotButton(button, InspectFrame.unit or 'target')
+				end
+			)
+		end
+	)
 end
 
-function module:OnDisable() end
+function module:OnDisable()
+end
 
 ---@class SUI.ICS.ItemButtonFrame : Frame
 ---@field ilvlText fontstring

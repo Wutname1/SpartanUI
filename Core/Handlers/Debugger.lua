@@ -894,7 +894,7 @@ function SUI.Log(debugText, module, level)
 			end
 		end
 
-		logger.DB.modules[module] = logger.DB.enable
+		logger.DB.modules[module] = true -- Default to enabled for logging approach
 		if logger.options then logger.options.args[module] = {
 			name = module,
 			type = 'toggle',
@@ -902,24 +902,20 @@ function SUI.Log(debugText, module, level)
 		} end
 	end
 
-	-- Check if we should log this message based on log levels
+	-- Validate log level
 	local logLevel = LOG_LEVELS[level]
 	if not logLevel then
 		level = 'info'
 		logLevel = LOG_LEVELS[level]
 	end
 
-	local moduleLogLevel = ModuleLogLevels[module] or 0
-	local effectiveLogLevel = moduleLogLevel > 0 and moduleLogLevel or GlobalLogLevel
-
-	-- Always capture warnings and errors if enabled
-	local shouldCapture = false
-	if logger.DB.captureWarningsErrors and (level == 'warning' or level == 'error' or level == 'critical') then
-		shouldCapture = true
-	elseif logger.DB.enable and logger.DB.modules[module] then
-		shouldCapture = true
-	elseif logLevel.priority >= effectiveLogLevel then
-		shouldCapture = true
+	-- LOGGING APPROACH: Always capture all messages, filter during display
+	-- This allows dynamic log level changes without losing historical data
+	local shouldCapture = true
+	
+	-- Only skip if logging is completely disabled for this module specifically
+	if logger.DB.modules[module] == false then
+		shouldCapture = false
 	end
 
 	if not shouldCapture then return end
@@ -950,28 +946,119 @@ function SUI.Log(debugText, module, level)
 	if ActiveModule and ActiveModule == module then UpdateLogDisplay() end
 end
 
+-- Compatibility function to maintain existing SUI.Debug calls
+---@param debugText string The message to log
+---@param module string The module name  
+---@param level? string Log level (debug, info, warning, error, critical) - defaults to 'info'
+function SUI.Debug(debugText, module, level)
+	-- Redirect to the new logging function
+	SUI.Log(debugText, module, level)
+end
+
 local function AddOptions()
 	---@type AceConfig.OptionsTable
 	local options = {
-		name = 'Debug',
+		name = 'Logging',
 		type = 'group',
 		get = function(info)
 			return logger.DB.modules[info[#info]]
 		end,
 		set = function(info, val)
 			logger.DB.modules[info[#info]] = val
-			if not val and logger.DB.enable then logger.DB.enable = false end
 		end,
 		args = {
-			EnableAll = {
-				name = 'Enable All',
-				type = 'toggle',
+			Description = {
+				name = 'SpartanUI uses a comprehensive logging system that captures all messages and filters by log level.\nModules can be individually disabled to stop collection entirely.',
+				type = 'description',
 				order = 0,
+			},
+			GlobalLogLevel = {
+				name = 'Global Log Level',
+				desc = 'Minimum log level to display globally. Individual modules can override this.',
+				type = 'select',
+				values = function()
+					local values = {}
+					-- Create ordered list to ensure proper display order
+					local orderedLevels = {}
+					for level, data in pairs(LOG_LEVELS) do
+						table.insert(orderedLevels, {level = level, data = data})
+					end
+					table.sort(orderedLevels, function(a, b) return a.data.priority < b.data.priority end)
+					
+					for _, levelData in ipairs(orderedLevels) do
+						values[levelData.data.priority] = levelData.data.display
+					end
+					return values
+				end,
+				sorting = function()
+					-- Return sorted order for dropdown
+					local sorted = {}
+					local orderedLevels = {}
+					for level, data in pairs(LOG_LEVELS) do
+						table.insert(orderedLevels, {level = level, data = data})
+					end
+					table.sort(orderedLevels, function(a, b) return a.data.priority < b.data.priority end)
+					
+					for _, levelData in ipairs(orderedLevels) do
+						table.insert(sorted, levelData.data.priority)
+					end
+					return sorted
+				end,
 				get = function(info)
-					return logger.DB.enable
+					return logger.DB.globalLogLevel
 				end,
 				set = function(info, val)
-					logger.DB.enable = val
+					logger.DB.globalLogLevel = val
+					GlobalLogLevel = val
+					if LogWindow then UpdateLogDisplay() end
+				end,
+				order = 1,
+			},
+			CaptureWarningsErrors = {
+				name = 'Always Capture Warnings/Errors',
+				desc = 'Always capture warning, error, and critical messages regardless of log level settings.',
+				type = 'toggle',
+				get = function(info)
+					return logger.DB.captureWarningsErrors
+				end,
+				set = function(info, val)
+					logger.DB.captureWarningsErrors = val
+				end,
+				order = 2,
+			},
+			MaxLogHistory = {
+				name = 'Maximum Log History',
+				desc = 'Maximum number of log entries to keep per module.',
+				type = 'range',
+				min = 100,
+				max = 5000,
+				step = 100,
+				get = function(info)
+					return logger.DB.maxLogHistory
+				end,
+				set = function(info, val)
+					logger.DB.maxLogHistory = val
+				end,
+				order = 3,
+			},
+			ModuleHeader = {
+				name = 'Module Logging Control',
+				type = 'header',
+				order = 10,
+			},
+			EnableAll = {
+				name = 'Enable All Modules',
+				desc = 'Enable or disable logging for all modules at once.',
+				type = 'toggle',
+				order = 11,
+				get = function(info)
+					-- Check if all modules are enabled
+					for _, enabled in pairs(logger.DB.modules) do
+						if not enabled then return false end
+					end
+					return true
+				end,
+				set = function(info, val)
 					for k, _ in pairs(logger.DB.modules) do
 						logger.DB.modules[k] = val
 					end
@@ -983,17 +1070,17 @@ local function AddOptions()
 	for k, _ in pairs(logger.DB.modules) do
 		options.args[k] = {
 			name = k,
+			desc = 'Enable logging for the ' .. k .. ' module.',
 			type = 'toggle',
 			order = (#options.args + 1),
 		}
 	end
 	logger.options = options
-	SUI.Options:AddOptions(options, 'Debug', 'Help')
+	SUI.Options:AddOptions(options, 'Logging', 'Help')
 end
 
 function logger:OnInitialize()
 	local defaults = {
-		enable = false,
 		globalLogLevel = 2, -- Default to 'info' and above
 		captureWarningsErrors = true, -- Always capture warnings and errors
 		maxLogHistory = 1000, -- Maximum log entries per module
@@ -1007,14 +1094,14 @@ function logger:OnInitialize()
 			y = 0,
 		},
 		modules = {
-			['*'] = false,
-			Core = false,
+			['*'] = true, -- Default to enabled for logging approach
+			Core = true,
 		},
 		moduleLogLevels = {
 			['*'] = 0, -- Use global level by default
 		},
 	}
-	logger.Database = SUI.SpartanUIDB:RegisterNamespace('Debugger', { profile = defaults })
+	logger.Database = SUI.SpartanUIDB:RegisterNamespace('Logger', { profile = defaults })
 	logger.DB = logger.Database.profile
 
 	-- Initialize log structures

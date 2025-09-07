@@ -1174,7 +1174,8 @@
     "LiteBagInventoryPanel",
     "Baganator",
     "ScrollingEdit_OnTextChanged",
-    "ScrollingEdit_OnCursorChanged"
+    "ScrollingEdit_OnCursorChanged",
+    "EquipmentManager_GetLocationData"
   ],
   "Lua.workspace.ignoreDir": [".vscode", "libs/*"],
   "Lua.diagnostics.enable": true,
