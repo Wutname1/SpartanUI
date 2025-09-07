@@ -42,7 +42,7 @@ local function CategorizeModule(moduleName)
 		['Core'] = { 'Core', 'Framework', 'Events', 'Options', 'Database', 'Profiles' },
 		['UI Modules'] = { 'UnitFrames', 'Minimap', 'Artwork', 'ActionBars', 'ChatBox', 'Tooltips' },
 		['External Addons'] = { 'LibsDataBar', 'LibsDisenchantAssist', 'Disenchant Assist', 'DataBar' },
-		['Handlers'] = { 'Handler', 'Debugger', 'ChatCommands', 'Compatibility' },
+		['Handlers'] = { 'Handler', 'Logger', 'ChatCommands', 'Compatibility' },
 		['Development'] = { 'Debug', 'Test', 'Dev', 'Plugin' },
 	}
 
@@ -912,11 +912,9 @@ function SUI.Log(debugText, module, level)
 	-- LOGGING APPROACH: Always capture all messages, filter during display
 	-- This allows dynamic log level changes without losing historical data
 	local shouldCapture = true
-	
+
 	-- Only skip if logging is completely disabled for this module specifically
-	if logger.DB.modules[module] == false then
-		shouldCapture = false
-	end
+	if logger.DB.modules[module] == false then shouldCapture = false end
 
 	if not shouldCapture then return end
 
@@ -948,7 +946,7 @@ end
 
 -- Compatibility function to maintain existing SUI.Debug calls
 ---@param debugText string The message to log
----@param module string The module name  
+---@param module string The module name
 ---@param level? string Log level (debug, info, warning, error, critical) - defaults to 'info'
 function SUI.Debug(debugText, module, level)
 	-- Redirect to the new logging function
@@ -981,10 +979,12 @@ local function AddOptions()
 					-- Create ordered list to ensure proper display order
 					local orderedLevels = {}
 					for level, data in pairs(LOG_LEVELS) do
-						table.insert(orderedLevels, {level = level, data = data})
+						table.insert(orderedLevels, { level = level, data = data })
 					end
-					table.sort(orderedLevels, function(a, b) return a.data.priority < b.data.priority end)
-					
+					table.sort(orderedLevels, function(a, b)
+						return a.data.priority < b.data.priority
+					end)
+
 					for _, levelData in ipairs(orderedLevels) do
 						values[levelData.data.priority] = levelData.data.display
 					end
@@ -995,10 +995,12 @@ local function AddOptions()
 					local sorted = {}
 					local orderedLevels = {}
 					for level, data in pairs(LOG_LEVELS) do
-						table.insert(orderedLevels, {level = level, data = data})
+						table.insert(orderedLevels, { level = level, data = data })
 					end
-					table.sort(orderedLevels, function(a, b) return a.data.priority < b.data.priority end)
-					
+					table.sort(orderedLevels, function(a, b)
+						return a.data.priority < b.data.priority
+					end)
+
 					for _, levelData in ipairs(orderedLevels) do
 						table.insert(sorted, levelData.data.priority)
 					end
