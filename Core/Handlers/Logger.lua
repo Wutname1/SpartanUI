@@ -463,10 +463,19 @@ local function CreateLogWindow()
 	LogWindow.MainContent:SetPoint('BOTTOMRIGHT', LogWindow, 'BOTTOMRIGHT', -20, 12)
 
 	-- Left panel for module list (styled like AuctionFrame's category list)
-	LogWindow.LeftPanel = CreateFrame('Frame', nil, LogWindow.MainContent, 'InsetFrameTemplate')
+	LogWindow.LeftPanel = CreateFrame('Frame', nil, LogWindow.MainContent)
 	LogWindow.LeftPanel:SetPoint('TOPLEFT', LogWindow.MainContent, 'TOPLEFT', 8, -8)
 	LogWindow.LeftPanel:SetPoint('BOTTOMLEFT', LogWindow.MainContent, 'BOTTOMLEFT', 8, 8)
-	LogWindow.LeftPanel:SetWidth(160)
+	LogWindow.LeftPanel:SetWidth(168)
+
+	-- Add AuctionHouse categories background
+	LogWindow.LeftPanel.Background = LogWindow.LeftPanel:CreateTexture(nil, 'BACKGROUND')
+	LogWindow.LeftPanel.Background:SetAtlas('auctionhouse-background-categories', true)
+	LogWindow.LeftPanel.Background:SetPoint('TOPLEFT', LogWindow.LeftPanel, 'TOPLEFT', 3, -3)
+
+	-- Add nine slice border for left panel
+	LogWindow.LeftPanel.NineSlice = CreateFrame('Frame', nil, LogWindow.LeftPanel, 'NineSlicePanelTemplate')
+	LogWindow.LeftPanel.NineSlice:SetAllPoints()
 
 	-- Add a header for the module list (like AuctionFrame's "Browse" header)
 	LogWindow.ModuleHeader = LogWindow.LeftPanel:CreateFontString(nil, 'OVERLAY', 'GameFontNormalLarge')
@@ -475,9 +484,18 @@ local function CreateLogWindow()
 	LogWindow.ModuleHeader:SetTextColor(1, 0.82, 0) -- Gold color like Blizzard headers
 
 	-- Right panel for log text (main display area like AuctionFrame's item list)
-	LogWindow.RightPanel = CreateFrame('Frame', nil, LogWindow.MainContent, 'InsetFrameTemplate')
+	LogWindow.RightPanel = CreateFrame('Frame', nil, LogWindow.MainContent)
 	LogWindow.RightPanel:SetPoint('TOPLEFT', LogWindow.LeftPanel, 'TOPRIGHT', 8, 0)
 	LogWindow.RightPanel:SetPoint('BOTTOMRIGHT', LogWindow.MainContent, 'BOTTOMRIGHT', -8, 8)
+
+	-- Add AuctionHouse index background
+	LogWindow.RightPanel.Background = LogWindow.RightPanel:CreateTexture(nil, 'BACKGROUND')
+	LogWindow.RightPanel.Background:SetAtlas('auctionhouse-background-index', true)
+	LogWindow.RightPanel.Background:SetPoint('TOPLEFT', LogWindow.RightPanel, 'TOPLEFT', 3, -3)
+
+	-- Add nine slice border for right panel
+	LogWindow.RightPanel.NineSlice = CreateFrame('Frame', nil, LogWindow.RightPanel, 'NineSlicePanelTemplate')
+	LogWindow.RightPanel.NineSlice:SetAllPoints()
 
 	-- Create scroll frame for module tree in left panel (properly sized)
 	LogWindow.ModuleScrollFrame = CreateFrame('ScrollFrame', nil, LogWindow.LeftPanel, 'UIPanelScrollFrameTemplate')
