@@ -24,7 +24,14 @@
       "Bash(find:*)",
       "mcp__ide__getDiagnostics",
       "Bash(git add:*)",
-      "Bash(git commit:*)"
+      "Bash(git commit:*)",
+      "Read(//c/Users/jerem/Syncthing/WoW/WOWUICode/wow-ui-source/Interface/AddOns/Blizzard_AuctionHouseUI/**)",
+      "Read(//c/Users/jerem/Syncthing/WoW/WOWUICode/wow-ui-source/Interface/AddOns/**)",
+      "Read(//c/Users/jerem/Syncthing/WoW/WOWUICode/wow-ui-source/Interface/**)",
+      "Read(//c/Users/jerem/Syncthing/WoW/WOWUICode/**)",
+      "Read(//c/Users/jerem/Syncthing/WOWUICode/wow-ui-source/Interface/AddOns/Blizzard_AuctionHouseUI/Shared/**)",
+      "Read(//c/Users/jerem/Syncthing/WOWUICode/wow-ui-source/Interface/AddOns/Blizzard_AuctionHouseUI/**)",
+      "Read(//c/Users/jerem/Syncthing/WOWUICode/wow-ui-source/Interface/AddOns/Blizzard_AuctionHouseUI/Mainline/**)"
     ],
     "deny": [],
     "ask": [],

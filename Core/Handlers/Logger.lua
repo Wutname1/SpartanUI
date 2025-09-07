@@ -163,22 +163,59 @@ function CreateCategoryTree(sortedCategories)
 		-- Create module buttons if category is expanded
 		if categoryData.expanded then
 			for _, moduleName in ipairs(categoryData.modules) do
-				local moduleButton = CreateFrame('Button', nil, LogWindow.ModuleTree, 'UIPanelButtonTemplate')
-				moduleButton:SetSize(125, buttonHeight)
+				local moduleButton = CreateFrame('Button', nil, LogWindow.ModuleTree)
+				moduleButton:SetSize(132, 21)
 				moduleButton:SetPoint('TOPLEFT', LogWindow.ModuleTree, 'TOPLEFT', indentWidth, yOffset)
-				moduleButton:SetText(moduleName)
-				moduleButton:SetNormalFontObject('GameFontNormalSmall')
-				moduleButton:SetHighlightFontObject('GameFontHighlightSmall')
+
+				-- Create textures to match AuctionHouse nav button style
+				-- Normal texture
+				moduleButton.NormalTexture = moduleButton:CreateTexture(nil, 'BACKGROUND')
+				moduleButton.NormalTexture:SetAtlas('auctionhouse-nav-button', false)
+				moduleButton.NormalTexture:SetSize(136, 32)
+				moduleButton.NormalTexture:SetPoint('TOPLEFT', moduleButton, 'TOPLEFT', -2, 0)
+
+				-- Highlight texture
+				moduleButton.HighlightTexture = moduleButton:CreateTexture(nil, 'BORDER')
+				moduleButton.HighlightTexture:SetAtlas('auctionhouse-nav-button-highlight')
+				moduleButton.HighlightTexture:SetPoint('CENTER', moduleButton, 'CENTER')
+				moduleButton.HighlightTexture:Hide()
+
+				-- Selected texture
+				moduleButton.SelectedTexture = moduleButton:CreateTexture(nil, 'ARTWORK')
+				moduleButton.SelectedTexture:SetAtlas('auctionhouse-nav-button-select')
+				moduleButton.SelectedTexture:SetBlendMode('ADD')
+				moduleButton.SelectedTexture:SetPoint('TOPLEFT', moduleButton.NormalTexture, 'TOPLEFT')
+				moduleButton.SelectedTexture:SetPoint('BOTTOMRIGHT', moduleButton.NormalTexture, 'BOTTOMRIGHT')
+				moduleButton.SelectedTexture:Hide()
+
+				-- Button text
+				moduleButton.Text = moduleButton:CreateFontString(nil, 'OVERLAY', 'GameFontNormalSmall')
+				moduleButton.Text:SetText(moduleName)
+				moduleButton.Text:SetJustifyH('LEFT')
+				moduleButton.Text:SetPoint('LEFT', moduleButton, 'LEFT', 4, 0)
+				moduleButton.Text:SetPoint('RIGHT', moduleButton, 'RIGHT', -4, 0)
+				moduleButton.Text:SetHeight(8)
+
+				-- Hover effects
+				moduleButton:SetScript('OnEnter', function(self)
+					self.HighlightTexture:Show()
+				end)
+				moduleButton:SetScript('OnLeave', function(self)
+					self.HighlightTexture:Hide()
+				end)
 
 				-- Module selection functionality
 				moduleButton:SetScript('OnClick', function(self)
-					-- Update button states (highlight selected)
+					-- Update button states (clear all selected states)
 					for _, btn in pairs(LogWindow.moduleButtons) do
-						btn:SetNormalFontObject('GameFontNormalSmall')
+						btn.SelectedTexture:Hide()
+						btn.Text:SetFontObject('GameFontNormalSmall')
 					end
-					self:SetNormalFontObject('GameFontHighlightSmall')
+					-- Set this button as selected
+					self.SelectedTexture:Show()
+					self.Text:SetFontObject('GameFontHighlightSmall')
 
-					ActiveModule = self:GetText()
+					ActiveModule = self.Text:GetText()
 					UpdateLogDisplay()
 				end)
 

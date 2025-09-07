@@ -513,7 +513,9 @@ function module:DebugItemSellability(link)
 		return
 	end
 
-	local name, _, quality, _, _, itemType, itemSubType, _, equipSlot, _, vendorPrice, _, _, _, expacID, _, isCraftingReagent = C_Item.GetItemInfo(link)
+	local name, _, quality, _, _, itemType, itemSubType, _, equipSlot, _, vendorPrice, _, _, bindType, expacID, _, isCraftingReagent = C_Item.GetItemInfo(link)
+	local actualItemLevel, previewLevel, sparseItemLevel = C_Item.GetDetailedItemLevelInfo(link)
+
 	if not name then
 		print('|cffFFFF00AutoSell Debug:|r Item info not available')
 		return
@@ -543,7 +545,11 @@ function module:DebugItemSellability(link)
 	print(string.format('Vendor Price: %s', vendorPrice and tostring(vendorPrice) or '0'))
 	print(string.format('Equip Slot: %s', equipSlot or 'none'))
 	print(string.format('Expansion ID: %s', expacID and tostring(expacID) or 'nil'))
+	print(string.format('Bind Type: %s', bindType and _G['BIND_' .. bindType] or 'nil'))
 	print(string.format('Is Crafting Reagent: %s', isCraftingReagent and 'Yes' or 'No'))
+	print(string.format('Actual Item Level: %s', actualItemLevel and tostring(actualItemLevel) or 'nil'))
+	print(string.format('Preview Item Level: %s', previewLevel and tostring(previewLevel) or 'nil'))
+	print(string.format('Sparse Item Level: %s', sparseItemLevel and tostring(sparseItemLevel) or 'nil'))
 
 	-- Check each condition
 	print('|cffFFFF00--- Sell Decision Process ------|r')
