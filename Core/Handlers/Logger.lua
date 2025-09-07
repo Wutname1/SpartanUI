@@ -504,7 +504,7 @@ local function CreateLogWindow()
 
 	LogWindow.ModuleTree = CreateFrame('Frame', nil, LogWindow.ModuleScrollFrame)
 	LogWindow.ModuleScrollFrame:SetScrollChild(LogWindow.ModuleTree)
-	LogWindow.ModuleTree:SetSize(125, 1)
+	LogWindow.ModuleTree:SetSize(140, 1)
 
 	-- Create log text display in right panel (styled like AuctionFrame's main area)
 	LogWindow.TextPanel = CreateFrame('ScrollFrame', nil, LogWindow.RightPanel, 'UIPanelScrollFrameTemplate')
