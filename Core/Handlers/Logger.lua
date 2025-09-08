@@ -176,7 +176,7 @@ function CreateCategoryTree(sortedCategories)
 				-- Highlight texture
 				moduleButton.HighlightTexture = moduleButton:CreateTexture(nil, 'BORDER')
 				moduleButton.HighlightTexture:SetAtlas('auctionhouse-nav-button-highlight')
-				moduleButton.HighlightTexture:SetPoint('CENTER', moduleButton, 'CENTER')
+				moduleButton.HighlightTexture:SetAllPoints(moduleButton)
 				moduleButton.HighlightTexture:Hide()
 
 				-- Selected texture (using primary button for selected state)
