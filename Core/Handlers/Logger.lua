@@ -302,9 +302,9 @@ end
 local function CreateLogWindow()
 	if LogWindow then return end
 
-	-- Create main frame using PortraitFrameTemplate for proper skinning
+	-- Create main frame using PortraitFrameTemplate for proper skinning (AH window size: 800x538)
 	LogWindow = CreateFrame('Frame', 'SpartanUI_LogWindow', UIParent, 'PortraitFrameTemplate')
-	LogWindow:SetSize(714, 487)
+	LogWindow:SetSize(800, 538)
 	LogWindow:SetPoint('CENTER', UIParent, 'CENTER', 0, 0)
 	LogWindow:SetFrameStrata('HIGH')
 	LogWindow:Hide()
@@ -1142,8 +1142,8 @@ function logger:OnInitialize()
 		captureWarningsErrors = true, -- Always capture warnings and errors
 		maxLogHistory = 1000, -- Maximum log entries per module
 		window = {
-			width = 714,
-			height = 487,
+			width = 800,
+			height = 538,
 			point = 'CENTER',
 			relativeTo = 'UIParent',
 			relativePoint = 'CENTER',
