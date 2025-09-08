@@ -448,11 +448,12 @@ local function CreateLogWindow()
 
 	-- PortraitFrameTemplate already includes a close button, no need to create another
 
-	-- Open Settings button (top right corner like AuctionFrame's "Browse" type buttons)
-	LogWindow.OpenSettings = CreateFrame('Button', nil, LogWindow.ControlFrame, 'UIPanelButtonTemplate')
-	LogWindow.OpenSettings:SetSize(90, 22)
-	LogWindow.OpenSettings:SetPoint('BOTTOMRIGHT', LogWindow.ControlFrame, 'BOTTOMRIGHT', 0, 5)
-	LogWindow.OpenSettings:SetText('Settings')
+	-- Settings button (workshop icon, positioned like AH refresh button)
+	LogWindow.OpenSettings = CreateFrame('Button', nil, LogWindow, 'UIPanelButtonTemplate')
+	LogWindow.OpenSettings:SetSize(35, 35)
+	LogWindow.OpenSettings:SetPoint('TOPRIGHT', LogWindow, 'TOPRIGHT', -40, -30)
+	LogWindow.OpenSettings:SetText('')
+	LogWindow.OpenSettings:SetNormalAtlas('Warfronts-BaseMapIcons-Empty-Workshop-Minimap')
 	LogWindow.OpenSettings:SetScript('OnClick', function()
 		SUI.Options:ToggleOptions({ 'Help', 'Debug' })
 	end)
