@@ -400,12 +400,46 @@ local function CreateLogWindow()
 
 	-- PortraitFrameTemplate already includes a close button, no need to create another
 
-	-- Settings button (workshop icon, positioned like AH refresh button)
-	LogWindow.OpenSettings = CreateFrame('Button', nil, LogWindow, 'UIPanelButtonTemplate')
-	LogWindow.OpenSettings:SetSize(35, 35)
+	-- Settings button (workshop icon, sized like AH refresh button)
+	LogWindow.OpenSettings = CreateFrame('Button', nil, LogWindow)
+	LogWindow.OpenSettings:SetSize(24, 24)
 	LogWindow.OpenSettings:SetPoint('TOPRIGHT', LogWindow, 'TOPRIGHT', -40, -30)
-	LogWindow.OpenSettings:SetText('')
-	LogWindow.OpenSettings:SetNormalAtlas('Warfronts-BaseMapIcons-Empty-Workshop-Minimap')
+	
+	-- Set up texture states
+	LogWindow.OpenSettings:SetNormalTexture('Interface\\AddOns\\SpartanUI\\images\\empty') -- Placeholder, will use atlas
+	LogWindow.OpenSettings:SetHighlightTexture('Interface\\AddOns\\SpartanUI\\images\\empty') -- Placeholder, will use atlas
+	LogWindow.OpenSettings:SetPushedTexture('Interface\\AddOns\\SpartanUI\\images\\empty') -- Placeholder, will use atlas
+	
+	-- Create texture layers using atlas
+	LogWindow.OpenSettings.NormalTexture = LogWindow.OpenSettings:CreateTexture(nil, 'ARTWORK')
+	LogWindow.OpenSettings.NormalTexture:SetAtlas('Warfronts-BaseMapIcons-Empty-Workshop')
+	LogWindow.OpenSettings.NormalTexture:SetAllPoints()
+	
+	LogWindow.OpenSettings.HighlightTexture = LogWindow.OpenSettings:CreateTexture(nil, 'HIGHLIGHT')
+	LogWindow.OpenSettings.HighlightTexture:SetAtlas('Warfronts-BaseMapIcons-Alliance-Workshop')
+	LogWindow.OpenSettings.HighlightTexture:SetAllPoints()
+	LogWindow.OpenSettings.HighlightTexture:SetAlpha(0)
+	
+	LogWindow.OpenSettings.PushedTexture = LogWindow.OpenSettings:CreateTexture(nil, 'ARTWORK')
+	LogWindow.OpenSettings.PushedTexture:SetAtlas('Warfronts-BaseMapIcons-Horde-Workshop')
+	LogWindow.OpenSettings.PushedTexture:SetAllPoints()
+	LogWindow.OpenSettings.PushedTexture:SetAlpha(0)
+	
+	-- Set up hover and click effects
+	LogWindow.OpenSettings:SetScript('OnEnter', function(self)
+		self.HighlightTexture:SetAlpha(1)
+	end)
+	LogWindow.OpenSettings:SetScript('OnLeave', function(self)
+		self.HighlightTexture:SetAlpha(0)
+	end)
+	LogWindow.OpenSettings:SetScript('OnMouseDown', function(self)
+		self.PushedTexture:SetAlpha(1)
+		self.NormalTexture:SetAlpha(0)
+	end)
+	LogWindow.OpenSettings:SetScript('OnMouseUp', function(self)
+		self.PushedTexture:SetAlpha(0)
+		self.NormalTexture:SetAlpha(1)
+	end)
 	LogWindow.OpenSettings:SetScript('OnClick', function()
 		SUI.Options:ToggleOptions({ 'Help', 'Debug' })
 	end)
