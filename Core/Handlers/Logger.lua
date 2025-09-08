@@ -268,11 +268,25 @@ local function CreateLogWindow()
 	LogWindow.ControlFrame:SetPoint('TOPRIGHT', LogWindow, 'TOPRIGHT', -18, -29)
 	LogWindow.ControlFrame:SetHeight(40) -- Reduced height to match AH
 
-	-- First row of controls (like AuctionFrame's search controls)
-	-- Search box with proper styling (matched to AH search bar width)
+	-- All controls on same horizontal line, left to right: checkbox, search, logging level, gear
+	-- Search all modules checkbox (leftmost)
+	LogWindow.SearchAllModules = CreateFrame('CheckButton', 'SUI_SearchAllModules', LogWindow.ControlFrame, 'UICheckButtonTemplate')
+	LogWindow.SearchAllModules:SetSize(18, 18)
+	LogWindow.SearchAllModules:SetPoint('TOPLEFT', LogWindow.ControlFrame, 'TOPLEFT', 0, -5)
+	LogWindow.SearchAllModules:SetScript('OnClick', function(self)
+		SearchAllModules = self:GetChecked()
+		UpdateLogDisplay()
+	end)
+
+	LogWindow.SearchAllModulesLabel = LogWindow.ControlFrame:CreateFontString(nil, 'OVERLAY', 'GameFontNormalSmall')
+	LogWindow.SearchAllModulesLabel:SetText('Search All Modules')
+	LogWindow.SearchAllModulesLabel:SetPoint('LEFT', LogWindow.SearchAllModules, 'RIGHT', 2, 0)
+	LogWindow.SearchAllModulesLabel:SetTextColor(1, 1, 1) -- White text
+
+	-- Search box positioned after checkbox
 	LogWindow.SearchBox = CreateFrame('EditBox', 'SUI_LogSearchBox', LogWindow.ControlFrame, 'SearchBoxTemplate')
 	LogWindow.SearchBox:SetSize(241, 22)
-	LogWindow.SearchBox:SetPoint('TOPLEFT', LogWindow.ControlFrame, 'TOPLEFT', 0, -5)
+	LogWindow.SearchBox:SetPoint('LEFT', LogWindow.SearchAllModulesLabel, 'RIGHT', 10, 0)
 	LogWindow.SearchBox:SetAutoFocus(false)
 	LogWindow.SearchBox:SetScript('OnTextChanged', function(self)
 		CurrentSearchTerm = self:GetText()
@@ -285,36 +299,21 @@ local function CreateLogWindow()
 		UpdateLogDisplay()
 	end)
 
-	-- Logging Level dropdown using AH FilterButton style (right side of first row)
+	-- Logging Level dropdown positioned after search box
 	LogWindow.LoggingLevelButton = CreateFrame('DropdownButton', 'SUI_LoggingLevelButton', LogWindow.ControlFrame, 'WowStyle1FilterDropdownTemplate')
-	LogWindow.LoggingLevelButton:SetPoint('TOPRIGHT', LogWindow.ControlFrame, 'TOPRIGHT', -15, -5)
+	LogWindow.LoggingLevelButton:SetPoint('LEFT', LogWindow.SearchBox, 'RIGHT', 10, 0)
 	LogWindow.LoggingLevelButton:SetSize(120, 22)
 	LogWindow.LoggingLevelButton:SetText('Logging Level')
 	-- Set initial dropdown text based on current global level
 	local _, globalLevelData = GetLogLevelByPriority(GlobalLogLevel)
 	if globalLevelData then LogWindow.LoggingLevelButton:SetText('Logging Level') end
 
-	-- Second row of controls (checkboxes repositioned)
-	-- Search all modules checkbox positioned to left of search box
-	LogWindow.SearchAllModules = CreateFrame('CheckButton', 'SUI_SearchAllModules', LogWindow.ControlFrame, 'UICheckButtonTemplate')
-	LogWindow.SearchAllModules:SetSize(18, 18)
-	LogWindow.SearchAllModules:SetPoint('LEFT', LogWindow.SearchBox, 'LEFT', 0, -35)
-	LogWindow.SearchAllModules:SetScript('OnClick', function(self)
-		SearchAllModules = self:GetChecked()
-		UpdateLogDisplay()
-	end)
-
-	LogWindow.SearchAllModulesLabel = LogWindow.ControlFrame:CreateFontString(nil, 'OVERLAY', 'GameFontNormalSmall')
-	LogWindow.SearchAllModulesLabel:SetText('Search All Modules')
-	LogWindow.SearchAllModulesLabel:SetPoint('LEFT', LogWindow.SearchAllModules, 'RIGHT', 2, 0)
-	LogWindow.SearchAllModulesLabel:SetTextColor(1, 1, 1) -- White text
-
 	-- PortraitFrameTemplate already includes a close button, no need to create another
 
-	-- Settings button (workshop icon, sized like AH refresh button)
-	LogWindow.OpenSettings = CreateFrame('Button', nil, LogWindow)
+	-- Settings button (workshop icon, positioned after logging level dropdown)
+	LogWindow.OpenSettings = CreateFrame('Button', nil, LogWindow.ControlFrame)
 	LogWindow.OpenSettings:SetSize(24, 24)
-	LogWindow.OpenSettings:SetPoint('TOPRIGHT', LogWindow, 'TOPRIGHT', -40, -30)
+	LogWindow.OpenSettings:SetPoint('LEFT', LogWindow.LoggingLevelButton, 'RIGHT', 10, 0)
 
 	-- Set up texture states
 	LogWindow.OpenSettings:SetNormalTexture('Interface\\AddOns\\SpartanUI\\images\\empty') -- Placeholder, will use atlas
