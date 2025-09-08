@@ -414,22 +414,6 @@ local function CreateLogWindow()
 	LogWindow.AutoScrollLabel:SetPoint('LEFT', LogWindow.AutoScroll, 'RIGHT', 2, 0)
 	LogWindow.AutoScrollLabel:SetTextColor(1, 1, 1) -- White text
 
-	-- Action buttons (styled like AuctionFrame buttons)
-	LogWindow.ClearButton = CreateFrame('Button', nil, LogWindow.ControlFrame, 'UIPanelButtonTemplate')
-	LogWindow.ClearButton:SetSize(70, 22)
-	LogWindow.ClearButton:SetPoint('TOPRIGHT', LogWindow.ControlFrame, 'BOTTOMRIGHT', -80, -5)
-	LogWindow.ClearButton:SetText('Clear')
-	LogWindow.ClearButton:SetScript('OnClick', function()
-		ClearCurrentLogs()
-	end)
-
-	LogWindow.ExportButton = CreateFrame('Button', nil, LogWindow.ControlFrame, 'UIPanelButtonTemplate')
-	LogWindow.ExportButton:SetSize(70, 22)
-	LogWindow.ExportButton:SetPoint('RIGHT', LogWindow.ClearButton, 'LEFT', -5, 0)
-	LogWindow.ExportButton:SetText('Export')
-	LogWindow.ExportButton:SetScript('OnClick', function()
-		ExportCurrentLogs()
-	end)
 
 	-- PortraitFrameTemplate already includes a close button, no need to create another
 
@@ -482,6 +466,23 @@ local function CreateLogWindow()
 	-- Add nine slice border for right panel
 	LogWindow.RightPanel.NineSlice = CreateFrame('Frame', nil, LogWindow.RightPanel, 'NineSlicePanelTemplate')
 	LogWindow.RightPanel.NineSlice:SetAllPoints()
+
+	-- Action buttons positioned in bottom right like AH Cancel Auction button
+	LogWindow.ClearButton = CreateFrame('Button', nil, LogWindow, 'UIPanelButtonTemplate')
+	LogWindow.ClearButton:SetSize(70, 22)
+	LogWindow.ClearButton:SetPoint('BOTTOMRIGHT', LogWindow, 'BOTTOMRIGHT', -25, 35)
+	LogWindow.ClearButton:SetText('Clear')
+	LogWindow.ClearButton:SetScript('OnClick', function()
+		ClearCurrentLogs()
+	end)
+
+	LogWindow.ExportButton = CreateFrame('Button', nil, LogWindow, 'UIPanelButtonTemplate')
+	LogWindow.ExportButton:SetSize(70, 22)
+	LogWindow.ExportButton:SetPoint('RIGHT', LogWindow.ClearButton, 'LEFT', -5, 0)
+	LogWindow.ExportButton:SetText('Export')
+	LogWindow.ExportButton:SetScript('OnClick', function()
+		ExportCurrentLogs()
+	end)
 
 	-- Create scroll frame for module tree in left panel (properly sized to match AH)
 	LogWindow.ModuleScrollFrame = CreateFrame('ScrollFrame', nil, LogWindow.LeftPanel, 'UIPanelScrollFrameTemplate')
