@@ -357,9 +357,9 @@ local function CreateLogWindow()
 	LogWindow.ControlFrame:SetHeight(55) -- Two rows of controls
 
 	-- First row of controls (like AuctionFrame's search controls)
-	-- Search box with proper styling
+	-- Search box with proper styling (matched to AH search bar width)
 	LogWindow.SearchBox = CreateFrame('EditBox', 'SUI_LogSearchBox', LogWindow.ControlFrame, 'SearchBoxTemplate')
-	LogWindow.SearchBox:SetSize(140, 22)
+	LogWindow.SearchBox:SetSize(241, 22)
 	LogWindow.SearchBox:SetPoint('TOPLEFT', LogWindow.ControlFrame, 'TOPLEFT', 0, -5)
 	LogWindow.SearchBox:SetAutoFocus(false)
 	LogWindow.SearchBox:SetScript('OnTextChanged', function(self)
