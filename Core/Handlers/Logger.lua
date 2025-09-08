@@ -264,27 +264,32 @@ local function CreateLogWindow()
 
 	-- Create control frame positioned like AuctionHouse SearchBar (y=-29)
 	LogWindow.ControlFrame = CreateFrame('Frame', nil, LogWindow)
-	LogWindow.ControlFrame:SetPoint('TOPLEFT', LogWindow, 'TOPLEFT', 18, -29)
-	LogWindow.ControlFrame:SetPoint('TOPRIGHT', LogWindow, 'TOPRIGHT', -18, -29)
-	LogWindow.ControlFrame:SetHeight(40) -- Reduced height to match AH
+	LogWindow.ControlFrame:SetPoint('TOPLEFT', LogWindow, 'TOPLEFT', 2, -33)
+	LogWindow.ControlFrame:SetPoint('TOPRIGHT', LogWindow, 'TOPRIGHT', -2, -33)
+	LogWindow.ControlFrame:SetHeight(28) -- Reduced height to match AH
+
+	LogWindow.HeaderAnchor = CreateFrame('Frame', nil, LogWindow)
+	LogWindow.HeaderAnchor:SetPoint('TOPLEFT', LogWindow.ControlFrame, 'TOPLEFT', 53, 0)
+	LogWindow.HeaderAnchor:SetPoint('TOPRIGHT', LogWindow.ControlFrame, 'TOPRIGHT', -16, 0)
+	LogWindow.HeaderAnchor:SetHeight(28) -- Reduced height to match AH
 
 	-- All controls on same horizontal line, left to right: checkbox, search, logging level, gear
 	-- Search all modules checkbox (leftmost)
-	LogWindow.SearchAllModules = CreateFrame('CheckButton', 'SUI_SearchAllModules', LogWindow.ControlFrame, 'UICheckButtonTemplate')
+	LogWindow.SearchAllModules = CreateFrame('CheckButton', 'SUI_SearchAllModules', LogWindow.HeaderAnchor, 'UICheckButtonTemplate')
 	LogWindow.SearchAllModules:SetSize(18, 18)
-	LogWindow.SearchAllModules:SetPoint('TOPLEFT', LogWindow.ControlFrame, 'TOPLEFT', 0, -5)
+	LogWindow.SearchAllModules:SetPoint('LEFT', LogWindow.HeaderAnchor, 'LEFT', 0, 0)
 	LogWindow.SearchAllModules:SetScript('OnClick', function(self)
 		SearchAllModules = self:GetChecked()
 		UpdateLogDisplay()
 	end)
 
-	LogWindow.SearchAllModulesLabel = LogWindow.ControlFrame:CreateFontString(nil, 'OVERLAY', 'GameFontNormalSmall')
+	LogWindow.SearchAllModulesLabel = LogWindow.HeaderAnchor:CreateFontString(nil, 'OVERLAY', 'GameFontNormalSmall')
 	LogWindow.SearchAllModulesLabel:SetText('Search All Modules')
 	LogWindow.SearchAllModulesLabel:SetPoint('LEFT', LogWindow.SearchAllModules, 'RIGHT', 2, 0)
 	LogWindow.SearchAllModulesLabel:SetTextColor(1, 1, 1) -- White text
 
 	-- Search box positioned after checkbox
-	LogWindow.SearchBox = CreateFrame('EditBox', 'SUI_LogSearchBox', LogWindow.ControlFrame, 'SearchBoxTemplate')
+	LogWindow.SearchBox = CreateFrame('EditBox', 'SUI_LogSearchBox', LogWindow.HeaderAnchor, 'SearchBoxTemplate')
 	LogWindow.SearchBox:SetSize(241, 22)
 	LogWindow.SearchBox:SetPoint('LEFT', LogWindow.SearchAllModulesLabel, 'RIGHT', 10, 0)
 	LogWindow.SearchBox:SetAutoFocus(false)
@@ -299,21 +304,10 @@ local function CreateLogWindow()
 		UpdateLogDisplay()
 	end)
 
-	-- Logging Level dropdown positioned after search box
-	LogWindow.LoggingLevelButton = CreateFrame('DropdownButton', 'SUI_LoggingLevelButton', LogWindow.ControlFrame, 'WowStyle1FilterDropdownTemplate')
-	LogWindow.LoggingLevelButton:SetPoint('LEFT', LogWindow.SearchBox, 'RIGHT', 10, 0)
-	LogWindow.LoggingLevelButton:SetSize(120, 22)
-	LogWindow.LoggingLevelButton:SetText('Logging Level')
-	-- Set initial dropdown text based on current global level
-	local _, globalLevelData = GetLogLevelByPriority(GlobalLogLevel)
-	if globalLevelData then LogWindow.LoggingLevelButton:SetText('Logging Level') end
-
-	-- PortraitFrameTemplate already includes a close button, no need to create another
-
 	-- Settings button (workshop icon, positioned after logging level dropdown)
-	LogWindow.OpenSettings = CreateFrame('Button', nil, LogWindow.ControlFrame)
+	LogWindow.OpenSettings = CreateFrame('Button', nil, LogWindow.HeaderAnchor)
 	LogWindow.OpenSettings:SetSize(24, 24)
-	LogWindow.OpenSettings:SetPoint('LEFT', LogWindow.LoggingLevelButton, 'RIGHT', 10, 0)
+	LogWindow.OpenSettings:SetPoint('RIGHT', LogWindow.HeaderAnchor, 'RIGHT', 0, 0)
 
 	-- Set up texture states
 	LogWindow.OpenSettings:SetNormalTexture('Interface\\AddOns\\SpartanUI\\images\\empty') -- Placeholder, will use atlas
@@ -351,8 +345,17 @@ local function CreateLogWindow()
 		self.NormalTexture:SetAlpha(1)
 	end)
 	LogWindow.OpenSettings:SetScript('OnClick', function()
-		SUI.Options:ToggleOptions({ 'Help', 'Debug' })
+		SUI.Options:ToggleOptions({ 'Help', 'Logging' })
 	end)
+
+	-- Logging Level dropdown positioned after search box
+	LogWindow.LoggingLevelButton = CreateFrame('DropdownButton', 'SUI_LoggingLevelButton', LogWindow.HeaderAnchor, 'WowStyle1FilterDropdownTemplate')
+	LogWindow.LoggingLevelButton:SetPoint('RIGHT', LogWindow.OpenSettings, 'LEFT', -10, 0)
+	LogWindow.LoggingLevelButton:SetSize(120, 22)
+	LogWindow.LoggingLevelButton:SetText('Logging Level')
+	-- Set initial dropdown text based on current global level
+	local _, globalLevelData = GetLogLevelByPriority(GlobalLogLevel)
+	if globalLevelData then LogWindow.LoggingLevelButton:SetText('Logging Level') end
 
 	-- Create main content area positioned like AuctionHouse panels (-4px from SearchBar bottom)
 	LogWindow.MainContent = CreateFrame('Frame', nil, LogWindow)
@@ -361,14 +364,15 @@ local function CreateLogWindow()
 
 	-- Left panel for module list (styled like AuctionFrame's category list)
 	LogWindow.LeftPanel = CreateFrame('Frame', nil, LogWindow.MainContent)
-	LogWindow.LeftPanel:SetPoint('TOPLEFT', LogWindow.MainContent, 'TOPLEFT', 4, 0)
-	LogWindow.LeftPanel:SetPoint('BOTTOMLEFT', LogWindow.MainContent, 'BOTTOMLEFT', 4, 0)
-	LogWindow.LeftPanel:SetWidth(168)
+	LogWindow.LeftPanel:SetPoint('TOPLEFT', LogWindow.MainContent, 'TOPLEFT', 10, 0)
+	LogWindow.LeftPanel:SetPoint('BOTTOMLEFT', LogWindow.MainContent, 'BOTTOMLEFT', 10, 20)
+	LogWindow.LeftPanel:SetWidth(160)
 
 	-- Add AuctionHouse categories background
 	LogWindow.LeftPanel.Background = LogWindow.LeftPanel:CreateTexture(nil, 'BACKGROUND')
 	LogWindow.LeftPanel.Background:SetAtlas('auctionhouse-background-summarylist', true)
-	LogWindow.LeftPanel.Background:SetPoint('TOPLEFT', LogWindow.LeftPanel, 'TOPLEFT', 3, -3)
+	-- LogWindow.LeftPanel.Background:SetPoint('TOPLEFT', LogWindow.LeftPanel, 'TOPLEFT', 3, -3)
+	LogWindow.LeftPanel.Background:SetAllPoints(LogWindow.LeftPanel)
 
 	-- Add nine slice border for left panel
 	LogWindow.LeftPanel.NineSlice = CreateFrame('Frame', nil, LogWindow.LeftPanel, 'NineSlicePanelTemplate')
@@ -376,13 +380,14 @@ local function CreateLogWindow()
 
 	-- Right panel for log text (main display area like AuctionFrame's item list)
 	LogWindow.RightPanel = CreateFrame('Frame', nil, LogWindow.MainContent)
-	LogWindow.RightPanel:SetPoint('TOPLEFT', LogWindow.LeftPanel, 'TOPRIGHT', 8, 0)
-	LogWindow.RightPanel:SetPoint('BOTTOMRIGHT', LogWindow.MainContent, 'BOTTOMRIGHT', -4, 0)
+	LogWindow.RightPanel:SetPoint('TOPLEFT', LogWindow.LeftPanel, 'TOPRIGHT', 20, 0)
+	LogWindow.RightPanel:SetPoint('BOTTOMRIGHT', LogWindow.MainContent, 'BOTTOMRIGHT', -10, 20)
 
 	-- Add AuctionHouse index background
 	LogWindow.RightPanel.Background = LogWindow.RightPanel:CreateTexture(nil, 'BACKGROUND')
 	LogWindow.RightPanel.Background:SetAtlas('auctionhouse-background-index', true)
-	LogWindow.RightPanel.Background:SetPoint('TOPLEFT', LogWindow.RightPanel, 'TOPLEFT', 3, -3)
+	LogWindow.RightPanel.Background:SetAllPoints(LogWindow.RightPanel)
+	-- LogWindow.RightPanel.Background:SetPoint('TOPLEFT', LogWindow.RightPanel, 'TOPLEFT', 3, -3)
 
 	-- Add nine slice border for right panel
 	LogWindow.RightPanel.NineSlice = CreateFrame('Frame', nil, LogWindow.RightPanel, 'NineSlicePanelTemplate')
@@ -391,7 +396,7 @@ local function CreateLogWindow()
 	-- Action buttons positioned in bottom right like AH Cancel Auction button
 	LogWindow.ClearButton = CreateFrame('Button', nil, LogWindow, 'UIPanelButtonTemplate')
 	LogWindow.ClearButton:SetSize(70, 22)
-	LogWindow.ClearButton:SetPoint('BOTTOMRIGHT', LogWindow, 'BOTTOMRIGHT', -25, 35)
+	LogWindow.ClearButton:SetPoint('BOTTOMRIGHT', LogWindow, 'BOTTOMRIGHT', -3, 4)
 	LogWindow.ClearButton:SetText('Clear')
 	LogWindow.ClearButton:SetScript('OnClick', function()
 		ClearCurrentLogs()
@@ -407,13 +412,13 @@ local function CreateLogWindow()
 
 	-- Create scroll frame for module tree in left panel with MinimalScrollBar
 	LogWindow.ModuleScrollFrame = CreateFrame('ScrollFrame', nil, LogWindow.LeftPanel)
-	LogWindow.ModuleScrollFrame:SetPoint('TOPLEFT', LogWindow.LeftPanel, 'TOPLEFT', 0, -8)
+	LogWindow.ModuleScrollFrame:SetPoint('TOPLEFT', LogWindow.LeftPanel, 'TOPLEFT', 2, -7)
 	LogWindow.ModuleScrollFrame:SetPoint('BOTTOMRIGHT', LogWindow.LeftPanel, 'BOTTOMRIGHT', -8, 2)
 
 	-- Create minimal scrollbar for left panel
 	LogWindow.ModuleScrollFrame.ScrollBar = CreateFrame('EventFrame', nil, LogWindow.ModuleScrollFrame, 'MinimalScrollBar')
-	LogWindow.ModuleScrollFrame.ScrollBar:SetPoint('TOPLEFT', LogWindow.ModuleScrollFrame, 'TOPRIGHT', 0, 0)
-	LogWindow.ModuleScrollFrame.ScrollBar:SetPoint('BOTTOMLEFT', LogWindow.ModuleScrollFrame, 'BOTTOMRIGHT', 0, 0)
+	LogWindow.ModuleScrollFrame.ScrollBar:SetPoint('TOPLEFT', LogWindow.ModuleScrollFrame, 'TOPRIGHT', 2, 0)
+	LogWindow.ModuleScrollFrame.ScrollBar:SetPoint('BOTTOMLEFT', LogWindow.ModuleScrollFrame, 'BOTTOMRIGHT', 2, 0)
 	ScrollUtil.InitScrollFrameWithScrollBar(LogWindow.ModuleScrollFrame, LogWindow.ModuleScrollFrame.ScrollBar)
 
 	LogWindow.ModuleTree = CreateFrame('Frame', nil, LogWindow.ModuleScrollFrame)
@@ -423,7 +428,7 @@ local function CreateLogWindow()
 	-- Create log text display in right panel with MinimalScrollBar
 	LogWindow.TextPanel = CreateFrame('ScrollFrame', nil, LogWindow.RightPanel)
 	LogWindow.TextPanel:SetPoint('TOPLEFT', LogWindow.RightPanel, 'TOPLEFT', 6, -6)
-	LogWindow.TextPanel:SetPoint('BOTTOMRIGHT', LogWindow.RightPanel, 'BOTTOMRIGHT', -8, 2)
+	LogWindow.TextPanel:SetPoint('BOTTOMRIGHT', LogWindow.RightPanel, 'BOTTOMRIGHT', 0, 2)
 
 	-- Create minimal scrollbar for right panel
 	LogWindow.TextPanel.ScrollBar = CreateFrame('EventFrame', nil, LogWindow.TextPanel, 'MinimalScrollBar')
@@ -453,9 +458,6 @@ local function CreateLogWindow()
 	LogWindow.AutoScroll:SetSize(18, 18)
 	LogWindow.AutoScroll:SetPoint('CENTER', LogWindow.RightPanel, 'BOTTOM', 0, -15)
 	LogWindow.AutoScroll:SetChecked(AutoScrollEnabled)
-	LogWindow.AutoScroll:SetScript('OnClick', function(self)
-		-- AutoScrollEnabled is now determined by checkbox state, no need to sync global variable
-	end)
 
 	LogWindow.AutoScrollLabel = LogWindow:CreateFontString(nil, 'OVERLAY', 'GameFontNormalSmall')
 	LogWindow.AutoScrollLabel:SetText('Auto-scroll')
@@ -616,15 +618,13 @@ function UpdateLogDisplay()
 	LogWindow.EditBox:SetText(logText)
 
 	-- Auto-scroll to bottom if enabled
-	if LogWindow.AutoScroll and LogWindow.AutoScroll:GetChecked() and LogWindow.EditBox then 
-		LogWindow.EditBox:SetCursorPosition(string.len(logText)) 
-	end
+	if LogWindow.AutoScroll and LogWindow.AutoScroll:GetChecked() and LogWindow.EditBox then LogWindow.EditBox:SetCursorPosition(string.len(logText)) end
 
 	-- Update logging level button text with color
 	if LogWindow.LoggingLevelButton then
 		local _, globalLevelData = GetLogLevelByPriority(GlobalLogLevel)
 		if globalLevelData then
-			local coloredButtonText = 'Level: ' .. globalLevelData.color .. globalLevelData.display .. '|r'
+			local coloredButtonText = 'Log Level: ' .. globalLevelData.color .. globalLevelData.display .. '|r'
 			LogWindow.LoggingLevelButton:SetText(coloredButtonText)
 		end
 	end
