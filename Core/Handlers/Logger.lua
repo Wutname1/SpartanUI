@@ -430,11 +430,6 @@ local function CreateLogWindow()
 	LogWindow.LeftPanel.NineSlice = CreateFrame('Frame', nil, LogWindow.LeftPanel, 'NineSlicePanelTemplate')
 	LogWindow.LeftPanel.NineSlice:SetAllPoints()
 
-	-- Add a header for the module list (like AuctionFrame's "Browse" header)
-	LogWindow.ModuleHeader = LogWindow.LeftPanel:CreateFontString(nil, 'OVERLAY', 'GameFontNormalLarge')
-	LogWindow.ModuleHeader:SetText('Module Categories')
-	LogWindow.ModuleHeader:SetPoint('TOP', LogWindow.LeftPanel, 'TOP', 0, -8)
-	LogWindow.ModuleHeader:SetTextColor(1, 0.82, 0) -- Gold color like Blizzard headers
 
 	-- Right panel for log text (main display area like AuctionFrame's item list)
 	LogWindow.RightPanel = CreateFrame('Frame', nil, LogWindow.MainContent)
@@ -469,7 +464,7 @@ local function CreateLogWindow()
 
 	-- Create scroll frame for module tree in left panel (properly sized to match AH)
 	LogWindow.ModuleScrollFrame = CreateFrame('ScrollFrame', nil, LogWindow.LeftPanel, 'UIPanelScrollFrameTemplate')
-	LogWindow.ModuleScrollFrame:SetPoint('TOPLEFT', LogWindow.ModuleHeader, 'BOTTOMLEFT', -5, -6)
+	LogWindow.ModuleScrollFrame:SetPoint('TOPLEFT', LogWindow.LeftPanel, 'TOPLEFT', 0, -8)
 	LogWindow.ModuleScrollFrame:SetPoint('BOTTOMRIGHT', LogWindow.LeftPanel, 'BOTTOMRIGHT', -25, 2)
 
 	LogWindow.ModuleTree = CreateFrame('Frame', nil, LogWindow.ModuleScrollFrame)
