@@ -235,8 +235,6 @@ function CreateCategoryTree(sortedCategories)
 	LogWindow.ModuleTree:SetHeight(math.max(totalHeight, LogWindow.ModuleScrollFrame:GetHeight()))
 end
 
-
-
 local function CreateLogWindow()
 	if LogWindow then return end
 
@@ -256,7 +254,6 @@ local function CreateLogWindow()
 		self:StopMovingOrSizing()
 	end)
 
-
 	-- Set the portrait (with safety checks)
 	if LogWindow.portrait then
 		if LogWindow.portrait.SetTexture then LogWindow.portrait:SetTexture('Interface\\AddOns\\SpartanUI\\images\\LogoSpartanUI') end
@@ -265,11 +262,11 @@ local function CreateLogWindow()
 	-- Set title
 	LogWindow:SetTitle('SpartanUI Logging')
 
-	-- Create control frame below the title (like AuctionFrame's browse/bid/sell tabs area)
+	-- Create control frame positioned like AuctionHouse SearchBar (y=-29)
 	LogWindow.ControlFrame = CreateFrame('Frame', nil, LogWindow)
-	LogWindow.ControlFrame:SetPoint('TOPLEFT', LogWindow, 'TOPLEFT', 18, -65)
-	LogWindow.ControlFrame:SetPoint('TOPRIGHT', LogWindow, 'TOPRIGHT', -18, -65)
-	LogWindow.ControlFrame:SetHeight(55) -- Two rows of controls
+	LogWindow.ControlFrame:SetPoint('TOPLEFT', LogWindow, 'TOPLEFT', 18, -29)
+	LogWindow.ControlFrame:SetPoint('TOPRIGHT', LogWindow, 'TOPRIGHT', -18, -29)
+	LogWindow.ControlFrame:SetHeight(40) -- Reduced height to match AH
 
 	-- First row of controls (like AuctionFrame's search controls)
 	-- Search box with proper styling (matched to AH search bar width)
@@ -288,7 +285,6 @@ local function CreateLogWindow()
 		UpdateLogDisplay()
 	end)
 
-
 	-- Logging Level dropdown using AH FilterButton style (right side of first row)
 	LogWindow.LoggingLevelButton = CreateFrame('DropdownButton', 'SUI_LoggingLevelButton', LogWindow.ControlFrame, 'WowStyle1FilterDropdownTemplate')
 	LogWindow.LoggingLevelButton:SetPoint('TOPRIGHT', LogWindow.ControlFrame, 'TOPRIGHT', -15, -5)
@@ -296,9 +292,7 @@ local function CreateLogWindow()
 	LogWindow.LoggingLevelButton:SetText('Logging Level')
 	-- Set initial dropdown text based on current global level
 	local _, globalLevelData = GetLogLevelByPriority(GlobalLogLevel)
-	if globalLevelData then
-		LogWindow.LoggingLevelButton:SetText('Logging Level')
-	end
+	if globalLevelData then LogWindow.LoggingLevelButton:SetText('Logging Level') end
 
 	-- Second row of controls (checkboxes repositioned)
 	-- Search all modules checkbox positioned to left of search box
@@ -315,34 +309,33 @@ local function CreateLogWindow()
 	LogWindow.SearchAllModulesLabel:SetPoint('LEFT', LogWindow.SearchAllModules, 'RIGHT', 2, 0)
 	LogWindow.SearchAllModulesLabel:SetTextColor(1, 1, 1) -- White text
 
-
 	-- PortraitFrameTemplate already includes a close button, no need to create another
 
 	-- Settings button (workshop icon, sized like AH refresh button)
 	LogWindow.OpenSettings = CreateFrame('Button', nil, LogWindow)
 	LogWindow.OpenSettings:SetSize(24, 24)
 	LogWindow.OpenSettings:SetPoint('TOPRIGHT', LogWindow, 'TOPRIGHT', -40, -30)
-	
+
 	-- Set up texture states
 	LogWindow.OpenSettings:SetNormalTexture('Interface\\AddOns\\SpartanUI\\images\\empty') -- Placeholder, will use atlas
 	LogWindow.OpenSettings:SetHighlightTexture('Interface\\AddOns\\SpartanUI\\images\\empty') -- Placeholder, will use atlas
 	LogWindow.OpenSettings:SetPushedTexture('Interface\\AddOns\\SpartanUI\\images\\empty') -- Placeholder, will use atlas
-	
+
 	-- Create texture layers using atlas
 	LogWindow.OpenSettings.NormalTexture = LogWindow.OpenSettings:CreateTexture(nil, 'ARTWORK')
 	LogWindow.OpenSettings.NormalTexture:SetAtlas('Warfronts-BaseMapIcons-Empty-Workshop')
 	LogWindow.OpenSettings.NormalTexture:SetAllPoints()
-	
+
 	LogWindow.OpenSettings.HighlightTexture = LogWindow.OpenSettings:CreateTexture(nil, 'HIGHLIGHT')
 	LogWindow.OpenSettings.HighlightTexture:SetAtlas('Warfronts-BaseMapIcons-Alliance-Workshop')
 	LogWindow.OpenSettings.HighlightTexture:SetAllPoints()
 	LogWindow.OpenSettings.HighlightTexture:SetAlpha(0)
-	
+
 	LogWindow.OpenSettings.PushedTexture = LogWindow.OpenSettings:CreateTexture(nil, 'ARTWORK')
 	LogWindow.OpenSettings.PushedTexture:SetAtlas('Warfronts-BaseMapIcons-Horde-Workshop')
 	LogWindow.OpenSettings.PushedTexture:SetAllPoints()
 	LogWindow.OpenSettings.PushedTexture:SetAlpha(0)
-	
+
 	-- Set up hover and click effects
 	LogWindow.OpenSettings:SetScript('OnEnter', function(self)
 		self.HighlightTexture:SetAlpha(1)
@@ -362,9 +355,9 @@ local function CreateLogWindow()
 		SUI.Options:ToggleOptions({ 'Help', 'Debug' })
 	end)
 
-	-- Create main content area like AuctionFrame (using Blizzard's standard inset style)
+	-- Create main content area positioned like AuctionHouse panels (-4px from SearchBar bottom)
 	LogWindow.MainContent = CreateFrame('Frame', nil, LogWindow)
-	LogWindow.MainContent:SetPoint('TOPLEFT', LogWindow.ControlFrame, 'BOTTOMLEFT', -4, -10)
+	LogWindow.MainContent:SetPoint('TOPLEFT', LogWindow.ControlFrame, 'BOTTOMLEFT', -4, -4)
 	LogWindow.MainContent:SetPoint('BOTTOMRIGHT', LogWindow, 'BOTTOMRIGHT', -20, 12)
 
 	-- Left panel for module list (styled like AuctionFrame's category list)
@@ -375,13 +368,12 @@ local function CreateLogWindow()
 
 	-- Add AuctionHouse categories background
 	LogWindow.LeftPanel.Background = LogWindow.LeftPanel:CreateTexture(nil, 'BACKGROUND')
-	LogWindow.LeftPanel.Background:SetAtlas('auctionhouse-background-categories', true)
+	LogWindow.LeftPanel.Background:SetAtlas('auctionhouse-background-summarylist', true)
 	LogWindow.LeftPanel.Background:SetPoint('TOPLEFT', LogWindow.LeftPanel, 'TOPLEFT', 3, -3)
 
 	-- Add nine slice border for left panel
 	LogWindow.LeftPanel.NineSlice = CreateFrame('Frame', nil, LogWindow.LeftPanel, 'NineSlicePanelTemplate')
 	LogWindow.LeftPanel.NineSlice:SetAllPoints()
-
 
 	-- Right panel for log text (main display area like AuctionFrame's item list)
 	LogWindow.RightPanel = CreateFrame('Frame', nil, LogWindow.MainContent)
@@ -418,7 +410,7 @@ local function CreateLogWindow()
 	LogWindow.ModuleScrollFrame = CreateFrame('ScrollFrame', nil, LogWindow.LeftPanel)
 	LogWindow.ModuleScrollFrame:SetPoint('TOPLEFT', LogWindow.LeftPanel, 'TOPLEFT', 0, -8)
 	LogWindow.ModuleScrollFrame:SetPoint('BOTTOMRIGHT', LogWindow.LeftPanel, 'BOTTOMRIGHT', -8, 2)
-	
+
 	-- Create minimal scrollbar for left panel
 	LogWindow.ModuleScrollFrame.ScrollBar = CreateFrame('EventFrame', nil, LogWindow.ModuleScrollFrame, 'MinimalScrollBar')
 	LogWindow.ModuleScrollFrame.ScrollBar:SetPoint('TOPLEFT', LogWindow.ModuleScrollFrame, 'TOPRIGHT', 0, 0)
@@ -433,7 +425,7 @@ local function CreateLogWindow()
 	LogWindow.TextPanel = CreateFrame('ScrollFrame', nil, LogWindow.RightPanel)
 	LogWindow.TextPanel:SetPoint('TOPLEFT', LogWindow.RightPanel, 'TOPLEFT', 6, -6)
 	LogWindow.TextPanel:SetPoint('BOTTOMRIGHT', LogWindow.RightPanel, 'BOTTOMRIGHT', -8, 2)
-	
+
 	-- Create minimal scrollbar for right panel
 	LogWindow.TextPanel.ScrollBar = CreateFrame('EventFrame', nil, LogWindow.TextPanel, 'MinimalScrollBar')
 	LogWindow.TextPanel.ScrollBar:SetPoint('TOPLEFT', LogWindow.TextPanel, 'TOPRIGHT', 0, 0)
@@ -481,7 +473,6 @@ local function CreateLogWindow()
 
 	-- Setup dropdown functionality
 	SetupLogLevelDropdowns()
-
 
 	-- Store references for compatibility
 	LogWindow.NamespaceListings = LogWindow.ModuleScrollFrame
@@ -798,9 +789,7 @@ function SetupLogLevelDropdowns()
 				GameTooltip_AddNormalLine(tooltip, 'Shows ' .. levelData.data.display:lower() .. ' messages and higher priority')
 			end)
 			-- Check current selection
-			if GlobalLogLevel == levelData.data.priority then
-				button:SetRadio(true)
-			end
+			if GlobalLogLevel == levelData.data.priority then button:SetRadio(true) end
 		end
 	end)
 end
