@@ -227,74 +227,7 @@ function CreateCategoryTree(sortedCategories)
 	LogWindow.ModuleTree:SetHeight(math.max(totalHeight, LogWindow.ModuleScrollFrame:GetHeight()))
 end
 
--- Function to validate and clamp window dimensions to screen size
-local function ValidateWindowDimensions(width, height)
-	local screenWidth = GetScreenWidth()
-	local screenHeight = GetScreenHeight()
 
-	-- Ensure minimum dimensions
-	width = math.max(width, 400)
-	height = math.max(height, 300)
-
-	-- Ensure maximum dimensions don't exceed screen size
-	width = math.min(width, screenWidth - 50) -- Leave 50px margin
-	height = math.min(height, screenHeight - 50) -- Leave 50px margin
-
-	return width, height
-end
-
--- Function to save window position and size
-local function SaveWindowLayout()
-	if not LogWindow or not logger.DB then return end
-
-	local point, relativeTo, relativePoint, x, y = LogWindow:GetPoint()
-	logger.DB.window.width = LogWindow:GetWidth()
-	logger.DB.window.height = LogWindow:GetHeight()
-	logger.DB.window.point = point or 'CENTER'
-	logger.DB.window.relativeTo = 'UIParent' -- Always relative to UIParent for consistency
-	logger.DB.window.relativePoint = relativePoint or 'CENTER'
-	logger.DB.window.x = x or 0
-	logger.DB.window.y = y or 0
-end
-
--- Function to load and apply window position and size
-local function LoadWindowLayout()
-	if not LogWindow or not logger.DB or not logger.DB.window then return end
-
-	local settings = logger.DB.window
-
-	-- Validate dimensions against current screen size
-	local width, height = ValidateWindowDimensions(settings.width, settings.height)
-
-	-- Apply validated size
-	LogWindow:SetSize(width, height)
-
-	-- Validate position to ensure window stays on screen
-	local screenWidth = GetScreenWidth()
-	local screenHeight = GetScreenHeight()
-	local x, y = settings.x, settings.y
-
-	-- Clamp position to keep window on screen
-	if settings.point == 'CENTER' then
-		-- For center anchoring, ensure the window doesn't go off edges
-		x = math.max(math.min(x, (screenWidth - width) / 2), -(screenWidth - width) / 2)
-		y = math.max(math.min(y, (screenHeight - height) / 2), -(screenHeight - height) / 2)
-	else
-		-- For other anchor points, use basic clamping
-		x = math.max(math.min(x, screenWidth - 100), -width + 100) -- Keep at least 100px visible
-		y = math.max(math.min(y, screenHeight - 100), -height + 100)
-	end
-
-	-- Apply position
-	LogWindow:ClearAllPoints()
-	LogWindow:SetPoint(settings.point, UIParent, settings.relativePoint, x, y)
-
-	-- Update database with clamped values
-	logger.DB.window.width = width
-	logger.DB.window.height = height
-	logger.DB.window.x = x
-	logger.DB.window.y = y
-end
 
 local function CreateLogWindow()
 	if LogWindow then return end
@@ -313,31 +246,8 @@ local function CreateLogWindow()
 	LogWindow:SetScript('OnDragStart', LogWindow.StartMoving)
 	LogWindow:SetScript('OnDragStop', function(self)
 		self:StopMovingOrSizing()
-		SaveWindowLayout() -- Save position when moved
 	end)
 
-	-- Make the window resizable
-	LogWindow:SetResizable(true)
-	-- Set dynamic resize bounds based on screen size
-	local screenWidth, screenHeight = GetScreenWidth(), GetScreenHeight()
-	LogWindow:SetResizeBounds(400, 300, screenWidth - 50, screenHeight - 50)
-
-	-- Create resize grip (bottom-right corner)
-	LogWindow.ResizeGrip = CreateFrame('Button', nil, LogWindow)
-	LogWindow.ResizeGrip:SetSize(16, 16)
-	LogWindow.ResizeGrip:SetPoint('BOTTOMRIGHT', LogWindow, 'BOTTOMRIGHT', -2, 2)
-	LogWindow.ResizeGrip:SetNormalTexture('Interface\\ChatFrame\\UI-ChatIM-SizeGrabber-Up')
-	LogWindow.ResizeGrip:SetHighlightTexture('Interface\\ChatFrame\\UI-ChatIM-SizeGrabber-Highlight')
-	LogWindow.ResizeGrip:SetPushedTexture('Interface\\ChatFrame\\UI-ChatIM-SizeGrabber-Down')
-	LogWindow.ResizeGrip:EnableMouse(true)
-	LogWindow.ResizeGrip:RegisterForDrag('LeftButton')
-	LogWindow.ResizeGrip:SetScript('OnDragStart', function(self)
-		LogWindow:StartSizing('BOTTOMRIGHT')
-	end)
-	LogWindow.ResizeGrip:SetScript('OnDragStop', function(self)
-		LogWindow:StopMovingOrSizing()
-		SaveWindowLayout() -- Save size when resized
-	end)
 
 	-- Set the portrait (with safety checks)
 	if LogWindow.portrait then
@@ -552,8 +462,6 @@ local function CreateLogWindow()
 	-- Setup dropdown functionality
 	SetupLogLevelDropdowns()
 
-	-- Load saved window layout (position and size)
-	LoadWindowLayout()
 
 	-- Store references for compatibility
 	LogWindow.NamespaceListings = LogWindow.ModuleScrollFrame
