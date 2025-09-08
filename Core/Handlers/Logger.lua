@@ -168,11 +168,10 @@ function CreateCategoryTree(sortedCategories)
 				moduleButton:SetPoint('TOPLEFT', LogWindow.ModuleTree, 'TOPLEFT', indentWidth, yOffset)
 
 				-- Create textures to match AuctionHouse nav button style
-				-- Normal texture
+				-- Normal texture (using secondary style for module buttons)
 				moduleButton.NormalTexture = moduleButton:CreateTexture(nil, 'BACKGROUND')
-				moduleButton.NormalTexture:SetAtlas('auctionhouse-nav-button', false)
-				moduleButton.NormalTexture:SetSize(136, 32)
-				moduleButton.NormalTexture:SetPoint('TOPLEFT', moduleButton, 'TOPLEFT', -2, 0)
+				moduleButton.NormalTexture:SetAtlas('auctionhouse-nav-button-secondary', false)
+				moduleButton.NormalTexture:SetAllPoints(moduleButton)
 
 				-- Highlight texture
 				moduleButton.HighlightTexture = moduleButton:CreateTexture(nil, 'BORDER')
@@ -180,12 +179,10 @@ function CreateCategoryTree(sortedCategories)
 				moduleButton.HighlightTexture:SetPoint('CENTER', moduleButton, 'CENTER')
 				moduleButton.HighlightTexture:Hide()
 
-				-- Selected texture
+				-- Selected texture (using primary button for selected state)
 				moduleButton.SelectedTexture = moduleButton:CreateTexture(nil, 'ARTWORK')
-				moduleButton.SelectedTexture:SetAtlas('auctionhouse-nav-button-select')
-				moduleButton.SelectedTexture:SetBlendMode('ADD')
-				moduleButton.SelectedTexture:SetPoint('TOPLEFT', moduleButton.NormalTexture, 'TOPLEFT')
-				moduleButton.SelectedTexture:SetPoint('BOTTOMRIGHT', moduleButton.NormalTexture, 'BOTTOMRIGHT')
+				moduleButton.SelectedTexture:SetAtlas('auctionhouse-nav-button')
+				moduleButton.SelectedTexture:SetAllPoints(moduleButton)
 				moduleButton.SelectedTexture:Hide()
 
 				-- Button text
