@@ -454,7 +454,7 @@ local function CreateLogWindow()
 	LogWindow.AutoScroll:SetPoint('CENTER', LogWindow.RightPanel, 'BOTTOM', 0, -15)
 	LogWindow.AutoScroll:SetChecked(AutoScrollEnabled)
 	LogWindow.AutoScroll:SetScript('OnClick', function(self)
-		AutoScrollEnabled = self:GetChecked()
+		-- AutoScrollEnabled is now determined by checkbox state, no need to sync global variable
 	end)
 
 	LogWindow.AutoScrollLabel = LogWindow:CreateFontString(nil, 'OVERLAY', 'GameFontNormalSmall')
@@ -616,7 +616,9 @@ function UpdateLogDisplay()
 	LogWindow.EditBox:SetText(logText)
 
 	-- Auto-scroll to bottom if enabled
-	if AutoScrollEnabled and LogWindow.EditBox then LogWindow.EditBox:SetCursorPosition(string.len(logText)) end
+	if LogWindow.AutoScroll and LogWindow.AutoScroll:GetChecked() and LogWindow.EditBox then 
+		LogWindow.EditBox:SetCursorPosition(string.len(logText)) 
+	end
 
 	-- Update logging level button text with color
 	if LogWindow.LoggingLevelButton then
