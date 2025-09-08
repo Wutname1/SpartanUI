@@ -129,11 +129,15 @@ function CreateCategoryTree(sortedCategories)
 		categoryButton.bg:SetAllPoints()
 		categoryButton.bg:SetColorTexture(0.1, 0.1, 0.1, 0.8)
 
-		-- Expand/collapse indicator (+ or -)
-		categoryButton.indicator = categoryButton:CreateFontString(nil, 'OVERLAY', 'GameFontNormalSmall')
+		-- Expand/collapse indicator (using proper expand/collapse textures)
+		categoryButton.indicator = categoryButton:CreateTexture(nil, 'OVERLAY')
+		categoryButton.indicator:SetSize(16, 16)
 		categoryButton.indicator:SetPoint('LEFT', categoryButton, 'LEFT', 3, 0)
-		categoryButton.indicator:SetText(categoryData.expanded and '-' or '+')
-		categoryButton.indicator:SetTextColor(0.8, 0.8, 0.8)
+		if categoryData.expanded then
+			categoryButton.indicator:SetAtlas('ui-trees-collapsed')
+		else
+			categoryButton.indicator:SetAtlas('ui-trees-expanded')
+		end
 
 		-- Category text
 		categoryButton.text = categoryButton:CreateFontString(nil, 'OVERLAY', 'GameFontNormalSmall')
@@ -144,7 +148,11 @@ function CreateCategoryTree(sortedCategories)
 		-- Category button functionality
 		categoryButton:SetScript('OnClick', function(self)
 			categoryData.expanded = not categoryData.expanded
-			self.indicator:SetText(categoryData.expanded and '-' or '+')
+			if categoryData.expanded then
+				self.indicator:SetAtlas('ui-trees-collapsed')
+			else
+				self.indicator:SetAtlas('ui-trees-expanded')
+			end
 			CreateCategoryTree(sortedCategories) -- Rebuild tree
 		end)
 
@@ -407,18 +415,30 @@ local function CreateLogWindow()
 	end)
 
 	-- Create scroll frame for module tree in left panel with MinimalScrollBar
-	LogWindow.ModuleScrollFrame = CreateFrame('ScrollFrame', nil, LogWindow.LeftPanel, 'MinimalScrollFrameTemplate')
+	LogWindow.ModuleScrollFrame = CreateFrame('ScrollFrame', nil, LogWindow.LeftPanel)
 	LogWindow.ModuleScrollFrame:SetPoint('TOPLEFT', LogWindow.LeftPanel, 'TOPLEFT', 0, -8)
 	LogWindow.ModuleScrollFrame:SetPoint('BOTTOMRIGHT', LogWindow.LeftPanel, 'BOTTOMRIGHT', -8, 2)
+	
+	-- Create minimal scrollbar for left panel
+	LogWindow.ModuleScrollFrame.ScrollBar = CreateFrame('EventFrame', nil, LogWindow.ModuleScrollFrame, 'MinimalScrollBar')
+	LogWindow.ModuleScrollFrame.ScrollBar:SetPoint('TOPLEFT', LogWindow.ModuleScrollFrame, 'TOPRIGHT', 0, 0)
+	LogWindow.ModuleScrollFrame.ScrollBar:SetPoint('BOTTOMLEFT', LogWindow.ModuleScrollFrame, 'BOTTOMRIGHT', 0, 0)
+	ScrollUtil.InitScrollFrameWithScrollBar(LogWindow.ModuleScrollFrame, LogWindow.ModuleScrollFrame.ScrollBar)
 
 	LogWindow.ModuleTree = CreateFrame('Frame', nil, LogWindow.ModuleScrollFrame)
 	LogWindow.ModuleScrollFrame:SetScrollChild(LogWindow.ModuleTree)
 	LogWindow.ModuleTree:SetSize(140, 1)
 
 	-- Create log text display in right panel with MinimalScrollBar
-	LogWindow.TextPanel = CreateFrame('ScrollFrame', nil, LogWindow.RightPanel, 'MinimalScrollFrameTemplate')
+	LogWindow.TextPanel = CreateFrame('ScrollFrame', nil, LogWindow.RightPanel)
 	LogWindow.TextPanel:SetPoint('TOPLEFT', LogWindow.RightPanel, 'TOPLEFT', 6, -6)
 	LogWindow.TextPanel:SetPoint('BOTTOMRIGHT', LogWindow.RightPanel, 'BOTTOMRIGHT', -8, 2)
+	
+	-- Create minimal scrollbar for right panel
+	LogWindow.TextPanel.ScrollBar = CreateFrame('EventFrame', nil, LogWindow.TextPanel, 'MinimalScrollBar')
+	LogWindow.TextPanel.ScrollBar:SetPoint('TOPLEFT', LogWindow.TextPanel, 'TOPRIGHT', 0, 0)
+	LogWindow.TextPanel.ScrollBar:SetPoint('BOTTOMLEFT', LogWindow.TextPanel, 'BOTTOMRIGHT', 0, 0)
+	ScrollUtil.InitScrollFrameWithScrollBar(LogWindow.TextPanel, LogWindow.TextPanel.ScrollBar)
 
 	-- Create the text display area
 	LogWindow.EditBox = CreateFrame('EditBox', nil, LogWindow.TextPanel)
@@ -608,11 +628,12 @@ function UpdateLogDisplay()
 	-- Auto-scroll to bottom if enabled
 	if AutoScrollEnabled and LogWindow.EditBox then LogWindow.EditBox:SetCursorPosition(string.len(logText)) end
 
-	-- Update logging level button text
+	-- Update logging level button text with color
 	if LogWindow.LoggingLevelButton then
 		local _, globalLevelData = GetLogLevelByPriority(GlobalLogLevel)
 		if globalLevelData then
-			LogWindow.LoggingLevelButton:SetText('Level: ' .. globalLevelData.display)
+			local coloredButtonText = 'Level: ' .. globalLevelData.color .. globalLevelData.display .. '|r'
+			LogWindow.LoggingLevelButton:SetText(coloredButtonText)
 		end
 	end
 end
@@ -761,19 +782,21 @@ function SetupLogLevelDropdowns()
 	LogWindow.LoggingLevelButton:SetupMenu(function(dropdown, rootDescription)
 		-- Add log levels in priority order with colored text
 		for _, levelData in ipairs(orderedLevels) do
-			local button = rootDescription:CreateButton(levelData.data.display, function()
+			-- Create colored display text
+			local coloredText = levelData.data.color .. levelData.data.display .. '|r'
+			local button = rootDescription:CreateButton(coloredText, function()
 				GlobalLogLevel = levelData.data.priority
 				logger.DB.globalLogLevel = GlobalLogLevel
-				LogWindow.LoggingLevelButton:SetText('Level: ' .. levelData.data.display)
+				-- Update button text with colored level name
+				local coloredButtonText = 'Level: ' .. levelData.data.color .. levelData.data.display .. '|r'
+				LogWindow.LoggingLevelButton:SetText(coloredButtonText)
 				UpdateLogDisplay() -- Refresh current view
 			end)
-			-- Color the text based on log level
-			if levelData.data.color then
-				button:SetTooltip(function(tooltip, elementDescription)
-					GameTooltip_SetTitle(tooltip, levelData.data.display .. ' Level')
-					GameTooltip_AddNormalLine(tooltip, 'Shows ' .. levelData.data.display:lower() .. ' messages and higher priority')
-				end)
-			end
+			-- Add tooltip
+			button:SetTooltip(function(tooltip, elementDescription)
+				GameTooltip_SetTitle(tooltip, levelData.data.display .. ' Level')
+				GameTooltip_AddNormalLine(tooltip, 'Shows ' .. levelData.data.display:lower() .. ' messages and higher priority')
+			end)
 			-- Check current selection
 			if GlobalLogLevel == levelData.data.priority then
 				button:SetRadio(true)
