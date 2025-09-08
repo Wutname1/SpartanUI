@@ -385,11 +385,11 @@ local function CreateLogWindow()
 		LogWindow.LoggingLevelButton:SetText('Logging Level')
 	end
 
-	-- Second row of controls (checkboxes and buttons)
-	-- Search all modules checkbox
+	-- Second row of controls (checkboxes repositioned)
+	-- Search all modules checkbox positioned to left of search box
 	LogWindow.SearchAllModules = CreateFrame('CheckButton', 'SUI_SearchAllModules', LogWindow.ControlFrame, 'UICheckButtonTemplate')
 	LogWindow.SearchAllModules:SetSize(18, 18)
-	LogWindow.SearchAllModules:SetPoint('TOPLEFT', LogWindow.SearchBox, 'BOTTOMLEFT', 0, -10)
+	LogWindow.SearchAllModules:SetPoint('LEFT', LogWindow.SearchBox, 'LEFT', 0, -35)
 	LogWindow.SearchAllModules:SetScript('OnClick', function(self)
 		SearchAllModules = self:GetChecked()
 		UpdateLogDisplay()
@@ -399,20 +399,6 @@ local function CreateLogWindow()
 	LogWindow.SearchAllModulesLabel:SetText('Search All Modules')
 	LogWindow.SearchAllModulesLabel:SetPoint('LEFT', LogWindow.SearchAllModules, 'RIGHT', 2, 0)
 	LogWindow.SearchAllModulesLabel:SetTextColor(1, 1, 1) -- White text
-
-	-- Auto-scroll checkbox
-	LogWindow.AutoScroll = CreateFrame('CheckButton', 'SUI_AutoScroll', LogWindow.ControlFrame, 'UICheckButtonTemplate')
-	LogWindow.AutoScroll:SetSize(18, 18)
-	LogWindow.AutoScroll:SetPoint('LEFT', LogWindow.SearchAllModulesLabel, 'RIGHT', 15, 0)
-	LogWindow.AutoScroll:SetChecked(AutoScrollEnabled)
-	LogWindow.AutoScroll:SetScript('OnClick', function(self)
-		AutoScrollEnabled = self:GetChecked()
-	end)
-
-	LogWindow.AutoScrollLabel = LogWindow.ControlFrame:CreateFontString(nil, 'OVERLAY', 'GameFontNormalSmall')
-	LogWindow.AutoScrollLabel:SetText('Auto-scroll')
-	LogWindow.AutoScrollLabel:SetPoint('LEFT', LogWindow.AutoScroll, 'RIGHT', 2, 0)
-	LogWindow.AutoScrollLabel:SetTextColor(1, 1, 1) -- White text
 
 
 	-- PortraitFrameTemplate already includes a close button, no need to create another
@@ -514,6 +500,20 @@ local function CreateLogWindow()
 	LogWindow.EditBox:EnableMouse(true) -- Allow selection for copying
 	LogWindow.EditBox:SetTextColor(1, 1, 1) -- White text for better readability
 	LogWindow.TextPanel:SetScrollChild(LogWindow.EditBox)
+
+	-- Auto-scroll checkbox centered under right panel
+	LogWindow.AutoScroll = CreateFrame('CheckButton', 'SUI_AutoScroll', LogWindow, 'UICheckButtonTemplate')
+	LogWindow.AutoScroll:SetSize(18, 18)
+	LogWindow.AutoScroll:SetPoint('CENTER', LogWindow.RightPanel, 'BOTTOM', 0, -15)
+	LogWindow.AutoScroll:SetChecked(AutoScrollEnabled)
+	LogWindow.AutoScroll:SetScript('OnClick', function(self)
+		AutoScrollEnabled = self:GetChecked()
+	end)
+
+	LogWindow.AutoScrollLabel = LogWindow:CreateFontString(nil, 'OVERLAY', 'GameFontNormalSmall')
+	LogWindow.AutoScrollLabel:SetText('Auto-scroll')
+	LogWindow.AutoScrollLabel:SetPoint('LEFT', LogWindow.AutoScroll, 'RIGHT', 2, 0)
+	LogWindow.AutoScrollLabel:SetTextColor(1, 1, 1) -- White text
 
 	-- Initialize data structures
 	LogWindow.Categories = {}
