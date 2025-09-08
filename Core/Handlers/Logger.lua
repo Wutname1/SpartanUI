@@ -479,7 +479,7 @@ local function CreateLogWindow()
 	-- Create the text display area
 	LogWindow.EditBox = CreateFrame('EditBox', nil, LogWindow.TextPanel)
 	LogWindow.EditBox:SetMultiLine(true)
-	LogWindow.EditBox:SetFontObject('GameFontHighlightSmall') -- Better font for log display
+	LogWindow.EditBox:SetFontObject('GameFontHighlight') -- Increased font size by 2 from GameFontHighlightSmall
 	LogWindow.EditBox:SetText('No logs active - select a module from the left or enable "Search All Modules"')
 	LogWindow.EditBox:SetWidth(LogWindow.TextPanel:GetWidth() - 20)
 	LogWindow.EditBox:SetScript('OnTextChanged', function(self)
