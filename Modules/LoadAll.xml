@@ -39,13 +39,4 @@
 	<Include file="UnitFrames\Load.xml"/>
 
 	<Script file="Nameplates.lua" />
-
-	<!-- Load TotemBar -->
-	<!-- <Script file="TotemBar\TotemBar.lua" /> -->
-	<!-- <Script file="TotemBar\Options.lua" /> -->
-
-	<!-- Load StatsTracker -->
-	<!-- <Script file="StatsTracker\StatsTracker.lua" />
-	<Script file="StatsTracker\Display.lua" />
-	<Script file="StatsTracker\Options.lua" /> -->
 </Ui>
