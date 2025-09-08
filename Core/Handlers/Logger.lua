@@ -373,10 +373,6 @@ local function CreateLogWindow()
 		UpdateLogDisplay()
 	end)
 
-	-- Search label
-	LogWindow.SearchLabel = LogWindow.ControlFrame:CreateFontString(nil, 'OVERLAY', 'GameFontNormal')
-	LogWindow.SearchLabel:SetText('Search:')
-	LogWindow.SearchLabel:SetPoint('BOTTOMLEFT', LogWindow.SearchBox, 'TOPLEFT', 0, 3)
 
 	-- Logging Level dropdown using AH FilterButton style (right side of first row)
 	LogWindow.LoggingLevelButton = CreateFrame('DropdownButton', 'SUI_LoggingLevelButton', LogWindow.ControlFrame, 'WowStyle1FilterDropdownTemplate')
