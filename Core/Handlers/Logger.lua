@@ -462,19 +462,19 @@ local function CreateLogWindow()
 		ExportCurrentLogs()
 	end)
 
-	-- Create scroll frame for module tree in left panel (properly sized to match AH)
-	LogWindow.ModuleScrollFrame = CreateFrame('ScrollFrame', nil, LogWindow.LeftPanel, 'UIPanelScrollFrameTemplate')
+	-- Create scroll frame for module tree in left panel with MinimalScrollBar
+	LogWindow.ModuleScrollFrame = CreateFrame('ScrollFrame', nil, LogWindow.LeftPanel, 'MinimalScrollFrameTemplate')
 	LogWindow.ModuleScrollFrame:SetPoint('TOPLEFT', LogWindow.LeftPanel, 'TOPLEFT', 0, -8)
-	LogWindow.ModuleScrollFrame:SetPoint('BOTTOMRIGHT', LogWindow.LeftPanel, 'BOTTOMRIGHT', -25, 2)
+	LogWindow.ModuleScrollFrame:SetPoint('BOTTOMRIGHT', LogWindow.LeftPanel, 'BOTTOMRIGHT', -8, 2)
 
 	LogWindow.ModuleTree = CreateFrame('Frame', nil, LogWindow.ModuleScrollFrame)
 	LogWindow.ModuleScrollFrame:SetScrollChild(LogWindow.ModuleTree)
 	LogWindow.ModuleTree:SetSize(140, 1)
 
-	-- Create log text display in right panel (styled like AuctionFrame's main area)
-	LogWindow.TextPanel = CreateFrame('ScrollFrame', nil, LogWindow.RightPanel, 'UIPanelScrollFrameTemplate')
+	-- Create log text display in right panel with MinimalScrollBar
+	LogWindow.TextPanel = CreateFrame('ScrollFrame', nil, LogWindow.RightPanel, 'MinimalScrollFrameTemplate')
 	LogWindow.TextPanel:SetPoint('TOPLEFT', LogWindow.RightPanel, 'TOPLEFT', 6, -6)
-	LogWindow.TextPanel:SetPoint('BOTTOMRIGHT', LogWindow.RightPanel, 'BOTTOMRIGHT', -25, 2)
+	LogWindow.TextPanel:SetPoint('BOTTOMRIGHT', LogWindow.RightPanel, 'BOTTOMRIGHT', -8, 2)
 
 	-- Create the text display area
 	LogWindow.EditBox = CreateFrame('EditBox', nil, LogWindow.TextPanel)
