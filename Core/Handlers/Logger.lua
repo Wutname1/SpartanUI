@@ -378,27 +378,16 @@ local function CreateLogWindow()
 	LogWindow.SearchLabel:SetText('Search:')
 	LogWindow.SearchLabel:SetPoint('BOTTOMLEFT', LogWindow.SearchBox, 'TOPLEFT', 0, 3)
 
-	-- Global Log Level dropdown (right side of first row)
-	LogWindow.GlobalLevelLabel = LogWindow.ControlFrame:CreateFontString(nil, 'OVERLAY', 'GameFontNormal')
-	LogWindow.GlobalLevelLabel:SetText('Global Level:')
-	LogWindow.GlobalLevelLabel:SetPoint('TOPRIGHT', LogWindow.ControlFrame, 'TOPRIGHT', -90, -2)
-
-	LogWindow.GlobalLevelDropdown = CreateFrame('Frame', 'SUI_GlobalLogLevelDropdown', LogWindow.ControlFrame, 'UIDropDownMenuTemplate')
-	LogWindow.GlobalLevelDropdown:SetPoint('TOPRIGHT', LogWindow.ControlFrame, 'TOPRIGHT', -15, -5)
-	UIDropDownMenu_SetWidth(LogWindow.GlobalLevelDropdown, 85)
+	-- Logging Level dropdown using AH FilterButton style (right side of first row)
+	LogWindow.LoggingLevelButton = CreateFrame('DropdownButton', 'SUI_LoggingLevelButton', LogWindow.ControlFrame, 'WowStyle1FilterDropdownTemplate')
+	LogWindow.LoggingLevelButton:SetPoint('TOPRIGHT', LogWindow.ControlFrame, 'TOPRIGHT', -15, -5)
+	LogWindow.LoggingLevelButton:SetSize(120, 22)
+	LogWindow.LoggingLevelButton:SetText('Logging Level')
 	-- Set initial dropdown text based on current global level
 	local _, globalLevelData = GetLogLevelByPriority(GlobalLogLevel)
-	UIDropDownMenu_SetText(LogWindow.GlobalLevelDropdown, globalLevelData.display)
-
-	-- Module Log Level dropdown (center of first row)
-	LogWindow.ModuleLevelLabel = LogWindow.ControlFrame:CreateFontString(nil, 'OVERLAY', 'GameFontNormal')
-	LogWindow.ModuleLevelLabel:SetText('Module Level:')
-	LogWindow.ModuleLevelLabel:SetPoint('TOP', LogWindow.ControlFrame, 'TOP', -20, -2)
-
-	LogWindow.ModuleLevelDropdown = CreateFrame('Frame', 'SUI_ModuleLogLevelDropdown', LogWindow.ControlFrame, 'UIDropDownMenuTemplate')
-	LogWindow.ModuleLevelDropdown:SetPoint('TOP', LogWindow.ControlFrame, 'TOP', 55, -5)
-	UIDropDownMenu_SetWidth(LogWindow.ModuleLevelDropdown, 85)
-	UIDropDownMenu_SetText(LogWindow.ModuleLevelDropdown, 'Global')
+	if globalLevelData then
+		LogWindow.LoggingLevelButton:SetText('Logging Level')
+	end
 
 	-- Second row of controls (checkboxes and buttons)
 	-- Search all modules checkbox
@@ -688,19 +677,12 @@ function UpdateLogDisplay()
 	-- Auto-scroll to bottom if enabled
 	if AutoScrollEnabled and LogWindow.EditBox then LogWindow.EditBox:SetCursorPosition(string.len(logText)) end
 
-	-- Update module level dropdown text
-	if LogWindow.ModuleLevelDropdown and ActiveModule then
-		local moduleLogLevel = ModuleLogLevels[ActiveModule] or 0
-		local levelText = 'Global'
-		if moduleLogLevel > 0 then
-			for level, data in pairs(LOG_LEVELS) do
-				if data.priority == moduleLogLevel then
-					levelText = data.display
-					break
-				end
-			end
+	-- Update logging level button text
+	if LogWindow.LoggingLevelButton then
+		local _, globalLevelData = GetLogLevelByPriority(GlobalLogLevel)
+		if globalLevelData then
+			LogWindow.LoggingLevelButton:SetText('Level: ' .. globalLevelData.display)
 		end
-		UIDropDownMenu_SetText(LogWindow.ModuleLevelDropdown, levelText)
 	end
 end
 
@@ -844,62 +826,27 @@ function SetupLogLevelDropdowns()
 		return a.data.priority < b.data.priority
 	end)
 
-	-- Global log level dropdown
-	UIDropDownMenu_Initialize(LogWindow.GlobalLevelDropdown, function(self, level)
-		local info = UIDropDownMenu_CreateInfo()
-
-		-- Add log levels in priority order
+	-- Setup logging level filter button (AH style)
+	LogWindow.LoggingLevelButton:SetupMenu(function(dropdown, rootDescription)
+		-- Add log levels in priority order with colored text
 		for _, levelData in ipairs(orderedLevels) do
-			info.text = levelData.data.display
-			info.value = levelData.data.priority
-			info.func = function()
+			local button = rootDescription:CreateButton(levelData.data.display, function()
 				GlobalLogLevel = levelData.data.priority
 				logger.DB.globalLogLevel = GlobalLogLevel
-				UIDropDownMenu_SetText(LogWindow.GlobalLevelDropdown, levelData.data.display)
+				LogWindow.LoggingLevelButton:SetText('Level: ' .. levelData.data.display)
 				UpdateLogDisplay() -- Refresh current view
+			end)
+			-- Color the text based on log level
+			if levelData.data.color then
+				button:SetTooltip(function(tooltip, elementDescription)
+					GameTooltip_SetTitle(tooltip, levelData.data.display .. ' Level')
+					GameTooltip_AddNormalLine(tooltip, 'Shows ' .. levelData.data.display:lower() .. ' messages and higher priority')
+				end)
 			end
-			info.checked = (GlobalLogLevel == levelData.data.priority)
-			UIDropDownMenu_AddButton(info)
-		end
-	end)
-
-	-- Module log level dropdown
-	UIDropDownMenu_Initialize(LogWindow.ModuleLevelDropdown, function(self, level)
-		if not ActiveModule then return end
-
-		local info = UIDropDownMenu_CreateInfo()
-
-		-- Add "Use Global" option
-		info.text = 'Use Global'
-		info.value = 0
-		info.func = function()
-			ModuleLogLevels[ActiveModule] = 0
-			logger.DB.moduleLogLevels[ActiveModule] = 0
-			UIDropDownMenu_SetText(LogWindow.ModuleLevelDropdown, 'Global')
-			UpdateLogDisplay()
-		end
-		info.checked = ((ModuleLogLevels[ActiveModule] or 0) == 0)
-		UIDropDownMenu_AddButton(info)
-
-		-- Add separator
-		info = UIDropDownMenu_CreateInfo()
-		info.text = ''
-		info.disabled = true
-		UIDropDownMenu_AddButton(info)
-
-		-- Add log levels in priority order
-		for _, levelData in ipairs(orderedLevels) do
-			info = UIDropDownMenu_CreateInfo()
-			info.text = levelData.data.display
-			info.value = levelData.data.priority
-			info.func = function()
-				ModuleLogLevels[ActiveModule] = levelData.data.priority
-				logger.DB.moduleLogLevels[ActiveModule] = levelData.data.priority
-				UIDropDownMenu_SetText(LogWindow.ModuleLevelDropdown, levelData.data.display)
-				UpdateLogDisplay()
+			-- Check current selection
+			if GlobalLogLevel == levelData.data.priority then
+				button:SetRadio(true)
 			end
-			info.checked = ((ModuleLogLevels[ActiveModule] or 0) == levelData.data.priority)
-			UIDropDownMenu_AddButton(info)
 		end
 	end)
 end
