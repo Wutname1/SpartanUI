@@ -1071,8 +1071,12 @@ function logger:OnEnable()
 		end
 	end
 
-	SUI:AddChatCommand('debug', ToggleLogWindow, 'Toggles the SpartanUI Logging window display')
 	SUI:AddChatCommand('logs', ToggleLogWindow, 'Toggles the SpartanUI Logging window display')
+
+	-- Register direct WoW slash commands
+	SLASH_SUILOGS1 = '/logs'
+	SlashCmdList['SUILOGS'] = ToggleLogWindow
+
 	AddOptions()
 end
 
