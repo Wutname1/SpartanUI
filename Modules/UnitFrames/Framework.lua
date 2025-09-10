@@ -32,7 +32,7 @@ UF.MountIds = {}
 ---@param frame UnitId
 ---@param element string
 function UF:debug(msg, frame, element)
-	SUI.Debug((frame and frame .. '-' or '') .. (element and element .. '-' or '') .. msg, 'UnitFrames')
+	SUI.Log((frame and frame .. '-' or '') .. (element and element .. '-' or '') .. msg, 'UnitFrames')
 end
 ---Returns the path to the texture for the given LSM key, or the SUI default
 ---@param LSMKey string

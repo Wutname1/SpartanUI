@@ -21,6 +21,7 @@ local function Build(frame, DB)
 	health.TextElements = {}
 	for i, key in pairs(DB.text) do
 		local NewString = health:CreateFontString(nil, 'OVERLAY')
+		NewString:SetDrawLayer('OVERLAY', 7) -- Ensure text is above all bars
 		SUI.Font:Format(NewString, key.size, 'UnitFrames')
 		NewString:SetJustifyH(key.SetJustifyH)
 		NewString:SetJustifyV(key.SetJustifyV)
@@ -56,36 +57,40 @@ local function Build(frame, DB)
 
 	-- Position and size
 	local myBar = CreateFrame('StatusBar', nil, frame.Health)
+	myBar:SetFrameLevel((DB.FrameLevel or 2) - 1) -- Ensure it's below text
 	myBar:SetPoint('TOP')
 	myBar:SetPoint('BOTTOM')
 	myBar:SetPoint('LEFT', frame.Health:GetStatusBarTexture(), 'RIGHT')
-	myBar:SetStatusBarTexture(UF:FindStatusBarTexture(DB.texture))
+	myBar:SetStatusBarTexture(UF:FindStatusBarTexture(DB.shieldTexture or DB.texture))
 	myBar:SetStatusBarColor(0, 1, 0.5, 0.45)
 	myBar:SetSize(150, 16)
 	myBar:Hide()
 
 	local otherBar = CreateFrame('StatusBar', nil, myBar)
+	otherBar:SetFrameLevel((DB.FrameLevel or 2) - 1) -- Ensure it's below text
 	otherBar:SetPoint('TOP')
 	otherBar:SetPoint('BOTTOM')
 	otherBar:SetPoint('LEFT', myBar:GetStatusBarTexture(), 'RIGHT')
-	otherBar:SetStatusBarTexture(UF:FindStatusBarTexture(DB.texture))
+	otherBar:SetStatusBarTexture(UF:FindStatusBarTexture(DB.shieldTexture or DB.texture))
 	otherBar:SetStatusBarColor(0, 0.5, 1, 0.35)
 	otherBar:SetSize(150, 16)
 	otherBar:Hide()
 
 	local absorbBar = CreateFrame('StatusBar', nil, frame.Health)
+	absorbBar:SetFrameLevel((DB.FrameLevel or 2) - 1) -- Ensure it's below text
 	absorbBar:SetPoint('TOP')
 	absorbBar:SetPoint('BOTTOM')
 	absorbBar:SetPoint('LEFT', otherBar:GetStatusBarTexture(), 'RIGHT')
-	absorbBar:SetStatusBarTexture(UF:FindStatusBarTexture(DB.texture))
+	absorbBar:SetStatusBarTexture(UF:FindStatusBarTexture(DB.absorbTexture or DB.texture))
 	absorbBar:SetWidth(10)
 	absorbBar:Hide()
 
 	local healAbsorbBar = CreateFrame('StatusBar', nil, frame.Health)
+	healAbsorbBar:SetFrameLevel((DB.FrameLevel or 2) - 1) -- Ensure it's below text
 	healAbsorbBar:SetPoint('TOP')
 	healAbsorbBar:SetPoint('BOTTOM')
 	healAbsorbBar:SetPoint('RIGHT', frame.Health:GetStatusBarTexture())
-	healAbsorbBar:SetStatusBarTexture(UF:FindStatusBarTexture(DB.texture))
+	healAbsorbBar:SetStatusBarTexture(UF:FindStatusBarTexture(DB.absorbTexture or DB.texture))
 	healAbsorbBar:SetReverseFill(true)
 	healAbsorbBar:SetWidth(10)
 	healAbsorbBar:Hide()
@@ -132,9 +137,18 @@ local function Update(frame, settings)
 	element.bg:SetTexture(UF:FindStatusBarTexture(DB.texture))
 	element.bg:SetVertexColor(unpack(DB.bg.color or { 1, 1, 1, 0.2 }))
 
+	-- Update HealthPrediction bar textures
+	if frame.HealthPrediction then
+		if frame.HealthPrediction.myBar then frame.HealthPrediction.myBar:SetStatusBarTexture(UF:FindStatusBarTexture(DB.shieldTexture or DB.texture)) end
+		if frame.HealthPrediction.otherBar then frame.HealthPrediction.otherBar:SetStatusBarTexture(UF:FindStatusBarTexture(DB.shieldTexture or DB.texture)) end
+		if frame.HealthPrediction.absorbBar then frame.HealthPrediction.absorbBar:SetStatusBarTexture(UF:FindStatusBarTexture(DB.absorbTexture or DB.texture)) end
+		if frame.HealthPrediction.healAbsorbBar then frame.HealthPrediction.healAbsorbBar:SetStatusBarTexture(UF:FindStatusBarTexture(DB.absorbTexture or DB.texture)) end
+	end
+
 	for i, key in pairs(DB.text) do
 		if element.TextElements[i] then
 			local TextElement = element.TextElements[i]
+			TextElement:SetDrawLayer('OVERLAY', 7) -- Ensure text is above all bars
 			TextElement:SetJustifyH(key.SetJustifyH)
 			TextElement:SetJustifyV(key.SetJustifyV)
 			TextElement:ClearAllPoints()
@@ -172,6 +186,40 @@ local function Options(frameName, OptionSet)
 				name = L['Dispel highlight'],
 				type = 'toggle',
 				order = 5,
+			},
+			textures = {
+				name = L['Bar Textures'],
+				type = 'group',
+				inline = true,
+				order = 6,
+				args = {
+					texture = {
+						type = 'select',
+						dialogControl = 'LSM30_Statusbar',
+						order = 1,
+						width = 'double',
+						name = L['Health Bar Texture'],
+						values = SUI.Lib.LSM:HashTable('statusbar'),
+					},
+					shieldTexture = {
+						type = 'select',
+						dialogControl = 'LSM30_Statusbar',
+						order = 2,
+						width = 'double',
+						name = L['Shield Bar Texture'],
+						desc = L['Texture used for shield and incoming heal bars'],
+						values = SUI.Lib.LSM:HashTable('statusbar'),
+					},
+					absorbTexture = {
+						type = 'select',
+						dialogControl = 'LSM30_Statusbar',
+						order = 3,
+						width = 'double',
+						name = L['Absorb Bar Texture'],
+						desc = L['Texture used for absorb and heal absorb bars'],
+						values = SUI.Lib.LSM:HashTable('statusbar'),
+					},
+				},
 			},
 			coloring = {
 				name = L['Color health bar by:'],
@@ -226,6 +274,9 @@ local Settings = {
 	height = 40,
 	width = false,
 	FrameStrata = 'BACKGROUND',
+	texture = 'SpartanUI Default',
+	shieldTexture = 'Stripes',
+	absorbTexture = 'Thin Stripes',
 	colorReaction = true,
 	colorSmooth = false,
 	colorClass = true,

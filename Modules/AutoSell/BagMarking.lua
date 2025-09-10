@@ -11,7 +11,7 @@ local vendorOpen = false
 local markingTimer = nil -- Ace3 timer handle
 
 local function debugMsg(msg)
-	SUI.Debug(msg, 'AutoSell.BagMarking')
+	SUI.Log(msg, 'AutoSell.BagMarking')
 end
 
 -- Function to show the sell icon on an item button

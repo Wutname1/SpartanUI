@@ -152,7 +152,7 @@ function module:TimeStamp(text)
 	if text:match('^|cff7d7d7d%[%d+:%d+:%d+%]|r') then return text end
 
 	local timestamp = date(module.DB.timestampFormat)
-	return '|cff7d7d7d[' .. timestamp .. ']|r ' .. text
+	return '|cff7d7d7d' .. timestamp .. ' | |r' .. text
 end
 
 local function shortenChannel(text)
@@ -208,7 +208,7 @@ local ModifyMessage = function(self)
 			--Print the number of leavers
 			SUI:Print('Leavers: ' .. LeaveCount)
 			--Output to Instance chat if over 15 leavers
-			if LeaveCount > 15 and module.DB.autoLeaverOutput then SendChatMessage('SpartanUI: BG Leavers counter: ' .. LeaveCount, 'INSTANCE_CHAT') end
+			if LeaveCount > 15 and module.DB.autoLeaverOutput then C_ChatInfo.SendChatMessage('SpartanUI: BG Leavers counter: ' .. LeaveCount, 'INSTANCE_CHAT') end
 			battleOver = true
 		end
 
@@ -295,31 +295,69 @@ function module:OnInitialize()
 	end
 
 	ChatLevelLog = SUI.DBG.ChatLevelLog
-	-- Create popup
-	popup = StdUi:Window(nil, 600, 350)
-	popup:MakeResizable('BOTTOMRIGHT')
-	popup:SetPoint('CENTER', 0, 0)
+	-- Create popup using Blizzard UI (similar to logging window)
+	popup = CreateFrame('Frame', 'SUI_ChatCopyPopup', UIParent, 'PortraitFrameTemplate')
+	popup:SetSize(600, 350)
+	popup:SetPoint('CENTER', UIParent, 'CENTER', 0, 0)
 	popup:SetFrameStrata('DIALOG')
-
-	popup.Title = StdUi:Texture(popup, 156, 45, 'Interface\\AddOns\\SpartanUI\\images\\setup\\SUISetup')
-	popup.Title:SetTexCoord(0, 0.611328125, 0, 0.6640625)
-	StdUi:GlueTop(popup.Title, popup, 0, 0)
-	popup.Title:SetAlpha(0.8)
-
-	-- Create Popup Items
-	popup.editBox = StdUi:MultiLineBox(popup, 580, 120, '')
-
-	-- Position
-	popup.editBox:SetPoint('TOPLEFT', popup, 'TOPLEFT', 10, -55)
-	popup.editBox:SetPoint('BOTTOMRIGHT', popup, 'BOTTOMRIGHT', -10, 10)
-
-	-- Actions
 	popup:Hide()
 
+	-- Make the window movable
+	popup:SetMovable(true)
+	popup:EnableMouse(true)
+	popup:RegisterForDrag('LeftButton')
+	popup:SetScript('OnDragStart', popup.StartMoving)
+	popup:SetScript('OnDragStop', popup.StopMovingOrSizing)
+
+	-- Set the portrait/logo
+	if popup.portrait then
+		if popup.portrait.SetTexture then 
+			popup.portrait:SetTexture('Interface\\AddOns\\SpartanUI\\images\\LogoSpartanUI') 
+		end
+	end
+
+	-- Set title
+	popup:SetTitle('SpartanUI Chat Copy')
+
+	-- Create main content area
+	popup.MainContent = CreateFrame('Frame', nil, popup)
+	popup.MainContent:SetPoint('TOPLEFT', popup, 'TOPLEFT', 20, -30)
+	popup.MainContent:SetPoint('BOTTOMRIGHT', popup, 'BOTTOMRIGHT', -20, 12)
+
+	-- Create text display area with MinimalScrollBar
+	popup.TextPanel = CreateFrame('ScrollFrame', nil, popup.MainContent)
+	popup.TextPanel:SetPoint('TOPLEFT', popup.MainContent, 'TOPLEFT', 6, -6)
+	popup.TextPanel:SetPoint('BOTTOMRIGHT', popup.MainContent, 'BOTTOMRIGHT', 0, 2)
+
+	-- Create minimal scrollbar
+	popup.TextPanel.ScrollBar = CreateFrame('EventFrame', nil, popup.TextPanel, 'MinimalScrollBar')
+	popup.TextPanel.ScrollBar:SetPoint('TOPLEFT', popup.TextPanel, 'TOPRIGHT', 0, 0)
+	popup.TextPanel.ScrollBar:SetPoint('BOTTOMLEFT', popup.TextPanel, 'BOTTOMRIGHT', 0, 0)
+	ScrollUtil.InitScrollFrameWithScrollBar(popup.TextPanel, popup.TextPanel.ScrollBar)
+
+	-- Create the text edit box
+	popup.editBox = CreateFrame('EditBox', nil, popup.TextPanel)
+	popup.editBox:SetMultiLine(true)
+	popup.editBox:SetFontObject('GameFontHighlight')
+	popup.editBox:SetWidth(popup.TextPanel:GetWidth() - 20)
+	popup.editBox:SetAutoFocus(false)
+	popup.editBox:EnableMouse(true)
+	popup.editBox:SetTextColor(1, 1, 1)
+	popup.editBox:SetScript('OnTextChanged', function(self)
+		ScrollingEdit_OnTextChanged(self, self:GetParent())
+	end)
+	popup.editBox:SetScript('OnCursorChanged', function(self, x, y, w, h)
+		ScrollingEdit_OnCursorChanged(self, x, y - 10, w, h)
+	end)
+	popup.TextPanel:SetScrollChild(popup.editBox)
+
+	-- Create font for text processing (keep for compatibility)
 	popup.font = popup:CreateFontString(nil, nil, 'GameFontNormal')
 	popup.font:Hide()
+	
+	-- Auto-scroll to bottom when shown
 	popup:HookScript('OnShow', function()
-		popup.editBox.scrollFrame:SetVerticalScroll((popup.editBox.scrollFrame:GetVerticalScrollRange()) or 0)
+		popup.TextPanel:SetVerticalScroll((popup.TextPanel:GetVerticalScrollRange()) or 0)
 	end)
 
 	-- Disable Blizz class color
@@ -368,7 +406,7 @@ function module:OnEnable()
 	--Add a chat command to print the number of leavers
 	SUI:AddChatCommand('leavers', function(output)
 		--If output is true then tell the instance chat
-		if output then SendChatMessage('SpartanUI: BG Leavers counter: ' .. LeaveCount, 'INSTANCE_CHAT') end
+		if output then C_ChatInfo.SendChatMessage('SpartanUI: BG Leavers counter: ' .. LeaveCount, 'INSTANCE_CHAT') end
 		SUI:Print('Leavers: ' .. LeaveCount)
 	end, 'Prints the number of leavers in the current battleground, addings anything after leavers will output to instance chat')
 	--Detect when we leave the battleground and reset the counter

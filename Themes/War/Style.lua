@@ -234,26 +234,26 @@ end
 
 -- Artwork Stuff
 function module:SlidingTrays()
+	-- Determine faction-based color
+	local factionColor = { r = 1, g = 1, b = 1, a = 1 } -- Default white/none
+	local faction = UnitFactionGroup('Player')
+	if faction == 'Horde' then
+		factionColor = { r = 1, g = 0, b = 0, a = 1 } -- Red
+	elseif faction == 'Alliance' then
+		factionColor = { r = 0, g = 0, b = 1, a = 1 } -- Blue
+	end
+
 	local Settings = {
-		bg = {
-			Texture = 'Interface\\AddOns\\SpartanUI\\Themes\\War\\Images\\Trays-' .. UnitFactionGroup('Player'),
-			TexCoord = { 0.076171875, 0.92578125, 0, 0.18359375 },
-		},
-		bgCollapsed = {
-			Texture = 'Interface\\AddOns\\SpartanUI\\Themes\\War\\Images\\Trays-' .. UnitFactionGroup('Player'),
-			TexCoord = { 0.076171875, 0.92578125, 1, 0.92578125 },
-		},
-		UpTex = {
-			Texture = 'Interface\\AddOns\\SpartanUI\\Themes\\War\\Images\\Trays-' .. UnitFactionGroup('Player'),
-			TexCoord = { 0.3671875, 0.640625, 0.20703125, 0.25390625 },
-		},
-		DownTex = {
-			Texture = 'Interface\\AddOns\\SpartanUI\\Themes\\War\\Images\\Trays-' .. UnitFactionGroup('Player'),
-			TexCoord = { 0.3671875, 0.640625, 0.25390625, 0.20703125 },
-		},
+		defaultTrayColor = factionColor,
 	}
 
 	Artwork_Core:SlidingTrays(Settings)
+
+	-- Register frames that this skin places in trays
+	Artwork_Core:RegisterSkinTrayFrames('War', {
+		left = 'BT4BarPetBar,BT4BarStanceBar,MultiCastActionBarFrame',
+		right = 'BT4BarMicroMenu,BT4BarBagBar',
+	})
 
 	if BT4BarBagBar and BT4BarPetBar.position then
 		BT4BarPetBar:position('TOPLEFT', 'SlidingTray_left', 'TOPLEFT', 50, -2)

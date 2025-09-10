@@ -8,6 +8,7 @@
 	<Script file="Minimap\Options.lua" />
 	<Script file="ExpandedExpansionButton.lua" />
 	<Script file="Objectives.lua" />
+	<Script file="ObjectiveTracker.lua" />
 	<Script file="Tooltips.lua" />
 	<Script file="MailOpenAll.lua" />
 	<Script file="CombatLog.lua" />
@@ -20,6 +21,7 @@
 	<Script file="StopTalking.lua" />
 	<Script file="MiniTom.lua" />
 	<Script file="LibsToolkit.lua" />
+	<Script file="BlizzUIFixes.lua" />
 
 	<!-- Load BarHandlers -->
 	<Script file="BarHandlers\Core.lua" />
@@ -37,6 +39,4 @@
 	<Include file="UnitFrames\Load.xml"/>
 
 	<Script file="Nameplates.lua" />
-
-	<Include file="FlexBar\Load.xml"/>
 </Ui>

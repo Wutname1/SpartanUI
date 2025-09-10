@@ -37,9 +37,41 @@ local ElementList = {
 	'PvPIndicator',
 	'ThreatIndicator',
 	'PvPRoleIndicator',
+	'Name',
+	'Runes',
+	'ClassPower',
 }
 ---@type table<SUI.UF.Elements.list, SUI.UF.Elements.Settings>
 local ElementDefaults = {
+	Name = {
+		enabled = true,
+		textSize = 8,
+		SetJustifyH = 'CENTER',
+		position = {
+			anchor = 'BOTTOM',
+			relativeTo = 'Frame',
+			relativePoint = 'TOP',
+			x = 0,
+			y = 0,
+		},
+	},
+	Runes = {
+		enabled = true,
+		texture = 'SpartanUI Default',
+	},
+	ClassPower = {
+		enabled = true,
+		width = 16,
+		height = 6,
+		texture = 'SpartanUI Default',
+		position = {
+			anchor = 'TOPLEFT',
+			relativeTo = 'Frame',
+			relativePoint = 'BOTTOMLEFT',
+			x = 0,
+			y = -2,
+		},
+	},
 	Health = {
 		enabled = true,
 		height = 8,
@@ -112,54 +144,57 @@ local UpdateElementState = function(frame)
 		local element = frame[elementName]
 		local data = elements[elementName]
 
-		-- Setup the Alpha scape and position
-		element:SetAlpha(data.alpha)
-		element:SetScale(data.scale)
+		-- Only process if element exists on this frame
+		if element then
+			-- Setup the Alpha scape and position
+			element:SetAlpha(data.alpha)
+			element:SetScale(data.scale)
 
-		if UF.Elements:GetConfig(elementName).config.NoBulkUpdate then return end
-		if UF.Elements:GetConfig(elementName).config.type == 'Indicator' and element.SetDrawLayer then element:SetDrawLayer('BORDER', 7) end
+			if UF.Elements:GetConfig(elementName).config.NoBulkUpdate then return end
+			if UF.Elements:GetConfig(elementName).config.type == 'Indicator' and element.SetDrawLayer then element:SetDrawLayer('BORDER', 7) end
 
-		-- Positioning
-		element:ClearAllPoints()
-		if data.points then
-			if type(data.points) == 'string' then
-				element:SetAllPoints(frame[data.points])
-			elseif data.points and type(data.points) == 'table' then
-				for _, key in pairs(data.points) do
-					if key.relativeTo == 'Frame' then
-						element:SetPoint(key.anchor, frame, key.anchor, key.x, key.y)
-					else
-						element:SetPoint(key.anchor, frame[key.relativeTo], key.anchor, key.x, key.y)
-					end
-				end
-			else
-				element:SetAllPoints(frame)
-			end
-		elseif data.position.anchor then
-			if data.position.relativeTo == 'Frame' then
-				element:SetPoint(data.position.anchor, frame, data.position.relativePoint or data.position.anchor, data.position.x, data.position.y)
-			else
-				element:SetPoint(data.position.anchor, frame[data.position.relativeTo], data.position.relativePoint or data.position.anchor, data.position.x, data.position.y)
-			end
-		end
-
-		--Size it if we have a size change function for the element
-		if element and data.enabled then
+			-- Positioning
 			element:ClearAllPoints()
-			element:SetPoint(data.position.anchor, frame, data.position.relativePoint, data.position.x, data.position.y)
+			if data.points then
+				if type(data.points) == 'string' then
+					element:SetAllPoints(frame[data.points])
+				elseif data.points and type(data.points) == 'table' then
+					for _, key in pairs(data.points) do
+						if key.relativeTo == 'Frame' then
+							element:SetPoint(key.anchor, frame, key.anchor, key.x, key.y)
+						else
+							element:SetPoint(key.anchor, frame[key.relativeTo], key.anchor, key.x, key.y)
+						end
+					end
+				else
+					element:SetAllPoints(frame)
+				end
+			elseif data.position.anchor then
+				if data.position.relativeTo == 'Frame' then
+					element:SetPoint(data.position.anchor, frame, data.position.relativePoint or data.position.anchor, data.position.x, data.position.y)
+				else
+					element:SetPoint(data.position.anchor, frame[data.position.relativeTo], data.position.relativePoint or data.position.anchor, data.position.x, data.position.y)
+				end
+			end
 
 			--Size it if we have a size change function for the element
-			if element.SizeChange then
-				element:SizeChange()
-			elseif data.size then
-				element:SetSize(data.size, data.size)
-			else
-				element:SetSize(data.width or frame:GetWidth(), data.height or frame:GetHeight())
-			end
-		end
+			if element and data.enabled then
+				element:ClearAllPoints()
+				element:SetPoint(data.position.anchor, frame, data.position.relativePoint, data.position.x, data.position.y)
 
-		-- Call the elements update function
-		if frame[elementName] and data.enabled and frame[elementName].ForceUpdate then frame[elementName].ForceUpdate(element) end
+				--Size it if we have a size change function for the element
+				if element.SizeChange then
+					element:SizeChange()
+				elseif data.size then
+					element:SetSize(data.size, data.size)
+				else
+					element:SetSize(data.width or frame:GetWidth(), data.height or frame:GetHeight())
+				end
+			end
+
+			-- Call the elements update function
+			if frame[elementName] and data.enabled and frame[elementName].ForceUpdate then frame[elementName].ForceUpdate(element) end
+		end
 	end
 
 	-- Power
@@ -183,57 +218,13 @@ end
 local PlayerPowerIcons = function(frame, attachPoint)
 	--Runes
 	if select(2, UnitClass('player')) == 'DEATHKNIGHT' then
-		frame.Runes = {}
-		frame.Runes.colorSpec = true
+		BuildElement(frame, 'Runes')
 
-		for i = 1, 6 do
-			frame.Runes[i] = CreateFrame('StatusBar', frame:GetName() .. '_Runes' .. i, frame)
-			frame.Runes[i]:SetSize((frame.Health:GetWidth() - 10) / 6, 4)
-			if i == 1 then
-				frame.Runes[i]:SetPoint('TOPLEFT', frame[attachPoint], 'BOTTOMLEFT', 0, 0)
-			else
-				frame.Runes[i]:SetPoint('TOPLEFT', frame.Runes[i - 1], 'TOPRIGHT', 2, 0)
-			end
-			frame.Runes[i]:SetStatusBarTexture('Interface\\AddOns\\SpartanUI\\images\\statusbars\\Smoothv2')
-			frame.Runes[i]:SetStatusBarColor(0, 0.39, 0.63, 1)
-
-			frame.Runes[i].bg = frame.Runes[i]:CreateTexture(nil, 'BORDER')
-			frame.Runes[i].bg:SetPoint('TOPLEFT', frame.Runes[i], 'TOPLEFT', -0, 0)
-			frame.Runes[i].bg:SetPoint('BOTTOMRIGHT', frame.Runes[i], 'BOTTOMRIGHT', 0, -0)
-			frame.Runes[i].bg:SetTexture('Interface\\AddOns\\SpartanUI\\images\\statusbars\\Smoothv2')
-			frame.Runes[i].bg:SetVertexColor(0, 0, 0, 1)
-			frame.Runes[i].bg.multiplier = 0.64
-			frame.Runes[i]:Hide()
-
-			DeathKnightResourceOverlayFrame:HookScript('OnShow', function()
-				DeathKnightResourceOverlayFrame:Hide()
-			end)
-		end
+		DeathKnightResourceOverlayFrame:HookScript('OnShow', function()
+			DeathKnightResourceOverlayFrame:Hide()
+		end)
 	else
-		frame.ComboPoints = frame:CreateFontString(nil, 'BORDER')
-		frame.ComboPoints:SetPoint('TOPLEFT', frame[attachPoint], 'BOTTOMLEFT', 0, -2)
-		local MaxPower, ClassPower = 5, {}
-
-		if select(2, UnitClass('player')) == 'MONK' then MaxPower = 6 end
-
-		for index = 1, MaxPower do
-			local Bar = CreateFrame('StatusBar', nil, frame)
-			Bar:SetStatusBarTexture('Interface\\AddOns\\SpartanUI\\images\\statusbars\\Smoothv2')
-
-			-- Position and size.
-			Bar:SetSize(((frame.Health:GetWidth() - 10) / MaxPower), 6)
-			if index == 1 then
-				Bar:SetPoint('TOPLEFT', frame.ComboPoints, 'TOPLEFT')
-			else
-				Bar:SetPoint('LEFT', ClassPower[index - 1], 'RIGHT', 2, 0)
-			end
-			Bar:Hide()
-
-			ClassPower[index] = Bar
-		end
-
-		-- Register with oUF
-		frame.ClassPower = ClassPower
+		BuildElement(frame, 'ClassPower')
 	end
 end
 
@@ -289,17 +280,7 @@ local NamePlateFactory = function(frame, unit)
 		frame.bg.artwork.Horde:SetSize(frame:GetSize())
 
 		-- Name
-		local nameString = ''
-		if module.DB.ShowLevel then nameString = '[difficulty][level]' end
-		if module.DB.ShowName then nameString = nameString .. ' [SUI_ColorClass][name]' end
-		if nameString ~= '' then
-			frame.Name = frame:CreateFontString(nil, 'OVERLAY')
-			SUI.Font:Format(frame.Name, 8, 'Nameplate')
-			frame.Name:SetSize(frame:GetWidth(), 9)
-			frame.Name:SetJustifyH(elementsDB.Name.SetJustifyH)
-			frame.Name:SetPoint('BOTTOM', frame, 'TOP')
-			frame:Tag(frame.Name, nameString)
-		end
+		BuildElement(frame, 'Name')
 
 		-- health bar
 		BuildElement(frame, 'ThreatIndicator')
@@ -541,8 +522,6 @@ function module:OnInitialize()
 	---#TODO: convert to new element settings process
 	---@class SUI.NamePlates.Settings
 	local defaults = {
-		ShowName = true,
-		ShowLevel = true,
 		ShowTarget = true,
 		onlyShowPlayer = true,
 		showStealableBuffs = false,
@@ -598,7 +577,18 @@ function module:OnInitialize()
 			DispelHighlight = {},
 			RareElite = {},
 			Name = {
+				enabled = true,
+				textSize = 8,
 				SetJustifyH = 'CENTER',
+				SetJustifyV = 'MIDDLE',
+				text = '[difficulty][level] [SUI_ColorClass][name]',
+				position = {
+					anchor = 'BOTTOM',
+					relativeTo = 'Frame',
+					relativePoint = 'TOP',
+					x = 0,
+					y = 0,
+				},
 			},
 			Health = {
 				enabled = true,
@@ -749,6 +739,23 @@ function module:OnInitialize()
 				},
 				enemy = {},
 			},
+			Runes = {
+				enabled = true,
+				texture = 'SpartanUI Default',
+			},
+			ClassPower = {
+				enabled = true,
+				width = 16,
+				height = 6,
+				texture = 'SpartanUI Default',
+				position = {
+					anchor = 'TOPLEFT',
+					relativeTo = 'Frame',
+					relativePoint = 'BOTTOMLEFT',
+					x = 0,
+					y = -2,
+				},
+			},
 		},
 	}
 	module.Database = SUI.SpartanUIDB:RegisterNamespace('Nameplates', { profile = defaults })
@@ -794,7 +801,6 @@ end
 
 function module:BuildOptions()
 	local Options = UF.Options
-	---#TODO: update to new element options process
 	local function toInt(val)
 		if val then return 1 end
 		return 0
@@ -888,166 +894,6 @@ function module:BuildOptions()
 		},
 	}
 
-	-- ---@type AceConfig.OptionsTable
-	-- local OptSet = {
-	-- 	args = {
-	-- 		Indicator = {
-	-- 			name = L['Indicators'],
-	-- 			type = 'group',
-	-- 			order = 20,
-	-- 			childGroups = 'tree',
-	-- 			args = {
-	-- 				Name = {
-	-- 					name = L['Name'],
-	-- 					type = 'group',
-	-- 					order = 1,
-	-- 					args = {
-	-- 						ShowLevel = {
-	-- 							name = L['Show level'],
-	-- 							type = 'toggle',
-	-- 							order = 1,
-	-- 							get = function(info)
-	-- 								return module.DB.ShowLevel
-	-- 							end,
-	-- 							set = function(info, val)
-	-- 								module.DB.ShowLevel = val
-	-- 							end
-	-- 						},
-	-- 						ShowName = {
-	-- 							name = L['Show name'],
-	-- 							type = 'toggle',
-	-- 							order = 2,
-	-- 							get = function(info)
-	-- 								return module.DB.elements.Name.enabled
-	-- 							end,
-	-- 							set = function(info, val)
-	-- 								--Update the DB
-	-- 								module.DB.elements.Name.enabled = val
-	-- 							end
-	-- 						},
-	-- 						JustifyH = {
-	-- 							name = L['Horizontal alignment'],
-	-- 							type = 'select',
-	-- 							order = 3,
-	-- 							values = {
-	-- 								['LEFT'] = 'Left',
-	-- 								['CENTER'] = 'Center',
-	-- 								['RIGHT'] = 'Right'
-	-- 							},
-	-- 							get = function(info)
-	-- 								return module.DB.elements.Name.SetJustifyH
-	-- 							end,
-	-- 							set = function(info, val)
-	-- 								--Update the DB
-	-- 								module.DB.elements.Name.SetJustifyH = val
-	-- 								--Update the screen
-	-- 								-- module.frames[frameName][key]:SetJustifyH(val)
-	-- 							end
-	-- 						}
-	-- 					}
-	-- 				},
-	-- 				Auras = {
-	-- 					name = L['Auras'],
-	-- 					type = 'group',
-	-- 					args = {
-	-- 						enabled = {
-	-- 							name = L['Enabled'],
-	-- 							type = 'toggle',
-	-- 							order = 1,
-	-- 							width = 'double',
-	-- 							get = function(info)
-	-- 								return module.DB.elements.Auras.enabled
-	-- 							end,
-	-- 							set = function(info, val)
-	-- 								module.DB.elements.Auras.enabled = val
-	-- 								module:UpdateNameplates()
-	-- 							end
-	-- 						},
-	-- 						onlyShowPlayer = {
-	-- 							name = L['Show only auras created by player'],
-	-- 							type = 'toggle',
-	-- 							order = 2,
-	-- 							width = 'double',
-	-- 							get = function(info)
-	-- 								return module.DB.onlyShowPlayer
-	-- 							end,
-	-- 							set = function(info, val)
-	-- 								module.DB.onlyShowPlayer = val
-	-- 								module:UpdateNameplates()
-	-- 							end
-	-- 						},
-	-- 						showStealableBuffs = {
-	-- 							name = L['Show Stealable/Dispellable buffs'],
-	-- 							type = 'toggle',
-	-- 							order = 3,
-	-- 							width = 'double',
-	-- 							get = function(info)
-	-- 								return module.DB.showStealableBuffs
-	-- 							end,
-	-- 							set = function(info, val)
-	-- 								module.DB.showStealableBuffs = val
-	-- 								module:UpdateNameplates()
-	-- 							end
-	-- 						},
-	-- 						notice = {
-	-- 							name = L['With both of these options active your DOTs will not appear on enemies.'],
-	-- 							type = 'description',
-	-- 							order = 4,
-	-- 							fontSize = 'small'
-	-- 						}
-	-- 					}
-	-- 				},
-	-- 				XPBar = {
-	-- 					name = L['XP Bar'],
-	-- 					type = 'group',
-	-- 					args = {
-	-- 						enabled = {
-	-- 							name = L['Enabled'],
-	-- 							type = 'toggle',
-	-- 							width = 'full',
-	-- 							order = 1,
-	-- 							get = function(info)
-	-- 								return module.DB.elements.XPBar.enabled
-	-- 							end,
-	-- 							set = function(info, val)
-	-- 								module.DB.elements.XPBar.enabled = val
-	-- 							end
-	-- 						},
-	-- 						size = {
-	-- 							name = L['Size'],
-	-- 							type = 'range',
-	-- 							order = 2,
-	-- 							min = 1,
-	-- 							max = 30,
-	-- 							step = 1,
-	-- 							get = function(info)
-	-- 								return module.DB.elements.XPBar.size
-	-- 							end,
-	-- 							set = function(info, val)
-	-- 								module.DB.elements.XPBar.size = val
-	-- 							end
-	-- 						},
-	-- 						Offset = {
-	-- 							name = L['Offset'],
-	-- 							type = 'range',
-	-- 							order = 3,
-	-- 							min = -30,
-	-- 							max = 30,
-	-- 							step = .5,
-	-- 							get = function(info)
-	-- 								return module.DB.elements.XPBar.Offset
-	-- 							end,
-	-- 							set = function(info, val)
-	-- 								module.DB.elements.XPBar.Offset = val
-	-- 							end
-	-- 						}
-	-- 					}
-	-- 				}
-	-- 			}
-	-- 		},
-	-- 	}
-	-- }
-
 	for _, elementName in ipairs(ElementList) do
 		local config = UF.Elements:GetConfig(elementName).config
 
@@ -1102,20 +948,306 @@ function module:BuildOptions()
 			--TODO
 		end
 
-		-- local Opt = OptSet.args[config.type].args[elementName]
-		-- if Opt then
-		-- 	if config.type == 'StatusBar' then
-		-- 		-- SUI.UF.Options:StatusBarDefaults('Nameplate', Opt, elementName)
-		-- 	elseif config.type == 'Indicator' then
-		-- 		SUI.UF.Options:IndicatorAddDisplay(Opt)
-		-- 		SUI.UF.Options:AddPositioning(ElementList, Opt, PositionGet, PositionSet)
-		-- 	end
-		-- else
-		-- 	print(elementName)
-		-- end
+		-- Helper function to override get/set functions recursively
+		local function OverrideGetSet(optTable, path)
+			for key, option in pairs(optTable) do
+				if option.args then
+					-- Recursively handle nested groups
+					OverrideGetSet(option.args, path)
+				elseif option.get or option.set then
+					-- Override get function
+					if option.get then
+						option.get = function(info)
+							local setting = ElementSettings
+							for _, pathKey in ipairs(path) do
+								setting = setting[pathKey]
+							end
+							local value = setting[info[#info]]
+							if option.type == 'color' and value then
+								return unpack(value, 1, 4)
+							else
+								return value
+							end
+						end
+					end
 
-		--Call Elements Custom function
-		-- UF.Elements:Options('Nameplates', elementName, ElementOptSet, ElementSettings)
+					-- Override set function
+					if option.set then
+						option.set = function(info, val, ...)
+							local setting = ElementSettings
+							local userSetting = UserSetting
+							for _, pathKey in ipairs(path) do
+								setting = setting[pathKey]
+								userSetting = userSetting[pathKey]
+							end
+
+							if option.type == 'color' then
+								setting[info[#info]] = { val, ... }
+								userSetting[info[#info]] = { val, ... }
+							else
+								setting[info[#info]] = val
+								userSetting[info[#info]] = val
+							end
+							module:UpdateNameplates()
+						end
+					end
+				end
+			end
+		end
+
+		--Add element-specific options using shared system where available
+		if elementName == 'Name' then
+			-- Name element uses simple text configuration
+
+			-- Add nameplate-specific text format option
+			ElementOptSet.args.text = {
+				name = L['Text'] or 'Text',
+				type = 'input',
+				width = 'full',
+				multiline = true,
+				order = 10,
+				desc = 'Text format for nameplate names. Use [difficulty][level] [SUI_ColorClass][name] or custom format.',
+				get = function()
+					return ElementSettings.text or '[difficulty][level] [SUI_ColorClass][name]'
+				end,
+				set = function(_, val)
+					ElementSettings.text = val
+					UserSetting.text = val
+					module:UpdateNameplates()
+				end,
+			}
+
+			-- Add positioning controls for Name element
+			ElementOptSet.args.position = {
+				name = L['Position'] or 'Position',
+				type = 'group',
+				inline = true,
+				order = 20,
+				args = {
+					anchor = {
+						name = L['Anchor Point'] or 'Anchor Point',
+						type = 'select',
+						order = 1,
+						values = {
+							TOPLEFT = L['Top Left'] or 'Top Left',
+							TOP = L['Top'] or 'Top', 
+							TOPRIGHT = L['Top Right'] or 'Top Right',
+							LEFT = L['Left'] or 'Left',
+							CENTER = L['Center'] or 'Center',
+							RIGHT = L['Right'] or 'Right',
+							BOTTOMLEFT = L['Bottom Left'] or 'Bottom Left',
+							BOTTOM = L['Bottom'] or 'Bottom',
+							BOTTOMRIGHT = L['Bottom Right'] or 'Bottom Right',
+						},
+						get = function()
+							return ElementSettings.position and ElementSettings.position.anchor or 'BOTTOM'
+						end,
+						set = function(_, val)
+							ElementSettings.position = ElementSettings.position or {}
+							ElementSettings.position.anchor = val
+							UserSetting.position = UserSetting.position or {}
+							UserSetting.position.anchor = val
+							module:UpdateNameplates()
+						end,
+					},
+					relativePoint = {
+						name = L['Relative Point'] or 'Relative Point',
+						type = 'select',
+						order = 2,
+						values = {
+							TOPLEFT = L['Top Left'] or 'Top Left',
+							TOP = L['Top'] or 'Top',
+							TOPRIGHT = L['Top Right'] or 'Top Right', 
+							LEFT = L['Left'] or 'Left',
+							CENTER = L['Center'] or 'Center',
+							RIGHT = L['Right'] or 'Right',
+							BOTTOMLEFT = L['Bottom Left'] or 'Bottom Left',
+							BOTTOM = L['Bottom'] or 'Bottom',
+							BOTTOMRIGHT = L['Bottom Right'] or 'Bottom Right',
+						},
+						get = function()
+							return ElementSettings.position and ElementSettings.position.relativePoint or 'TOP'
+						end,
+						set = function(_, val)
+							ElementSettings.position = ElementSettings.position or {}
+							ElementSettings.position.relativePoint = val
+							UserSetting.position = UserSetting.position or {}
+							UserSetting.position.relativePoint = val
+							module:UpdateNameplates()
+						end,
+					},
+					x = {
+						name = L['X Offset'] or 'X Offset',
+						type = 'range',
+						order = 3,
+						min = -100,
+						max = 100,
+						step = 1,
+						get = function()
+							return ElementSettings.position and ElementSettings.position.x or 0
+						end,
+						set = function(_, val)
+							ElementSettings.position = ElementSettings.position or {}
+							ElementSettings.position.x = val
+							UserSetting.position = UserSetting.position or {}
+							UserSetting.position.x = val
+							module:UpdateNameplates()
+						end,
+					},
+					y = {
+						name = L['Y Offset'] or 'Y Offset',
+						type = 'range',
+						order = 4,
+						min = -100,
+						max = 100,
+						step = 1,
+						get = function()
+							return ElementSettings.position and ElementSettings.position.y or 0
+						end,
+						set = function(_, val)
+							ElementSettings.position = ElementSettings.position or {}
+							ElementSettings.position.y = val
+							UserSetting.position = UserSetting.position or {}
+							UserSetting.position.y = val
+							module:UpdateNameplates()
+						end,
+					},
+				},
+			}
+
+			-- Add text justification controls
+			ElementOptSet.args.justify = {
+				name = L['Text Alignment'] or 'Text Alignment',
+				type = 'group',
+				inline = true,
+				order = 30,
+				args = {
+					SetJustifyH = {
+						name = L['Horizontal'] or 'Horizontal',
+						type = 'select',
+						order = 1,
+						values = {
+							LEFT = L['Left'] or 'Left',
+							CENTER = L['Center'] or 'Center', 
+							RIGHT = L['Right'] or 'Right',
+						},
+						get = function()
+							return ElementSettings.SetJustifyH or 'CENTER'
+						end,
+						set = function(_, val)
+							ElementSettings.SetJustifyH = val
+							UserSetting.SetJustifyH = val
+							module:UpdateNameplates()
+						end,
+					},
+					SetJustifyV = {
+						name = L['Vertical'] or 'Vertical',
+						type = 'select',
+						order = 2,
+						values = {
+							TOP = L['Top'] or 'Top',
+							MIDDLE = L['Middle'] or 'Middle',
+							BOTTOM = L['Bottom'] or 'Bottom',
+						},
+						get = function()
+							return ElementSettings.SetJustifyV or 'MIDDLE'
+						end,
+						set = function(_, val)
+							ElementSettings.SetJustifyV = val
+							UserSetting.SetJustifyV = val
+							module:UpdateNameplates()
+						end,
+					},
+				},
+			}
+
+			-- Add text size control
+			ElementOptSet.args.textSize = {
+				name = L['Text Size'] or 'Text Size',
+				type = 'range',
+				order = 40,
+				min = 6,
+				max = 20,
+				step = 1,
+				get = function()
+					return ElementSettings.textSize or 8
+				end,
+				set = function(_, val)
+					ElementSettings.textSize = val
+					UserSetting.textSize = val
+					module:UpdateNameplates()
+				end,
+			}
+		elseif elementName == 'Health' or elementName == 'Power' or elementName == 'Castbar' then
+			-- Use the existing StatusBarDefaults to get all the standard options
+			Options:StatusBarDefaults('player', ElementOptSet, elementName)
+			-- Override the main options to work with nameplate settings structure
+			OverrideGetSet(ElementOptSet.args, {})
+			-- Note: Skip AddDynamicText as it requires UF.CurrentSettings structure
+		-- Note: Other elements use shared building but require UF.CurrentSettings structure for options
+		end
+
+		-- Add element-specific options that aren't covered by shared system
+		if elementName == 'Castbar' then
+			ElementOptSet.args.FlashOnInterruptible = {
+				name = L['Flash on interruptible cast'] or 'Flash on interruptible cast',
+				type = 'toggle',
+				width = 'double',
+				order = 10,
+				get = function()
+					return ElementSettings.FlashOnInterruptible
+				end,
+				set = function(_, val)
+					ElementSettings.FlashOnInterruptible = val
+					UserSetting.FlashOnInterruptible = val
+					module:UpdateNameplates()
+				end,
+			}
+			ElementOptSet.args.InterruptSpeed = {
+				name = L['Interrupt flash speed'] or 'Interrupt flash speed',
+				type = 'range',
+				width = 'double',
+				min = 0.01,
+				max = 1,
+				step = 0.01,
+				order = 11,
+				get = function()
+					return ElementSettings.InterruptSpeed
+				end,
+				set = function(_, val)
+					ElementSettings.InterruptSpeed = val
+					UserSetting.InterruptSpeed = val
+					module:UpdateNameplates()
+				end,
+			}
+			ElementOptSet.args.interruptable = {
+				name = L['Show interrupt or spell steal'] or 'Show interrupt or spell steal',
+				type = 'toggle',
+				width = 'double',
+				order = 20,
+				get = function()
+					return ElementSettings.interruptable
+				end,
+				set = function(_, val)
+					ElementSettings.interruptable = val
+					UserSetting.interruptable = val
+					module:UpdateNameplates()
+				end,
+			}
+			ElementOptSet.args.latency = {
+				name = L['Show latency'] or 'Show latency',
+				type = 'toggle',
+				order = 21,
+				get = function()
+					return ElementSettings.latency
+				end,
+				set = function(_, val)
+					ElementSettings.latency = val
+					UserSetting.latency = val
+					module:UpdateNameplates()
+				end,
+			}
+		end
 
 		if not ElementOptSet.args.enabled then
 			--Add a disable check to all args

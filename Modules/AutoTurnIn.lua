@@ -301,7 +301,7 @@ local OptionTable = {
 }
 local buildItemList
 local function debug(content)
-	SUI.Debug(content, 'AutoTurnIn')
+	SUI.Log(content, 'AutoTurnIn')
 end
 -- turns quest in printing reward text if `ChatText` option is set.
 -- prints appropriate message if item is taken by greed
