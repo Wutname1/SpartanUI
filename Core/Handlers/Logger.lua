@@ -27,6 +27,11 @@ local CurrentSearchTerm = ''
 local SearchAllModules = false
 local AutoScrollEnabled = true
 
+-- Registration system for external addons
+local RegisteredAddons = {} -- Simple addons registered under "External Addons"
+local AddonCategories = {} -- Complex addons with custom categories
+local AddonLoggers = {} -- Cached logger functions for registered addons
+
 -- Helper function to get log level by priority
 local function GetLogLevelByPriority(priority)
 	for level, data in pairs(LOG_LEVELS) do
@@ -35,19 +40,31 @@ local function GetLogLevelByPriority(priority)
 	return 'info', LOG_LEVELS['info'] -- Default fallback
 end
 
--- Function to categorize modules like AuctionFrame categorizes items
+-- Function to categorize modules using registration system
 local function CategorizeModule(moduleName)
-	-- Define category rules (similar to AuctionFrame's item categorization)
-	local categories = {
+	-- Check if this is a registered simple addon
+	if RegisteredAddons[moduleName] then
+		return 'External Addons'
+	end
+	
+	-- Check if this is part of a registered addon category (subcategory)
+	for addonName, categoryData in pairs(AddonCategories) do
+		-- Check if moduleName matches pattern "AddonName.subcategory"
+		if moduleName:match("^" .. addonName .. "%.(.+)") then
+			return addonName -- Return the addon name as category
+		end
+	end
+	
+	-- Fall back to SUI internal categorization for core modules
+	local internalCategories = {
 		['Core'] = { 'Core', 'Framework', 'Events', 'Options', 'Database', 'Profiles' },
 		['UI Modules'] = { 'UnitFrames', 'Minimap', 'Artwork', 'ActionBars', 'ChatBox', 'Tooltips' },
-		['External Addons'] = { 'LibsDataBar', 'LibsDisenchantAssist', 'Disenchant Assist', 'DataBar' },
 		['Handlers'] = { 'Handler', 'Logger', 'ChatCommands', 'Compatibility' },
 		['Development'] = { 'Debug', 'Test', 'Dev', 'Plugin' },
 	}
 
-	-- Check each category for module matches
-	for category, keywords in pairs(categories) do
+	-- Check each internal category for module matches
+	for category, keywords in pairs(internalCategories) do
 		for _, keyword in ipairs(keywords) do
 			if moduleName:lower():find(keyword:lower()) then return category end
 		end
@@ -69,12 +86,30 @@ function CreateModuleCategories()
 	for moduleName, _ in pairs(logger.DB.modules) do
 		local category = CategorizeModule(moduleName)
 
-		if not LogWindow.Categories[category] then LogWindow.Categories[category] = {
-			name = category,
-			modules = {},
-			expanded = false,
-			button = nil,
-		} end
+		-- Handle registered addon categories specially
+		if AddonCategories[category] then
+			-- This is a registered addon category - use its expansion state
+			if not LogWindow.Categories[category] then 
+				LogWindow.Categories[category] = {
+					name = category,
+					modules = {},
+					expanded = AddonCategories[category].expanded,
+					button = nil,
+					isAddonCategory = true, -- Mark as special addon category
+				} 
+			end
+		else
+			-- Regular category
+			if not LogWindow.Categories[category] then 
+				LogWindow.Categories[category] = {
+					name = category,
+					modules = {},
+					expanded = false,
+					button = nil,
+					isAddonCategory = false,
+				} 
+			end
+		end
 
 		table.insert(LogWindow.Categories[category].modules, moduleName)
 		table.insert(ScrollListing, { text = moduleName, value = moduleName, category = category })
@@ -148,6 +183,12 @@ function CreateCategoryTree(sortedCategories)
 		-- Category button functionality
 		categoryButton:SetScript('OnClick', function(self)
 			categoryData.expanded = not categoryData.expanded
+			
+			-- Persist expansion state for registered addon categories
+			if categoryData.isAddonCategory and AddonCategories[categoryName] then
+				AddonCategories[categoryName].expanded = categoryData.expanded
+			end
+			
 			if categoryData.expanded then
 				self.indicator:SetAtlas('ui-trees-collapsed')
 			else
@@ -793,6 +834,74 @@ function SetupLogLevelDropdowns()
 			if GlobalLogLevel == levelData.data.priority then button:SetRadio(true) end
 		end
 	end)
+end
+
+----------------------------------------------------------------------------------------------------
+-- External Addon Registration API
+----------------------------------------------------------------------------------------------------
+
+---Register a simple addon for logging under "External Addons" category
+---@param addonName string Name of the addon to register
+---@return function logger Logger function that takes (message, level)
+function SUI.Logger:RegisterAddon(addonName)
+	if not addonName or addonName == "" then
+		error("RegisterAddon: addonName cannot be empty")
+	end
+	
+	-- Store registration
+	RegisteredAddons[addonName] = true
+	
+	-- Create and cache logger function
+	local loggerFunc = function(message, level)
+		SUI.Log(message, addonName, level)
+	end
+	
+	AddonLoggers[addonName] = loggerFunc
+	
+	-- Initialize in database if logger is ready
+	if logger.DB then
+		logger.DB.modules[addonName] = true
+	end
+	
+	return loggerFunc
+end
+
+---Register an addon with its own expandable category and subcategories
+---@param addonName string Name of the addon (will be the category name)
+---@param subcategories string[] Array of subcategory names
+---@return table<string, function> loggers Table of logger functions keyed by subcategory name
+function SUI.Logger:RegisterAddonCategory(addonName, subcategories)
+	if not addonName or addonName == "" then
+		error("RegisterAddonCategory: addonName cannot be empty")
+	end
+	if not subcategories or type(subcategories) ~= "table" or #subcategories == 0 then
+		error("RegisterAddonCategory: subcategories must be a non-empty array")
+	end
+	
+	-- Store category registration
+	AddonCategories[addonName] = {
+		subcategories = subcategories,
+		expanded = false
+	}
+	
+	-- Create logger functions for each subcategory
+	local loggers = {}
+	for _, subcat in ipairs(subcategories) do
+		local moduleName = addonName .. "." .. subcat
+		loggers[subcat] = function(message, level)
+			SUI.Log(message, moduleName, level)
+		end
+		
+		-- Initialize in database if logger is ready
+		if logger.DB then
+			logger.DB.modules[moduleName] = true
+		end
+	end
+	
+	-- Cache the logger table
+	AddonLoggers[addonName] = loggers
+	
+	return loggers
 end
 
 ---Enhanced logging function with log levels
