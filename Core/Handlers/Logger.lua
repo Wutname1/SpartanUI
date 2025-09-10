@@ -965,8 +965,22 @@ function SUI.Log(debugText, module, level)
 		logLevel = LOG_LEVELS[level]
 	end
 
-	-- LOGGING APPROACH: Always capture all messages, filter during display
-	-- This allows dynamic log level changes without losing historical data
+	-- PERFORMANCE OPTIMIZATION: In release builds, skip logs below current threshold
+	-- Dev builds capture everything for dynamic filtering, release builds filter early for performance
+	if SUI.releaseType ~= 'DEV Build' then
+		-- Get effective log level for this module
+		local moduleLogLevel = ModuleLogLevels[module] or 0
+		local effectiveLogLevel = moduleLogLevel > 0 and moduleLogLevel or GlobalLogLevel
+		
+		-- Skip capturing if log level is below threshold (unless it's warning/error/critical)
+		if logLevel.priority < effectiveLogLevel and logLevel.priority < 3 then
+			return -- Early exit, don't capture low-priority logs in release builds
+		end
+	end
+	
+	-- LOGGING APPROACH: 
+	-- DEV builds: Always capture all messages, filter during display (allows dynamic level changes)
+	-- RELEASE builds: Filter at capture time for performance, still capture warnings/errors
 
 	-- Create log entry with timestamp and level
 	local timestamp = date('%H:%M:%S')
