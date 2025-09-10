@@ -363,41 +363,81 @@ function module:ToggleOptions(pages)
 			bottom:SetBackdropBorderColor(0, 0, 0, 0)
 			frame.bottomHolder = bottom
 
+			-- Button layout: Toggle Movers | Logging | Import Settings | Export Settings | Close
+			-- Button widths: 120px for most, 80px for Close (smaller)
+			-- Spacing between buttons: 10px
+			-- Total width calculation: 4*120 + 80 + 4*10 = 600px (centered in window)
+
+			-- Toggle Movers button (leftmost, most prominent)
+			if SUI:IsModuleEnabled('MoveIt') then
+				local MoveIt = CreateFrame('Button', nil, bottom, 'UIPanelButtonTemplate')
+				MoveIt:SetSize(150, 20)
+				MoveIt:SetText(L['Toggle movers'])
+				MoveIt:SetPoint('BOTTOM', -190, 10) -- Start at -190 to center the 5 buttons
+				MoveIt:HookScript('OnClick', function()
+					SUI.MoveIt:MoveIt()
+				end)
+				SUI.Skins.SkinObj('Button', MoveIt, 'Dark', 'Ace3') -- Dark skin for prominence
+				bottom.MoveIt = MoveIt
+			end
+
+			-- Logging button (second from left, darker/transparent)
+			if SUI.Log then
+				local Logging = CreateFrame('Button', nil, bottom, 'UIPanelButtonTemplate')
+				Logging:SetSize(100, 20)
+				Logging:SetText('Logging')
+				if bottom.MoveIt then
+					Logging:SetPoint('LEFT', bottom.MoveIt, 'RIGHT', 10, 0)
+				else
+					Logging:SetPoint('BOTTOM', -190, 10)
+				end
+				Logging:HookScript('OnClick', function()
+					-- Use the /logs slash command to toggle the Logger window
+					SlashCmdList['SUILOGS']()
+				end)
+				SUI.Skins.SkinObj('Button', Logging, 'Light', 'Ace3')
+				-- Make it more transparent/darker by adjusting the background after skinning
+				Logging:HookScript('OnShow', function(self)
+					if self.bg then self.bg:SetAlpha(0.6) end
+					-- Also make the texture more transparent
+					local normalTexture = self:GetNormalTexture()
+					if normalTexture then normalTexture:SetAlpha(0.7) end
+				end)
+				bottom.Logging = Logging
+			end
+
+			-- Import and Export buttons (middle)
 			local ProfileHandler = SUI:GetModule('Handler.Profiles', true) ---@type SUI.Handler.Profiles
 			if ProfileHandler then
-				local Export = CreateFrame('Button', nil, bottom, 'UIPanelButtonTemplate')
-				Export:SetSize(150, 20)
-				Export:SetText('Export')
-				Export:SetPoint('BOTTOM', 80, 10)
-				Export:HookScript('OnClick', function()
-					ProfileHandler:ExportUI()
-					ACD:Close('SpartanUI')
-				end)
-				SUI.Skins.SkinObj('Button', Export, 'Light', 'Ace3')
-				bottom.Export = Export
-
+				-- Import Settings button
 				local Import = CreateFrame('Button', nil, bottom, 'UIPanelButtonTemplate')
-				Import:SetSize(150, 20)
-				Import:SetText('Import')
-				Import:SetPoint('BOTTOM', -80, 10)
+				Import:SetSize(120, 20)
+				Import:SetText('Import Settings')
+				if bottom.Logging then
+					Import:SetPoint('LEFT', bottom.Logging, 'RIGHT', 10, 0)
+				elseif bottom.MoveIt then
+					Import:SetPoint('LEFT', bottom.MoveIt, 'RIGHT', 10, 0)
+				else
+					Import:SetPoint('BOTTOM', -70, 10)
+				end
 				Import:HookScript('OnClick', function()
 					ProfileHandler:ImportUI()
 					ACD:Close('SpartanUI')
 				end)
 				SUI.Skins.SkinObj('Button', Import, 'Light', 'Ace3')
 				bottom.Import = Import
-			end
 
-			if SUI:IsModuleEnabled('MoveIt') then
-				local MoveIt = CreateFrame('Button', nil, bottom, 'UIPanelButtonTemplate')
-				MoveIt:SetSize(150, 20)
-				MoveIt:SetText(L['Toggle movers'])
-				MoveIt:SetPoint('RIGHT', bottom.Import, 'LEFT', -25, 0)
-				MoveIt:HookScript('OnClick', function()
-					SUI.MoveIt:MoveIt()
+				-- Export Settings button
+				local Export = CreateFrame('Button', nil, bottom, 'UIPanelButtonTemplate')
+				Export:SetSize(120, 20)
+				Export:SetText('Export Settings')
+				Export:SetPoint('LEFT', bottom.Import, 'RIGHT', 10, 0)
+				Export:HookScript('OnClick', function()
+					ProfileHandler:ExportUI()
+					ACD:Close('SpartanUI')
 				end)
-				SUI.Skins.SkinObj('Button', MoveIt, 'Light', 'Ace3')
-				bottom.MoveIt = MoveIt
+				SUI.Skins.SkinObj('Button', Export, 'Light', 'Ace3')
+				bottom.Export = Export
 			end
 
 			local Logo = bottom:CreateTexture()
