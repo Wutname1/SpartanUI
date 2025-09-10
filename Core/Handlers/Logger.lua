@@ -858,12 +858,6 @@ function SUI.Log(debugText, module, level)
 
 	-- LOGGING APPROACH: Always capture all messages, filter during display
 	-- This allows dynamic log level changes without losing historical data
-	local shouldCapture = true
-
-	-- Only skip if logging is completely disabled for this module specifically
-	if logger.DB.modules[module] == false then shouldCapture = false end
-
-	if not shouldCapture then return end
 
 	-- Create log entry with timestamp and level
 	local timestamp = date('%H:%M:%S')
