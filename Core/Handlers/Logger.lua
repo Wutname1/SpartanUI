@@ -1,10 +1,37 @@
 ---@class SUI
 local SUI = SUI
-local logger = SUI:NewModule('Handler.Logger') ---@type SUI.Module
+local logger = SUI:NewModule('Handler.Logger') ---@class SUI.LoggerInternal | SUI.Module
 SUI.Handlers.Logger = logger
 logger.description = 'SpartanUI Logging System'
+
 ----------------------------------------------------------------------------------------------------
-local LogWindow = nil ---@type Frame
+-- Type Definitions for Logger System
+----------------------------------------------------------------------------------------------------
+
+---@alias LogLevel
+---| "debug"    # Detailed debugging information
+---| "info"     # General informational messages
+---| "warning"  # Warning conditions
+---| "error"    # Error conditions
+---| "critical" # Critical system failures
+
+---Logger function returned by RegisterAddon
+---@alias SimpleLogger fun(message: string, level?: LogLevel): nil
+
+---Logger table returned by RegisterAddonCategory
+---@alias ComplexLoggers table<string, SimpleLogger>
+
+---Internal Logger Handler (SUI.Handlers.Logger)
+---@class SUI.LoggerInternal : SUI.Module
+---@field description string
+
+---External Logger API (SUI.Logger) - for third-party addons
+---@class SUI.Logger
+---@field RegisterAddon fun(addonName: string): SimpleLogger
+---@field RegisterAddonCategory fun(addonName: string, subcategories: string[]): ComplexLoggers
+
+----------------------------------------------------------------------------------------------------
+local LogWindow = nil ---@type table|Frame
 local LogMessages = {}
 local ScrollListing = {}
 local ActiveModule = nil
@@ -43,18 +70,16 @@ end
 -- Function to categorize modules using registration system
 local function CategorizeModule(moduleName)
 	-- Check if this is a registered simple addon
-	if RegisteredAddons[moduleName] then
-		return 'External Addons'
-	end
-	
+	if RegisteredAddons[moduleName] then return 'External Addons' end
+
 	-- Check if this is part of a registered addon category (subcategory)
 	for addonName, categoryData in pairs(AddonCategories) do
 		-- Check if moduleName matches pattern "AddonName.subcategory"
-		if moduleName:match("^" .. addonName .. "%.(.+)") then
+		if moduleName:match('^' .. addonName .. '%.(.+)') then
 			return addonName -- Return the addon name as category
 		end
 	end
-	
+
 	-- Fall back to SUI internal categorization for core modules
 	local internalCategories = {
 		['Core'] = { 'Core', 'Framework', 'Events', 'Options', 'Database', 'Profiles' },
@@ -89,25 +114,25 @@ function CreateModuleCategories()
 		-- Handle registered addon categories specially
 		if AddonCategories[category] then
 			-- This is a registered addon category - use its expansion state
-			if not LogWindow.Categories[category] then 
+			if not LogWindow.Categories[category] then
 				LogWindow.Categories[category] = {
 					name = category,
 					modules = {},
 					expanded = AddonCategories[category].expanded,
 					button = nil,
 					isAddonCategory = true, -- Mark as special addon category
-				} 
+				}
 			end
 		else
 			-- Regular category
-			if not LogWindow.Categories[category] then 
+			if not LogWindow.Categories[category] then
 				LogWindow.Categories[category] = {
 					name = category,
 					modules = {},
 					expanded = false,
 					button = nil,
 					isAddonCategory = false,
-				} 
+				}
 			end
 		end
 
@@ -183,12 +208,10 @@ function CreateCategoryTree(sortedCategories)
 		-- Category button functionality
 		categoryButton:SetScript('OnClick', function(self)
 			categoryData.expanded = not categoryData.expanded
-			
+
 			-- Persist expansion state for registered addon categories
-			if categoryData.isAddonCategory and AddonCategories[categoryName] then
-				AddonCategories[categoryName].expanded = categoryData.expanded
-			end
-			
+			if categoryData.isAddonCategory and AddonCategories[categoryName] then AddonCategories[categoryName].expanded = categoryData.expanded end
+
 			if categoryData.expanded then
 				self.indicator:SetAtlas('ui-trees-collapsed')
 			else
@@ -837,77 +860,70 @@ function SetupLogLevelDropdowns()
 end
 
 ----------------------------------------------------------------------------------------------------
--- External Addon Registration API
+-- External API - SUI.Logger (for third-party addons)
 ----------------------------------------------------------------------------------------------------
+
+-- Initialize the external Logger API
+SUI.Logger = {} ---@class SUI.Logger
 
 ---Register a simple addon for logging under "External Addons" category
 ---@param addonName string Name of the addon to register
----@return function logger Logger function that takes (message, level)
-function SUI.Logger:RegisterAddon(addonName)
-	if not addonName or addonName == "" then
-		error("RegisterAddon: addonName cannot be empty")
-	end
-	
+---@return SimpleLogger logger Logger function that takes (message, level?)
+function SUI.Logger.RegisterAddon(addonName)
+	if not addonName or addonName == '' then error('RegisterAddon: addonName cannot be empty') end
+
 	-- Store registration
 	RegisteredAddons[addonName] = true
-	
+
 	-- Create and cache logger function
 	local loggerFunc = function(message, level)
 		SUI.Log(message, addonName, level)
 	end
-	
+
 	AddonLoggers[addonName] = loggerFunc
-	
+
 	-- Initialize in database if logger is ready
-	if logger.DB then
-		logger.DB.modules[addonName] = true
-	end
-	
+	if logger.DB then logger.DB.modules[addonName] = true end
+
 	return loggerFunc
 end
 
 ---Register an addon with its own expandable category and subcategories
 ---@param addonName string Name of the addon (will be the category name)
 ---@param subcategories string[] Array of subcategory names
----@return table<string, function> loggers Table of logger functions keyed by subcategory name
-function SUI.Logger:RegisterAddonCategory(addonName, subcategories)
-	if not addonName or addonName == "" then
-		error("RegisterAddonCategory: addonName cannot be empty")
-	end
-	if not subcategories or type(subcategories) ~= "table" or #subcategories == 0 then
-		error("RegisterAddonCategory: subcategories must be a non-empty array")
-	end
-	
+---@return ComplexLoggers loggers Table of logger functions keyed by subcategory name
+function SUI.Logger.RegisterAddonCategory(addonName, subcategories)
+	if not addonName or addonName == '' then error('RegisterAddonCategory: addonName cannot be empty') end
+	if not subcategories or type(subcategories) ~= 'table' or #subcategories == 0 then error('RegisterAddonCategory: subcategories must be a non-empty array') end
+
 	-- Store category registration
 	AddonCategories[addonName] = {
 		subcategories = subcategories,
-		expanded = false
+		expanded = false,
 	}
-	
+
 	-- Create logger functions for each subcategory
 	local loggers = {}
 	for _, subcat in ipairs(subcategories) do
-		local moduleName = addonName .. "." .. subcat
+		local moduleName = addonName .. '.' .. subcat
 		loggers[subcat] = function(message, level)
 			SUI.Log(message, moduleName, level)
 		end
-		
+
 		-- Initialize in database if logger is ready
-		if logger.DB then
-			logger.DB.modules[moduleName] = true
-		end
+		if logger.DB then logger.DB.modules[moduleName] = true end
 	end
-	
+
 	-- Cache the logger table
 	AddonLoggers[addonName] = loggers
-	
+
 	return loggers
 end
 
 ---Enhanced logging function with log levels
 ---@param debugText string The message to log
 ---@param module string The module name
----@param level? string Log level (debug, info, warning, error, critical) - defaults to 'info'
+---@param level? LogLevel Log level - defaults to 'info'
 function SUI.Log(debugText, module, level)
 	level = level or 'info'
 
@@ -971,14 +987,14 @@ function SUI.Log(debugText, module, level)
 		-- Get effective log level for this module
 		local moduleLogLevel = ModuleLogLevels[module] or 0
 		local effectiveLogLevel = moduleLogLevel > 0 and moduleLogLevel or GlobalLogLevel
-		
+
 		-- Skip capturing if log level is below threshold (unless it's warning/error/critical)
 		if logLevel.priority < effectiveLogLevel and logLevel.priority < 3 then
 			return -- Early exit, don't capture low-priority logs in release builds
 		end
 	end
-	
-	-- LOGGING APPROACH: 
+
+	-- LOGGING APPROACH:
 	-- DEV builds: Always capture all messages, filter during display (allows dynamic level changes)
 	-- RELEASE builds: Filter at capture time for performance, still capture warnings/errors
 
@@ -1011,7 +1027,7 @@ end
 -- Compatibility function to maintain existing SUI.Debug calls
 ---@param debugText string The message to log
 ---@param module string The module name
----@param level? string Log level (debug, info, warning, error, critical) - defaults to 'info'
+---@param level? LogLevel Log level - defaults to 'info'
 function SUI.Debug(debugText, module, level)
 	-- Redirect to the new logging function
 	SUI.Log(debugText, module, level)
