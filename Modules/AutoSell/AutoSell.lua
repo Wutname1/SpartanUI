@@ -264,6 +264,32 @@ function module:IsSellable(item, ilink, bag, slot)
 	--Consumables
 	if module.DB.NotConsumables and (itemType == 'Consumable' or itemSubType == 'Consumables') and quality ~= 0 then return false end --Some junk is labeled as consumable
 
+	-- Check for items with "Use:" in tooltip (profession enhancement items, etc.)
+	if bag and slot then
+		local hasUseText = pcall(function()
+			Tooltip:SetOwner(UIParent, 'ANCHOR_NONE')
+			Tooltip:SetBagItem(bag, slot)
+			
+			for i = 1, Tooltip:NumLines() do
+				local line = _G['AutoSellTooltipTextLeft' .. i]
+				if line and line:GetText() then
+					local text = line:GetText():lower()
+					if text:find('^use:') or text:find('^%s*use:') then
+						Tooltip:Hide()
+						return true
+					end
+				end
+			end
+			Tooltip:Hide()
+			return false
+		end)
+		
+		if hasUseText then
+			debugMsg('Item has "Use:" text in tooltip - skipping')
+			return false
+		end
+	end
+
 	if string.find(name, '') and quality == 1 then return false end
 
 	-- Check profile blacklists (optimized lookups)
@@ -551,6 +577,42 @@ function module:DebugItemSellability(link)
 	print(string.format('Preview Item Level: %s', previewLevel and tostring(previewLevel) or 'nil'))
 	print(string.format('Sparse Item Level: %s', sparseItemLevel and tostring(sparseItemLevel) or 'nil'))
 
+	-- Tooltip Analysis
+	print('|cffFFFF00--- Tooltip Analysis ------|r')
+	if actualBag and actualSlot then
+		local success, tooltipText = pcall(function()
+			Tooltip:SetOwner(UIParent, 'ANCHOR_NONE')
+			Tooltip:SetBagItem(actualBag, actualSlot)
+			
+			local lines = {}
+			for i = 1, Tooltip:NumLines() do
+				local leftText = _G['AutoSellTooltipTextLeft' .. i]
+				local rightText = _G['AutoSellTooltipTextRight' .. i]
+				if leftText and leftText:GetText() then
+					local lineText = leftText:GetText()
+					if rightText and rightText:GetText() then
+						lineText = lineText .. ' | ' .. rightText:GetText()
+					end
+					table.insert(lines, lineText)
+				end
+			end
+			return table.concat(lines, '\n')
+		end)
+		
+		if success and tooltipText then
+			print('Tooltip Content:')
+			for line in tooltipText:gmatch('[^\n]+') do
+				print('  ' .. line)
+			end
+		else
+			print('|cffFF0000ERROR:|r Could not read tooltip: ' .. tostring(tooltipText))
+		end
+		
+		Tooltip:Hide()
+	else
+		print('|cffFFFFFF WARNING:|r Could not dump tooltip - item not found in bags')
+	end
+
 	-- Check each condition
 	print('|cffFFFF00--- Sell Decision Process ------|r')
 
@@ -662,6 +724,36 @@ function module:DebugItemSellability(link)
 		return
 	else
 		print('|cff00FF00PASSED:|r Consumables check (NotConsumables = ' .. tostring(module.DB.NotConsumables) .. ')')
+	end
+
+	-- Use text check
+	if actualBag and actualSlot then
+		local hasUseText = pcall(function()
+			Tooltip:SetOwner(UIParent, 'ANCHOR_NONE')
+			Tooltip:SetBagItem(actualBag, actualSlot)
+			
+			for i = 1, Tooltip:NumLines() do
+				local line = _G['AutoSellTooltipTextLeft' .. i]
+				if line and line:GetText() then
+					local text = line:GetText():lower()
+					if text:find('^use:') or text:find('^%s*use:') then
+						Tooltip:Hide()
+						return true
+					end
+				end
+			end
+			Tooltip:Hide()
+			return false
+		end)
+		
+		if hasUseText then
+			print('|cffFF0000BLOCKED:|r Item has "Use:" text in tooltip (profession enhancement protection)')
+			return
+		else
+			print('|cff00FF00PASSED:|r Use text check (no "Use:" found)')
+		end
+	else
+		print('|cffFFFFFF SKIPPED:|r Use text check (item not found in bags)')
 	end
 
 	-- Profile blacklist checks
