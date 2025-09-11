@@ -21,8 +21,8 @@ local function Options()
 					if not SUI.DB.Styles.Arcane.Color.Art then return { 1, 1, 1, 1 } end
 					return unpack(SUI.DB.Styles.Arcane.Color.Art)
 				end,
-				set = function(info, r, b, g, a)
-					SUI.DB.Styles.Arcane.Color.Art = { r, b, g, a }
+				set = function(info, r, g, b, a)
+					SUI.DB.Styles.Arcane.Color.Art = { r, g, b, a }
 					module:SetColor()
 				end,
 			},
@@ -172,21 +172,21 @@ function module:OnDisable()
 end
 
 function module:SetColor()
-	local r, b, g, a = 1, 1, 1, 1
+	local r, g, b, a = 1, 1, 1, 1
 	if SUI.DB.Styles.Arcane.Color.Art then
-		r, b, g, a = unpack(SUI.DB.Styles.Arcane.Color.Art)
+		r, g, b, a = unpack(SUI.DB.Styles.Arcane.Color.Art)
 	end
 
-	SUI_Art_Arcane.Left:SetVertexColor(r, b, g, a)
-	SUI_Art_Arcane.Right:SetVertexColor(r, b, g, a)
+	SUI_Art_Arcane.Left:SetVertexColor(r, g, b, a)
+	SUI_Art_Arcane.Right:SetVertexColor(r, g, b, a)
 
 	if _G['SUI_StatusBar_Left'] then
-		_G['SUI_StatusBar_Left'].bg:SetVertexColor(r, b, g, a)
-		_G['SUI_StatusBar_Left'].overlay:SetVertexColor(r, b, g, a)
+		_G['SUI_StatusBar_Left'].bg:SetVertexColor(r, g, b, a)
+		_G['SUI_StatusBar_Left'].overlay:SetVertexColor(r, g, b, a)
 	end
 	if _G['SUI_StatusBar_Right'] then
-		_G['SUI_StatusBar_Right'].bg:SetVertexColor(r, b, g, a)
-		_G['SUI_StatusBar_Right'].overlay:SetVertexColor(r, b, g, a)
+		_G['SUI_StatusBar_Right'].bg:SetVertexColor(r, g, b, a)
+		_G['SUI_StatusBar_Right'].overlay:SetVertexColor(r, g, b, a)
 	end
 end
 

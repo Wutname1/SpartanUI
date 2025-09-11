@@ -216,8 +216,8 @@ function module:Options()
 				get = function(info)
 					return unpack(SUI.DB.Styles.Gale.Color.Art)
 				end,
-				set = function(info, r, b, g, a)
-					SUI.DB.Styles.Gale.Color.Art = { r, b, g, a }
+				set = function(info, r, g, b, a)
+					SUI.DB.Styles.Gale.Color.Art = { r, g, b, a }
 					module:SetColor()
 				end,
 			},
@@ -239,8 +239,8 @@ function module:SlidingTrays()
 end
 
 function module:SetColor()
-	local r, b, g, a
-	
+	local r, g, b, a
+
 	if SUI.DB.Styles.Gale.UseClassColors then
 		-- Get player class colors
 		local _, class = UnitClass('player')
@@ -249,11 +249,11 @@ function module:SetColor()
 			r, g, b, a = classColor.r, classColor.g, classColor.b, 1
 		else
 			-- Fallback to default if class color not found
-			r, b, g, a = unpack(SUI.DB.Styles.Gale.Color.Art or { 0, 0, 0, 1 })
+			r, g, b, a = unpack(SUI.DB.Styles.Gale.Color.Art or { 0, 0, 0, 1 })
 		end
 	else
 		-- Use custom colors - Gale uses solid black backgrounds with class-colored elements
-		r, b, g, a = unpack(SUI.DB.Styles.Gale.Color.Art or { 0, 0, 0, 1 })
+		r, g, b, a = unpack(SUI.DB.Styles.Gale.Color.Art or { 0, 0, 0, 1 })
 	end
 
 	-- Apply coloring to main artwork elements

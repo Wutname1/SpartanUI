@@ -21,8 +21,8 @@ local function Options()
 				get = function(info)
 					return unpack(SUI.DB.Styles.Transparent.Color.Art)
 				end,
-				set = function(info, r, b, g, a)
-					SUI.DB.Styles.Transparent.Color.Art = { r, b, g, a }
+				set = function(info, r, g, b, a)
+					SUI.DB.Styles.Transparent.Color.Art = { r, g, b, a }
 					module:SetColor()
 				end,
 			},
@@ -242,13 +242,13 @@ function module:RemoveVehicleUI()
 end
 
 function module:SetColor()
-	local r, b, g, a = unpack(SUI.DB.Styles.Transparent.Color.Art)
+	local r, g, b, a = unpack(SUI.DB.Styles.Transparent.Color.Art)
 	for i = 1, 6 do
-		if _G['Transparent_Bar' .. i .. 'BG'] then _G['Transparent_Bar' .. i .. 'BG']:SetVertexColor(r, b, g) end
+		if _G['Transparent_Bar' .. i .. 'BG'] then _G['Transparent_Bar' .. i .. 'BG']:SetVertexColor(r, g, b) end
 	end
-	_G['SUI_Art_Transparent_Center']:SetVertexColor(r, b, g, a)
-	_G['SUI_Art_Transparent_Left']:SetVertexColor(r, b, g, a)
-	_G['SUI_Art_Transparent_FarLeft']:SetVertexColor(r, b, g, a)
-	_G['SUI_Art_Transparent_Right']:SetVertexColor(r, b, g, a)
-	_G['SUI_Art_Transparent_FarRight']:SetVertexColor(r, b, g, a)
+	_G['SUI_Art_Transparent_Center']:SetVertexColor(r, g, b, a)
+	_G['SUI_Art_Transparent_Left']:SetVertexColor(r, g, b, a)
+	_G['SUI_Art_Transparent_FarLeft']:SetVertexColor(r, g, b, a)
+	_G['SUI_Art_Transparent_Right']:SetVertexColor(r, g, b, a)
+	_G['SUI_Art_Transparent_FarRight']:SetVertexColor(r, g, b, a)
 end

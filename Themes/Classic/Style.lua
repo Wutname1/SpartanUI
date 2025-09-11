@@ -9,27 +9,27 @@ local SkinnedFrames = {}
 local FramesToSkin = { 'player', 'target' }
 
 function module:SetColor()
-	local r, b, g, a = 1, 1, 1, 1
+	local r, g, b, a = 1, 1, 1, 1
 	if SUI.DB.Styles.Classic.Color.Art then
-		r, b, g, a = unpack(SUI.DB.Styles.Classic.Color.Art)
+		r, g, b, a = unpack(SUI.DB.Styles.Classic.Color.Art)
 	end
 
 	for i = 1, 10 do
-		if _G['Classic_Bar' .. i] and _G['Classic_Bar' .. i].BG then _G['Classic_Bar' .. i].BG:SetVertexColor(r, b, g, a) end
+		if _G['Classic_Bar' .. i] and _G['Classic_Bar' .. i].BG then _G['Classic_Bar' .. i].BG:SetVertexColor(r, g, b, a) end
 	end
-	SUI_Art_Classic.Center:SetVertexColor(r, b, g, a)
-	SUI_Art_Classic.Left:SetVertexColor(r, b, g, a)
-	SUI_Art_Classic.FarLeft:SetVertexColor(r, b, g, a)
-	SUI_Art_Classic.Right:SetVertexColor(r, b, g, a)
-	SUI_Art_Classic.FarRight:SetVertexColor(r, b, g, a)
+	SUI_Art_Classic.Center:SetVertexColor(r, g, b, a)
+	SUI_Art_Classic.Left:SetVertexColor(r, g, b, a)
+	SUI_Art_Classic.FarLeft:SetVertexColor(r, g, b, a)
+	SUI_Art_Classic.Right:SetVertexColor(r, g, b, a)
+	SUI_Art_Classic.FarRight:SetVertexColor(r, g, b, a)
 
 	if _G['SUI_StatusBar_Left'] then
-		_G['SUI_StatusBar_Left'].bg:SetVertexColor(r, b, g, a)
-		_G['SUI_StatusBar_Left'].overlay:SetVertexColor(r, b, g, a)
+		_G['SUI_StatusBar_Left'].bg:SetVertexColor(r, g, b, a)
+		_G['SUI_StatusBar_Left'].overlay:SetVertexColor(r, g, b, a)
 	end
 	if _G['SUI_StatusBar_Right'] then
-		_G['SUI_StatusBar_Right'].bg:SetVertexColor(r, b, g, a)
-		_G['SUI_StatusBar_Right'].overlay:SetVertexColor(r, b, g, a)
+		_G['SUI_StatusBar_Right'].bg:SetVertexColor(r, g, b, a)
+		_G['SUI_StatusBar_Right'].overlay:SetVertexColor(r, g, b, a)
 	end
 end
 
@@ -534,8 +534,8 @@ local function Options()
 					if not SUI.DB.Styles.Classic.Color.Art then return 1, 1, 1, 1 end
 					return unpack(SUI.DB.Styles.Classic.Color.Art)
 				end,
-				set = function(info, r, b, g, a)
-					SUI.DB.Styles.Classic.Color.Art = { r, b, g, a }
+				set = function(info, r, g, b, a)
+					SUI.DB.Styles.Classic.Color.Art = { r, g, b, a }
 					module:SetColor()
 				end,
 			},
@@ -791,9 +791,7 @@ function module:OnEnable()
 
 		module:SetupVehicleUI()
 
-		if BT4BarMicroMenu then
-			BT4BarMicroMenu:SetFrameStrata('LOW')
-		end
+		if BT4BarMicroMenu then BT4BarMicroMenu:SetFrameStrata('LOW') end
 		if SUI.DB.Styles.Classic.Color.Art then module:SetColor() end
 	else
 		module:Disable()

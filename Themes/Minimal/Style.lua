@@ -54,7 +54,7 @@ function module:OnInitialize()
 	}
 	SUI.Minimap:Register('Minimal', minimapSettings)
 
-	SUI.UF.Style:Register('Minimal', { 
+	SUI.UF.Style:Register('Minimal', {
 		displayName = 'Minimal',
 		setup = {
 			image = 'Interface\\AddOns\\SpartanUI\\images\\setup\\Style_Frames_Minimal',
@@ -245,8 +245,9 @@ function module:Options()
 				get = function(info)
 					return unpack(SUI.DB.Styles.Minimal.Color.Art)
 				end,
-				set = function(info, r, b, g, a)
-					SUI.DB.Styles.Minimal.Color.Art = { r, b, g, a }
+				set = function(info, r, g, b, a)
+					SUI.Log('Options - Artwork Color changed to r:' .. r .. ' g:' .. g .. ' b:' .. b .. ' a:' .. a, 'Style.Minimal', 'debug')
+					SUI.DB.Styles.Minimal.Color.Art = { r, g, b, a }
 					module:SetColor()
 				end,
 			},
@@ -260,7 +261,6 @@ end
 
 function module:SlidingTrays()
 	local Settings = {
-		trayImage = 'Interface\\AddOns\\SpartanUI\\Themes\\Minimal\\Images\\base-center-top',
 		-- Uses default coordinates from DefaultTraySettings
 	}
 
@@ -268,29 +268,42 @@ function module:SlidingTrays()
 end
 
 function module:SetColor()
-	local r, b, g, a
-	
+	local r, g, b, a
+
+	SUI.Log('SetColor: Starting color update', 'Style.Minimal', 'debug')
+	SUI.Log('SetColor: UseClassColors setting = ' .. tostring(SUI.DB.Styles.Minimal.UseClassColors), 'Style.Minimal', 'debug')
+
 	if SUI.DB.Styles.Minimal.UseClassColors then
 		-- Get player class colors
 		local _, class = UnitClass('player')
 		local classColor = RAID_CLASS_COLORS[class]
+		SUI.Log('SetColor: Player class = ' .. tostring(class), 'Style.Minimal', 'debug')
 		if classColor then
 			r, g, b, a = classColor.r, classColor.g, classColor.b, 1
+			SUI.Log('SetColor: Using class colors - r:' .. r .. ' g:' .. g .. ' b:' .. b .. ' a:' .. a, 'Style.Minimal', 'debug')
 		else
 			-- Fallback to default if class color not found
-			r, b, g, a = unpack(SUI.DB.Styles.Minimal.Color.Art)
+			r, g, b, a = unpack(SUI.DB.Styles.Minimal.Color.Art)
+			SUI.Log('SetColor: Class color not found, using fallback colors - r:' .. r .. ' g:' .. g .. ' b:' .. b .. ' a:' .. a, 'Style.Minimal', 'debug')
 		end
 	else
 		-- Use custom colors
-		r, b, g, a = unpack(SUI.DB.Styles.Minimal.Color.Art)
+		r, g, b, a = unpack(SUI.DB.Styles.Minimal.Color.Art)
+		SUI.Log('SetColor: Using custom colors - r:' .. r .. ' g:' .. g .. ' b:' .. b .. ' a:' .. a, 'Style.Minimal', 'debug')
 	end
 
 	for i = 1, 5 do
-		if _G['SUI_Art_Minimal_Base' .. i] then _G['SUI_Art_Minimal_Base' .. i]:SetVertexColor(r, g, b, a) end
+		if _G['SUI_Art_Minimal_Base' .. i] then
+			_G['SUI_Art_Minimal_Base' .. i]:SetVertexColor(r, g, b, a)
+			SUI.Log('SetColor: Applied color to SUI_Art_Minimal_Base' .. i, 'Style.Minimal', 'debug')
+		end
 	end
 
 	for _, v in pairs(Artwork_Core.Trays) do
 		v.expanded.bg:SetVertexColor(r, g, b, a)
 		v.collapsed.bg:SetVertexColor(r, g, b, a)
+		SUI.Log('SetColor: Applied color to sliding tray backgrounds', 'Style.Minimal', 'debug')
 	end
+
+	SUI.Log('SetColor: Color update complete', 'Style.Minimal', 'debug')
 end
