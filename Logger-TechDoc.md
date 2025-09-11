@@ -7,11 +7,13 @@ The SpartanUI Logger provides a comprehensive logging system for World of Warcra
 ## Core Features
 
 - **5-Level Logging System**: Debug, Info, Warning, Error, Critical
+- **Three-Level Hierarchy**: Category → SubCategory → SubSubCategory organization
 - **Dynamic Categorization**: Automatic UI organization based on addon registration
 - **Real-Time Filtering**: Dynamic log level changes without data loss
-- **Professional UI**: AuctionHouse-styled interface with search and export capabilities
+- **Professional UI**: AuctionHouse-styled interface with authentic Blizzard styling
 - **Performance Optimized**: Minimal runtime overhead with efficient filtering
-- **Cross-Module Search**: Search across all registered addons simultaneously
+- **Cross-Source Search**: Search across all registered addons simultaneously
+- **Hierarchical Organization**: Support for granular log source organization
 
 ## Type Definitions (Emmy Lua)
 
@@ -109,6 +111,161 @@ loggers.display("Updating display layout")
 loggers.plugins("Plugin registered: " .. pluginName, "debug")
 ```
 
+## Hierarchical Logging Patterns
+
+### Automatic SubSubCategory Detection
+
+The Logger automatically detects and creates hierarchical structures based on your log source naming:
+
+```lua
+-- Two-level pattern: "AddonName.SubCategory"
+SUI.Log("Combat module loaded", "MyAddon.Combat")
+-- → Category: "MyAddon", SubCategory: "Combat" (selectable)
+
+-- Three-level pattern: "AddonName.SubCategory.SubSubCategory"  
+SUI.Log("Spell rotation started", "MyAddon.Combat.Rotation")
+SUI.Log("Cooldown tracked", "MyAddon.Combat.Cooldowns")
+-- → Category: "MyAddon", SubCategory: "Combat" (expandable)
+--   ├─ SubSubCategory: "Rotation" (selectable)
+--   └─ SubSubCategory: "Cooldowns" (selectable)
+```
+
+### Advanced Hierarchical Usage
+
+For complex addons, you can combine registration with hierarchical source names:
+
+```lua
+-- Register your main category
+local loggers = SUI.Logger:RegisterAddonCategory("MyRaidAddon", {
+    "core", "ui", "data"
+})
+
+-- Use basic subcategories
+loggers.core("Addon initialized")
+loggers.ui("Interface loaded") 
+
+-- Use hierarchical patterns for granular logging
+SUI.Log("Player data updated", "MyRaidAddon.data.player")
+SUI.Log("Guild data synced", "MyRaidAddon.data.guild")
+SUI.Log("Raid roster changed", "MyRaidAddon.data.roster")
+-- Creates: "MyRaidAddon" → "data" → "player/guild/roster"
+
+-- Mix registration and direct logging
+SUI.Log("Button created", "MyRaidAddon.ui.buttons")
+SUI.Log("Panel updated", "MyRaidAddon.ui.panels")
+-- Creates: "MyRaidAddon" → "ui" → "buttons/panels"
+```
+
+### Best Practices for Hierarchy
+
+- **Use consistent naming**: Stick to a pattern like "AddonName.System.Component"
+- **Group related functionality**: Put similar features under the same SubCategory
+- **Avoid deep nesting**: Three levels provide excellent organization without complexity
+- **Be descriptive**: Use clear names that indicate the log source purpose
+
+## Internal SpartanUI Module API
+
+For SpartanUI module developers, the Logger provides enhanced APIs that leverage the module system for automatic categorization and easier usage.
+
+### Module-Aware Logging Functions
+
+#### `SUI.ModuleLog(moduleObj, message, component?, level?)`
+
+Direct logging function that uses module object information:
+
+```lua
+local module = SUI:NewModule('MyModule')
+module.DisplayName = "My Custom Module"
+
+function module:OnInitialize()
+    SUI.ModuleLog(self, "Module initialized successfully")
+    SUI.ModuleLog(self, "Database connection established", "Database", "info") 
+    SUI.ModuleLog(self, "Configuration loaded", "Config.Settings", "debug")
+end
+```
+
+#### `SUI.SetupModuleLogging(moduleObj, components?)`
+
+Recommended setup function that returns pre-configured loggers:
+
+**Simple Logging Setup:**
+```lua
+local module = SUI:NewModule('AutoTurnIn')
+module.DisplayName = "Auto turn in"
+
+function module:OnInitialize()
+    -- Creates a simple logger that automatically uses "Auto turn in"
+    self.logger = SUI.SetupModuleLogging(self)
+    
+    -- Usage throughout the module
+    self.logger("Quest auto-accept enabled")
+    self.logger("Processing quest turn-in", "debug")
+    self.logger("Failed to turn in quest", "error")
+end
+```
+
+**Component-Based Logging Setup:**
+```lua
+local module = SUI:NewModule('ObjectiveTracker')
+
+function module:OnInitialize()
+    -- Creates component-specific loggers + general logger
+    self.loggers = SUI.SetupModuleLogging(self, {
+        "rules", "actions", "ui", "events"
+    })
+    
+    -- Usage with specific components
+    self.loggers.rules("Rule evaluation started") 
+    self.loggers.actions("Executing hide action on quest")
+    self.loggers.ui("Updating objective display")
+    self.loggers.events("QUEST_LOG_UPDATE received", "debug")
+    
+    -- General logging without component
+    self.loggers.general("Module fully initialized")
+end
+```
+
+### Automatic Hierarchy Creation
+
+The internal API automatically creates proper categorization:
+
+```lua
+-- With DisplayName = "Auto turn in"
+self.logger("Quest completed")
+-- → Category: "UI Components", SubCategory: "Auto turn in"
+
+-- With components
+self.loggers.database("Player data saved")  
+-- → Category: "UI Components", SubCategory: "Auto turn in.database"
+
+-- With sub-components 
+SUI.ModuleLog(self, "Connection timeout", "database.connection", "warning")
+-- → Category: "UI Components" 
+--   SubCategory: "Auto turn in.database" (expandable)
+--   SubSubCategory: "connection" (selectable)
+```
+
+### Migration from Direct SUI.Log Calls
+
+**Old Pattern:**
+```lua
+SUI.Log("Player health updated", "UnitFrames.Player.Health", "debug")
+SUI.Log("Action bar button created", "ActionBars", "info") 
+```
+
+**New Recommended Pattern:**
+```lua
+-- In module initialization
+self.loggers = SUI.SetupModuleLogging(self, {"player", "target", "party"})
+
+-- In usage
+self.loggers.player("Health updated", "health", "debug")
+-- Creates: "Unit Frames.player.health" hierarchy
+
+self.loggers.general("Action bar button created", "info")
+-- Creates: "Unit Frames" simple entry
+```
+
 ## User Interface Access
 
 ### Chat Commands
@@ -132,13 +289,44 @@ The Logger uses a 5-tier priority system with color coding:
 | error    | 4        | Red     | Error conditions               |
 | critical | 5        | Magenta | Critical system failures       |
 
-## Addon Categories
+## Three-Level Hierarchy System
 
-Registered addons are organized in the Logger UI as follows:
+The Logger uses a sophisticated three-level hierarchy system that matches Blizzard's AuctionHouse organization:
 
+### Level 1: Categories
+Top-level organizational groups:
 - **External Addons**: Simple registered addons (using `RegisterAddon()`)
-- **Custom Categories**: Complex registered addons (using `RegisterAddonCategory()`) appear as their own expandable categories
-- **SpartanUI Internal**: Core SpartanUI modules and handlers
+- **Custom Categories**: Complex registered addons (using `RegisterAddonCategory()`)
+- **SpartanUI Internal**: Core, UI Components, Handlers, Development
+
+### Level 2: SubCategories  
+Secondary organization within categories:
+- **For External Addons**: Individual addon names (e.g., "MyAddon")
+- **For Custom Categories**: User-defined subcategories (e.g., "Combat", "Interface") 
+- **For SpartanUI Internal**: System components (e.g., "UnitFrames", "Database")
+
+### Level 3: SubSubCategories
+Granular log source organization:
+- **Automatic Detection**: Sources like "MyAddon.Combat.Spells" automatically create hierarchy
+- **Expandable Groups**: SubCategories with multiple SubSubCategories become expandable
+- **Direct Logging**: Individual log sources are selectable for focused viewing
+
+### Hierarchy Examples
+
+```
+📁 MyAddon (5)                    ← Category (your custom category)
+├── 📂 Combat (3)                 ← SubCategory (expandable) 
+│   ├── 📄 Spells                 ← SubSubCategory (selectable log source)
+│   ├── 📄 Rotation               ← SubSubCategory (selectable log source)
+│   └── 📄 Cooldowns              ← SubSubCategory (selectable log source)
+├── 📂 Interface                  ← SubCategory (selectable log source)
+└── 📂 Database                   ← SubCategory (selectable log source)
+
+📁 External Addons (8)            ← Category (simple registrations)
+├── 📂 LibDataBroker              ← SubCategory (selectable log source)
+├── 📂 WeakAuras                  ← SubCategory (selectable log source)
+└── 📂 Details                    ← SubCategory (selectable log source)
+```
 
 ## Logger UI Components
 
@@ -150,16 +338,18 @@ Registered addons are organized in the Logger UI as follows:
 
 ### Control Bar
 
-- **Search All Modules**: Checkbox to enable cross-module searching
+- **Search All Sources**: Checkbox to enable cross-source searching
 - **Search Box**: Real-time text filtering with highlighting
 - **Log Level Dropdown**: Dynamic filtering by minimum log level
 - **Settings Button**: Direct access to configuration options
 
-### Module Tree (Left Panel)
+### Hierarchy Tree (Left Panel)
 
-- **Expandable Categories**: Organized by module type
-- **Selection System**: Single module selection for focused viewing
-- **Count Display**: Shows number of modules per category
+- **Three-Level Organization**: Category → SubCategory → SubSubCategory
+- **Expandable Structure**: Click to expand/collapse any level
+- **Selection System**: Select individual log sources for focused viewing
+- **Count Display**: Shows total items per category
+- **Visual Indicators**: Expand/collapse icons match AuctionHouse style
 
 ### Log Display (Right Panel)
 

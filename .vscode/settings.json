@@ -1186,7 +1186,9 @@
     "AuctionHouseFrameMixin",
     "AuctionFrame_DoesCategoryHaveFlag",
     "AuctionHouseFrameDisplayMode",
-    "CreateScrollBoxListTreeListView"
+    "CreateScrollBoxListTreeListView",
+    "ButtonFrameTemplate_HidePortrait",
+    "ButtonFrameTemplate_HideButtonBar"
   ],
   "Lua.workspace.ignoreDir": [".vscode", "libs/*"],
   "Lua.diagnostics.enable": true,

@@ -142,6 +142,12 @@ Always document function inputs and outputs to improve code maintainability and 
 
 No automated test framework. Testing done manually in World of Warcraft client using `/rl` to reload changes.
 
+**Important Notes:**
+- `luac` command does not work in this environment for syntax checking
+- Use VS Code IDE integration for error detection via the Problems tab
+- Only focus on actual errors, not formatting issues (formatting is auto-handled on save)
+- Lua syntax errors and WoW API issues will be flagged by the language server
+
 ## Important Locations
 
 - **Core/Framework.lua:1-100** - Main addon initialization and library setup

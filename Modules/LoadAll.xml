@@ -7,7 +7,6 @@
 	<Script file="Minimap\Minimap.lua" />
 	<Script file="Minimap\Options.lua" />
 	<Script file="ExpandedExpansionButton.lua" />
-	<Script file="Objectives.lua" />
 	<Script file="ObjectiveTracker.lua" />
 	<Script file="Tooltips.lua" />
 	<Script file="MailOpenAll.lua" />

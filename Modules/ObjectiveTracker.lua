@@ -1,13 +1,62 @@
 local _G, SUI, L = _G, SUI, SUI.L
 local module = SUI:NewModule('ObjectiveTracker') ---@type SUI.Module.ObjectiveTracker
 module.DisplayName = 'Objective Tracker'
-module.description = 'Enhanced objective tracker with advanced customization options'
+module.description = 'Enhanced objective tracker with advanced customization options and rules builder'
 
 ----------------------------------------------------------------------------------------------------
 -- Module Variables
 local ObjectiveTrackerFrame
 local fadeInAnim, fadeOutAnim
 local backgroundFrame
+local rulesEngine
+
+----------------------------------------------------------------------------------------------------
+-- Rules System Type Definitions
+
+---@class ObjectiveRule
+---@field id string Unique rule identifier
+---@field name string User-friendly rule name
+---@field enabled boolean Whether this rule is active
+---@field priority number Lower numbers = higher priority (1 = highest)
+---@field conditions ObjectiveCondition[] List of conditions (AND logic)
+---@field actions ObjectiveAction[] What to do when conditions match
+
+---@class ObjectiveCondition
+---@field type ConditionType The condition type
+---@field value any The condition value
+---@field operator? string Comparison operator (for numeric conditions)
+
+---@alias ConditionType
+---| "groupState"    # Solo, Group, Raid
+---| "combatState"   # InCombat, OutOfCombat
+---| "instanceType"  # Outdoor, Dungeon, Raid, PvP, Scenario
+---| "zoneType"      # City, Outdoor, Instance
+---| "playerLevel"   # Level comparison
+---| "timeOfDay"     # Day, Night
+---| "questItemNearby" # Quest item available within range
+
+---@class ObjectiveAction
+---@field type ActionType The action type
+---@field targets string[] List of objective tracker sections to affect
+
+---@alias ActionType
+---| "hide"         # Hide the specified sections
+---| "show"         # Show the specified sections
+---| "collapse"     # Collapse the specified sections
+---| "expand"       # Expand the specified sections
+
+-- Available tracker sections
+local TRACKER_SECTIONS = {
+	'achievement',
+	'quest',
+	'bonus',
+	'scenario',
+	'world',
+	'campaign',
+	'monthly',
+	'adventure',
+	'professions',
+}
 
 ----------------------------------------------------------------------------------------------------
 -- Database and Settings
@@ -16,8 +65,6 @@ function module:OnInitialize()
 	---@class SUI.ObjectiveTracker.Database
 	local defaults = {
 		enabled = true,
-		keybindToggle = nil,
-		hideInCombat = false,
 		scale = 1.0,
 		opacity = 1.0,
 		mouseoverOpacity = true,
@@ -26,13 +73,82 @@ function module:OnInitialize()
 		mouseoverDelay = 0.4,
 		backgroundEnabled = false,
 		backgroundColor = { r = 0, g = 0, b = 0, a = 0.5 },
-		autoCollapseInCombat = {
-			achievement = false,
-			quest = true,
-			bonus = false,
-			scenario = false,
-			world = false,
+		-- Quest button system
+		questButton = {
+			enabled = false,
+			scale = 1.0,
+			position = {
+				point = 'TOP',
+				relativeTo = 'ObjectiveTrackerFrame',
+				relativePoint = 'TOP',
+				x = 0,
+				y = 25,
+			},
+			maxDistance = 100,
+			zoneOnly = true,
+			trackingOnly = false,
 		},
+		rules = {
+			-- Example default rule: Hide quests in raid when in combat
+			['rule_1'] = {
+				id = 'rule_1',
+				name = 'Hide Quests in Raid Combat',
+				enabled = false,
+				priority = 1,
+				conditions = {
+					{ type = 'groupState', value = 'Raid' },
+					{ type = 'combatState', value = 'InCombat' },
+				},
+				actions = {
+					{ type = 'hide', targets = { 'quest', 'bonus' } },
+				},
+			},
+			-- Example rule: Group combat behavior
+			['rule_2'] = {
+				id = 'rule_2',
+				name = 'Group Combat - Hide All Except Scenario',
+				enabled = false,
+				priority = 2,
+				conditions = {
+					{ type = 'groupState', value = 'Group' },
+					{ type = 'combatState', value = 'InCombat' },
+					{ type = 'instanceType', value = 'Dungeon' },
+				},
+				actions = {
+					{ type = 'hide', targets = { 'quest', 'achievement', 'bonus', 'world' } },
+				},
+			},
+			-- Example rule: Solo outdoor quest focus
+			['rule_3'] = {
+				id = 'rule_3',
+				name = 'Solo Outdoor - Show Only Quests',
+				enabled = false,
+				priority = 3,
+				conditions = {
+					{ type = 'groupState', value = 'Solo' },
+					{ type = 'zoneType', value = 'Outdoor' },
+					{ type = 'combatState', value = 'OutOfCombat' },
+				},
+				actions = {
+					{ type = 'show', targets = { 'quest', 'world' } },
+					{ type = 'hide', targets = { 'achievement', 'bonus' } },
+				},
+			},
+			-- Example rule: Never hide when quest item is nearby
+			['rule_4'] = {
+				id = 'rule_4',
+				name = 'Always Show When Quest Item Nearby',
+				enabled = false,
+				priority = 0, -- Highest priority
+				conditions = {
+					{ type = 'questItemNearby', value = 'true' },
+				},
+				actions = {
+					{ type = 'show', targets = { 'quest', 'world', 'bonus' } },
+				},
+			},
+		},
+		nextRuleId = 5,
 	}
 
 	module.Database = SUI.SpartanUIDB:RegisterNamespace('ObjectiveTracker', { profile = defaults })
@@ -61,8 +177,7 @@ function module:OnEnable()
 		module:SetupObjectiveTracker()
 	end
 
-	module:SetupKeyBindings()
-	module:SetupEventHandlers()
+	module:SetupRulesEngine()
 	module:BuildOptions()
 end
 
@@ -252,165 +367,210 @@ function module:SetupMouseoverEffects()
 	isFadedIn = false
 end
 
-function module:SetupKeyBindings()
-	-- Register the binding name in WoW's system
-	_G['BINDING_HEADER_SUI_OBJECTIVES'] = 'SpartanUI Objectives'
-	_G['BINDING_NAME_SUI_TOGGLE_OBJECTIVES'] = 'Toggle Objective Tracker'
 
-	-- Store the function globally for the binding system
-	_G['SUI_ToggleObjectiveTracker'] = function()
-		module:ToggleObjectiveTracker()
-	end
+function module:SetupRulesEngine()
+	if not rulesEngine then
+		rulesEngine = CreateFrame('Frame')
+		rulesEngine:RegisterEvent('PLAYER_REGEN_DISABLED') -- Combat start
+		rulesEngine:RegisterEvent('PLAYER_REGEN_ENABLED') -- Combat end
+		rulesEngine:RegisterEvent('GROUP_JOINED')
+		rulesEngine:RegisterEvent('GROUP_LEFT')
+		rulesEngine:RegisterEvent('GROUP_ROSTER_UPDATE')
+		rulesEngine:RegisterEvent('ZONE_CHANGED')
+		rulesEngine:RegisterEvent('ZONE_CHANGED_INDOORS')
+		rulesEngine:RegisterEvent('ZONE_CHANGED_NEW_AREA')
+		rulesEngine:RegisterEvent('PLAYER_LEVEL_UP')
+		-- Quest item detection events
+		rulesEngine:RegisterEvent('QUEST_LOG_UPDATE')
+		rulesEngine:RegisterEvent('QUEST_WATCH_LIST_CHANGED')
+		rulesEngine:RegisterEvent('BAG_UPDATE_DELAYED')
 
-	-- If user has set a keybind in DB, apply it
-	if module.DB.keybindToggle and module.DB.keybindToggle ~= '' then
-		-- Clear any existing binding for this action
-		local key1, key2 = GetBindingKey('SUI_TOGGLE_OBJECTIVES')
-		if key1 then SetBinding(key1) end
-		if key2 then SetBinding(key2) end
-
-		-- Set the new binding
-		SetBinding(module.DB.keybindToggle, 'SUI_TOGGLE_OBJECTIVES')
-		SaveBindings(GetCurrentBindingSet())
-	end
-end
-
-function module:SetupEventHandlers()
-	if not module.eventFrame then
-		module.eventFrame = CreateFrame('Frame')
-		module.eventFrame:RegisterEvent('PLAYER_REGEN_DISABLED') -- Combat start
-		module.eventFrame:RegisterEvent('PLAYER_REGEN_ENABLED') -- Combat end
-
-		module.eventFrame:SetScript('OnEvent', function(self, event)
-			if event == 'PLAYER_REGEN_DISABLED' then
-				module:OnCombatStart()
-			elseif event == 'PLAYER_REGEN_ENABLED' then
-				module:OnCombatEnd()
-			end
+		rulesEngine:SetScript('OnEvent', function(self, event, ...)
+			module:EvaluateRules(event)
 		end)
+
+		-- Update quest button every 5 seconds for distance checks
+		if module.DB.questButton.enabled then C_Timer.NewTicker(5, function()
+			module:UpdateQuestButton()
+		end) end
 	end
 end
 
 ----------------------------------------------------------------------------------------------------
--- Event Handlers
+-- Quest Item Detection
 
-function module:OnCombatStart()
-	-- Store the main tracker collapsed state before combat
-	if not module.preCollapseState then module.preCollapseState = {} end
+function module:HasQuestItemNearby()
+	local settings = module.DB.questButton
+	return module:GetClosestQuestItem(settings.maxDistance, settings.zoneOnly, settings.trackingOnly) ~= nil
+end
 
-	-- Handle main tracker collapse in combat
-	if module.DB.hideInCombat then
-		if ObjectiveTrackerFrame and ObjectiveTrackerFrame.Header and ObjectiveTrackerFrame.Header.MinimizeButton then
-			-- Store the current collapsed state of the main tracker
-			module.preCollapseState.mainTracker = ObjectiveTrackerFrame.collapsed or false
-
-			-- Only collapse if it's not already collapsed
-			if not module.preCollapseState.mainTracker then ObjectiveTrackerFrame.Header.MinimizeButton:Click() end
+function module:GetClosestQuestItem(maxDistanceYd, zoneOnly, trackingOnly)
+	-- Simplified version of ExtraQuestButton logic
+	for index = 1, C_QuestLog.GetNumQuestWatches() do
+		local questID = C_QuestLog.GetQuestIDForQuestWatchIndex(index)
+		if questID then
+			local distance, itemLink = module:GetQuestDistanceWithItem(questID, maxDistanceYd, zoneOnly)
+			if itemLink then return itemLink, distance end
 		end
 	end
 
-	-- Store the current state of ALL sections before making any changes
-	local sectionMap = {
-		achievement = 'AchievementObjectiveTracker',
-		quest = 'QuestObjectiveTracker',
-		bonus = 'BonusObjectiveTracker',
-		scenario = 'ScenarioObjectiveTracker',
-		world = 'WorldQuestObjectiveTracker',
-	}
-
-	-- First, store the current state of all sections
-	for section, moduleKey in pairs(sectionMap) do
-		local trackerModule = _G[moduleKey]
-		if trackerModule then
-			local wasCollapsed = false
-			if trackerModule.Header and trackerModule.Header.MinimizeButton then wasCollapsed = trackerModule.collapsed or false end
-			module.preCollapseState[section] = wasCollapsed
-		end
-	end
-
-	-- Auto-collapse individual sections in combat
-	for section, shouldCollapse in pairs(module.DB.autoCollapseInCombat) do
-		if shouldCollapse then
-			if not ObjectiveTrackerFrame then return end
-
-			local moduleKey = sectionMap[section]
-			local trackerModule = _G[moduleKey]
-			if trackerModule then
-				-- Only collapse if it's not already collapsed
-				local isCurrentlyCollapsed = trackerModule.collapsed or false
-				if not isCurrentlyCollapsed then
-					-- Use pcall to safely attempt the collapse
-					local success, err = pcall(function()
-						-- Try different collapse methods based on WoW version/structure
-						if trackerModule.SetCollapsed then
-							trackerModule:SetCollapsed(true)
-						elseif trackerModule.Header and trackerModule.Header.MinimizeButton then
-							-- Simulate clicking the minimize button
-							trackerModule.Header.MinimizeButton:Click()
-						elseif trackerModule.Collapse then
-							trackerModule:Collapse()
-						end
-					end)
-				end
+	-- Check world quests if not tracking only
+	if not trackingOnly then
+		for index = 1, C_QuestLog.GetNumWorldQuestWatches() do
+			local questID = C_QuestLog.GetQuestIDForWorldQuestWatchIndex(index)
+			if questID then
+				local distance, itemLink = module:GetQuestDistanceWithItem(questID, maxDistanceYd, zoneOnly)
+				if itemLink then return itemLink, distance end
 			end
 		end
+	end
+
+	return nil
+end
+
+function module:GetQuestDistanceWithItem(questID, maxDistanceYd, zoneOnly)
+	local questLogIndex = C_QuestLog.GetLogIndexForQuestID(questID)
+	if not questLogIndex then return nil end
+
+	local itemLink = GetQuestLogSpecialItemInfo(questLogIndex)
+	if not itemLink then return nil end
+
+	if C_Item.GetItemCount(itemLink) == 0 then
+		return nil -- No point showing items we don't have
+	end
+
+	-- Check if quest is on current zone if zoneOnly is enabled
+	if zoneOnly and not C_QuestLog.IsOnMap(questID) then return nil end
+
+	-- Check distance
+	local distanceSq = C_QuestLog.GetDistanceSqToQuest(questID)
+	if distanceSq then
+		local distanceYd = math.sqrt(distanceSq)
+		if distanceYd <= maxDistanceYd then return distanceYd, itemLink end
+	end
+
+	return nil
+end
+
+----------------------------------------------------------------------------------------------------
+-- Quest Button Implementation
+
+local questButton
+
+function module:CreateQuestButton()
+	if questButton then return questButton end
+
+	questButton = CreateFrame('Button', 'SUI_ObjectiveQuestButton', ObjectiveTrackerFrame, 'ActionButtonTemplate, SecureActionButtonTemplate')
+	questButton:SetSize(32, 32)
+	questButton:SetAttribute('type', 'item')
+
+	-- Initialize button mixin
+	Mixin(questButton, ItemMixin)
+
+	-- Style the button
+	questButton:SetNormalTexture([[Interface\Buttons\UI-Quickslot2]])
+	questButton:SetPushedTexture([[Interface\Buttons\UI-Quickslot-Depress]])
+	questButton:SetHighlightTexture([[Interface\Buttons\ButtonHilight-Square]], 'ADD')
+
+	-- Add cooldown frame
+	local cooldown = CreateFrame('Cooldown', questButton:GetName() .. 'Cooldown', questButton, 'CooldownFrameTemplate')
+	cooldown:SetAllPoints()
+	questButton.cooldown = cooldown
+
+	-- Add count text
+	local count = questButton:CreateFontString(nil, 'OVERLAY', 'NumberFontNormal')
+	count:SetPoint('BOTTOMRIGHT', -2, 2)
+	questButton.Count = count
+
+	questButton:Hide()
+	questButton:RegisterEvent('BAG_UPDATE_DELAYED')
+	questButton:RegisterEvent('BAG_UPDATE_COOLDOWN')
+
+	questButton:SetScript('OnEvent', function(self, event)
+		if event == 'BAG_UPDATE_DELAYED' then
+			module:UpdateQuestButtonCount()
+		elseif event == 'BAG_UPDATE_COOLDOWN' then
+			module:UpdateQuestButtonCooldown()
+		end
+	end)
+
+	questButton:SetScript('OnEnter', function(self)
+		local itemLink = self:GetItemLink()
+		if itemLink then
+			GameTooltip:SetOwner(self, 'ANCHOR_LEFT')
+			GameTooltip:SetHyperlink(itemLink)
+		end
+	end)
+
+	questButton:SetScript('OnLeave', function(self)
+		GameTooltip_Hide(self)
+	end)
+
+	return questButton
+end
+
+function module:UpdateQuestButton()
+	if not module.DB.questButton.enabled then
+		if questButton then questButton:Hide() end
+		return
+	end
+
+	if not questButton then questButton = module:CreateQuestButton() end
+
+	local settings = module.DB.questButton
+	local itemLink, distance = module:GetClosestQuestItem(settings.maxDistance, settings.zoneOnly, settings.trackingOnly)
+
+	if itemLink then
+		if itemLink ~= questButton:GetItemLink() then
+			questButton:SetItemLink(itemLink)
+			questButton:SetIcon(C_Item.GetItemIconByID(questButton:GetItemID()))
+			questButton:SetAttribute('item', 'item:' .. questButton:GetItemID())
+
+			module:UpdateQuestButtonCount()
+			module:UpdateQuestButtonCooldown()
+
+			SUI.Log('Quest button updated with item: ' .. itemLink, 'ObjectiveTracker', 'debug')
+		end
+
+		questButton:Show()
+		module:PositionQuestButton()
+	else
+		questButton:Hide()
+		questButton:SetAttribute('item', nil)
 	end
 end
 
-function module:OnCombatEnd()
-	-- Restore main tracker state
-	if module.DB.hideInCombat and module.preCollapseState and module.preCollapseState.mainTracker ~= nil then
-		if ObjectiveTrackerFrame and ObjectiveTrackerFrame.Header and ObjectiveTrackerFrame.Header.MinimizeButton then
-			-- Only expand if it was expanded before combat
-			if not module.preCollapseState.mainTracker then ObjectiveTrackerFrame.Header.MinimizeButton:Click() end
-		end
+function module:UpdateQuestButtonCount()
+	if not questButton or questButton:IsItemEmpty() then return end
+
+	local count = C_Item.GetItemCount(questButton:GetItemLink())
+	if count > 1 then
+		questButton.Count:SetText(count)
+		questButton.Count:Show()
+	else
+		questButton.Count:Hide()
 	end
+end
 
-	-- Restore individual section collapsed states
-	if module.preCollapseState then
-		local sectionMap = {
-			achievement = 'AchievementObjectiveTracker',
-			quest = 'QuestObjectiveTracker',
-			bonus = 'BonusObjectiveTracker',
-			scenario = 'ScenarioObjectiveTracker',
-			world = 'WorldQuestObjectiveTracker',
-		}
+function module:UpdateQuestButtonCooldown()
+	if not questButton or questButton:IsItemEmpty() then return end
 
-		for section, wasCollapsed in pairs(module.preCollapseState) do
-			-- Skip the mainTracker entry since that's not a section
-			if section ~= 'mainTracker' then
-				-- Only restore sections that:
-				-- 1. Were expanded before combat (wasCollapsed = false)
-				-- 2. Have auto-collapse enabled (so we actually changed them during combat)
-				if module.DB.autoCollapseInCombat[section] and not wasCollapsed then
-					if not ObjectiveTrackerFrame then return end
-
-					local moduleKey = sectionMap[section]
-					local trackerModule = _G[moduleKey]
-					if trackerModule then
-						-- Check if it's currently collapsed (it should be if our auto-collapse worked)
-						local isCurrentlyCollapsed = trackerModule.collapsed or false
-						if isCurrentlyCollapsed then
-							-- Use pcall to safely attempt the expand
-							local success, err = pcall(function()
-								-- Try different expand methods based on WoW version/structure
-								if trackerModule.SetCollapsed then
-									trackerModule:SetCollapsed(false)
-								elseif trackerModule.Header and trackerModule.Header.MinimizeButton then
-									-- Click to expand
-									trackerModule.Header.MinimizeButton:Click()
-								elseif trackerModule.Expand then
-									trackerModule:Expand()
-								end
-							end)
-						end
-					end
-				end
-			end
-		end
-		-- Clear the stored state
-		module.preCollapseState = {}
+	local start, duration = C_Item.GetItemCooldown(questButton:GetItemID())
+	if duration > 0 then
+		questButton.cooldown:SetCooldown(start, duration)
+		questButton.cooldown:Show()
+	else
+		questButton.cooldown:Hide()
 	end
+end
+
+function module:PositionQuestButton()
+	if not questButton then return end
+
+	local pos = module.DB.questButton.position
+	questButton:ClearAllPoints()
+	questButton:SetPoint(pos.point, _G[pos.relativeTo], pos.relativePoint, pos.x, pos.y)
+	questButton:SetScale(module.DB.questButton.scale)
 end
 
 ----------------------------------------------------------------------------------------------------
@@ -479,6 +639,262 @@ function module:UpdateMouseoverSettings()
 end
 
 ----------------------------------------------------------------------------------------------------
+-- Rules Engine
+
+function module:EvaluateRules(triggerEvent)
+	if not module.DB.rules then
+		SUI.Log('Rules evaluation skipped - rules missing', 'ObjectiveTracker', 'debug')
+		return
+	end
+
+	SUI.Log('Evaluating rules triggered by: ' .. (triggerEvent or 'manual'), 'ObjectiveTracker', 'info')
+
+	-- Get all enabled rules sorted by priority
+	local activeRules = {}
+	for _, rule in pairs(module.DB.rules) do
+		if rule.enabled then table.insert(activeRules, rule) end
+	end
+
+	table.sort(activeRules, function(a, b)
+		return a.priority < b.priority
+	end)
+
+	-- Evaluate each rule
+	for _, rule in ipairs(activeRules) do
+		if module:EvaluateRule(rule) then
+			SUI.Log('Rule "' .. rule.name .. '" conditions met, executing actions', 'ObjectiveTracker', 'info')
+			module:ExecuteRuleActions(rule)
+			-- Only execute the first matching rule (highest priority)
+			return
+		end
+	end
+
+	SUI.Log('No rules matched current conditions', 'ObjectiveTracker', 'debug')
+end
+
+---@param rule ObjectiveRule
+---@return boolean
+function module:EvaluateRule(rule)
+	for _, condition in ipairs(rule.conditions) do
+		if not module:EvaluateCondition(condition) then return false end
+	end
+	return true
+end
+
+---@param condition ObjectiveCondition
+---@return boolean
+function module:EvaluateCondition(condition)
+	local conditionType = condition.type
+	local expectedValue = condition.value
+	local operator = condition.operator or '=='
+
+	if conditionType == 'groupState' then
+		local currentState = module:GetGroupState()
+		return currentState == expectedValue
+	elseif conditionType == 'combatState' then
+		local inCombat = InCombatLockdown()
+		local currentState = inCombat and 'InCombat' or 'OutOfCombat'
+		return currentState == expectedValue
+	elseif conditionType == 'instanceType' then
+		local currentType = module:GetInstanceType()
+		return currentType == expectedValue
+	elseif conditionType == 'zoneType' then
+		local currentType = module:GetZoneType()
+		return currentType == expectedValue
+	elseif conditionType == 'playerLevel' then
+		local currentLevel = UnitLevel('player')
+		return module:CompareValues(currentLevel, expectedValue, operator)
+	elseif conditionType == 'timeOfDay' then
+		local currentTime = module:GetTimeOfDay()
+		return currentTime == expectedValue
+	elseif conditionType == 'questItemNearby' then
+		local hasQuestItem = module:HasQuestItemNearby()
+		local expectedState = expectedValue == 'true' or expectedValue == true
+		return hasQuestItem == expectedState
+	end
+
+	return false
+end
+
+---@param rule ObjectiveRule
+function module:ExecuteRuleActions(rule)
+	for _, action in ipairs(rule.actions) do
+		local actionType = action.type
+		local targets = action.targets or {}
+
+		SUI.Log('Executing action "' .. actionType .. '" on targets: ' .. table.concat(targets, ', '), 'ObjectiveTracker', 'info')
+
+		for _, target in ipairs(targets) do
+			if actionType == 'hide' then
+				module:SetSectionVisibility(target, false)
+			elseif actionType == 'show' then
+				module:SetSectionVisibility(target, true)
+			elseif actionType == 'collapse' then
+				module:SetSectionCollapsed(target, true)
+			elseif actionType == 'expand' then
+				module:SetSectionCollapsed(target, false)
+			end
+		end
+	end
+end
+
+-- Condition evaluation helper functions
+
+function module:GetGroupState()
+	if IsInRaid() then
+		return 'Raid'
+	elseif IsInGroup() then
+		return 'Group'
+	else
+		return 'Solo'
+	end
+end
+
+function module:GetInstanceType()
+	local _, instanceType = IsInInstance()
+	if instanceType == 'party' then
+		return 'Dungeon'
+	elseif instanceType == 'raid' then
+		return 'Raid'
+	elseif instanceType == 'pvp' then
+		return 'PvP'
+	elseif instanceType == 'scenario' then
+		return 'Scenario'
+	else
+		return 'Outdoor'
+	end
+end
+
+function module:GetZoneType()
+	local inInstance = IsInInstance()
+	if inInstance then return 'Instance' end
+
+	local pvpType = C_PvP.GetZonePVPInfo()
+	if pvpType == 'sanctuary' then
+		return 'City'
+	else
+		return 'Outdoor'
+	end
+end
+
+function module:GetTimeOfDay()
+	local hour = tonumber(date('%H'))
+	if hour >= 6 and hour < 18 then
+		return 'Day'
+	else
+		return 'Night'
+	end
+end
+
+function module:CompareValues(current, expected, operator)
+	if operator == '==' then
+		return current == expected
+	elseif operator == '!=' then
+		return current ~= expected
+	elseif operator == '>' then
+		return current > expected
+	elseif operator == '<' then
+		return current < expected
+	elseif operator == '>=' then
+		return current >= expected
+	elseif operator == '<=' then
+		return current <= expected
+	end
+	return false
+end
+
+function module:SetSectionVisibility(sectionName, visible)
+	local sectionMap = {
+		achievement = 'AchievementObjectiveTracker',
+		quest = 'QuestObjectiveTracker',
+		bonus = 'BonusObjectiveTracker',
+		scenario = 'ScenarioObjectiveTracker',
+		world = 'WorldQuestObjectiveTracker',
+		campaign = 'CampaignQuestObjectiveTracker',
+		monthly = 'MonthlyActivitiesObjectiveTracker',
+		adventure = 'AdventureObjectiveTracker',
+		professions = 'ProfessionsRecipeTracker',
+	}
+
+	local moduleKey = sectionMap[sectionName]
+	local trackerModule = _G[moduleKey]
+	if trackerModule then
+		local success = pcall(function()
+			if visible then
+				if trackerModule.Show then trackerModule:Show() end
+			else
+				if trackerModule.Hide then trackerModule:Hide() end
+			end
+		end)
+		if success then SUI.Log('Set section "' .. sectionName .. '" visibility to ' .. tostring(visible), 'ObjectiveTracker', 'debug') end
+	end
+end
+
+function module:SetSectionCollapsed(sectionName, collapsed)
+	local sectionMap = {
+		achievement = 'AchievementObjectiveTracker',
+		quest = 'QuestObjectiveTracker',
+		bonus = 'BonusObjectiveTracker',
+		scenario = 'ScenarioObjectiveTracker',
+		world = 'WorldQuestObjectiveTracker',
+		campaign = 'CampaignQuestObjectiveTracker',
+		monthly = 'MonthlyActivitiesObjectiveTracker',
+		adventure = 'AdventureObjectiveTracker',
+		professions = 'ProfessionsRecipeTracker',
+	}
+
+	local moduleKey = sectionMap[sectionName]
+	local trackerModule = _G[moduleKey]
+	if trackerModule then
+		local success = pcall(function()
+			if trackerModule.SetCollapsed then
+				trackerModule:SetCollapsed(collapsed)
+			elseif trackerModule.Header and trackerModule.Header.MinimizeButton then
+				local isCurrentlyCollapsed = trackerModule.collapsed or false
+				if collapsed ~= isCurrentlyCollapsed then trackerModule.Header.MinimizeButton:Click() end
+			end
+		end)
+		if success then SUI.Log('Set section "' .. sectionName .. '" collapsed to ' .. tostring(collapsed), 'ObjectiveTracker', 'debug') end
+	end
+end
+
+-- Rule management functions
+
+function module:CreateRule(name, conditions, actions)
+	local ruleId = 'rule_' .. module.DB.nextRuleId
+	module.DB.nextRuleId = module.DB.nextRuleId + 1
+
+	local rule = {
+		id = ruleId,
+		name = name or 'New Rule',
+		enabled = true,
+		priority = module:GetNextPriority(),
+		conditions = conditions or {},
+		actions = actions or {},
+	}
+
+	module.DB.rules[ruleId] = rule
+	SUI.Log('Created new rule: ' .. rule.name, 'ObjectiveTracker', 'info')
+	return ruleId
+end
+
+function module:DeleteRule(ruleId)
+	if module.DB.rules[ruleId] then
+		local ruleName = module.DB.rules[ruleId].name
+		module.DB.rules[ruleId] = nil
+		SUI.Log('Deleted rule: ' .. ruleName, 'ObjectiveTracker', 'info')
+	end
+end
+
+function module:GetNextPriority()
+	local maxPriority = 0
+	for _, rule in pairs(module.DB.rules) do
+		if rule.priority > maxPriority then maxPriority = rule.priority end
+	end
+	return maxPriority + 1
+end
+
+----------------------------------------------------------------------------------------------------
 -- Public API
 
 function module:ToggleObjectiveTracker()
@@ -530,6 +946,518 @@ end
 ----------------------------------------------------------------------------------------------------
 -- Options Panel
 
+function module:GetRulesBuilderOptions()
+	local args = {
+		description = {
+			type = 'description',
+			name = L['Create rules to control objective tracker behavior based on different conditions. Rules are evaluated in priority order (lower numbers first).'],
+			order = 1,
+		},
+		newRule = {
+			type = 'group',
+			name = L['Create New Rule'],
+			inline = true,
+			order = 2,
+			args = {
+				newRuleName = {
+					type = 'input',
+					name = L['Rule Name'],
+					desc = L['Enter a name for the new rule'],
+					get = function()
+						return module.newRuleName or ''
+					end,
+					set = function(_, value)
+						module.newRuleName = value
+					end,
+					order = 1,
+				},
+				createRule = {
+					type = 'execute',
+					name = L['Create Rule'],
+					desc = L['Create a new rule with the specified name'],
+					disabled = function()
+						return not module.newRuleName or module.newRuleName:trim() == ''
+					end,
+					func = function()
+						local name = module.newRuleName:trim()
+						if name ~= '' then
+							module:CreateRule(name)
+							module.newRuleName = nil
+							-- Refresh options to show new rule
+							LibStub('AceConfigRegistry-3.0'):NotifyChange('SpartanUI')
+						end
+					end,
+					order = 2,
+				},
+			},
+		},
+		spacer1 = {
+			type = 'description',
+			name = '\n',
+			order = 3,
+		},
+		priorityManagement = {
+			type = 'group',
+			name = L['Rule Priority Management'],
+			inline = true,
+			order = 4,
+			args = module:GetPriorityManagementOptions(),
+		},
+		spacer2 = {
+			type = 'description',
+			name = '\n',
+			order = 5,
+		},
+	}
+
+	-- Add existing rules
+	local ruleOrder = 10
+	local rulesList = {}
+
+	for ruleId, rule in pairs(module.DB.rules or {}) do
+		table.insert(rulesList, rule)
+	end
+
+	table.sort(rulesList, function(a, b)
+		return a.priority < b.priority
+	end)
+
+	for _, rule in ipairs(rulesList) do
+		args['rule_' .. rule.id] = {
+			type = 'group',
+			name = rule.name .. ' (Priority: ' .. rule.priority .. ')',
+			inline = false,
+			order = ruleOrder,
+			args = module:GetRuleEditorOptions(rule),
+		}
+		ruleOrder = ruleOrder + 1
+	end
+
+	return args
+end
+
+function module:GetPriorityManagementOptions()
+	local args = {
+		description = {
+			type = 'description',
+			name = L['Reorder rules by priority (lower numbers execute first). Use arrows to move rules up/down.'],
+			order = 1,
+		},
+	}
+
+	-- Get all rules sorted by priority
+	local rulesList = {}
+	for ruleId, rule in pairs(module.DB.rules or {}) do
+		table.insert(rulesList, rule)
+	end
+	table.sort(rulesList, function(a, b) return a.priority < b.priority end)
+
+	local order = 10
+	for i, rule in ipairs(rulesList) do
+		args['priority_' .. rule.id] = {
+			type = 'group',
+			name = string.format('%d. %s', rule.priority, rule.name),
+			inline = true,
+			order = order,
+			args = {
+				moveUp = {
+					type = 'execute',
+					name = '↑',
+					desc = L['Move rule up (higher priority)'],
+					disabled = function()
+						return i == 1 -- First rule can't move up
+					end,
+					func = function()
+						module:MoveRulePriority(rule.id, -1)
+						LibStub('AceConfigRegistry-3.0'):NotifyChange('SpartanUI')
+					end,
+					order = 1,
+					width = 0.3,
+				},
+				moveDown = {
+					type = 'execute',
+					name = '↓',
+					desc = L['Move rule down (lower priority)'],
+					disabled = function()
+						return i == #rulesList -- Last rule can't move down
+					end,
+					func = function()
+						module:MoveRulePriority(rule.id, 1)
+						LibStub('AceConfigRegistry-3.0'):NotifyChange('SpartanUI')
+					end,
+					order = 2,
+					width = 0.3,
+				},
+				enabled = {
+					type = 'toggle',
+					name = L['Enabled'],
+					desc = L['Enable or disable this rule'],
+					get = function()
+						return rule.enabled
+					end,
+					set = function(_, value)
+						rule.enabled = value
+						module:EvaluateRules('manual')
+					end,
+					order = 3,
+					width = 0.5,
+				},
+				spacer = {
+					type = 'description',
+					name = '',
+					order = 4,
+					width = 'full',
+				},
+			},
+		}
+		order = order + 1
+	end
+
+	return args
+end
+
+function module:MoveRulePriority(ruleId, direction)
+	local rule = module.DB.rules[ruleId]
+	if not rule then return end
+
+	-- Get all rules sorted by priority
+	local rulesList = {}
+	for id, r in pairs(module.DB.rules) do
+		table.insert(rulesList, r)
+	end
+	table.sort(rulesList, function(a, b) return a.priority < b.priority end)
+
+	-- Find current position
+	local currentIndex
+	for i, r in ipairs(rulesList) do
+		if r.id == ruleId then
+			currentIndex = i
+			break
+		end
+	end
+
+	if not currentIndex then return end
+
+	local newIndex = currentIndex + direction
+	if newIndex < 1 or newIndex > #rulesList then return end
+
+	-- Swap priorities
+	local otherRule = rulesList[newIndex]
+	local tempPriority = rule.priority
+	rule.priority = otherRule.priority
+	otherRule.priority = tempPriority
+
+	SUI.Log('Moved rule "' .. rule.name .. '" ' .. (direction > 0 and 'down' or 'up'), 'ObjectiveTracker', 'info')
+end
+
+function module:GetRuleEditorOptions(rule)
+	local conditionTypes = {
+		groupState = L['Group State'],
+		combatState = L['Combat State'],
+		instanceType = L['Instance Type'],
+		zoneType = L['Zone Type'],
+		playerLevel = L['Player Level'],
+		timeOfDay = L['Time of Day'],
+	}
+
+	local groupStates = { Solo = L['Solo'], Group = L['Group'], Raid = L['Raid'] }
+	local combatStates = { InCombat = L['In Combat'], OutOfCombat = L['Out of Combat'] }
+	local instanceTypes = { Outdoor = L['Outdoor'], Dungeon = L['Dungeon'], Raid = L['Raid'], PvP = L['PvP'], Scenario = L['Scenario'] }
+	local zoneTypes = { City = L['City'], Outdoor = L['Outdoor'], Instance = L['Instance'] }
+	local timeStates = { Day = L['Day'], Night = L['Night'] }
+	local operators = { ['=='] = L['Equals'], ['!='] = L['Not Equals'], ['>'] = L['Greater Than'], ['<'] = L['Less Than'], ['>='] = L['Greater or Equal'], ['<='] = L['Less or Equal'] }
+
+	local actionTypes = {
+		hide = L['Hide'],
+		show = L['Show'],
+		collapse = L['Collapse'],
+		expand = L['Expand'],
+	}
+
+	local trackerSections = {}
+	for _, section in ipairs(TRACKER_SECTIONS) do
+		trackerSections[section] = L[section:gsub('^%l', string.upper)] or section
+	end
+
+	local args = {
+		enabled = {
+			type = 'toggle',
+			name = L['Enabled'],
+			desc = L['Enable or disable this rule'],
+			get = function()
+				return rule.enabled
+			end,
+			set = function(_, value)
+				rule.enabled = value
+				if module.DB.rulesEnabled then module:EvaluateRules('manual') end
+			end,
+			order = 1,
+		},
+		priority = {
+			type = 'range',
+			name = L['Priority'],
+			desc = L['Rule priority (lower numbers execute first)'],
+			min = 1,
+			max = 20,
+			step = 1,
+			get = function()
+				return rule.priority
+			end,
+			set = function(_, value)
+				rule.priority = value
+				module:EvaluateRules('manual')
+				LibStub('AceConfigRegistry-3.0'):NotifyChange('SpartanUI')
+			end,
+			order = 2,
+		},
+		spacer1 = {
+			type = 'description',
+			name = '\n' .. L['Conditions (ALL must be true):'],
+			order = 10,
+		},
+		deleteRule = {
+			type = 'execute',
+			name = L['Delete Rule'],
+			desc = L['Delete this rule permanently'],
+			confirm = true,
+			confirmText = L['Are you sure you want to delete this rule?'],
+			func = function()
+				module:DeleteRule(rule.id)
+				LibStub('AceConfigRegistry-3.0'):NotifyChange('SpartanUI')
+			end,
+			order = 99,
+		},
+	}
+
+	-- Add condition editors
+	local condOrder = 20
+	for i, condition in ipairs(rule.conditions) do
+		args['condition_' .. i] = module:GetConditionEditorOptions(rule, condition, i, condOrder)
+		condOrder = condOrder + 1
+	end
+
+	-- Add new condition button
+	args.addCondition = {
+		type = 'execute',
+		name = L['Add Condition'],
+		desc = L['Add a new condition to this rule'],
+		func = function()
+			table.insert(rule.conditions, { type = 'groupState', value = 'Solo' })
+			SUI.Options:Refresh()
+		end,
+		order = condOrder,
+	}
+
+	-- Add action editors
+	args.spacer2 = {
+		type = 'description',
+		name = '\n' .. L['Actions (what to do when conditions match):'],
+		order = condOrder + 10,
+	}
+
+	local actionOrder = condOrder + 20
+	for i, action in ipairs(rule.actions) do
+		args['action_' .. i] = module:GetActionEditorOptions(rule, action, i, actionOrder)
+		actionOrder = actionOrder + 1
+	end
+
+	-- Add new action button
+	args.addAction = {
+		type = 'execute',
+		name = L['Add Action'],
+		desc = L['Add a new action to this rule'],
+		func = function()
+			table.insert(rule.actions, { type = 'hide', targets = { 'quest' } })
+			SUI.Options:Refresh()
+		end,
+		order = actionOrder,
+	}
+
+	return args
+end
+
+function module:GetConditionEditorOptions(rule, condition, index, baseOrder)
+	local conditionTypes = {
+		groupState = L['Group State'],
+		combatState = L['Combat State'],
+		instanceType = L['Instance Type'],
+		zoneType = L['Zone Type'],
+		playerLevel = L['Player Level'],
+		timeOfDay = L['Time of Day'],
+		questItemNearby = L['Quest Item Nearby'],
+	}
+
+	local valueOptions = {}
+	if condition.type == 'groupState' then
+		valueOptions = { Solo = L['Solo'], Group = L['Group'], Raid = L['Raid'] }
+	elseif condition.type == 'combatState' then
+		valueOptions = { InCombat = L['In Combat'], OutOfCombat = L['Out of Combat'] }
+	elseif condition.type == 'instanceType' then
+		valueOptions = { Outdoor = L['Outdoor'], Dungeon = L['Dungeon'], Raid = L['Raid'], PvP = L['PvP'], Scenario = L['Scenario'] }
+	elseif condition.type == 'zoneType' then
+		valueOptions = { City = L['City'], Outdoor = L['Outdoor'], Instance = L['Instance'] }
+	elseif condition.type == 'timeOfDay' then
+		valueOptions = { Day = L['Day'], Night = L['Night'] }
+	elseif condition.type == 'questItemNearby' then
+		valueOptions = { ['true'] = L['Yes'], ['false'] = L['No'] }
+	end
+
+	local operators = { ['=='] = L['Equals'], ['!='] = L['Not Equals'], ['>'] = L['Greater Than'], ['<'] = L['Less Than'], ['>='] = L['Greater or Equal'], ['<='] = L['Less or Equal'] }
+
+	return {
+		type = 'group',
+		name = L['Condition'] .. ' ' .. index,
+		inline = true,
+		order = baseOrder,
+		args = {
+			conditionType = {
+				type = 'select',
+				name = L['Type'],
+				desc = L['Type of condition to check'],
+				values = conditionTypes,
+				get = function()
+					return condition.type
+				end,
+				set = function(_, value)
+					condition.type = value
+					-- Reset value when type changes
+					if value == 'groupState' then
+						condition.value = 'Solo'
+					elseif value == 'combatState' then
+						condition.value = 'InCombat'
+					elseif value == 'instanceType' then
+						condition.value = 'Outdoor'
+					elseif value == 'zoneType' then
+						condition.value = 'City'
+					elseif value == 'playerLevel' then
+						condition.value = 80
+						condition.operator = '=='
+					elseif value == 'timeOfDay' then
+						condition.value = 'Day'
+					elseif value == 'questItemNearby' then
+						condition.value = 'true'
+					end
+					LibStub('AceConfigRegistry-3.0'):NotifyChange('SpartanUI')
+				end,
+				order = 1,
+			},
+			conditionValue = {
+				type = condition.type == 'playerLevel' and 'range' or 'select',
+				name = L['Value'],
+				desc = L['Value to compare against'],
+				values = condition.type ~= 'playerLevel' and valueOptions or nil,
+				min = condition.type == 'playerLevel' and 1 or nil,
+				max = condition.type == 'playerLevel' and 80 or nil,
+				step = condition.type == 'playerLevel' and 1 or nil,
+				get = function()
+					return condition.value
+				end,
+				set = function(_, value)
+					condition.value = value
+					module:EvaluateRules('manual')
+				end,
+				order = 2,
+			},
+			conditionOperator = {
+				type = 'select',
+				name = L['Operator'],
+				desc = L['Comparison operator'],
+				values = operators,
+				hidden = function()
+					return condition.type ~= 'playerLevel'
+				end,
+				get = function()
+					return condition.operator or '=='
+				end,
+				set = function(_, value)
+					condition.operator = value
+					module:EvaluateRules('manual')
+				end,
+				order = 3,
+			},
+			removeCondition = {
+				type = 'execute',
+				name = L['Remove'],
+				desc = L['Remove this condition'],
+				func = function()
+					table.remove(rule.conditions, index)
+					LibStub('AceConfigRegistry-3.0'):NotifyChange('SpartanUI')
+				end,
+				order = 4,
+			},
+		},
+	}
+end
+
+function module:GetActionEditorOptions(rule, action, index, baseOrder)
+	local actionTypes = {
+		hide = L['Hide'],
+		show = L['Show'],
+		collapse = L['Collapse'],
+		expand = L['Expand'],
+	}
+
+	local trackerSections = {}
+	for _, section in ipairs(TRACKER_SECTIONS) do
+		trackerSections[section] = L[section:gsub('^%l', string.upper)] or section
+	end
+
+	-- Get current targets as comma-separated string
+	local currentTargets = table.concat(action.targets or {}, ', ')
+
+	return {
+		type = 'group',
+		name = L['Action'] .. ' ' .. index,
+		inline = true,
+		order = baseOrder,
+		args = {
+			actionType = {
+				type = 'select',
+				name = L['Action'],
+				desc = L['What to do with the target sections'],
+				values = actionTypes,
+				get = function()
+					return action.type
+				end,
+				set = function(_, value)
+					action.type = value
+					module:EvaluateRules('manual')
+				end,
+				order = 1,
+			},
+			actionTargets = {
+				type = 'input',
+				name = L['Targets'],
+				desc = L['Comma-separated list of sections (e.g., quest, achievement, bonus)'],
+				multiline = false,
+				get = function()
+					return currentTargets
+				end,
+				set = function(_, value)
+					local targets = {}
+					for target in value:gmatch('[^,]+') do
+						local trimmed = target:trim()
+						if trimmed ~= '' then table.insert(targets, trimmed) end
+					end
+					action.targets = targets
+					module:EvaluateRules('manual')
+				end,
+				order = 2,
+			},
+			removeAction = {
+				type = 'execute',
+				name = L['Remove'],
+				desc = L['Remove this action'],
+				func = function()
+					table.remove(rule.actions, index)
+					LibStub('AceConfigRegistry-3.0'):NotifyChange('SpartanUI')
+				end,
+				order = 3,
+			},
+		},
+	}
+end
+
 function module:BuildOptions()
 	local options = {
 		type = 'group',
@@ -537,49 +1465,24 @@ function module:BuildOptions()
 		args = {
 			description = {
 				type = 'description',
-				name = L['Configure the objective tracker with advanced options including keybinds, opacity, scaling, and individual section control.'],
+				name = L['Configure the objective tracker with advanced options including keybinds, opacity, scaling, rules builder, and individual section control.'],
 				order = 1,
 			},
-			general = {
+			rulesToggle = {
 				type = 'group',
-				name = L['General'],
+				name = L['Rules System'],
 				inline = true,
-				order = 2,
+				order = 1.5,
 				args = {
-					keybindToggle = {
-						type = 'keybinding',
-						name = L['Toggle Keybind'],
-						desc = L['Set a keybind to toggle the objective tracker'],
-						get = function()
-							return GetBindingKey('SUI_TOGGLE_OBJECTIVES') or module.DB.keybindToggle
-						end,
-						set = function(_, value)
-							-- Clear existing binding
-							local key1, key2 = GetBindingKey('SUI_TOGGLE_OBJECTIVES')
-							if key1 then SetBinding(key1) end
-							if key2 then SetBinding(key2) end
-
-							-- Set new binding if value provided
-							if value and value ~= '' then
-								SetBinding(value, 'SUI_TOGGLE_OBJECTIVES')
-								SaveBindings(GetCurrentBindingSet())
-							end
-
-							module.DB.keybindToggle = value
+					testRules = {
+						type = 'execute',
+						name = L['Test Rules'],
+						desc = L['Manually test current rules against current conditions'],
+						func = function()
+							module:EvaluateRules('manual')
+							print('SpartanUI: Rules evaluation complete - check chat for details')
 						end,
 						order = 1,
-					},
-					hideInCombat = {
-						type = 'toggle',
-						name = L['Hide in Combat'],
-						desc = L['Hide the objective tracker during combat'],
-						get = function()
-							return module.DB.hideInCombat
-						end,
-						set = function(_, value)
-							module.DB.hideInCombat = value
-						end,
-						order = 2,
 					},
 				},
 			},
@@ -748,76 +1651,106 @@ function module:BuildOptions()
 					},
 				},
 			},
-			combatBehavior = {
+			rulesBuilder = {
 				type = 'group',
-				name = L['Combat Behavior'],
+				name = L['Rules Builder'],
+				inline = false,
+				order = 6,
+				args = module:GetRulesBuilderOptions(),
+			},
+			questButton = {
+				type = 'group',
+				name = L['Quest Button'],
 				inline = true,
-				order = 7,
+				order = 6.5,
 				args = {
-					description = {
-						type = 'description',
-						name = L['Configure how sections behave during combat'],
-						order = 1,
-					},
-					achievementCombat = {
+					enabled = {
 						type = 'toggle',
-						name = L['Auto-collapse Achievement'],
-						desc = L['Automatically collapse achievement tracking in combat'],
+						name = L['Enable Quest Button'],
+						desc = L['Show a button for nearby quest items'],
 						get = function()
-							return module.DB.autoCollapseInCombat.achievement
+							return module.DB.questButton.enabled
 						end,
 						set = function(_, value)
-							module.DB.autoCollapseInCombat.achievement = value
+							module.DB.questButton.enabled = value
+							if value then
+								module:CreateQuestButton()
+								module:UpdateQuestButton()
+							elseif questButton then
+								questButton:Hide()
+							end
+						end,
+						order = 1,
+					},
+					scale = {
+						type = 'range',
+						name = L['Button Scale'],
+						desc = L['Scale of the quest button'],
+						min = 0.5,
+						max = 2.0,
+						step = 0.1,
+						disabled = function()
+							return not module.DB.questButton.enabled
+						end,
+						get = function()
+							return module.DB.questButton.scale
+						end,
+						set = function(_, value)
+							module.DB.questButton.scale = value
+							module:PositionQuestButton()
 						end,
 						order = 2,
 					},
-					questCombat = {
-						type = 'toggle',
-						name = L['Auto-collapse Quest'],
-						desc = L['Automatically collapse quest tracking in combat'],
+					maxDistance = {
+						type = 'range',
+						name = L['Max Distance'],
+						desc = L['Maximum distance to show quest items (yards)'],
+						min = 10,
+						max = 1000,
+						step = 10,
+						disabled = function()
+							return not module.DB.questButton.enabled
+						end,
 						get = function()
-							return module.DB.autoCollapseInCombat.quest
+							return module.DB.questButton.maxDistance
 						end,
 						set = function(_, value)
-							module.DB.autoCollapseInCombat.quest = value
+							module.DB.questButton.maxDistance = value
+							module:UpdateQuestButton()
 						end,
 						order = 3,
 					},
-					bonusCombat = {
+					zoneOnly = {
 						type = 'toggle',
-						name = L['Auto-collapse Bonus'],
-						desc = L['Automatically collapse bonus objectives in combat'],
+						name = L['Current Zone Only'],
+						desc = L['Only show quest items for quests in the current zone'],
+						disabled = function()
+							return not module.DB.questButton.enabled
+						end,
 						get = function()
-							return module.DB.autoCollapseInCombat.bonus
+							return module.DB.questButton.zoneOnly
 						end,
 						set = function(_, value)
-							module.DB.autoCollapseInCombat.bonus = value
+							module.DB.questButton.zoneOnly = value
+							module:UpdateQuestButton()
 						end,
 						order = 4,
 					},
-					scenarioCombat = {
+					trackingOnly = {
 						type = 'toggle',
-						name = L['Auto-collapse Scenario'],
-						desc = L['Automatically collapse scenario tracking in combat'],
+						name = L['Tracked Quests Only'],
+						desc = L['Only show quest items for tracked quests'],
+						disabled = function()
+							return not module.DB.questButton.enabled
+						end,
 						get = function()
-							return module.DB.autoCollapseInCombat.scenario
+							return module.DB.questButton.trackingOnly
 						end,
 						set = function(_, value)
-							module.DB.autoCollapseInCombat.scenario = value
+							module.DB.questButton.trackingOnly = value
+							module:UpdateQuestButton()
 						end,
 						order = 5,
-					},
-					worldCombat = {
-						type = 'toggle',
-						name = L['Auto-collapse World Quests'],
-						desc = L['Automatically collapse world quest tracking in combat'],
-						get = function()
-							return module.DB.autoCollapseInCombat.world
-						end,
-						set = function(_, value)
-							module.DB.autoCollapseInCombat.world = value
-						end,
-						order = 6,
 					},
 				},
 			},
@@ -827,8 +1760,3 @@ function module:BuildOptions()
 	SUI.Options:AddOptions(options, 'ObjectiveTracker')
 end
 
-----------------------------------------------------------------------------------------------------
--- Global API for keybindings
-_G.SUI_ToggleObjectiveTracker = function()
-	if module then module:ToggleObjectiveTracker() end
-end

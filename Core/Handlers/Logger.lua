@@ -57,7 +57,6 @@ local AutoScrollEnabled = true
 -- Registration system for external addons
 local RegisteredAddons = {} -- Simple addons registered under "External Addons"
 local AddonCategories = {} -- Complex addons with custom categories
-local AddonLoggers = {} -- Cached logger functions for registered addons
 
 -- Helper function to get log level by priority
 local function GetLogLevelByPriority(priority)
@@ -67,92 +66,275 @@ local function GetLogLevelByPriority(priority)
 	return 'info', LOG_LEVELS['info'] -- Default fallback
 end
 
--- Function to categorize modules using registration system
-local function CategorizeModule(moduleName)
-	-- Check if this is a registered simple addon
-	if RegisteredAddons[moduleName] then return 'External Addons' end
+local function FilterButton_SetUp(button, info)
+	local normalText = button.Text
+	local normalTexture = button.NormalTexture
+	local line = button.Lines
+	local btnWidth = 144
+	local btnHeight = 20
 
-	-- Check if this is part of a registered addon category (subcategory)
-	for addonName, categoryData in pairs(AddonCategories) do
-		-- Check if moduleName matches pattern "AddonName.subcategory"
-		if moduleName:match('^' .. addonName .. '%.(.+)') then
-			return addonName -- Return the addon name as category
+	if info.type == 'category' then
+		if info.isToken then
+			button:SetNormalFontObject(GameFontNormalSmallBattleNetBlueLeft)
+		else
+			button:SetNormalFontObject(GameFontNormalSmall)
 		end
+
+		button.NormalTexture:SetAtlas('auctionhouse-nav-button', false)
+		button.NormalTexture:SetSize(btnWidth + 6, btnHeight + 11)
+		button.NormalTexture:ClearAllPoints()
+		button.NormalTexture:SetPoint('TOPLEFT', -2, 0)
+		button.SelectedTexture:SetAtlas('auctionhouse-nav-button-select', false)
+		button.SelectedTexture:SetSize(btnWidth + 2, btnHeight)
+		button.SelectedTexture:ClearAllPoints()
+		button.SelectedTexture:SetPoint('LEFT')
+		button.HighlightTexture:SetAtlas('auctionhouse-nav-button-highlight', false)
+		button.HighlightTexture:SetSize(btnWidth + 2, btnHeight)
+		button.HighlightTexture:ClearAllPoints()
+		button.HighlightTexture:SetPoint('LEFT')
+		button.HighlightTexture:SetBlendMode('BLEND')
+		button:SetText(info.name)
+		normalText:SetPoint('LEFT', button, 'LEFT', 8, 0)
+		normalTexture:SetAlpha(1.0)
+		line:Hide()
+	elseif info.type == 'subCategory' then
+		button:SetNormalFontObject(GameFontHighlightSmall)
+		button.NormalTexture:SetAtlas('auctionhouse-nav-button-secondary', false)
+		button.NormalTexture:SetSize(btnWidth + 3, btnHeight + 11)
+		button.NormalTexture:ClearAllPoints()
+		button.NormalTexture:SetPoint('TOPLEFT', 1, 0)
+		button.SelectedTexture:SetAtlas('auctionhouse-nav-button-secondary-select', false)
+		button.SelectedTexture:SetSize(btnWidth - 10, btnHeight)
+		button.SelectedTexture:ClearAllPoints()
+		button.SelectedTexture:SetPoint('TOPLEFT', 10, 0)
+		button.HighlightTexture:SetAtlas('auctionhouse-nav-button-secondary-highlight', false)
+		button.HighlightTexture:SetSize(btnWidth - 10, btnHeight)
+		button.HighlightTexture:ClearAllPoints()
+		button.HighlightTexture:SetPoint('TOPLEFT', 10, 0)
+		button.HighlightTexture:SetBlendMode('BLEND')
+		button:SetText(info.name)
+		normalText:SetPoint('LEFT', button, 'LEFT', 18, 0)
+		normalTexture:SetAlpha(1.0)
+		line:Hide()
+	elseif info.type == 'subSubCategory' then
+		button:SetNormalFontObject(GameFontHighlightSmall)
+		button.NormalTexture:ClearAllPoints()
+		button.NormalTexture:SetPoint('TOPLEFT', 10, 0)
+		button.SelectedTexture:SetAtlas('auctionhouse-ui-row-select', false)
+		button.SelectedTexture:SetSize(btnWidth - 20, btnHeight - 3)
+		button.SelectedTexture:ClearAllPoints()
+		button.SelectedTexture:SetPoint('TOPRIGHT', 0, -2)
+		button.HighlightTexture:SetAtlas('auctionhouse-ui-row-highlight', false)
+		button.HighlightTexture:SetSize(btnWidth - 20, btnHeight - 3)
+		button.HighlightTexture:ClearAllPoints()
+		button.HighlightTexture:SetPoint('TOPRIGHT', 0, -2)
+		button.HighlightTexture:SetBlendMode('ADD')
+		button:SetText(info.name)
+		normalText:SetPoint('LEFT', button, 'LEFT', 26, 0)
+		normalTexture:SetAlpha(0.0)
+		line:Show()
+	end
+	button.type = info.type
+
+	if info.type == 'category' then
+		button.categoryIndex = info.categoryIndex
+	elseif info.type == 'subCategory' then
+		button.subCategoryIndex = info.subCategoryIndex
+	elseif info.type == 'subSubCategory' then
+		button.subSubCategoryIndex = info.subSubCategoryIndex
 	end
 
-	-- Fall back to SUI internal categorization for core modules
+	button.SelectedTexture:SetShown(info.selected)
+end
+
+-- Function to parse and categorize log sources using hierarchical system
+-- Returns: category, subCategory, subSubCategory, sourceType
+local function ParseLogSource(sourceName)
+	-- Check if this is a registered simple addon (category level only)
+	if RegisteredAddons[sourceName] then return 'External Addons', sourceName, nil, 'subCategory' end
+
+	-- Check if this is part of a registered addon category hierarchy
+	for addonName, categoryData in pairs(AddonCategories) do
+		-- Check for three-level pattern: "AddonName.subCategory.subSubCategory"
+		local subCategory, subSubCategory = sourceName:match('^' .. addonName .. '%.([^%.]+)%.(.+)')
+		if subCategory and subSubCategory then return addonName, subCategory, subSubCategory, 'subSubCategory' end
+
+		-- Check for two-level pattern: "AddonName.subCategory"
+		local subCategoryOnly = sourceName:match('^' .. addonName .. '%.(.+)')
+		if subCategoryOnly then return addonName, subCategoryOnly, nil, 'subCategory' end
+	end
+
+	-- Fall back to SUI internal categorization with hierarchy support
 	local internalCategories = {
 		['Core'] = { 'Core', 'Framework', 'Events', 'Options', 'Database', 'Profiles' },
-		['UI Modules'] = { 'UnitFrames', 'Minimap', 'Artwork', 'ActionBars', 'ChatBox', 'Tooltips' },
+		['UI Components'] = { 'UnitFrames', 'Minimap', 'Artwork', 'ActionBars', 'ChatBox', 'Tooltips' },
 		['Handlers'] = { 'Handler', 'Logger', 'ChatCommands', 'Compatibility' },
 		['Development'] = { 'Debug', 'Test', 'Dev', 'Plugin' },
 	}
 
-	-- Check each internal category for module matches
-	for category, keywords in pairs(internalCategories) do
-		for _, keyword in ipairs(keywords) do
-			if moduleName:lower():find(keyword:lower()) then return category end
+	-- Check for internal three-level hierarchy: "System.Component.SubComponent"
+	local parts = {}
+	for part in sourceName:gmatch('[^%.]+') do
+		table.insert(parts, part)
+	end
+
+	if #parts >= 3 then
+		-- Check if first part matches any internal category keywords
+		for category, keywords in pairs(internalCategories) do
+			for _, keyword in ipairs(keywords) do
+				if parts[1]:lower():find(keyword:lower()) or parts[2]:lower():find(keyword:lower()) then return category, parts[1] .. '.' .. parts[2], table.concat(parts, '.', 3), 'subSubCategory' end
+			end
+		end
+	elseif #parts == 2 then
+		-- Check for two-level internal hierarchy
+		for category, keywords in pairs(internalCategories) do
+			for _, keyword in ipairs(keywords) do
+				if parts[1]:lower():find(keyword:lower()) then return category, parts[1], parts[2], 'subSubCategory' end
+			end
 		end
 	end
 
-	-- Default category for unmatched modules
-	return 'Other Modules'
+	-- Single-level categorization fallback
+	for category, keywords in pairs(internalCategories) do
+		for _, keyword in ipairs(keywords) do
+			if sourceName:lower():find(keyword:lower()) then return category, sourceName, nil, 'subCategory' end
+		end
+	end
+
+	-- Default category for unmatched sources
+	return 'Other Sources', sourceName, nil, 'subCategory'
 end
 
--- Function to create hierarchical module tree (like AuctionFrame categories)
-function CreateModuleCategories()
+-- Function to create hierarchical log source tree (like AuctionFrame categories)
+function CreateLogSourceCategories()
 	if not LogWindow then return end
 
 	-- Clear existing data
 	LogWindow.Categories = {}
 	ScrollListing = {}
 
-	-- Organize modules into categories
-	for moduleName, _ in pairs(logger.DB.modules) do
-		local category = CategorizeModule(moduleName)
+	-- Organize log sources into hierarchical categories
+	for sourceName, _ in pairs(logger.DB.modules) do
+		local category, subCategory, subSubCategory, sourceType = ParseLogSource(sourceName)
 
-		-- Handle registered addon categories specially
-		if AddonCategories[category] then
-			-- This is a registered addon category - use its expansion state
-			if not LogWindow.Categories[category] then
-				LogWindow.Categories[category] = {
-					name = category,
-					modules = {},
-					expanded = AddonCategories[category].expanded,
-					button = nil,
-					isAddonCategory = true, -- Mark as special addon category
-				}
-			end
-		else
-			-- Regular category
-			if not LogWindow.Categories[category] then
-				LogWindow.Categories[category] = {
-					name = category,
-					modules = {},
-					expanded = false,
-					button = nil,
-					isAddonCategory = false,
-				}
-			end
+		-- Initialize category if it doesn't exist
+		if not LogWindow.Categories[category] then
+			LogWindow.Categories[category] = {
+				name = category,
+				subCategories = {},
+				expanded = AddonCategories[category] and AddonCategories[category].expanded or false,
+				button = nil,
+				isAddonCategory = AddonCategories[category] ~= nil,
+			}
 		end
 
-		table.insert(LogWindow.Categories[category].modules, moduleName)
-		table.insert(ScrollListing, { text = moduleName, value = moduleName, category = category })
+		if sourceType == 'subCategory' then
+			-- This is a direct subCategory under the main category
+			if not LogWindow.Categories[category].subCategories[subCategory] then
+				LogWindow.Categories[category].subCategories[subCategory] = {
+					name = subCategory,
+					sourceName = sourceName,
+					subSubCategories = {},
+					expanded = false,
+					button = nil,
+					type = 'subCategory',
+				}
+			end
+		elseif sourceType == 'subSubCategory' then
+			-- This has a subSubCategory level
+			if not LogWindow.Categories[category].subCategories[subCategory] then
+				LogWindow.Categories[category].subCategories[subCategory] = {
+					name = subCategory,
+					subSubCategories = {},
+					expanded = false,
+					button = nil,
+					type = 'subCategory',
+				}
+			end
+
+			LogWindow.Categories[category].subCategories[subCategory].subSubCategories[subSubCategory] = {
+				name = subSubCategory,
+				sourceName = sourceName,
+				button = nil,
+				type = 'subSubCategory',
+			}
+		end
+
+		table.insert(ScrollListing, {
+			text = sourceName,
+			value = sourceName,
+			category = category,
+			subCategory = subCategory,
+			subSubCategory = subSubCategory,
+			sourceType = sourceType,
+		})
 	end
 
-	-- Sort categories and modules within categories
+	-- Sort categories and their contents
 	local sortedCategories = {}
-	for categoryName, _ in pairs(LogWindow.Categories) do
+	for categoryName, categoryData in pairs(LogWindow.Categories) do
 		table.insert(sortedCategories, categoryName)
+
+		-- Sort subCategories
+		local sortedSubCategories = {}
+		for subCategoryName, _ in pairs(categoryData.subCategories) do
+			table.insert(sortedSubCategories, subCategoryName)
+		end
+		table.sort(sortedSubCategories)
+		categoryData.sortedSubCategories = sortedSubCategories
+
+		-- Sort subSubCategories within each subCategory
+		for _, subCategoryData in pairs(categoryData.subCategories) do
+			local sortedSubSubCategories = {}
+			for subSubCategoryName, _ in pairs(subCategoryData.subSubCategories) do
+				table.insert(sortedSubSubCategories, subSubCategoryName)
+			end
+			table.sort(sortedSubSubCategories)
+			subCategoryData.sortedSubSubCategories = sortedSubSubCategories
+		end
 	end
 	table.sort(sortedCategories)
 
-	for _, categoryName in pairs(sortedCategories) do
-		table.sort(LogWindow.Categories[categoryName].modules)
-	end
-
 	-- Create the visual tree structure
 	CreateCategoryTree(sortedCategories)
+end
+
+-- Function to create a button with the proper AuctionHouse template structure
+local function CreateLoggerFilterButton(parent, name)
+	local button = CreateFrame('Button', name, parent, 'TruncatedTooltipScriptTemplate')
+	button:SetSize(150, 21)
+
+	-- Create all texture layers as defined in the XML template
+	-- BACKGROUND layer
+	button.Lines = button:CreateTexture(nil, 'BACKGROUND')
+	button.Lines:SetAtlas('auctionhouse-nav-button-tertiary-filterline', true)
+	button.Lines:SetPoint('LEFT', button, 'LEFT', 18, 3)
+
+	button.NormalTexture = button:CreateTexture(nil, 'BACKGROUND')
+
+	-- BORDER layer
+	button.HighlightTexture = button:CreateTexture(nil, 'BORDER')
+	button.HighlightTexture:Hide()
+
+	-- ARTWORK layer
+	button.SelectedTexture = button:CreateTexture(nil, 'ARTWORK')
+	button.SelectedTexture:Hide()
+
+	-- Button text with shadow
+	button.Text = button:CreateFontString(nil, 'OVERLAY', 'GameFontNormalSmall')
+	button.Text:SetSize(0, 8)
+	button.Text:SetPoint('LEFT', button, 'LEFT', 4, 0)
+	button.Text:SetPoint('RIGHT', button, 'RIGHT', -4, 0)
+	button.Text:SetJustifyH('LEFT')
+	-- Add text shadow
+	button.Text:SetShadowOffset(1, -1)
+	button.Text:SetShadowColor(0, 0, 0)
+
+	-- Set font objects
+	button:SetNormalFontObject(GameFontNormalSmall)
+	button:SetHighlightFontObject(GameFontHighlightSmall)
+
+	return button
 end
 
 -- Function to create the visual category tree (styled like AuctionFrame's category list)
@@ -172,38 +354,50 @@ function CreateCategoryTree(sortedCategories)
 	LogWindow.moduleButtons = {}
 
 	local yOffset = 0
-	local buttonHeight = 20
-	local categoryHeight = 18
-	local indentWidth = 15
+	local buttonHeight = 21 -- Standard AuctionHouse button height
 
 	for _, categoryName in ipairs(sortedCategories) do
 		local categoryData = LogWindow.Categories[categoryName]
+		local subCategoryCount = 0
 
-		-- Create category button (styled like AuctionFrame's expandable categories)
-		local categoryButton = CreateFrame('Button', nil, LogWindow.ModuleTree)
-		categoryButton:SetSize(140, categoryHeight)
-		categoryButton:SetPoint('TOPLEFT', LogWindow.ModuleTree, 'TOPLEFT', 0, yOffset)
-
-		-- Category background (darker, like AuctionFrame headers)
-		categoryButton.bg = categoryButton:CreateTexture(nil, 'BACKGROUND')
-		categoryButton.bg:SetAllPoints()
-		categoryButton.bg:SetColorTexture(0.1, 0.1, 0.1, 0.8)
-
-		-- Expand/collapse indicator (using proper expand/collapse textures)
-		categoryButton.indicator = categoryButton:CreateTexture(nil, 'OVERLAY')
-		categoryButton.indicator:SetSize(16, 16)
-		categoryButton.indicator:SetPoint('LEFT', categoryButton, 'LEFT', 3, 0)
-		if categoryData.expanded then
-			categoryButton.indicator:SetAtlas('ui-trees-collapsed')
-		else
-			categoryButton.indicator:SetAtlas('ui-trees-expanded')
+		-- Count total items in this category (subCategories + subSubCategories)
+		if categoryData.subCategories then
+			for _, subCategoryData in pairs(categoryData.subCategories) do
+				subCategoryCount = subCategoryCount + 1
+				if subCategoryData.subSubCategories then
+					for _, _ in pairs(subCategoryData.subSubCategories) do
+						subCategoryCount = subCategoryCount + 1
+					end
+				end
+			end
 		end
 
-		-- Category text
-		categoryButton.text = categoryButton:CreateFontString(nil, 'OVERLAY', 'GameFontNormalSmall')
-		categoryButton.text:SetPoint('LEFT', categoryButton.indicator, 'RIGHT', 5, 0)
-		categoryButton.text:SetText(categoryName .. ' (' .. #categoryData.modules .. ')')
-		categoryButton.text:SetTextColor(1, 0.82, 0) -- Gold like AuctionFrame headers
+		-- Create category button using the proper template
+		local categoryButton = CreateLoggerFilterButton(LogWindow.ModuleTree, 'SUI_CategoryButton_' .. categoryName)
+		categoryButton:SetPoint('TOPLEFT', LogWindow.ModuleTree, 'TOPLEFT', 3, yOffset)
+
+		-- Set up category button using Blizzard's helper function
+		local categoryInfo = {
+			type = 'category',
+			name = categoryName .. ' (' .. subCategoryCount .. ')',
+			categoryIndex = categoryName,
+			isToken = categoryData.isAddonCategory, -- Use isToken for external addons (matches Blizzard's pattern)
+			selected = false,
+		}
+		FilterButton_SetUp(categoryButton, categoryInfo)
+
+		-- Add expand/collapse indicator
+		categoryButton.indicator = categoryButton:CreateTexture(nil, 'OVERLAY')
+		categoryButton.indicator:SetSize(15, 15)
+		categoryButton.indicator:SetPoint('LEFT', categoryButton, 'LEFT', 2, 0)
+		if categoryData.expanded then
+			categoryButton.indicator:SetAtlas('uitools-icon-minimize')
+		else
+			categoryButton.indicator:SetAtlas('uitools-icon-plus')
+		end
+
+		-- Override text color for gold category headers
+		categoryButton.Text:SetTextColor(1, 0.82, 0)
 
 		-- Category button functionality
 		categoryButton:SetScript('OnClick', function(self)
@@ -213,83 +407,140 @@ function CreateCategoryTree(sortedCategories)
 			if categoryData.isAddonCategory and AddonCategories[categoryName] then AddonCategories[categoryName].expanded = categoryData.expanded end
 
 			if categoryData.expanded then
-				self.indicator:SetAtlas('ui-trees-collapsed')
+				self.indicator:SetAtlas('uitools-icon-minimize')
 			else
-				self.indicator:SetAtlas('ui-trees-expanded')
+				self.indicator:SetAtlas('uitools-icon-plus')
 			end
 			CreateCategoryTree(sortedCategories) -- Rebuild tree
 		end)
 
-		-- Hover effects like AuctionFrame
+		-- Standard hover effects
 		categoryButton:SetScript('OnEnter', function(self)
-			self.bg:SetColorTexture(0.2, 0.2, 0.2, 0.8)
+			self.HighlightTexture:Show()
 		end)
 		categoryButton:SetScript('OnLeave', function(self)
-			self.bg:SetColorTexture(0.1, 0.1, 0.1, 0.8)
+			self.HighlightTexture:Hide()
 		end)
 
 		categoryData.button = categoryButton
 		table.insert(LogWindow.categoryButtons, categoryButton)
-		yOffset = yOffset - (categoryHeight + 1)
+		yOffset = yOffset - (buttonHeight + 1)
 
-		-- Create module buttons if category is expanded
+		-- Create subCategory and subSubCategory buttons if category is expanded
 		if categoryData.expanded then
-			for _, moduleName in ipairs(categoryData.modules) do
-				local moduleButton = CreateFrame('Button', nil, LogWindow.ModuleTree)
-				moduleButton:SetSize(132, 21)
-				moduleButton:SetPoint('TOPLEFT', LogWindow.ModuleTree, 'TOPLEFT', indentWidth, yOffset)
+			for _, subCategoryName in ipairs(categoryData.sortedSubCategories) do
+				local subCategoryData = categoryData.subCategories[subCategoryName]
 
-				-- Create textures to match AuctionHouse nav button style
-				-- Normal texture (using secondary style for module buttons)
-				moduleButton.NormalTexture = moduleButton:CreateTexture(nil, 'BACKGROUND')
-				moduleButton.NormalTexture:SetAtlas('auctionhouse-nav-button-secondary', false)
-				moduleButton.NormalTexture:SetAllPoints(moduleButton)
+				-- Create subCategory button using the proper template
+				local subCategoryButton = CreateLoggerFilterButton(LogWindow.ModuleTree, nil)
+				subCategoryButton:SetPoint('TOPLEFT', LogWindow.ModuleTree, 'TOPLEFT', 3, yOffset)
 
-				-- Highlight texture
-				moduleButton.HighlightTexture = moduleButton:CreateTexture(nil, 'BORDER')
-				moduleButton.HighlightTexture:SetAtlas('auctionhouse-nav-button-highlight')
-				moduleButton.HighlightTexture:SetAllPoints(moduleButton)
-				moduleButton.HighlightTexture:Hide()
+				-- Set up subCategory button using Blizzard's helper function
+				local subCategoryInfo = {
+					type = 'subCategory',
+					name = subCategoryName,
+					subCategoryIndex = subCategoryName,
+					selected = (ActiveModule == (subCategoryData.sourceName or subCategoryName)),
+				}
+				FilterButton_SetUp(subCategoryButton, subCategoryInfo)
 
-				-- Selected texture (using primary button for selected state)
-				moduleButton.SelectedTexture = moduleButton:CreateTexture(nil, 'ARTWORK')
-				moduleButton.SelectedTexture:SetAtlas('auctionhouse-nav-button')
-				moduleButton.SelectedTexture:SetAllPoints(moduleButton)
-				moduleButton.SelectedTexture:Hide()
+				-- If this subCategory has subSubCategories, add expand/collapse indicator
+				if subCategoryData.subSubCategories and next(subCategoryData.subSubCategories) then
+					subCategoryButton.indicator = subCategoryButton:CreateTexture(nil, 'OVERLAY')
+					subCategoryButton.indicator:SetSize(12, 12)
+					subCategoryButton.indicator:SetPoint('LEFT', subCategoryButton, 'LEFT', 2, 0)
+					if subCategoryData.expanded then
+						subCategoryButton.indicator:SetAtlas('uitools-icon-minimize')
+					else
+						subCategoryButton.indicator:SetAtlas('uitools-icon-plus')
+					end
+				end
 
-				-- Button text
-				moduleButton.Text = moduleButton:CreateFontString(nil, 'OVERLAY', 'GameFontNormalSmall')
-				moduleButton.Text:SetText(moduleName)
-				moduleButton.Text:SetJustifyH('LEFT')
-				moduleButton.Text:SetPoint('LEFT', moduleButton, 'LEFT', 4, 0)
-				moduleButton.Text:SetPoint('RIGHT', moduleButton, 'RIGHT', -4, 0)
-				moduleButton.Text:SetHeight(8)
-
-				-- Hover effects
-				moduleButton:SetScript('OnEnter', function(self)
+				-- Standard hover effects
+				subCategoryButton:SetScript('OnEnter', function(self)
 					self.HighlightTexture:Show()
 				end)
-				moduleButton:SetScript('OnLeave', function(self)
+				subCategoryButton:SetScript('OnLeave', function(self)
 					self.HighlightTexture:Hide()
 				end)
 
-				-- Module selection functionality
-				moduleButton:SetScript('OnClick', function(self)
-					-- Update button states (clear all selected states)
-					for _, btn in pairs(LogWindow.moduleButtons) do
-						btn.SelectedTexture:Hide()
-						btn.Text:SetFontObject('GameFontNormalSmall')
-					end
-					-- Set this button as selected
-					self.SelectedTexture:Show()
-					self.Text:SetFontObject('GameFontHighlightSmall')
+				-- SubCategory functionality
+				subCategoryButton:SetScript('OnClick', function(self)
+					-- If this has subSubCategories, toggle expansion
+					if subCategoryData.subSubCategories and next(subCategoryData.subSubCategories) then
+						subCategoryData.expanded = not subCategoryData.expanded
+						if self.indicator then
+							if subCategoryData.expanded then
+								self.indicator:SetAtlas('uitools-icon-minimize')
+							else
+								self.indicator:SetAtlas('uitools-icon-plus')
+							end
+						end
+						CreateCategoryTree(sortedCategories) -- Rebuild tree
+					else
+						-- This is a selectable log source
+						-- Update button states (clear all selected states)
+						for _, btn in pairs(LogWindow.moduleButtons) do
+							btn.SelectedTexture:Hide()
+							btn:SetNormalFontObject(GameFontHighlightSmall)
+						end
+						-- Set this button as selected
+						self.SelectedTexture:Show()
+						self:SetNormalFontObject(GameFontNormalSmall)
 
-					ActiveModule = self.Text:GetText()
-					UpdateLogDisplay()
+						ActiveModule = subCategoryData.sourceName or subCategoryName
+						UpdateLogDisplay()
+					end
 				end)
 
-				table.insert(LogWindow.moduleButtons, moduleButton)
+				table.insert(LogWindow.moduleButtons, subCategoryButton)
 				yOffset = yOffset - (buttonHeight + 1)
+
+				-- Create subSubCategory buttons if subCategory is expanded
+				if subCategoryData.expanded and subCategoryData.sortedSubSubCategories then
+					for _, subSubCategoryName in ipairs(subCategoryData.sortedSubSubCategories) do
+						local subSubCategoryData = subCategoryData.subSubCategories[subSubCategoryName]
+
+						-- Create subSubCategory button using the proper template
+						local subSubCategoryButton = CreateLoggerFilterButton(LogWindow.ModuleTree, nil)
+						subSubCategoryButton:SetPoint('TOPLEFT', LogWindow.ModuleTree, 'TOPLEFT', 3, yOffset)
+
+						-- Set up subSubCategory button using Blizzard's helper function
+						local subSubCategoryInfo = {
+							type = 'subSubCategory',
+							name = subSubCategoryName,
+							subSubCategoryIndex = subSubCategoryName,
+							selected = (ActiveModule == subSubCategoryData.sourceName),
+						}
+						FilterButton_SetUp(subSubCategoryButton, subSubCategoryInfo)
+
+						-- Standard hover effects
+						subSubCategoryButton:SetScript('OnEnter', function(self)
+							self.HighlightTexture:Show()
+						end)
+						subSubCategoryButton:SetScript('OnLeave', function(self)
+							self.HighlightTexture:Hide()
+						end)
+
+						-- SubSubCategory selection functionality
+						subSubCategoryButton:SetScript('OnClick', function(self)
+							-- Update button states (clear all selected states)
+							for _, btn in pairs(LogWindow.moduleButtons) do
+								btn.SelectedTexture:Hide()
+								btn:SetNormalFontObject(GameFontHighlightSmall)
+							end
+							-- Set this button as selected
+							self.SelectedTexture:Show()
+							self:SetNormalFontObject(GameFontNormalSmall)
+
+							ActiveModule = subSubCategoryData.sourceName
+							UpdateLogDisplay()
+						end)
+
+						table.insert(LogWindow.moduleButtons, subSubCategoryButton)
+						yOffset = yOffset - (buttonHeight + 1)
+					end
+				end
 			end
 		end
 	end
@@ -302,8 +553,9 @@ end
 local function CreateLogWindow()
 	if LogWindow then return end
 
-	-- Create main frame using PortraitFrameTemplate for proper skinning (AH window size: 800x538)
-	LogWindow = CreateFrame('Frame', 'SpartanUI_LogWindow', UIParent, 'PortraitFrameTemplate')
+	-- Create main frame using ButtonFrameTemplate for proper skinning (AH window size: 800x538)
+	LogWindow = CreateFrame('Frame', 'SpartanUI_LogWindow', UIParent, 'ButtonFrameTemplate')
+	ButtonFrameTemplate_HidePortrait(LogWindow)
 	LogWindow:SetSize(800, 538)
 	LogWindow:SetPoint('CENTER', UIParent, 'CENTER', 0, 0)
 	LogWindow:SetFrameStrata('HIGH')
@@ -324,7 +576,7 @@ local function CreateLogWindow()
 	end
 
 	-- Set title
-	LogWindow:SetTitle('SpartanUI Logging')
+	LogWindow:SetTitle('|cffffffffSpartan|cffe21f1fUI|r Logging')
 
 	-- Create control frame positioned like AuctionHouse SearchBar (y=-29)
 	LogWindow.ControlFrame = CreateFrame('Frame', nil, LogWindow)
@@ -423,29 +675,45 @@ local function CreateLogWindow()
 
 	-- Create main content area positioned like AuctionHouse panels (-4px from SearchBar bottom)
 	LogWindow.MainContent = CreateFrame('Frame', nil, LogWindow)
-	LogWindow.MainContent:SetPoint('TOPLEFT', LogWindow.ControlFrame, 'BOTTOMLEFT', -4, -4)
+	LogWindow.MainContent:SetPoint('TOPLEFT', LogWindow.ControlFrame, 'BOTTOMLEFT', 0, -4)
 	LogWindow.MainContent:SetPoint('BOTTOMRIGHT', LogWindow, 'BOTTOMRIGHT', -20, 12)
 
 	-- Left panel for module list (styled like AuctionFrame's category list)
-	LogWindow.LeftPanel = CreateFrame('Frame', nil, LogWindow.MainContent)
+	LogWindow.LeftPanel = CreateFrame('Frame', 'SUI_LeftPanel', LogWindow.MainContent)
 	LogWindow.LeftPanel:SetPoint('TOPLEFT', LogWindow.MainContent, 'TOPLEFT', 10, 0)
 	LogWindow.LeftPanel:SetPoint('BOTTOMLEFT', LogWindow.MainContent, 'BOTTOMLEFT', 10, 20)
-	LogWindow.LeftPanel:SetWidth(160)
+	LogWindow.LeftPanel:SetWidth(155)
+	LogWindow.LeftPanel.layoutType = 'InsetFrameTemplate'
 
 	-- Add AuctionHouse categories background
 	LogWindow.LeftPanel.Background = LogWindow.LeftPanel:CreateTexture(nil, 'BACKGROUND')
 	LogWindow.LeftPanel.Background:SetAtlas('auctionhouse-background-summarylist', true)
-	-- LogWindow.LeftPanel.Background:SetPoint('TOPLEFT', LogWindow.LeftPanel, 'TOPLEFT', 3, -3)
 	LogWindow.LeftPanel.Background:SetAllPoints(LogWindow.LeftPanel)
 
 	-- Add nine slice border for left panel
-	LogWindow.LeftPanel.NineSlice = CreateFrame('Frame', nil, LogWindow.LeftPanel, 'NineSlicePanelTemplate')
+	LogWindow.LeftPanel.NineSlice = CreateFrame('Frame', 'SUI_LeftPanelNineSlice', LogWindow.LeftPanel, 'NineSlicePanelTemplate')
 	LogWindow.LeftPanel.NineSlice:SetAllPoints()
 
+	-- Create scroll frame for module tree in left panel with MinimalScrollBar
+	LogWindow.ModuleScrollFrame = CreateFrame('ScrollFrame', 'SUI_ModuleScrollFrame', LogWindow.LeftPanel)
+	LogWindow.ModuleScrollFrame:SetPoint('TOPLEFT', LogWindow.LeftPanel, 'TOPLEFT', 2, -7)
+	LogWindow.ModuleScrollFrame:SetPoint('BOTTOMRIGHT', LogWindow.LeftPanel, 'BOTTOMRIGHT', 0, 2)
+
+	-- Create minimal scrollbar for left panel
+	LogWindow.ModuleScrollFrame.ScrollBar = CreateFrame('EventFrame', nil, LogWindow.ModuleScrollFrame, 'MinimalScrollBar')
+	LogWindow.ModuleScrollFrame.ScrollBar:SetPoint('TOPLEFT', LogWindow.ModuleScrollFrame, 'TOPRIGHT', 2, 0)
+	LogWindow.ModuleScrollFrame.ScrollBar:SetPoint('BOTTOMLEFT', LogWindow.ModuleScrollFrame, 'BOTTOMRIGHT', 2, 0)
+	ScrollUtil.InitScrollFrameWithScrollBar(LogWindow.ModuleScrollFrame, LogWindow.ModuleScrollFrame.ScrollBar)
+
+	LogWindow.ModuleTree = CreateFrame('Frame', 'SUI_ModuleTree', LogWindow.ModuleScrollFrame)
+	LogWindow.ModuleScrollFrame:SetScrollChild(LogWindow.ModuleTree)
+	LogWindow.ModuleTree:SetSize(160, 1)
+
 	-- Right panel for log text (main display area like AuctionFrame's item list)
-	LogWindow.RightPanel = CreateFrame('Frame', nil, LogWindow.MainContent)
+	LogWindow.RightPanel = CreateFrame('Frame', 'SUI_RightPanel', LogWindow.MainContent)
 	LogWindow.RightPanel:SetPoint('TOPLEFT', LogWindow.LeftPanel, 'TOPRIGHT', 20, 0)
 	LogWindow.RightPanel:SetPoint('BOTTOMRIGHT', LogWindow.MainContent, 'BOTTOMRIGHT', -10, 20)
+	LogWindow.RightPanel.layoutType = 'InsetFrameTemplate'
 
 	-- Add AuctionHouse index background
 	LogWindow.RightPanel.Background = LogWindow.RightPanel:CreateTexture(nil, 'BACKGROUND')
@@ -474,20 +742,14 @@ local function CreateLogWindow()
 		ExportCurrentLogs()
 	end)
 
-	-- Create scroll frame for module tree in left panel with MinimalScrollBar
-	LogWindow.ModuleScrollFrame = CreateFrame('ScrollFrame', nil, LogWindow.LeftPanel)
-	LogWindow.ModuleScrollFrame:SetPoint('TOPLEFT', LogWindow.LeftPanel, 'TOPLEFT', 2, -7)
-	LogWindow.ModuleScrollFrame:SetPoint('BOTTOMRIGHT', LogWindow.LeftPanel, 'BOTTOMRIGHT', -8, 2)
-
-	-- Create minimal scrollbar for left panel
-	LogWindow.ModuleScrollFrame.ScrollBar = CreateFrame('EventFrame', nil, LogWindow.ModuleScrollFrame, 'MinimalScrollBar')
-	LogWindow.ModuleScrollFrame.ScrollBar:SetPoint('TOPLEFT', LogWindow.ModuleScrollFrame, 'TOPRIGHT', 2, 0)
-	LogWindow.ModuleScrollFrame.ScrollBar:SetPoint('BOTTOMLEFT', LogWindow.ModuleScrollFrame, 'BOTTOMRIGHT', 2, 0)
-	ScrollUtil.InitScrollFrameWithScrollBar(LogWindow.ModuleScrollFrame, LogWindow.ModuleScrollFrame.ScrollBar)
-
-	LogWindow.ModuleTree = CreateFrame('Frame', nil, LogWindow.ModuleScrollFrame)
-	LogWindow.ModuleScrollFrame:SetScrollChild(LogWindow.ModuleTree)
-	LogWindow.ModuleTree:SetSize(140, 1)
+	-- Reload UI button positioned in bottom left
+	LogWindow.ReloadButton = CreateFrame('Button', nil, LogWindow, 'UIPanelButtonTemplate')
+	LogWindow.ReloadButton:SetSize(80, 22)
+	LogWindow.ReloadButton:SetPoint('BOTTOMLEFT', LogWindow, 'BOTTOMLEFT', 3, 4)
+	LogWindow.ReloadButton:SetText('Reload UI')
+	LogWindow.ReloadButton:SetScript('OnClick', function()
+		ReloadUI()
+	end)
 
 	-- Create log text display in right panel with MinimalScrollBar
 	LogWindow.TextPanel = CreateFrame('ScrollFrame', nil, LogWindow.RightPanel)
@@ -533,8 +795,8 @@ local function CreateLogWindow()
 	LogWindow.categoryButtons = {}
 	LogWindow.moduleButtons = {}
 
-	-- Build module categories (like AuctionFrame's item categories)
-	CreateModuleCategories()
+	-- Build log source categories (like AuctionFrame's item categories)
+	CreateLogSourceCategories()
 
 	-- Setup dropdown functionality
 	SetupLogLevelDropdowns()
@@ -721,7 +983,7 @@ function ExportCurrentLogs()
 
 	-- Create export frame if it doesn't exist
 	if not LogWindow.ExportFrame then
-		LogWindow.ExportFrame = CreateFrame('Frame', 'SUI_LogExportFrame', UIParent, 'PortraitFrameTemplate')
+		LogWindow.ExportFrame = CreateFrame('Frame', 'SUI_LogExportFrame', UIParent, 'ButtonFrameTemplate')
 		LogWindow.ExportFrame:SetSize(500, 400)
 		LogWindow.ExportFrame:SetPoint('CENTER', UIParent, 'CENTER', 0, 0)
 		LogWindow.ExportFrame:SetFrameStrata('DIALOG')
@@ -933,45 +1195,59 @@ function SUI.Log(debugText, module, level)
 
 		-- Add new module to category system if log window exists
 		if LogWindow and LogWindow.Categories then
-			-- Determine category and add module
-			local category = CategorizeModule(module)
-
-			if not LogWindow.Categories[category] then LogWindow.Categories[category] = {
-				name = category,
-				modules = {},
-				expanded = false,
-				button = nil,
-			} end
-
-			-- Add module to category if not already present
-			local moduleExists = false
-			for _, existingModule in ipairs(LogWindow.Categories[category].modules) do
-				if existingModule == module then
-					moduleExists = true
-					break
-				end
-			end
-
-			if not moduleExists then
-				table.insert(LogWindow.Categories[category].modules, module)
-				table.sort(LogWindow.Categories[category].modules)
-
-				-- Rebuild the category tree to include new module
-				local sortedCategories = {}
-				for categoryName, _ in pairs(LogWindow.Categories) do
-					table.insert(sortedCategories, categoryName)
-				end
-				table.sort(sortedCategories)
-				CreateCategoryTree(sortedCategories)
-			end
+			-- Rebuild the category tree to include new module
+			CreateLogSourceCategories()
 		end
 
 		logger.DB.modules[module] = true -- Default to enabled for logging approach
-		if logger.options then logger.options.args[module] = {
-			name = module,
-			type = 'toggle',
-			order = (#logger.options.args + 1),
-		} end
+		if logger.options then
+			logger.options.args[module] = {
+				name = module,
+				desc = 'Set the minimum log level for the ' .. module .. ' module. Use "Global" to inherit the global log level setting.',
+				type = 'select',
+				values = function()
+					local values = { [0] = 'Global (inherit)' }
+					-- Create ordered list to ensure proper display order
+					local orderedLevels = {}
+					for level, data in pairs(LOG_LEVELS) do
+						table.insert(orderedLevels, { level = level, data = data })
+					end
+					table.sort(orderedLevels, function(a, b)
+						return a.data.priority < b.data.priority
+					end)
+
+					for _, levelData in ipairs(orderedLevels) do
+						values[levelData.data.priority] = levelData.data.display
+					end
+					return values
+				end,
+				sorting = function()
+					-- Return sorted order for dropdown
+					local sorted = { 0 } -- Global first
+					local orderedLevels = {}
+					for level, data in pairs(LOG_LEVELS) do
+						table.insert(orderedLevels, { level = level, data = data })
+					end
+					table.sort(orderedLevels, function(a, b)
+						return a.data.priority < b.data.priority
+					end)
+
+					for _, levelData in ipairs(orderedLevels) do
+						table.insert(sorted, levelData.data.priority)
+					end
+					return sorted
+				end,
+				get = function(info)
+					return logger.DB.moduleLogLevels[info[#info]] or 0
+				end,
+				set = function(info, val)
+					logger.DB.moduleLogLevels[info[#info]] = val
+					ModuleLogLevels[info[#info]] = val
+					if LogWindow then UpdateLogDisplay() end
+				end,
+				order = (#logger.options.args + 1),
+			}
+		end
 	end
 
 	-- Validate log level
@@ -1033,20 +1309,87 @@ function SUI.Debug(debugText, module, level)
 	SUI.Log(debugText, module, level)
 end
 
+----------------------------------------------------------------------------------------------------
+-- Internal SpartanUI Module Logging API
+----------------------------------------------------------------------------------------------------
+
+---Enhanced logging function for SpartanUI modules that leverages module objects
+---Automatically uses module DisplayName, falls back to module name, and supports hierarchical categorization
+---@param moduleObj SUI.Module The SpartanUI module object
+---@param message string The message to log
+---@param component? string Optional component/subcomponent for hierarchical logging (e.g., "Database.Connection")
+---@param level? LogLevel Log level - defaults to 'info'
+function SUI.ModuleLog(moduleObj, message, component, level)
+	if not moduleObj then
+		SUI.Log(message, 'Unknown', level)
+		return
+	end
+
+	-- Get the best display name for the module
+	local moduleName = moduleObj.DisplayName or moduleObj:GetName()
+
+	-- Create hierarchical source name if component is provided
+	local logSource = moduleName
+	if component and component ~= '' then logSource = moduleName .. '.' .. component end
+
+	SUI.Log(message, logSource, level)
+end
+
+---Create a logger function for a specific SpartanUI module
+---Returns a logger function that automatically uses the module's information
+---@param moduleObj SUI.Module The SpartanUI module object
+---@param defaultComponent? string Optional default component name for all logs from this logger
+---@return fun(message: string, component?: string, level?: LogLevel) logger Logger function
+function SUI.CreateModuleLogger(moduleObj, defaultComponent)
+	return function(message, component, level)
+		-- If component is actually the level (for backwards compatibility)
+		if type(component) == 'string' and LOG_LEVELS[component] and not level then
+			level = component
+			component = defaultComponent
+		elseif not component then
+			component = defaultComponent
+		elseif defaultComponent then
+			-- Combine default and provided component
+			component = defaultComponent .. '.' .. component
+		end
+
+		SUI.ModuleLog(moduleObj, message, component, level)
+	end
+end
+
+---Enhanced module registration system that provides easy logging setup
+---Call this in your module's OnInitialize to get a pre-configured logger
+---@param moduleObj SUI.Module The SpartanUI module object
+---@param components? string[] Optional list of components for structured logging
+---@return SimpleLogger|ComplexLoggers logger Either a simple logger function or a table of component loggers
+function SUI.SetupModuleLogging(moduleObj, components)
+	if not moduleObj then error('SetupModuleLogging: moduleObj is required') end
+
+	if not components or #components == 0 then
+		-- Simple logger - just logs to the module name
+		return SUI.CreateModuleLogger(moduleObj)
+	else
+		-- Complex logger - create component-specific loggers
+		local loggers = {}
+		for _, component in ipairs(components) do
+			loggers[component] = SUI.CreateModuleLogger(moduleObj, component)
+		end
+
+		-- Also add a general logger without component prefix
+		loggers.general = SUI.CreateModuleLogger(moduleObj)
+
+		return loggers
+	end
+end
+
 local function AddOptions()
 	---@type AceConfig.OptionsTable
 	local options = {
 		name = 'Logging',
 		type = 'group',
-		get = function(info)
-			return logger.DB.modules[info[#info]]
-		end,
-		set = function(info, val)
-			logger.DB.modules[info[#info]] = val
-		end,
 		args = {
 			Description = {
-				name = 'SpartanUI uses a comprehensive logging system that captures all messages and filters by log level.\nModules can be individually disabled to stop collection entirely.',
+				name = 'SpartanUI uses a comprehensive logging system that captures all messages and filters by log level.\nAll modules are always enabled - use log level settings to control what messages are displayed.',
 				type = 'description',
 				order = 0,
 			},
@@ -1128,22 +1471,18 @@ local function AddOptions()
 				type = 'header',
 				order = 10,
 			},
-			EnableAll = {
-				name = 'Enable All Modules',
-				desc = 'Enable or disable logging for all modules at once.',
-				type = 'toggle',
+			ResetAllToGlobal = {
+				name = 'Reset All Modules to Global',
+				desc = 'Reset all modules to use the global log level setting (remove individual overrides).',
+				type = 'execute',
 				order = 11,
-				get = function(info)
-					-- Check if all modules are enabled
-					for _, enabled in pairs(logger.DB.modules) do
-						if not enabled then return false end
-					end
-					return true
-				end,
-				set = function(info, val)
+				func = function()
 					for k, _ in pairs(logger.DB.modules) do
-						logger.DB.modules[k] = val
+						logger.DB.moduleLogLevels[k] = 0
+						ModuleLogLevels[k] = 0
 					end
+					if LogWindow then UpdateLogDisplay() end
+					SUI:Print('All module log levels reset to global setting.')
 				end,
 			},
 		},
@@ -1152,8 +1491,48 @@ local function AddOptions()
 	for k, _ in pairs(logger.DB.modules) do
 		options.args[k] = {
 			name = k,
-			desc = 'Enable logging for the ' .. k .. ' module.',
-			type = 'toggle',
+			desc = 'Set the minimum log level for the ' .. k .. ' module. Use "Global" to inherit the global log level setting.',
+			type = 'select',
+			values = function()
+				local values = { [0] = 'Global (inherit)' }
+				-- Create ordered list to ensure proper display order
+				local orderedLevels = {}
+				for level, data in pairs(LOG_LEVELS) do
+					table.insert(orderedLevels, { level = level, data = data })
+				end
+				table.sort(orderedLevels, function(a, b)
+					return a.data.priority < b.data.priority
+				end)
+
+				for _, levelData in ipairs(orderedLevels) do
+					values[levelData.data.priority] = levelData.data.display
+				end
+				return values
+			end,
+			sorting = function()
+				-- Return sorted order for dropdown
+				local sorted = { 0 } -- Global first
+				local orderedLevels = {}
+				for level, data in pairs(LOG_LEVELS) do
+					table.insert(orderedLevels, { level = level, data = data })
+				end
+				table.sort(orderedLevels, function(a, b)
+					return a.data.priority < b.data.priority
+				end)
+
+				for _, levelData in ipairs(orderedLevels) do
+					table.insert(sorted, levelData.data.priority)
+				end
+				return sorted
+			end,
+			get = function(info)
+				return logger.DB.moduleLogLevels[info[#info]] or 0
+			end,
+			set = function(info, val)
+				logger.DB.moduleLogLevels[info[#info]] = val
+				ModuleLogLevels[info[#info]] = val
+				if LogWindow then UpdateLogDisplay() end
+			end,
 			order = (#options.args + 1),
 		}
 	end

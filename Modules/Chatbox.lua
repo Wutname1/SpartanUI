@@ -296,7 +296,10 @@ function module:OnInitialize()
 
 	ChatLevelLog = SUI.DBG.ChatLevelLog
 	-- Create popup using Blizzard UI (similar to logging window)
-	popup = CreateFrame('Frame', 'SUI_ChatCopyPopup', UIParent, 'PortraitFrameTemplate')
+	popup = CreateFrame('Frame', 'SUI_ChatCopyPopup', UIParent, 'ButtonFrameTemplate')
+	ButtonFrameTemplate_HidePortrait(popup)
+	ButtonFrameTemplate_HideButtonBar(popup)
+	popup.Inset:Hide()
 	popup:SetSize(600, 350)
 	popup:SetPoint('CENTER', UIParent, 'CENTER', 0, 0)
 	popup:SetFrameStrata('DIALOG')
@@ -311,28 +314,31 @@ function module:OnInitialize()
 
 	-- Set the portrait/logo
 	if popup.portrait then
-		if popup.portrait.SetTexture then 
-			popup.portrait:SetTexture('Interface\\AddOns\\SpartanUI\\images\\LogoSpartanUI') 
-		end
+		if popup.portrait.SetTexture then popup.portrait:SetTexture('Interface\\AddOns\\SpartanUI\\images\\LogoSpartanUI') end
 	end
 
 	-- Set title
-	popup:SetTitle('SpartanUI Chat Copy')
+	popup:SetTitle('|cffffffffSpartan|cffe21f1fUI|r Chat Copy')
 
 	-- Create main content area
 	popup.MainContent = CreateFrame('Frame', nil, popup)
-	popup.MainContent:SetPoint('TOPLEFT', popup, 'TOPLEFT', 20, -30)
-	popup.MainContent:SetPoint('BOTTOMRIGHT', popup, 'BOTTOMRIGHT', -20, 12)
+	popup.MainContent:SetPoint('TOPLEFT', popup, 'TOPLEFT', 18, -30)
+	popup.MainContent:SetPoint('BOTTOMRIGHT', popup, 'BOTTOMRIGHT', -25, 12)
 
 	-- Create text display area with MinimalScrollBar
 	popup.TextPanel = CreateFrame('ScrollFrame', nil, popup.MainContent)
 	popup.TextPanel:SetPoint('TOPLEFT', popup.MainContent, 'TOPLEFT', 6, -6)
 	popup.TextPanel:SetPoint('BOTTOMRIGHT', popup.MainContent, 'BOTTOMRIGHT', 0, 2)
 
+	popup.TextPanel.Background = popup.TextPanel:CreateTexture(nil, 'BACKGROUND')
+	popup.TextPanel.Background:SetAtlas('auctionhouse-background-index', true)
+	popup.TextPanel.Background:SetPoint('TOPLEFT', popup.TextPanel, 'TOPLEFT', -6, 6)
+	popup.TextPanel.Background:SetPoint('BOTTOMRIGHT', popup.TextPanel, 'BOTTOMRIGHT', 0, -6)
+
 	-- Create minimal scrollbar
 	popup.TextPanel.ScrollBar = CreateFrame('EventFrame', nil, popup.TextPanel, 'MinimalScrollBar')
-	popup.TextPanel.ScrollBar:SetPoint('TOPLEFT', popup.TextPanel, 'TOPRIGHT', 0, 0)
-	popup.TextPanel.ScrollBar:SetPoint('BOTTOMLEFT', popup.TextPanel, 'BOTTOMRIGHT', 0, 0)
+	popup.TextPanel.ScrollBar:SetPoint('TOPLEFT', popup.TextPanel, 'TOPRIGHT', 6, 0)
+	popup.TextPanel.ScrollBar:SetPoint('BOTTOMLEFT', popup.TextPanel, 'BOTTOMRIGHT', 6, 0)
 	ScrollUtil.InitScrollFrameWithScrollBar(popup.TextPanel, popup.TextPanel.ScrollBar)
 
 	-- Create the text edit box
@@ -354,7 +360,7 @@ function module:OnInitialize()
 	-- Create font for text processing (keep for compatibility)
 	popup.font = popup:CreateFontString(nil, nil, 'GameFontNormal')
 	popup.font:Hide()
-	
+
 	-- Auto-scroll to bottom when shown
 	popup:HookScript('OnShow', function()
 		popup.TextPanel:SetVerticalScroll((popup.TextPanel:GetVerticalScrollRange()) or 0)

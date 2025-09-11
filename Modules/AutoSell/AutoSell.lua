@@ -116,8 +116,20 @@ local DbDefaults = {
 ---@field Whitelist table<number, boolean> Character-specific whitelist items
 ---@field Blacklist table<number, boolean> Character-specific blacklist items
 
-local function debugMsg(msg)
-	SUI.Log(msg, 'AutoSell')
+-- Setup hierarchical logging for AutoSell module
+local loggers = nil
+
+local function debugMsg(msg, component, level)
+	if loggers then
+		if component and loggers[component] then
+			loggers[component](msg, level)
+		else
+			loggers.general(msg, level)
+		end
+	else
+		-- Fallback to basic logging if loggers not set up yet
+		SUI.Log(msg, 'AutoSell', level)
+	end
 end
 
 -- Build fast blacklist lookup tables
@@ -151,7 +163,10 @@ function module:InvalidateBlacklistCache()
 	invalidateBlacklistLookup()
 
 	-- Refresh bag markings when cache is invalidated
-	if module.DB.ShowBagMarking and module.markItems then module.markItems() end
+	if module.DB.ShowBagMarking and module.markItems then
+		debugMsg("Refreshing bag markings after blacklist cache invalidation", "BagMarking", "debug")
+		module.markItems()
+	end
 
 	-- Refresh Baganator when cache is invalidated
 	if C_AddOns.IsAddOnLoaded('Baganator') and Baganator and Baganator.API then Baganator.API.RequestItemButtonsRefresh() end
@@ -174,7 +189,7 @@ local function IsInGearset(bag, slot)
 	end)
 
 	if not success then
-		debugMsg('IsInGearset error: ' .. tostring(result))
+		debugMsg('IsInGearset error: ' .. tostring(result), "Selling", "error")
 		return false
 	end
 
@@ -194,26 +209,26 @@ end
 
 function module:IsSellable(item, ilink, bag, slot)
 	if not item then
-		debugMsg('IsSellable: item is nil, returning false')
+		debugMsg('IsSellable: item is nil, returning false', "Selling", "warning")
 		return false
 	end
 	local name, _, quality, _, _, itemType, itemSubType, _, equipSlot, _, vendorPrice, _, _, _, expacID, _, isCraftingReagent = C_Item.GetItemInfo(ilink)
 	if vendorPrice == 0 or name == nil then
-		debugMsg('IsSellable: no vendor price or name for item ' .. tostring(item))
+		debugMsg('IsSellable: no vendor price or name for item ' .. tostring(item), "Selling", "debug")
 		return false
 	end
 
 	-- Check character-specific blacklist FIRST (highest priority)
 	if module.CharDB.Blacklist[item] then
-		debugMsg('--Decision: Not selling (character blacklist)--')
+		debugMsg('--Decision: Not selling (character blacklist)--', "Blacklist", "debug")
 		return false
 	end
 
 	-- Check character-specific whitelist (overrides ALL other rules)
 	if module.CharDB.Whitelist[item] then
-		debugMsg('--Decision: Selling (character whitelist overrides all rules)--')
-		debugMsg('Item: ' .. (name or 'Unknown') .. ' (Link: ' .. ilink .. ')')
-		debugMsg('Vendor Price: ' .. tostring(vendorPrice))
+		debugMsg('--Decision: Selling (character whitelist overrides all rules)--', "Blacklist", "debug")
+		debugMsg('Item: ' .. (name or 'Unknown') .. ' (Link: ' .. ilink .. ')', "Selling", "debug")
+		debugMsg('Vendor Price: ' .. tostring(vendorPrice), "Selling", "debug")
 		return true
 	end
 
@@ -285,7 +300,7 @@ function module:IsSellable(item, ilink, bag, slot)
 		end)
 		
 		if hasUseText then
-			debugMsg('Item has "Use:" text in tooltip - skipping')
+			debugMsg('Item has "Use:" text in tooltip - skipping', "Selling", "debug")
 			return false
 		end
 	end
@@ -295,13 +310,13 @@ function module:IsSellable(item, ilink, bag, slot)
 	-- Check profile blacklists (optimized lookups)
 	buildBlacklistLookup()
 	if not blacklistLookup.items[item] and not blacklistLookup.types[itemType] and not blacklistLookup.types[itemSubType] then
-		debugMsg('--Decision: Selling--')
-		debugMsg('Item: ' .. (name or 'Unknown') .. ' (Link: ' .. ilink .. ')')
-		debugMsg('Expansion ID: ' .. tostring(expacID))
-		debugMsg('Item Level: ' .. tostring(iLevel))
-		debugMsg('Item Type: ' .. itemType)
-		debugMsg('Item Sub-Type: ' .. itemSubType)
-		debugMsg('Vendor Price: ' .. tostring(vendorPrice))
+		debugMsg('--Decision: Selling--', "Selling", "debug")
+		debugMsg('Item: ' .. (name or 'Unknown') .. ' (Link: ' .. ilink .. ')', "Selling", "debug")
+		debugMsg('Expansion ID: ' .. tostring(expacID), "Selling", "debug")
+		debugMsg('Item Level: ' .. tostring(iLevel), "Selling", "debug")
+		debugMsg('Item Type: ' .. itemType, "Selling", "debug")
+		debugMsg('Item Sub-Type: ' .. itemSubType, "Selling", "debug")
+		debugMsg('Vendor Price: ' .. tostring(vendorPrice), "Selling", "debug")
 		return true
 	end
 
@@ -333,7 +348,7 @@ function module:SellTrash()
 			end
 
 			if grayItemCount > 0 then
-				debugMsg('Using Blizzard SellAllJunkItems for ' .. grayItemCount .. ' gray items')
+				debugMsg('Using Blizzard SellAllJunkItems for ' .. grayItemCount .. ' gray items', "Selling", "info")
 				C_MerchantFrame.SellAllJunkItems()
 				-- blizzardSoldItems = true
 				-- Schedule our additional selling after a delay to let Blizzard's sell complete
@@ -344,7 +359,7 @@ function module:SellTrash()
 	end
 
 	--Find Items to sell and track highest iLVL
-	debugMsg('Starting to scan bags for sellable items...')
+	debugMsg('Starting to scan bags for sellable items...', "Selling", "info")
 	-- Scan through all possible bag slots (0-12 covers all normal bags plus extras)
 	for bag = 0, MAX_BAG_SLOTS do
 		for slot = 1, C_Container.GetContainerNumSlots(bag) do
@@ -368,12 +383,12 @@ function module:SellTrash()
 			end
 		end
 	end
-	debugMsg('Finished scanning bags. Found ' .. #ItemToSell .. ' items to sell.')
+	debugMsg('Finished scanning bags. Found ' .. #ItemToSell .. ' items to sell.', "Selling", "info")
 
 	-- Auto-increase MaximumiLVL if we detected higher iLVL items
 	if highestILVL > 0 and (highestILVL + 50) > module.DB.MaximumiLVL then
 		module.DB.MaximumiLVL = highestILVL + 50
-		debugMsg('Auto-increased MaximumiLVL to: ' .. module.DB.MaximumiLVL .. ' (highest detected: ' .. highestILVL .. ')')
+		debugMsg('Auto-increased MaximumiLVL to: ' .. module.DB.MaximumiLVL .. ' (highest detected: ' .. highestILVL .. ')', "Selling", "info")
 	end
 
 	--Sell Items if needed
@@ -421,7 +436,7 @@ function module:SellAdditionalItems()
 	-- Auto-increase MaximumiLVL if we detected higher iLVL items
 	if highestILVL > 0 and (highestILVL + 50) > module.DB.MaximumiLVL then
 		module.DB.MaximumiLVL = highestILVL + 50
-		debugMsg('Auto-increased MaximumiLVL to: ' .. module.DB.MaximumiLVL .. ' (highest detected: ' .. highestILVL .. ')')
+		debugMsg('Auto-increased MaximumiLVL to: ' .. module.DB.MaximumiLVL .. ' (highest detected: ' .. highestILVL .. ')', "Selling", "info")
 	end
 
 	--Sell Items if needed
@@ -459,10 +474,12 @@ function module:Repair(personalFunds)
 	if not module.DB.AutoRepair or not CanMerchantRepair() or GetRepairAllCost() == 0 then return end
 
 	if CanGuildBankRepair() and module.DB.UseGuildBankRepair and not personalFunds then
+		debugMsg('Repairing with guild funds for ' .. SUI:GoldFormattedValue(GetRepairAllCost()), "Repair", "info")
 		SUI:Print(L['Auto repair cost'] .. ': ' .. SUI:GoldFormattedValue(GetRepairAllCost()) .. ' ' .. L['used guild funds'])
 		RepairAllItems(true)
 		module:ScheduleTimer('Repair', 0.7, true)
 	else
+		debugMsg('Repairing with personal funds for ' .. SUI:GoldFormattedValue(GetRepairAllCost()), "Repair", "info")
 		SUI:Print(L['Auto repair cost'] .. ': ' .. SUI:GoldFormattedValue(GetRepairAllCost()) .. ' ' .. L['used personal funds'])
 		RepairAllItems()
 	end
@@ -470,11 +487,13 @@ end
 
 function module:MERCHANT_SHOW()
 	if SUI:IsModuleDisabled('AutoSell') then return end
+	debugMsg('Merchant window opened, starting auto-sell process', "Selling", "info")
 	module:ScheduleTimer('SellTrash', 0.2)
 	module:Repair()
 end
 
 function module:MERCHANT_CLOSED()
+	debugMsg('Merchant window closed, canceling timers', "Selling", "info")
 	module:CancelAllTimers()
 	if totalValue > 0 then totalValue = 0 end
 end
@@ -482,7 +501,7 @@ end
 local function HandleItemLevelSquish()
 	-- Check if the WOW_PROJECT_ID has changed (indicating potential expansion change)
 	if module.DB.LastWowProjectID ~= WOW_PROJECT_ID then
-		debugMsg('Detected WOW_PROJECT_ID change from ' .. (module.DB.LastWowProjectID or 'unknown') .. ' to ' .. WOW_PROJECT_ID)
+		debugMsg('Detected WOW_PROJECT_ID change from ' .. (module.DB.LastWowProjectID or 'unknown') .. ' to ' .. WOW_PROJECT_ID, "Selling", "info")
 
 		-- Scan all items to find the new highest item level
 		local newHighestILVL = 0
@@ -511,9 +530,9 @@ local function HandleItemLevelSquish()
 			-- Ensure we don't go below 1
 			if newMaxILVL < 1 then newMaxILVL = 1 end
 
-			debugMsg('Item level squish detected!')
-			debugMsg('Old MaximumiLVL: ' .. module.DB.MaximumiLVL .. ' -> New: ' .. newMaximumiLVL)
-			debugMsg('Old MaxILVL: ' .. oldMaxILVL .. ' -> New: ' .. newMaxILVL .. ' (ratio: ' .. string.format('%.2f', squishRatio) .. ')')
+			debugMsg('Item level squish detected!', "Selling", "warning")
+			debugMsg('Old MaximumiLVL: ' .. module.DB.MaximumiLVL .. ' -> New: ' .. newMaximumiLVL, "Selling", "info")
+			debugMsg('Old MaxILVL: ' .. oldMaxILVL .. ' -> New: ' .. newMaxILVL .. ' (ratio: ' .. string.format('%.2f', squishRatio) .. ')', "Selling", "info")
 
 			-- Apply the adjustments
 			module.DB.MaximumiLVL = newMaximumiLVL
@@ -523,7 +542,7 @@ local function HandleItemLevelSquish()
 		elseif newMaximumiLVL > module.DB.MaximumiLVL then
 			-- Normal case: just increase the maximum if we found higher level items
 			module.DB.MaximumiLVL = newMaximumiLVL
-			debugMsg('Increased MaximumiLVL to: ' .. newMaximumiLVL)
+			debugMsg('Increased MaximumiLVL to: ' .. newMaximumiLVL, "Selling", "info")
 		end
 
 		-- Update the stored project ID
@@ -833,11 +852,15 @@ function module:HandleItemClick(link)
 	end
 
 	-- Refresh bag markings if enabled
-	if module.DB.ShowBagMarking and module.markItems then module.markItems() end
+	if module.DB.ShowBagMarking and module.markItems then
+		debugMsg("Refreshing bag markings after item list changes", "BagMarking", "debug")
+		module.markItems()
+	end
 
 	-- Request refresh for Baganator if loaded
 	if C_AddOns.IsAddOnLoaded('Baganator') and Baganator and Baganator.API then
 		-- Request refresh so junk plugin can re-evaluate all items
+		debugMsg("Requesting Baganator item button refresh", "BagMarking", "debug")
 		Baganator.API.RequestItemButtonsRefresh()
 	end
 end
@@ -860,6 +883,11 @@ function module:OnInitialize()
 	module.DB = module.Database.profile ---@type SUI.Module.AutoSell.DB
 	module.CharDB = module.Database.char ---@type SUI.Module.AutoSell.CharDB
 
+	-- Setup hierarchical logging system for AutoSell
+	loggers = SUI.SetupModuleLogging(module, {
+		"BagMarking", "Selling", "Repair", "Blacklist"
+	})
+
 	-- Handle potential item level squish after DB is initialized
 	HandleItemLevelSquish()
 
@@ -877,7 +905,10 @@ function module:OnEnable()
 	module:CreateMiniVendorPanels()
 
 	-- Initialize bag marking system if enabled
-	if module.DB.ShowBagMarking then module:InitializeBagMarking() end
+	if module.DB.ShowBagMarking then
+		debugMsg("Initializing bag marking system", "BagMarking", "info")
+		module:InitializeBagMarking()
+	end
 
 	-- Build blacklist cache on enable for better performance
 	buildBlacklistLookup()
@@ -891,6 +922,7 @@ function module:OnDisable()
 	module:UnregisterEvent('MERCHANT_CLOSED')
 
 	-- Cleanup bag marking system
+	debugMsg("Cleaning up bag marking system", "BagMarking", "info")
 	module:CleanupBagMarking()
 
 	-- Hide and cleanup vendor panels
