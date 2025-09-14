@@ -12,7 +12,7 @@ local elementList = {
 	'RaidTargetIndicator',
 	'Range',
 	'ThreatIndicator',
-	'RaidRoleIndicator',
+	'RaidRoleIndicator'
 }
 
 ---@param frame table
@@ -34,8 +34,8 @@ end
 local Settings = {
 	config = {
 		type = 'Indicator',
-		DisplayName = 'Threat',
-	},
+		DisplayName = 'Threat'
+	}
 }
 
 UF.Elements:Register('ThreatIndicator', Build, nil, nil, Settings)

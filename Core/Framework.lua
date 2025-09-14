@@ -17,10 +17,18 @@ SUI.IsWrath = (WOW_PROJECT_ID == WOW_PROJECT_WRATH_CLASSIC) ---@type boolean
 SUI.IsMOP = (WOW_PROJECT_ID == WOW_PROJECT_MISTS_CLASSIC) ---@type boolean
 SUI.GitHash = '@project-abbreviated-hash@' -- The ZIP packager will replace this with the Git hash.
 SUI.wowVersion = 'Retail'
-if SUI.IsClassic then SUI.wowVersion = 'Classic' end
-if SUI.IsTBC then SUI.wowVersion = 'TBC' end
-if SUI.IsWrath then SUI.wowVersion = 'Wrath' end
-if SUI.IsMOP then SUI.wowVersion = 'MOP' end
+if SUI.IsClassic then
+	SUI.wowVersion = 'Classic'
+end
+if SUI.IsTBC then
+	SUI.wowVersion = 'TBC'
+end
+if SUI.IsWrath then
+	SUI.wowVersion = 'Wrath'
+end
+if SUI.IsMOP then
+	SUI.wowVersion = 'MOP'
+end
 --@alpha@
 SUI.releaseType = 'ALPHA ' .. SUI.BuildNum
 --@end-alpha@
@@ -50,7 +58,9 @@ SUI.Handlers = {}
 ---@param libaray table|function
 ---@param silent? boolean
 SUI.AddLib = function(name, libaray, silent)
-	if not name then return end
+	if not name then
+		return
+	end
 
 	-- in this case: `major` is the lib table and `minor` is the minor version
 	if type(libaray) == 'table' then
@@ -105,13 +115,15 @@ SUI.opt = {
 	type = 'group',
 	childGroups = 'tree',
 	args = {
-		General = { name = SUI.L['General'], type = 'group', order = 0, args = {} },
-		Artwork = { name = SUI.L['Artwork'], type = 'group', order = 1, args = {} },
-	},
+		General = {name = SUI.L['General'], type = 'group', order = 0, args = {}},
+		Artwork = {name = SUI.L['Artwork'], type = 'group', order = 1, args = {}}
+	}
 }
 ---------------  Database  ---------------
 local scale = 0.88
-if SUI.IsClassic then scale = 0.79 end
+if SUI.IsClassic then
+	scale = 0.79
+end
 
 local DBdefault = {
 	Version = '0',
@@ -121,18 +133,18 @@ local DBdefault = {
 	ActionBars = {
 		Allalpha = 100,
 		Allenable = true,
-		popup1 = { anim = true, alpha = 100, enable = true },
-		popup2 = { anim = true, alpha = 100, enable = true },
-		bar1 = { alpha = 100, enable = true },
-		bar2 = { alpha = 100, enable = true },
-		bar3 = { alpha = 100, enable = true },
-		bar4 = { alpha = 100, enable = true },
-		bar5 = { alpha = 100, enable = true },
-		bar6 = { alpha = 100, enable = true },
+		popup1 = {anim = true, alpha = 100, enable = true},
+		popup2 = {anim = true, alpha = 100, enable = true},
+		bar1 = {alpha = 100, enable = true},
+		bar2 = {alpha = 100, enable = true},
+		bar3 = {alpha = 100, enable = true},
+		bar4 = {alpha = 100, enable = true},
+		bar5 = {alpha = 100, enable = true},
+		bar6 = {alpha = 100, enable = true}
 	},
 	DisabledModules = {},
 	SetupWizard = {
-		FirstLaunch = true,
+		FirstLaunch = true
 	},
 	Styles = {
 		['**'] = {
@@ -141,7 +153,7 @@ local DBdefault = {
 				barBG = {
 					['**'] = {
 						enabled = true,
-						alpha = 1,
+						alpha = 1
 					},
 					['1'] = {},
 					['2'] = {},
@@ -154,8 +166,8 @@ local DBdefault = {
 					['9'] = {},
 					['10'] = {},
 					Stance = {},
-					MenuBar = {},
-				},
+					MenuBar = {}
+				}
 			},
 			Movers = {},
 			BlizzMovers = {
@@ -169,14 +181,14 @@ local DBdefault = {
 				['BossButton'] = 'BOTTOM,SpartanUI,BOTTOM,0,210',
 				['AlertFrame'] = 'BOTTOM,SpartanUI,BOTTOM,0,215',
 				['VehicleLeaveButton'] = 'BOTTOM,SpartanUI,BOTTOM,0,180',
-				['FramerateFrame'] = 'BOTTOM,SpartanUI,BOTTOM,0,210',
+				['FramerateFrame'] = 'BOTTOM,SpartanUI,BOTTOM,0,210'
 			},
 			Color = {
 				Art = false,
 				PlayerFrames = false,
 				PartyFrames = false,
-				RaidFrames = false,
-			},
+				RaidFrames = false
+			}
 		},
 		Arcane = {
 			Frames = {
@@ -188,24 +200,24 @@ local DBdefault = {
 							position = {
 								anchor = 'BOTTOM',
 								x = 0,
-								y = -16,
-							},
+								y = -16
+							}
 						},
 						SpartanArt = {
 							top = {
 								enabled = true,
-								graphic = 'Arcane',
+								graphic = 'Arcane'
 							},
 							bg = {
 								enabled = true,
-								graphic = 'Arcane',
+								graphic = 'Arcane'
 							},
 							bottom = {
 								enabled = true,
-								graphic = 'Arcane',
-							},
-						},
-					},
+								graphic = 'Arcane'
+							}
+						}
+					}
 				},
 				target = {
 					elements = {
@@ -215,44 +227,44 @@ local DBdefault = {
 							position = {
 								anchor = 'BOTTOM',
 								x = 0,
-								y = -16,
-							},
+								y = -16
+							}
 						},
 						SpartanArt = {
 							top = {
 								enabled = true,
-								graphic = 'Arcane',
+								graphic = 'Arcane'
 							},
 							bg = {
 								enabled = true,
-								graphic = 'Arcane',
+								graphic = 'Arcane'
 							},
 							bottom = {
 								enabled = true,
-								graphic = 'Arcane',
-							},
-						},
-					},
-				},
+								graphic = 'Arcane'
+							}
+						}
+					}
+				}
 			},
 			Color = {
 				Art = {
 					0.4784313725490196,
 					0.9137254901960784,
 					1,
-					0.9,
-				},
+					0.9
+				}
 			},
 			SlidingTrays = {
 				left = {
 					enabled = true,
-					collapsed = false,
+					collapsed = false
 				},
 				right = {
 					enabled = true,
-					collapsed = false,
-				},
-			},
+					collapsed = false
+				}
+			}
 		},
 		ArcaneRed = {
 			Frames = {
@@ -261,16 +273,16 @@ local DBdefault = {
 						SpartanArt = {
 							top = {
 								enabled = true,
-								graphic = 'ArcaneRed',
+								graphic = 'ArcaneRed'
 							},
 							bg = {
 								enabled = true,
-								graphic = 'ArcaneRed',
+								graphic = 'ArcaneRed'
 							},
 							bottom = {
 								enabled = true,
-								graphic = 'ArcaneRed',
-							},
+								graphic = 'ArcaneRed'
+							}
 						},
 						Name = {
 							enabled = true,
@@ -278,26 +290,26 @@ local DBdefault = {
 							position = {
 								anchor = 'BOTTOM',
 								x = 0,
-								y = -16,
-							},
-						},
-					},
+								y = -16
+							}
+						}
+					}
 				},
 				target = {
 					elements = {
 						SpartanArt = {
 							top = {
 								enabled = true,
-								graphic = 'ArcaneRed',
+								graphic = 'ArcaneRed'
 							},
 							bg = {
 								enabled = true,
-								graphic = 'ArcaneRed',
+								graphic = 'ArcaneRed'
 							},
 							bottom = {
 								enabled = true,
-								graphic = 'ArcaneRed',
-							},
+								graphic = 'ArcaneRed'
+							}
 						},
 						Name = {
 							enabled = true,
@@ -305,12 +317,12 @@ local DBdefault = {
 							position = {
 								anchor = 'BOTTOM',
 								x = 0,
-								y = -16,
-							},
-						},
-					},
-				},
-			},
+								y = -16
+							}
+						}
+					}
+				}
+			}
 		},
 		Classic = {
 			Frames = {
@@ -326,8 +338,8 @@ local DBdefault = {
 								relativeTo = 'Name',
 								relativePoint = 'TOPLEFT',
 								anchor = 'BOTTOMLEFT',
-								x = -23,
-							},
+								x = -23
+							}
 						},
 						Debuffs = {
 							rows = 4,
@@ -336,11 +348,11 @@ local DBdefault = {
 								y = 8,
 								relativeTo = 'Name',
 								anchor = 'BOTTOMRIGHT',
-								relativePoint = 'TOPRIGHT',
-							},
+								relativePoint = 'TOPRIGHT'
+							}
 						},
 						Castbar = {
-							height = 15,
+							height = 15
 						},
 						Health = {
 							offset = 2,
@@ -352,10 +364,10 @@ local DBdefault = {
 									position = {
 										anchor = 'LEFT',
 										x = -35,
-										y = 0,
-									},
-								},
-							},
+										y = 0
+									}
+								}
+							}
 						},
 						Power = {
 							offset = 2,
@@ -367,61 +379,61 @@ local DBdefault = {
 									position = {
 										anchor = 'LEFT',
 										x = -35,
-										y = 0,
-									},
-								},
+										y = 0
+									}
+								}
 							},
 							position = {
-								y = -3,
-							},
+								y = -3
+							}
 						},
 						Portrait = {
-							position = 'right',
+							position = 'right'
 						},
 						RestingIndicator = {
 							position = {
 								anchor = 'TOPRIGHT',
 								x = 102,
-								y = 10,
-							},
+								y = 10
+							}
 						},
 						ClassIcon = {
 							size = 18,
 							position = {
 								anchor = 'TOPRIGHT',
 								x = 20,
-								y = 16,
-							},
+								y = 16
+							}
 						},
 						PvPIndicator = {
 							position = {
 								anchor = 'BOTTOMRIGHT',
 								x = 80,
-								y = 0,
-							},
+								y = 0
+							}
 						},
 						RaidRoleIndicator = {
 							position = {
 								anchor = 'BOTTOMRIGHT',
 								x = 22,
-								y = 0,
-							},
+								y = 0
+							}
 						},
 						SpartanArt = {
 							full = {
 								enabled = true,
-								graphic = 'Classic',
-							},
+								graphic = 'Classic'
+							}
 						},
 						CombatIndicator = {
 							enabled = true,
 							position = {
 								anchor = 'TOPRIGHT',
 								x = 102,
-								y = 10,
-							},
-						},
-					},
+								y = 10
+							}
+						}
+					}
 				},
 				target = {
 					width = 153,
@@ -435,8 +447,8 @@ local DBdefault = {
 								relativeTo = 'Name',
 								relativePoint = 'TOPLEFT',
 								anchor = 'BOTTOMLEFT',
-								x = -23,
-							},
+								x = -23
+							}
 						},
 						Debuffs = {
 							rows = 4,
@@ -445,8 +457,8 @@ local DBdefault = {
 								y = 8,
 								relativeTo = 'Name',
 								anchor = 'BOTTOMRIGHT',
-								relativePoint = 'TOPRIGHT',
-							},
+								relativePoint = 'TOPRIGHT'
+							}
 						},
 						Health = {
 							offset = 2,
@@ -457,10 +469,10 @@ local DBdefault = {
 									text = '[perhp]%',
 									position = {
 										anchor = 'RIGHT',
-										x = 40,
-									},
-								},
-							},
+										x = 40
+									}
+								}
+							}
 						},
 						Power = {
 							offset = 2,
@@ -471,54 +483,54 @@ local DBdefault = {
 									text = '[perpp]%',
 									position = {
 										anchor = 'RIGHT',
-										x = 40,
-									},
-								},
+										x = 40
+									}
+								}
 							},
 							position = {
-								y = -3,
-							},
+								y = -3
+							}
 						},
 						Castbar = {
-							height = 15,
+							height = 15
 						},
 						ClassIcon = {
 							size = 18,
 							position = {
 								anchor = 'TOPLEFT',
 								x = -22,
-								y = 16,
-							},
+								y = 16
+							}
 						},
 						PvPIndicator = {
 							position = {
 								anchor = 'BOTTOMLEFT',
 								x = -80,
-								y = 0,
-							},
+								y = 0
+							}
 						},
 						RaidRoleIndicator = {
 							position = {
 								anchor = 'BOTTOMLEFT',
 								x = -22,
-								y = 0,
-							},
+								y = 0
+							}
 						},
 						SpartanArt = {
 							full = {
 								enabled = true,
-								graphic = 'Classic',
-							},
-						},
-					},
+								graphic = 'Classic'
+							}
+						}
+					}
 				},
 				pet = {
 					elements = {
 						Buffs = {
 							enabled = false,
 							position = {
-								y = 22,
-							},
+								y = 22
+							}
 						},
 						Debuffs = {
 							rows = 4,
@@ -527,8 +539,8 @@ local DBdefault = {
 								y = 8,
 								relativeTo = 'Name',
 								anchor = 'BOTTOMRIGHT',
-								relativePoint = 'TOPRIGHT',
-							},
+								relativePoint = 'TOPRIGHT'
+							}
 						},
 						Health = {
 							offset = 2,
@@ -540,10 +552,10 @@ local DBdefault = {
 									position = {
 										anchor = 'LEFT',
 										x = -35,
-										y = 0,
-									},
-								},
-							},
+										y = 0
+									}
+								}
+							}
 						},
 						Power = {
 							offset = 2,
@@ -555,34 +567,34 @@ local DBdefault = {
 									position = {
 										anchor = 'LEFT',
 										x = -35,
-										y = 0,
-									},
-								},
-							},
+										y = 0
+									}
+								}
+							}
 						},
 						Castbar = {
-							height = 15,
+							height = 15
 						},
 						Name = {
 							position = {
-								y = 5,
-							},
+								y = 5
+							}
 						},
 						SpartanArt = {
 							full = {
 								enabled = true,
-								graphic = 'Classic',
-							},
-						},
-					},
+								graphic = 'Classic'
+							}
+						}
+					}
 				},
 				targettarget = {
 					elements = {
 						Buffs = {
-							enabled = false,
+							enabled = false
 						},
 						Debuffs = {
-							enabled = false,
+							enabled = false
 						},
 						Health = {
 							offset = 2,
@@ -593,10 +605,10 @@ local DBdefault = {
 									text = '[perhp]%',
 									position = {
 										anchor = 'RIGHT',
-										x = 40,
-									},
-								},
-							},
+										x = 40
+									}
+								}
+							}
 						},
 						Power = {
 							offset = 1,
@@ -607,26 +619,26 @@ local DBdefault = {
 									text = '[perpp]%',
 									position = {
 										anchor = 'RIGHT',
-										x = 40,
-									},
-								},
-							},
+										x = 40
+									}
+								}
+							}
 						},
 						Castbar = {
-							height = 14,
+							height = 14
 						},
 						SpartanArt = {
 							full = {
 								enabled = true,
-								graphic = 'Classic',
-							},
-						},
-					},
-				},
+								graphic = 'Classic'
+							}
+						}
+					}
+				}
 			},
 			BlizzMovers = {
-				['VehicleLeaveButton'] = 'BOTTOM,SpartanUI,BOTTOM,0,195',
-			},
+				['VehicleLeaveButton'] = 'BOTTOM,SpartanUI,BOTTOM,0,195'
+			}
 		},
 		Transparent = {
 			Frames = {
@@ -635,39 +647,39 @@ local DBdefault = {
 						SpartanArt = {
 							top = {
 								enabled = true,
-								graphic = 'Transparent',
+								graphic = 'Transparent'
 							},
 							bg = {
 								enabled = true,
-								graphic = 'Transparent',
-							},
+								graphic = 'Transparent'
+							}
 						},
 						Portrait = {
-							position = 'right',
-						},
-					},
+							position = 'right'
+						}
+					}
 				},
 				target = {
 					elements = {
 						SpartanArt = {
 							top = {
 								enabled = true,
-								graphic = 'Transparent',
+								graphic = 'Transparent'
 							},
 							bg = {
 								enabled = true,
-								graphic = 'Transparent',
-							},
-						},
-					},
-				},
+								graphic = 'Transparent'
+							}
+						}
+					}
+				}
 			},
 			Color = {
-				Art = { 0, 0.8, 0.9, 0.7 },
-				PlayerFrames = { 0, 0.8, 0.9, 0.7 },
-				PartyFrames = { 0, 0.8, 0.9, 0.7 },
-				RaidFrames = { 0, 0.8, 0.9, 0.7 },
-			},
+				Art = {0, 0.8, 0.9, 0.7},
+				PlayerFrames = {0, 0.8, 0.9, 0.7},
+				PartyFrames = {0, 0.8, 0.9, 0.7},
+				RaidFrames = {0, 0.8, 0.9, 0.7}
+			}
 		},
 		Minimal = {
 			Color = {
@@ -675,14 +687,14 @@ local DBdefault = {
 					0.6156862745098039,
 					0.1215686274509804,
 					0.1215686274509804,
-					0.9,
-				},
+					0.9
+				}
 			},
 			HideCenterGraphic = false,
 			HideBottomRight = false,
 			HideBottomLeft = false,
 			HideTopRight = false,
-			HideTopLeft = false,
+			HideTopLeft = false
 		},
 		Fel = {
 			Artwork = {},
@@ -692,16 +704,16 @@ local DBdefault = {
 						SpartanArt = {
 							top = {
 								enabled = true,
-								graphic = 'Fel',
+								graphic = 'Fel'
 							},
 							bg = {
 								enabled = true,
-								graphic = 'Fel',
+								graphic = 'Fel'
 							},
 							bottom = {
 								enabled = true,
-								graphic = 'Fel',
-							},
+								graphic = 'Fel'
+							}
 						},
 						Name = {
 							enabled = true,
@@ -709,26 +721,26 @@ local DBdefault = {
 							position = {
 								anchor = 'BOTTOM',
 								x = 0,
-								y = -16,
-							},
-						},
-					},
+								y = -16
+							}
+						}
+					}
 				},
 				target = {
 					elements = {
 						SpartanArt = {
 							top = {
 								enabled = true,
-								graphic = 'Fel',
+								graphic = 'Fel'
 							},
 							bg = {
 								enabled = true,
-								graphic = 'Fel',
+								graphic = 'Fel'
 							},
 							bottom = {
 								enabled = true,
-								graphic = 'Fel',
-							},
+								graphic = 'Fel'
+							}
 						},
 						Name = {
 							enabled = true,
@@ -736,12 +748,12 @@ local DBdefault = {
 							position = {
 								anchor = 'BOTTOM',
 								x = 0,
-								y = -16,
-							},
-						},
-					},
-				},
-			},
+								y = -16
+							}
+						}
+					}
+				}
+			}
 		},
 		Digital = {
 			Artwork = {},
@@ -751,22 +763,22 @@ local DBdefault = {
 						SpartanArt = {
 							bg = {
 								enabled = true,
-								graphic = 'Digital',
-							},
-						},
-					},
+								graphic = 'Digital'
+							}
+						}
+					}
 				},
 				target = {
 					elements = {
 						SpartanArt = {
 							bg = {
 								enabled = true,
-								graphic = 'Digital',
-							},
-						},
-					},
-				},
-			},
+								graphic = 'Digital'
+							}
+						}
+					}
+				}
+			}
 		},
 		War = {
 			Artwork = {},
@@ -776,16 +788,16 @@ local DBdefault = {
 						SpartanArt = {
 							top = {
 								enabled = true,
-								graphic = 'War',
+								graphic = 'War'
 							},
 							bg = {
 								enabled = true,
-								graphic = 'War',
+								graphic = 'War'
 							},
 							bottom = {
 								enabled = true,
-								graphic = 'War',
-							},
+								graphic = 'War'
+							}
 						},
 						Name = {
 							enabled = true,
@@ -793,38 +805,38 @@ local DBdefault = {
 							position = {
 								anchor = 'BOTTOM',
 								x = 0,
-								y = -16,
-							},
+								y = -16
+							}
 						},
 						Buffs = {
 							position = {
 								relativeTo = 'Name',
-								y = -15,
-							},
+								y = -15
+							}
 						},
 						Debuffs = {
 							position = {
 								relativeTo = 'Name',
-								y = -15,
-							},
-						},
-					},
+								y = -15
+							}
+						}
+					}
 				},
 				target = {
 					elements = {
 						SpartanArt = {
 							top = {
 								enabled = true,
-								graphic = 'War',
+								graphic = 'War'
 							},
 							bg = {
 								enabled = true,
-								graphic = 'War',
+								graphic = 'War'
 							},
 							bottom = {
 								enabled = true,
-								graphic = 'War',
-							},
+								graphic = 'War'
+							}
 						},
 						Name = {
 							enabled = true,
@@ -832,34 +844,34 @@ local DBdefault = {
 							position = {
 								anchor = 'BOTTOM',
 								x = 0,
-								y = -16,
-							},
+								y = -16
+							}
 						},
 						Buffs = {
 							position = {
 								relativeTo = 'Name',
-								y = -5,
-							},
+								y = -5
+							}
 						},
 						Debuffs = {
 							position = {
 								relativeTo = 'Name',
-								y = -5,
-							},
-						},
-					},
-				},
+								y = -5
+							}
+						}
+					}
+				}
 			},
 			SlidingTrays = {
 				left = {
 					enabled = true,
-					collapsed = false,
+					collapsed = false
 				},
 				right = {
 					enabled = true,
-					collapsed = false,
-				},
-			},
+					collapsed = false
+				}
+			}
 		},
 		Tribal = {
 			Artwork = {},
@@ -869,16 +881,16 @@ local DBdefault = {
 						SpartanArt = {
 							top = {
 								enabled = true,
-								graphic = 'Tribal',
+								graphic = 'Tribal'
 							},
 							bg = {
 								enabled = true,
-								graphic = 'Tribal',
+								graphic = 'Tribal'
 							},
 							bottom = {
 								enabled = true,
-								graphic = 'Tribal',
-							},
+								graphic = 'Tribal'
+							}
 						},
 						Name = {
 							enabled = true,
@@ -886,26 +898,26 @@ local DBdefault = {
 							position = {
 								anchor = 'BOTTOM',
 								x = 0,
-								y = -16,
-							},
-						},
-					},
+								y = -16
+							}
+						}
+					}
 				},
 				target = {
 					elements = {
 						SpartanArt = {
 							top = {
 								enabled = true,
-								graphic = 'Tribal',
+								graphic = 'Tribal'
 							},
 							bg = {
 								enabled = true,
-								graphic = 'Tribal',
+								graphic = 'Tribal'
 							},
 							bottom = {
 								enabled = true,
-								graphic = 'Tribal',
-							},
+								graphic = 'Tribal'
+							}
 						},
 						Name = {
 							enabled = true,
@@ -913,23 +925,23 @@ local DBdefault = {
 							position = {
 								anchor = 'BOTTOM',
 								x = 0,
-								y = -16,
-							},
-						},
-					},
-				},
+								y = -16
+							}
+						}
+					}
+				}
 			},
 			SlidingTrays = {
 				left = {
 					enabled = true,
-					collapsed = false,
+					collapsed = false
 				},
 				right = {
 					enabled = true,
-					collapsed = false,
-				},
-			},
-		},
+					collapsed = false
+				}
+			}
+		}
 	},
 	Artwork = {
 		Style = 'War',
@@ -938,12 +950,12 @@ local DBdefault = {
 		VehicleUI = true,
 		Viewport = {
 			enabled = false,
-			offset = { top = 0, bottom = 0, left = 0, right = 0 },
+			offset = {top = 0, bottom = 0, left = 0, right = 0}
 		},
 		SlidingTrays = {
 			['**'] = {
-				collapsed = false,
-			},
+				collapsed = false
+			}
 		},
 		Offset = {
 			Top = 0,
@@ -952,28 +964,30 @@ local DBdefault = {
 			BottomAuto = true,
 			Horizontal = {
 				Bottom = 0,
-				Top = 0,
-			},
-		},
-	},
+				Top = 0
+			}
+		}
+	}
 }
 
 SUI.DBdefault = DBdefault
 local GlobalDefaults = {
 	ChatLevelLog = {},
 	ErrorHandler = {
-		SUIErrorIcon = {},
-	},
+		SUIErrorIcon = {}
+	}
 }
 
 ---@class SUIDBObject
-local DBdefaults = { global = GlobalDefaults, profile = DBdefault }
+local DBdefaults = {global = GlobalDefaults, profile = DBdefault}
 ---@class SUIDB : SUIDBObject, AceDBObject-3.0
 ---@field RegisterCallback function
 SUI.SpartanUIDB = SUI.Lib.AceDB:New('SpartanUIDB', DBdefaults)
 --If user has not played in a long time reset the database.
 local ver = SUI.SpartanUIDB.profile.Version
-if ver ~= '0' and ver < '6.0.0' then SUI.SpartanUIDB:ResetDB() end
+if ver ~= '0' and ver < '6.0.0' then
+	SUI.SpartanUIDB:ResetDB()
+end
 
 -- New SUI.DB Access
 SUI.DBG = SUI.SpartanUIDB.global
@@ -1007,20 +1021,28 @@ local function reloaduiWindow()
 	popup.btnClose:SetPoint('BOTTOMRIGHT', popup, 'BOTTOMRIGHT', -4, 4)
 
 	-- Actions
-	popup.btnClose:SetScript('OnClick', function()
-		-- Perform the Page's Custom Next action
-		popup:Hide()
-	end)
-	popup.btnReload:SetScript('OnClick', function()
-		-- Perform the Page's Custom Next action
-		ReloadUI()
-	end)
+	popup.btnClose:SetScript(
+		'OnClick',
+		function()
+			-- Perform the Page's Custom Next action
+			popup:Hide()
+		end
+	)
+	popup.btnReload:SetScript(
+		'OnClick',
+		function()
+			-- Perform the Page's Custom Next action
+			ReloadUI()
+		end
+	)
 
 	SUI.reloaduiWindow = popup
 end
 
 function SUI:OnInitialize()
-	if not SpartanUICharDB then SpartanUICharDB = {} end
+	if not SpartanUICharDB then
+		SpartanUICharDB = {}
+	end
 	SUI.CharDB = SpartanUICharDB
 
 	SUI.SpartanUIDB = SUI.Lib.AceDB:New('SpartanUIDB', DBdefaults)
@@ -1030,7 +1052,9 @@ function SUI:OnInitialize()
 	SUI.DB = SUI.SpartanUIDB.profile
 
 	--Check for any SUI.DB changes
-	if SUI.DB.SetupDone and (SUI.Version ~= SUI.DB.Version) and SUI.DB.Version ~= '0' then SUI:DBUpgrades() end
+	if SUI.DB.SetupDone and (SUI.Version ~= SUI.DB.Version) and SUI.DB.Version ~= '0' then
+		SUI:DBUpgrades()
+	end
 
 	if SUI.DB.SUIProper then
 		SUI.print('---------------', true)
@@ -1041,18 +1065,24 @@ function SUI:OnInitialize()
 		SUI5Indicator:SetFrameStrata('DIALOG')
 		SUI5Indicator:SetPoint('TOPRIGHT', UIParent, 'TOPRIGHT', 0, 0)
 		SUI5Indicator:SetSize(20, 20)
-		SUI5Indicator:SetBackdrop({
-			bgFile = 'Interface\\AddOns\\SpartanUI\\images\\blank.tga',
-			edgeFile = 'Interface\\AddOns\\SpartanUI\\images\\blank.tga',
-			edgeSize = 1,
-		})
+		SUI5Indicator:SetBackdrop(
+			{
+				bgFile = 'Interface\\AddOns\\SpartanUI\\images\\blank.tga',
+				edgeFile = 'Interface\\AddOns\\SpartanUI\\images\\blank.tga',
+				edgeSize = 1
+			}
+		)
 		SUI5Indicator:SetBackdropColor(1, 0, 0, 0.5)
 		SUI5Indicator:SetBackdropBorderColor(0.00, 0.00, 0.00, 1)
-		SUI5Indicator:HookScript('OnEnter', function()
-			SUI.print('---------------', true)
-			SUI:Print('SpartanUI has detected an unsupported SUI5 profile is being used. Please reset your profile via /suihelp')
-			SUI.print('---------------', true)
-		end, 'LE_SCRIPT_BINDING_TYPE_EXTRINSIC')
+		SUI5Indicator:HookScript(
+			'OnEnter',
+			function()
+				SUI.print('---------------', true)
+				SUI:Print('SpartanUI has detected an unsupported SUI5 profile is being used. Please reset your profile via /suihelp')
+				SUI.print('---------------', true)
+			end,
+			'LE_SCRIPT_BINDING_TYPE_EXTRINSIC'
+		)
 	end
 
 	-- Add Profiles to Options
@@ -1088,7 +1118,9 @@ function SUI:OnInitialize()
 
 	local function resetfulldb()
 		if ResetDBWarning then
-			if Bartender4 then Bartender4.db:ResetDB() end
+			if Bartender4 then
+				Bartender4.db:ResetDB()
+			end
 			SUI.SpartanUIDB:ResetDB()
 		else
 			ResetDBWarning = true
@@ -1104,7 +1136,9 @@ function SUI:OnInitialize()
 	local function Version()
 		SUI:Print(SUI.L['Version'] .. ' ' .. C_AddOns.GetAddOnMetadata('SpartanUI', 'Version'))
 		SUI:Print(string.format('%s build %s', SUI.wowVersion, SUI.BuildNum))
-		if SUI.Bartender4Version ~= 0 then SUI:Print(SUI.L['Bartender4 version'] .. ' ' .. SUI.Bartender4Version) end
+		if SUI.Bartender4Version ~= 0 then
+			SUI:Print(SUI.L['Bartender4 version'] .. ' ' .. SUI.Bartender4Version)
+		end
 	end
 
 	SUI:AddChatCommand('version', Version, 'Displays version information to the chat')
@@ -1121,7 +1155,7 @@ function SUI:OnInitialize()
 		end
 		local desc = 'Display SUI Error handler'
 		local args = {
-			reset = 'Clear all saved errors',
+			reset = 'Clear all saved errors'
 		}
 		SUI:AddChatCommand('error', ErrHandler, desc, args)
 		SUI:AddChatCommand('errors', ErrHandler, desc, args)
@@ -1129,7 +1163,9 @@ function SUI:OnInitialize()
 end
 
 function SUI:DBUpgrades()
-	if SUI.DB.Artwork.Style == '' and SUI.DB.Artwork.SetupDone then SUI.DB.Artwork.Style = 'Classic' end
+	if SUI.DB.Artwork.Style == '' and SUI.DB.Artwork.SetupDone then
+		SUI.DB.Artwork.Style = 'Classic'
+	end
 
 	-- 6.3.0
 	if SUI.DB.Offset then
@@ -1219,9 +1255,13 @@ end
 ---@param override? boolean
 ---@return table
 function SUI:MergeData(target, source, override)
-	if source == nil then return target end
+	if source == nil then
+		return target
+	end
 
-	if type(target) ~= 'table' then target = {} end
+	if type(target) ~= 'table' then
+		target = {}
+	end
 	for k, v in pairs(source) do
 		if type(v) == 'table' then
 			target[k] = self:MergeData(target[k], v, override)
@@ -1241,9 +1281,13 @@ end
 ---@param source any The data that will be used to populate the dest, unless the target info exsists in the dest then it will be left alone
 ---@return any will return the dest table, this is not needed as LUA updates the dest obj you passed but can be useful for easy re-assignment
 function SUI:CopyData(dest, source)
-	if source == nil then return dest end
+	if source == nil then
+		return dest
+	end
 
-	if type(dest) ~= 'table' then dest = {} end
+	if type(dest) ~= 'table' then
+		dest = {}
+	end
 	for k, v in pairs(source) do
 		if k == '*' or k == '**' then
 			if type(v) == 'table' then
@@ -1251,35 +1295,45 @@ function SUI:CopyData(dest, source)
 				local mt = {
 					-- This handles the lookup and creation of new subtables
 					__index = function(t, k)
-						if k == nil then return nil end
+						if k == nil then
+							return nil
+						end
 						local tbl = {}
 						SUI:CopyData(tbl, v)
 						rawset(t, k, tbl)
 						return tbl
-					end,
+					end
 				}
 				setmetatable(dest, mt)
 				-- handle already existing tables in the SV
 				for dk, dv in pairs(dest) do
-					if not rawget(source, dk) and type(dv) == 'table' then SUI:CopyData(dv, v) end
+					if not rawget(source, dk) and type(dv) == 'table' then
+						SUI:CopyData(dv, v)
+					end
 				end
 			else
 				-- Values are not tables, so this is just a simple return
 				local mt = {
 					__index = function(t, k)
 						return k ~= nil and v or nil
-					end,
+					end
 				}
 				setmetatable(dest, mt)
 			end
 		elseif type(v) == 'table' then
-			if not rawget(dest, k) then rawset(dest, k, {}) end
+			if not rawget(dest, k) then
+				rawset(dest, k, {})
+			end
 			if type(dest[k]) == 'table' then
 				SUI:CopyData(dest[k], v)
-				if source['**'] then SUI:CopyData(dest[k], source['**']) end
+				if source['**'] then
+					SUI:CopyData(dest[k], source['**'])
+				end
 			end
 		else
-			if rawget(dest, k) == nil then rawset(dest, k, v) end
+			if rawget(dest, k) == nil then
+				rawset(dest, k, v)
+			end
 		end
 	end
 	return dest
@@ -1290,7 +1344,9 @@ function SUI:isPartialMatch(frameName, tab)
 
 	for _, v in ipairs(tab) do
 		local startpos, _ = strfind(strlower(frameName), strlower(v))
-		if startpos == 1 then result = true end
+		if startpos == 1 then
+			result = true
+		end
 	end
 
 	return result
@@ -1313,16 +1369,22 @@ function SUI:IsInTable(searchTable, searchPhrase, all)
 	if all ~= nil then
 		for k, v in ipairs(searchTable) do
 			if v ~= nil and searchPhrase ~= nil then
-				if strlower(v) == strlower(searchPhrase) then return true end
+				if strlower(v) == strlower(searchPhrase) then
+					return true
+				end
 			end
 			if k ~= nil and searchPhrase ~= nil then
-				if strlower(k) == strlower(searchPhrase) then return true end
+				if strlower(k) == strlower(searchPhrase) then
+					return true
+				end
 			end
 		end
 	else
 		for _, v in ipairs(searchTable) do
 			if v ~= nil and searchPhrase ~= nil then
-				if strlower(v) == strlower(searchPhrase) then return true end
+				if strlower(v) == strlower(searchPhrase) then
+					return true
+				end
 			end
 		end
 	end
@@ -1333,11 +1395,15 @@ end
 ---@param defaultTable table
 ---@return table
 function SUI:CopyTable(currentTable, defaultTable)
-	if type(currentTable) ~= 'table' then currentTable = {} end
+	if type(currentTable) ~= 'table' then
+		currentTable = {}
+	end
 
 	if type(defaultTable) == 'table' then
 		for option, value in pairs(defaultTable) do
-			if type(value) == 'table' then value = self:CopyTable(currentTable[option], value) end
+			if type(value) == 'table' then
+				value = self:CopyTable(currentTable[option], value)
+			end
 
 			currentTable[option] = value
 		end
@@ -1356,35 +1422,45 @@ function SUI:CopyDefaults(dest, src)
 				local mt = {
 					-- This handles the lookup and creation of new subtables
 					__index = function(t, k)
-						if k == nil then return nil end
+						if k == nil then
+							return nil
+						end
 						local tbl = {}
 						SUI:CopyDefaults(tbl, v)
 						rawset(t, k, tbl)
 						return tbl
-					end,
+					end
 				}
 				setmetatable(dest, mt)
 				-- handle already existing tables in the SV
 				for dk, dv in pairs(dest) do
-					if not rawget(src, dk) and type(dv) == 'table' then SUI:CopyDefaults(dv, v) end
+					if not rawget(src, dk) and type(dv) == 'table' then
+						SUI:CopyDefaults(dv, v)
+					end
 				end
 			else
 				-- Values are not tables, so this is just a simple return
 				local mt = {
 					__index = function(t, k)
 						return k ~= nil and v or nil
-					end,
+					end
 				}
 				setmetatable(dest, mt)
 			end
 		elseif type(v) == 'table' then
-			if not rawget(dest, k) then rawset(dest, k, {}) end
+			if not rawget(dest, k) then
+				rawset(dest, k, {})
+			end
 			if type(dest[k]) == 'table' then
 				SUI:CopyDefaults(dest[k], v)
-				if src['**'] then SUI:CopyDefaults(dest[k], src['**']) end
+				if src['**'] then
+					SUI:CopyDefaults(dest[k], src['**'])
+				end
 			end
 		else
-			if rawget(dest, k) == nil then rawset(dest, k, v) end
+			if rawget(dest, k) == nil then
+				rawset(dest, k, v)
+			end
 		end
 	end
 end
@@ -1459,7 +1535,9 @@ function SUI:FilterTableFromBlacklist(cleanTable, blacklistTable)
 			tfbCleaned[option] = self:FilterTableFromBlacklist(value, blacklistTable[option])
 		else
 			-- Filter out blacklisted keys
-			if blacklistTable[option] ~= true then tfbCleaned[option] = value end
+			if blacklistTable[option] ~= true then
+				tfbCleaned[option] = value
+			end
 		end
 	end
 
@@ -1509,7 +1587,9 @@ function SUI:TableToLuaString(inTable)
 	end
 
 	local ret = '{\n'
-	if inTable then ret = recurse(inTable, 1, ret) end
+	if inTable then
+		ret = recurse(inTable, 1, ret)
+	end
 	ret = ret .. '}'
 
 	return ret
@@ -1519,7 +1599,7 @@ function SUI:round(num, pos)
 	if num then
 		local mult = 10 ^ (pos or 2)
 		return floor(num * mult + 0.5) / mult
-		-- return floor((num * 10 ^ 2) + 0.5) / (10 ^ 2)
+	-- return floor((num * 10 ^ 2) + 0.5) / (10 ^ 2)
 	end
 end
 
@@ -1538,14 +1618,18 @@ function SUI:GetAceAddon(addon)
 end
 
 function SUI:GetiLVL(itemLink)
-	if not itemLink then return 0 end
+	if not itemLink then
+		return 0
+	end
 
 	local scanningTooltip = CreateFrame('GameTooltip', 'AutoTurnInTooltip', nil, 'GameTooltipTemplate')
 	local itemLevelPattern = ITEM_LEVEL:gsub('%%d', '(%%d+)')
 	local itemQuality = select(3, C_Item.GetItemInfo(itemLink))
 
 	-- if a heirloom return a huge number so we dont replace it.
-	if itemQuality == 7 then return math.huge end
+	if itemQuality == 7 then
+		return math.huge
+	end
 
 	-- Scan the tooltip
 	-- Setup the scanning tooltip
@@ -1560,7 +1644,9 @@ function SUI:GetiLVL(itemLink)
 	-- Find the iLVL inthe tooltip
 	for i = 2, scanningTooltip:NumLines() do
 		local line = _G['AutoTurnInTooltipTextLeft' .. i]
-		if line:GetText():match(itemLevelPattern) then return tonumber(line:GetText():match(itemLevelPattern)) end
+		if line:GetText():match(itemLevelPattern) then
+			return tonumber(line:GetText():match(itemLevelPattern))
+		end
 	end
 	return 0
 end
@@ -1589,7 +1675,9 @@ function SUI:SplitString(str, delim)
 	-- find each instance of a string followed by the delimiter
 	while true do
 		local pos = strfind(str, delim, start, true)
-		if not pos then break end
+		if not pos then
+			break
+		end
 
 		tinsert(splitTable, strsub(str, start, pos - 1))
 		start = pos + strlen(delim)
@@ -1625,75 +1713,93 @@ function SUI:OnEnable()
 	local AceC = SUI.Lib.AceC
 	local AceCD = SUI.Lib.AceCD
 
-	AceC:RegisterOptionsTable('SpartanUIBliz', {
-		name = 'SpartanUI',
-		type = 'group',
-		args = {
-			n3 = {
-				type = 'description',
-				fontSize = 'medium',
-				order = 3,
-				width = 'full',
-				name = SUI.L['Options can be accessed by the button below or by typing /sui'],
-			},
-			Close = {
-				name = SUI.L['Launch Options'],
-				width = 'full',
-				type = 'execute',
-				order = 50,
-				func = function()
-					while CloseWindows() do
+	AceC:RegisterOptionsTable(
+		'SpartanUIBliz',
+		{
+			name = 'SpartanUI',
+			type = 'group',
+			args = {
+				n3 = {
+					type = 'description',
+					fontSize = 'medium',
+					order = 3,
+					width = 'full',
+					name = SUI.L['Options can be accessed by the button below or by typing /sui']
+				},
+				Close = {
+					name = SUI.L['Launch Options'],
+					width = 'full',
+					type = 'execute',
+					order = 50,
+					func = function()
+						while CloseWindows() do
+						end
+						AceCD:SetDefaultSize('SpartanUI', 850, 600)
+						AceCD:Open('SpartanUI')
 					end
-					AceCD:SetDefaultSize('SpartanUI', 850, 600)
-					AceCD:Open('SpartanUI')
-				end,
-			},
-		},
-	})
+				}
+			}
+		}
+	)
 	AceC:RegisterOptionsTable('SpartanUI', SUI.opt)
 
 	AceCD:AddToBlizOptions('SpartanUIBliz', 'SpartanUI')
 	AceCD:SetDefaultSize('SpartanUI', 1000, 700)
 
 	SUI:RegisterChatCommand('sui', 'ChatCommand')
-	SUI:RegisterChatCommand('suihelp', function()
-		SUI.Lib.AceCD:Open('SpartanUI', 'Help')
-	end)
+	SUI:RegisterChatCommand(
+		'suihelp',
+		function()
+			SUI.Lib.AceCD:Open('SpartanUI', 'Help')
+		end
+	)
 	SUI:RegisterChatCommand('spartanui', 'ChatCommand')
 
 	--Reopen options screen if flagged to do so after a reloadui
-	SUI:RegisterEvent('PLAYER_ENTERING_WORLD', function()
-		if SUI.DB.OpenOptions then
-			SUI:ChatCommand()
-			SUI.DB.OpenOptions = false
+	SUI:RegisterEvent(
+		'PLAYER_ENTERING_WORLD',
+		function()
+			if SUI.DB.OpenOptions then
+				SUI:ChatCommand()
+				SUI.DB.OpenOptions = false
+			end
 		end
-	end)
+	)
 
 	local GameMenuButtonsStore = {} --Table to hold data for buttons to be added to GameMenu
 
-	tinsert(GameMenuButtonsStore, {
-		text = '|cffffffffSpartan|cffe21f1fUI|r',
-		callback = function()
-			SUI.Options:ToggleOptions()
-			if not InCombatLockdown() then HideUIPanel(GameMenuFrame) end
-		end,
-		isDisabled = false, --If set to true will make button disabled. Can be set as a fucn to return true/false dynamically if needed
-		disabledText = 'This button is somehow disabled. Probably someone was messing around with the code.', --this text will show up in tooltip when the button is disabled
-	})
+	tinsert(
+		GameMenuButtonsStore,
+		{
+			text = '|cffffffffSpartan|cffe21f1fUI|r',
+			callback = function()
+				SUI.Options:ToggleOptions()
+				if not InCombatLockdown() then
+					HideUIPanel(GameMenuFrame)
+				end
+			end,
+			isDisabled = false, --If set to true will make button disabled. Can be set as a fucn to return true/false dynamically if needed
+			disabledText = 'This button is somehow disabled. Probably someone was messing around with the code.' --this text will show up in tooltip when the button is disabled
+		}
+	)
 
 	--hooking to blizz button add function for game menu, since the list of those is reset every time menu is opened
 	if GameMenuFrame.AddButton then
-		hooksecurefunc(GameMenuFrame, 'AddButton', function(text, callback, isDisabled)
-		if text == MACROS then --check for text "Macros". That button is the last before logout in default so we insert our stuff in between
-			for i, data in next, GameMenuButtonsStore do --Go through buttons in the tabe and adding them based on data provided
-				if i == 1 then
-					GameMenuFrame:AddSection() --spacer off first button
-				end
+		hooksecurefunc(
+			GameMenuFrame,
+			'AddButton',
+			function(text, callback, isDisabled)
+				if text == MACROS then --check for text "Macros". That button is the last before logout in default so we insert our stuff in between
+					for i, data in next, GameMenuButtonsStore do --Go through buttons in the tabe and adding them based on data provided
+						if i == 1 then
+							GameMenuFrame:AddSection() --spacer off first button
+						end
 
-				GameMenuFrame:AddButton(data.text, data.callback, data.isDisabled, data.disabledText)
+						GameMenuFrame:AddButton(data.text, data.callback, data.isDisabled, data.disabledText)
+					end
+				end
 			end
-		end
-		end)
+		)
 	end
 end
 
@@ -1704,11 +1810,14 @@ function SUI:SetActiveStyle(skin)
 	artModule:SetActiveStyle(skin)
 
 	for _, submodule in SUI:IterateModules() do
-		if submodule.SetActiveStyle then submodule:SetActiveStyle(skin) end
+		if submodule.SetActiveStyle then
+			submodule:SetActiveStyle(skin)
+		end
 	end
 
 	-- Ensure this is the First and last thing to occur, iincase the art style has any StyleUpdate's needed after doing the other updates
 	artModule:SetActiveStyle(skin)
 end
 
-SUI.noop = function() end
+SUI.noop = function()
+end

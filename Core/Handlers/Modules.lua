@@ -19,18 +19,26 @@ end
 function SUI:IsModuleEnabled(moduleName)
 	-- If we are passed a table, we need to get the name from it.
 	if type(moduleName) == 'table' then
-		if moduleName.override then return false end
+		if moduleName.override then
+			return false
+		end
 
 		moduleName = SUI:GetModuleName(moduleName)
 	else
 		-- Fetch the Module
 		local moduleObj = SUI:GetModule(moduleName, true)
-		if not moduleObj then return false end
+		if not moduleObj then
+			return false
+		end
 		-- See if the modules has been overridden
-		if moduleObj and moduleObj.override then return false end
+		if moduleObj and moduleObj.override then
+			return false
+		end
 	end
 
-	if SUI.DB.DisabledModules[moduleName] then return false end
+	if SUI.DB.DisabledModules[moduleName] then
+		return false
+	end
 
 	return true
 end
@@ -98,16 +106,21 @@ local function CreateSetupPage()
 					local Displayname = submodule.DisplayName or RealName
 
 					local checkbox = StdUi:Checkbox(SUI_Win.ModSelection, Displayname, 160, 20)
-					if submodule.description then StdUi:FrameTooltip(checkbox, submodule.description, submodule.name .. 'Tooltip', 'TOP', true) end
+					if submodule.description then
+						StdUi:FrameTooltip(checkbox, submodule.description, submodule.name .. 'Tooltip', 'TOP', true)
+					end
 
-					checkbox:HookScript('OnClick', function()
-						local IsDisabled = (not checkbox:GetValue()) or false
-						if IsDisabled then
-							SUI:DisableModule(submodule)
-						else
-							SUI:EnableModule(submodule)
+					checkbox:HookScript(
+						'OnClick',
+						function()
+							local IsDisabled = (not checkbox:GetValue()) or false
+							if IsDisabled then
+								SUI:DisableModule(submodule)
+							else
+								SUI:EnableModule(submodule)
+							end
 						end
-					end)
+					)
 					checkbox:SetChecked(SUI:IsModuleEnabled(RealName))
 					checkbox.name = RealName
 					checkbox.Core = (submodule.Core or false)
@@ -131,11 +144,16 @@ local function CreateSetupPage()
 
 			local btnOptional = StdUi:Button(SUI_Win.ModSelection, 130, 18, 'Toggle optional(s)')
 			btnOptional.tooltip = StdUi:FrameTooltip(btnOptional, 'Toggles optional SUI modules. Disabling Core modules may cause unintended side effects.', 'OptionalTooltip', 'TOP', true)
-			btnOptional:SetScript('OnClick', function(this)
-				for i, v in ipairs(itemsMatrix) do
-					if not v.Core then v:Click() end
+			btnOptional:SetScript(
+				'OnClick',
+				function(this)
+					for i, v in ipairs(itemsMatrix) do
+						if not v.Core then
+							v:Click()
+						end
+					end
 				end
-			end)
+			)
 			StdUi:GlueBottom(btnOptional, SUI_Win.ModSelection, 0, 0)
 			SUI_Win.ModSelection.btnOptional = btnOptional
 		end,
@@ -144,7 +162,7 @@ local function CreateSetupPage()
 		end,
 		Skip = function()
 			SUI.DB.SetupDone = true
-		end,
+		end
 	}
 
 	SUI.Setup:AddPage(SetupPage)

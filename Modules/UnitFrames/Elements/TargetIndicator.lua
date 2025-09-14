@@ -36,8 +36,8 @@ end
 
 local Settings = {
 	config = {
-		NoBulkUpdate = false,
-	},
+		NoBulkUpdate = false
+	}
 }
 
 UF.Elements:Register('TargetIndicator', Build, Update, nil, Settings)

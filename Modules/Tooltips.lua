@@ -4,7 +4,7 @@ module.description = 'SpartanUI tooltip skining'
 local unpack = unpack
 ----------------------------------------------------------------------------------------------------
 local targetList = {}
-local RuleList = { 'Rule1', 'Rule2' }
+local RuleList = {'Rule1', 'Rule2'}
 local tooltips = {
 	GameTooltip,
 	ItemRefTooltip,
@@ -39,9 +39,9 @@ local tooltips = {
 	BrowserSettingsTooltip,
 	QueueStatusFrame,
 	EventTraceTooltip,
-	ItemSocketingDescription,
+	ItemSocketingDescription
 }
-local whitebg = { bgFile = 'Interface\\AddOns\\SpartanUI\\images\\blank.tga', tile = false, edgeSize = 3, insets = { left = 0, right = 1, top = 0, bottom = 1 } }
+local whitebg = {bgFile = 'Interface\\AddOns\\SpartanUI\\images\\blank.tga', tile = false, edgeSize = 3, insets = {left = 0, right = 1, top = 0, bottom = 1}}
 local ilvlTempData = {}
 
 ---Check if the modifier key condition is met for spell ID display
@@ -68,61 +68,68 @@ function module:OnInitialize()
 		Styles = {
 			metal = {
 				bgFile = 'Interface\\AddOns\\SpartanUI\\images\\statusbars\\metal',
-				tile = false,
+				tile = false
 			},
 			smooth = {
 				bgFile = 'Interface\\AddOns\\SpartanUI\\images\\statusbars\\Smoothv2',
-				tile = false,
+				tile = false
 			},
 			smoke = {
 				bgFile = 'Interface\\AddOns\\SpartanUI\\images\\textures\\smoke',
-				tile = false,
+				tile = false
 			},
 			none = {
 				bgFile = 'Interface\\AddOns\\SpartanUI\\images\\blank.tga',
-				tile = false,
-			},
+				tile = false
+			}
 		},
 		Rule1 = {
 			Status = 'All',
 			Combat = false,
 			OverrideLoc = false,
-			Anchor = { onMouse = false, Moved = false, AnchorPos = {} },
+			Anchor = {onMouse = false, Moved = false, AnchorPos = {}}
 		},
 		Rule2 = {
 			Status = 'All',
 			Combat = false,
 			OverrideLoc = false,
-			Anchor = { onMouse = false, Moved = false, AnchorPos = {} },
+			Anchor = {onMouse = false, Moved = false, AnchorPos = {}}
 		},
 		Background = 'Blizzard Dialog Background Dark',
 		onMouse = false,
 		VendorPrices = true,
 		Override = {},
 		ColorOverlay = true,
-		Color = { 0, 0, 0, 0.4 },
+		Color = {0, 0, 0, 0.4},
 		SuppressNoMatch = true,
 		SpellID = {
 			enabled = false,
-			modifierKey = 'NONE',
-		},
+			modifierKey = 'NONE'
+		}
 	}
-	module.Database = SUI.SpartanUIDB:RegisterNamespace('Tooltips', { profile = defaults })
+	module.Database = SUI.SpartanUIDB:RegisterNamespace('Tooltips', {profile = defaults})
 	module.DB = module.Database.profile ---@type SUI.Tooltip.Settings
 end
 
 local onShow = function(self)
-	if not self.SetBackdrop then Mixin(self, BackdropTemplateMixin) end
+	if not self.SetBackdrop then
+		Mixin(self, BackdropTemplateMixin)
+	end
 
 	-- Safely set backdrop with error protection
-	local success, err = pcall(function()
-		self:SetBackdrop(whitebg)
-		if self.SUITip then
-			local bgFile = LSM:Fetch('background', module.DB.Background)
-			if bgFile and bgFile ~= '' then self.SUITip:SetBackdrop({ bgFile = bgFile, tile = false }) end
-			self.SUITip:SetFrameLevel(0)
+	local success, err =
+		pcall(
+		function()
+			self:SetBackdrop(whitebg)
+			if self.SUITip then
+				local bgFile = LSM:Fetch('background', module.DB.Background)
+				if bgFile and bgFile ~= '' then
+					self.SUITip:SetBackdrop({bgFile = bgFile, tile = false})
+				end
+				self.SUITip:SetFrameLevel(0)
+			end
 		end
-	end)
+	)
 
 	if not success then
 		-- If backdrop setting fails, skip it for this show event
@@ -131,9 +138,13 @@ local onShow = function(self)
 
 	if (module.DB.Background == 'none' or module.DB.ColorOverlay) or not self.SUITip then
 		self:SetBackdropColor(unpack(module.DB.Color))
-		if self.SUITip then self.SUITip:SetBackdropColor(1, 1, 1, 1) end
+		if self.SUITip then
+			self.SUITip:SetBackdropColor(1, 1, 1, 1)
+		end
 	else
-		if self.SUITip then self.SUITip:SetBackdropColor(unpack(module.DB.Color)) end
+		if self.SUITip then
+			self.SUITip:SetBackdropColor(unpack(module.DB.Color))
+		end
 		self:SetBackdropColor(0, 0, 0, 0)
 	end
 end
@@ -152,7 +163,9 @@ end
 
 local setPoint = function(self, parent)
 	if parent then
-		if module.DB.onMouse then self:SetOwner(parent, 'ANCHOR_CURSOR') end
+		if module.DB.onMouse then
+			self:SetOwner(parent, 'ANCHOR_CURSOR')
+		end
 	end
 end
 
@@ -163,7 +176,9 @@ local SetBorderColor = function(self, r, g, b, hasStatusBar)
 	self.SUITip.border[3]:SetVertexColor(r, g, b, 1)
 	self.SUITip.border[4]:SetVertexColor(r, g, b, 1)
 
-	if self.NineSlice then SUI.Skins.RemoveTextures(self.NineSlice) end
+	if self.NineSlice then
+		SUI.Skins.RemoveTextures(self.NineSlice)
+	end
 end
 
 local ClearColors = function(SUITip)
@@ -208,31 +223,39 @@ local function ApplySkin(tooltip)
 		SUITip.border[4]:SetWidth(2)
 		SUITip.border[4]:SetTexture('Interface\\AddOns\\SpartanUI\\images\\blank.tga')
 
-		SUITip:SetBackdrop({ bgFile = LSM:Fetch('background', module.DB.Background), tile = false })
+		SUITip:SetBackdrop({bgFile = LSM:Fetch('background', module.DB.Background), tile = false})
 
 		SUITip.ClearColors = ClearColors
 		SUITip.border:Hide()
 
 		tooltip.SUITip = SUITip
 		tooltip.SetBorderColor = SetBorderColor
-		if tooltip.SetBackdrop then tooltip:SetBackdrop(nil) end
+		if tooltip.SetBackdrop then
+			tooltip:SetBackdrop(nil)
+		end
 		tooltip:HookScript('OnShow', onShow)
 		tooltip:HookScript('OnHide', onHide)
 	end
 
 	local style = {
-		bgFile = LSM:Fetch('background', module.DB.Background),
+		bgFile = LSM:Fetch('background', module.DB.Background)
 	}
 
-	if tooltip.NineSlice then SUI.Skins.RemoveTextures(tooltip.NineSlice) end
-	if not tooltip.SetBackdrop then Mixin(tooltip, BackdropTemplateMixin) end
+	if tooltip.NineSlice then
+		SUI.Skins.RemoveTextures(tooltip.NineSlice)
+	end
+	if not tooltip.SetBackdrop then
+		Mixin(tooltip, BackdropTemplateMixin)
+	end
 	tooltip:SetBackdrop(style)
 	tooltip:SetBackdropColor(unpack(module.DB.Color))
 	tooltip.skined = true
 end
 
 local TooltipSetGeneric = function(self, tooltipData)
-	if self.NineSlice then SUI.Skins.RemoveTextures(self.NineSlice) end
+	if self.NineSlice then
+		SUI.Skins.RemoveTextures(self.NineSlice)
+	end
 
 	ApplySkin(self)
 end
@@ -242,13 +265,15 @@ end
 ---@param tooltipData any The tooltip data
 local TooltipSetSpell = function(self, tooltipData)
 	-- Apply standard skin
-	if self.NineSlice then SUI.Skins.RemoveTextures(self.NineSlice) end
+	if self.NineSlice then
+		SUI.Skins.RemoveTextures(self.NineSlice)
+	end
 	ApplySkin(self)
 
 	-- Add spell ID if enabled and conditions are met
 	if module.DB.SpellID.enabled and tooltipData and tooltipData.id then
 		local shouldShowID = IsModifierConditionMet(module.DB.SpellID.modifierKey)
-		
+
 		if shouldShowID then
 			-- Use ElvUI-style formatting for consistency
 			local IDLine = '|cFFCA3C3C%s:|r %d'
@@ -271,7 +296,7 @@ local TooltipSetItem = function(tooltip, tooltipData)
 	if itemLink then
 		local quality = select(3, C_Item.GetItemInfo(itemLink))
 		local style = {
-			bgFile = 'Interface/Tooltips/UI-Tooltip-Background',
+			bgFile = 'Interface/Tooltips/UI-Tooltip-Background'
 		}
 		if C_AzeriteEmpoweredItem.IsAzeriteEmpoweredItemByID(itemLink) or C_AzeriteItem.IsAzeriteItemByID(itemLink) then
 			style = {
@@ -280,7 +305,7 @@ local TooltipSetItem = function(tooltip, tooltipData)
 				overlayAtlasTopScale = 0.75,
 				overlayAtlasTopYOffset = 1,
 				overlayAtlasBottom = 'AzeriteTooltip-Bottom',
-				overlayAtlasBottomYOffset = 2,
+				overlayAtlasBottomYOffset = 2
 			}
 		end
 
@@ -297,7 +322,7 @@ local TooltipSetItem = function(tooltip, tooltipData)
 		-- Add item ID if enabled and conditions are met
 		if module.DB.SpellID.enabled and tooltipData and tooltipData.id then
 			local shouldShowID = IsModifierConditionMet(module.DB.SpellID.modifierKey)
-			
+
 			if shouldShowID then
 				-- Use ElvUI-style formatting for consistency
 				local IDLine = '|cFFCA3C3C%s:|r %d'
@@ -309,10 +334,14 @@ local TooltipSetItem = function(tooltip, tooltipData)
 end
 
 local TooltipSetUnit = function(self, data)
-	if self ~= GameTooltip or self:IsForbidden() then return end
+	if self ~= GameTooltip or self:IsForbidden() then
+		return
+	end
 
 	local unit = select(2, self:GetUnit())
-	if not unit then return end
+	if not unit then
+		return
+	end
 
 	local unitLevel = UnitLevel(unit)
 	local className, classToken = UnitClass(unit)
@@ -322,7 +351,7 @@ local TooltipSetUnit = function(self, data)
 		worldboss = format('|cffAF5050World Boss%s|r', BOSS),
 		rareelite = format('|cffAF5050RARE-ELITE%s|r', ITEM_QUALITY3_DESC),
 		elite = '|cffAF5050ELITE|r',
-		rare = format('|cffAF5050RARE%s|r', ITEM_QUALITY3_DESC),
+		rare = format('|cffAF5050RARE%s|r', ITEM_QUALITY3_DESC)
 	}
 
 	if UnitIsPlayer(unit) then
@@ -334,7 +363,9 @@ local TooltipSetUnit = function(self, data)
 
 		if uRealm and uRealm ~= '' then
 			local tmp = ''
-			if gRealm ~= uRealm then tmp = ' ' .. uRealm end
+			if gRealm ~= uRealm then
+				tmp = ' ' .. uRealm
+			end
 
 			if realmRelation == LE_REALM_RELATION_COALESCED then
 				nameString = nameString .. FOREIGN_SERVER_LABEL .. tmp
@@ -358,7 +389,9 @@ local TooltipSetUnit = function(self, data)
 		end
 
 		if gName then
-			if gRealm then gName = gName .. '-' .. gRealm end
+			if gRealm then
+				gName = gName .. '-' .. gRealm
+			end
 			GameTooltipTextLeft2:SetText(('|cff008000%s|r'):format(gName))
 
 			local iLvl = ilvlTempData[uName .. '-' .. (uRealm or GetRealmName())] or C_PaperDollInfo.GetInspectItemLevel('mouseover')
@@ -385,7 +418,9 @@ local TooltipSetUnit = function(self, data)
 
 	for i = 2, self:NumLines() do
 		local tip = _G['GameTooltipTextLeft' .. i]
-		if tip and tip:GetText() and tip:GetText():find(LEVEL) then lvlLine = tip end
+		if tip and tip:GetText() and tip:GetText():find(LEVEL) then
+			lvlLine = tip
+		end
 	end
 
 	if lvlLine then
@@ -395,9 +430,13 @@ local TooltipSetUnit = function(self, data)
 		local factionGroup = UnitFactionGroup(unit) or 'Neutral'
 
 		race = (race or '') .. ' ' .. (className or '')
-		if factionGroup and englishRace == 'Pandaren' then race = factionGroup .. ' ' .. race end
+		if factionGroup and englishRace == 'Pandaren' then
+			race = factionGroup .. ' ' .. race
+		end
 		if GENDER_INFO then
-			if gender then race = race .. ' ' .. gender end
+			if gender then
+				race = race .. ' ' .. gender
+			end
 		end
 
 		if SUI.IsRetail and (UnitIsWildBattlePet(unit) or UnitIsBattlePetCompanion(unit)) then
@@ -411,7 +450,9 @@ local TooltipSetUnit = function(self, data)
 		else
 			lvlColor = GetCreatureDifficultyColor(unitLevel)
 		end
-		if creatureType == nil then creatureType = '' end
+		if creatureType == nil then
+			creatureType = ''
+		end
 
 		lvlLine:SetFormattedText(
 			'|cff%02x%02x%02x%s|r %s %s',
@@ -449,7 +490,9 @@ local TooltipSetUnit = function(self, data)
 		end
 	end
 
-	if self.NineSlice then SUI.Skins.RemoveTextures(self.NineSlice) end
+	if self.NineSlice then
+		SUI.Skins.RemoveTextures(self.NineSlice)
+	end
 end
 
 local function ApplyTooltipSkins()
@@ -464,7 +507,9 @@ local function ApplyTooltipSkins()
 	GameTooltipStatusBar.bg:SetAllPoints(GameTooltipStatusBar)
 
 	for i, tooltip in pairs(tooltips) do
-		if not tooltip then return end
+		if not tooltip then
+			return
+		end
 		ApplySkin(tooltip)
 	end
 end
@@ -477,7 +522,9 @@ function module:INSPECT_READY()
 	if UnitIsPlayer('mouseover') then
 		local uName, uRealm = UnitName('mouseover')
 		local ilvl = C_PaperDollInfo.GetInspectItemLevel('mouseover')
-		if ilvl ~= 0 then ilvlTempData[uName .. '-' .. (uRealm or GetRealmName())] = ilvl end
+		if ilvl ~= 0 then
+			ilvlTempData[uName .. '-' .. (uRealm or GetRealmName())] = ilvl
+		end
 	end
 end
 
@@ -492,26 +539,36 @@ function module:UpdateBG()
 			end
 		end
 
-		if tooltip.NineSlice then SUI.Skins.RemoveTextures(tooltip.NineSlice) end
+		if tooltip.NineSlice then
+			SUI.Skins.RemoveTextures(tooltip.NineSlice)
+		end
 	end
 end
 
 function module:OnEnable()
 	module:BuildOptions()
-	if SUI:IsModuleDisabled('Tooltips') then return end
+	if SUI:IsModuleDisabled('Tooltips') then
+		return
+	end
 	module:RegisterEvent('INSPECT_READY')
 	module:RegisterEvent('ZONE_CHANGED')
 
 	--Do Setup
 	ApplyTooltipSkins()
 	hooksecurefunc('GameTooltip_SetDefaultAnchor', setPoint)
-	hooksecurefunc('GameTooltip_SetDefaultAnchor', function(tooltip)
-		ApplySkin(tooltip)
-	end)
+	hooksecurefunc(
+		'GameTooltip_SetDefaultAnchor',
+		function(tooltip)
+			ApplySkin(tooltip)
+		end
+	)
 
-	hooksecurefunc('SharedTooltip_SetBackdropStyle', function(self)
-		ApplySkin(self)
-	end)
+	hooksecurefunc(
+		'SharedTooltip_SetBackdropStyle',
+		function(self)
+			ApplySkin(self)
+		end
+	)
 
 	GameTooltip:HookScript('OnTooltipCleared', TipCleared)
 	TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Item, TooltipSetItem)
@@ -540,7 +597,7 @@ function module:BuildOptions()
 				type = 'select',
 				order = 1,
 				dialogControl = 'LSM30_Background',
-				values = SUI.Lib.LSM:HashTable('background'),
+				values = SUI.Lib.LSM:HashTable('background')
 			},
 			color = {
 				name = L['Color'],
@@ -552,21 +609,21 @@ function module:BuildOptions()
 					return unpack(module.DB.Color)
 				end,
 				set = function(info, r, g, b, a)
-					module.DB.Color = { r, g, b, a }
+					module.DB.Color = {r, g, b, a}
 					module:UpdateBG()
-				end,
+				end
 			},
 			ColorOverlay = {
 				name = L['Color Overlay'],
 				type = 'toggle',
 				order = 11,
-				desc = L['Apply the color to the texture or put it over the texture'],
+				desc = L['Apply the color to the texture or put it over the texture']
 			},
 			onMouse = {
 				name = L['Display on mouse?'],
 				type = 'toggle',
 				order = 12,
-				desc = L['TooltipOverrideDesc'],
+				desc = L['TooltipOverrideDesc']
 			},
 			spellIDGroup = {
 				name = 'Spell/Item IDs',
@@ -584,7 +641,7 @@ function module:BuildOptions()
 						name = 'Show Spell IDs',
 						desc = 'Display spell IDs in tooltips',
 						type = 'toggle',
-						order = 1,
+						order = 1
 					},
 					modifierKey = {
 						name = 'Modifier Key',
@@ -596,14 +653,14 @@ function module:BuildOptions()
 							ALL = 'Always',
 							SHIFT = 'Shift',
 							CTRL = 'Ctrl',
-							ALT = 'Alt',
+							ALT = 'Alt'
 						},
 						disabled = function()
 							return not module.DB.SpellID.enabled
-						end,
-					},
-				},
-			},
-		},
+						end
+					}
+				}
+			}
+		}
 	}
 end

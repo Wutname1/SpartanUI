@@ -8,7 +8,9 @@ local buildStatsList
 ---Build dynamic stats management list for a frame
 ---@param frameKey string
 buildStatsList = function(frameKey)
-	if not frameKey or not StatsTracker.DB.frames[frameKey] then return end
+	if not frameKey or not StatsTracker.DB.frames[frameKey] then
+		return
+	end
 
 	local frameConfig = StatsTracker.DB.frames[frameKey]
 	local frameArgs = SUI.opt.args.StatsTracker.args.frames.args[frameKey].args.statsManagement.args
@@ -30,7 +32,9 @@ buildStatsList = function(frameKey)
 					break
 				end
 			end
-			if not alreadyAdded then availableStats[statKey] = statName end
+			if not alreadyAdded then
+				availableStats[statKey] = statName
+			end
 		end
 	end
 
@@ -46,20 +50,22 @@ buildStatsList = function(frameKey)
 		set = function(_, val)
 			if val and val ~= '' then
 				table.insert(frameConfig.stats, val)
-				if not frameConfig.statVisibility then frameConfig.statVisibility = {} end
+				if not frameConfig.statVisibility then
+					frameConfig.statVisibility = {}
+				end
 				frameConfig.statVisibility[val] = 'always'
 				StatsTracker:CreateDisplayFrames()
 				buildStatsList(frameKey)
 			end
-		end,
+		end
 	}
 
 	-- Add dropdown for adding currencies
 	local availableCurrencies = {}
-	
+
 	-- Ensure currencies are discovered before building dropdown
 	StatsTracker:DiscoverCurrencies()
-	
+
 	if _G.DETECTED_CURRENCIES then
 		for statKey, currencyData in pairs(_G.DETECTED_CURRENCIES) do
 			-- Only show currencies not already added to this frame
@@ -74,22 +80,25 @@ buildStatsList = function(frameKey)
 				local displayName = currencyData.name
 				-- Add icon if available
 				if currencyData.icon then
-					displayName = "|T" .. currencyData.icon .. ":16:16:0:0|t " .. currencyData.name
+					displayName = '|T' .. currencyData.icon .. ':16:16:0:0|t ' .. currencyData.name
 				end
 				availableCurrencies[statKey] = displayName
 			end
 		end
 	end
-	
+
 	-- If no currencies found, try again after a delay (API might not be ready)
 	if not next(availableCurrencies) and UnitName('player') then
-		C_Timer.After(1, function()
-			StatsTracker:DiscoverCurrencies()
-			if next(_G.DETECTED_CURRENCIES or {}) then
-				-- Rebuild options if currencies were found
-				StatsTracker:BuildFrameOptions()
+		C_Timer.After(
+			1,
+			function()
+				StatsTracker:DiscoverCurrencies()
+				if next(_G.DETECTED_CURRENCIES or {}) then
+					-- Rebuild options if currencies were found
+					StatsTracker:BuildFrameOptions()
+				end
 			end
-		end)
+		)
 	end
 
 	-- Only show currency dropdown if there are currencies available
@@ -109,16 +118,18 @@ buildStatsList = function(frameKey)
 					StatsTracker.DB.enabledStats[val] = true
 					-- Add to frame
 					table.insert(frameConfig.stats, val)
-					if not frameConfig.statVisibility then frameConfig.statVisibility = {} end
+					if not frameConfig.statVisibility then
+						frameConfig.statVisibility = {}
+					end
 					frameConfig.statVisibility[val] = 'always'
 					StatsTracker:CreateDisplayFrames()
 					buildStatsList(frameKey)
 				end
-			end,
+			end
 		}
 	end
 
-	frameArgs.spacer1 = { type = 'header', order = 15, name = '' }
+	frameArgs.spacer1 = {type = 'header', order = 15, name = ''}
 
 	-- List current stats with controls
 	local order = 25
@@ -130,7 +141,7 @@ buildStatsList = function(frameKey)
 			frameArgs['stat_' .. statKey .. '_header'] = {
 				name = statName,
 				type = 'header',
-				order = order,
+				order = order
 			}
 			order = order + 1
 
@@ -142,7 +153,7 @@ buildStatsList = function(frameKey)
 				width = 'half',
 				values = {
 					always = L['Always Shown'],
-					mouseover = L['Show on Mouseover'],
+					mouseover = L['Show on Mouseover']
 				},
 				get = function()
 					return frameConfig.statVisibility[statKey] or 'always'
@@ -150,7 +161,7 @@ buildStatsList = function(frameKey)
 				set = function(_, val)
 					frameConfig.statVisibility[statKey] = val
 					StatsTracker:CreateDisplayFrames()
-				end,
+				end
 			}
 			order = order + 1
 
@@ -178,7 +189,7 @@ buildStatsList = function(frameKey)
 						local goal = tonumber(val) or 0
 						StatsTracker.DB.currencyGoals[statKey] = goal
 						StatsTracker:CreateDisplayFrames()
-					end,
+					end
 				}
 				order = order + 1
 			end
@@ -192,24 +203,28 @@ buildStatsList = function(frameKey)
 				func = function()
 					-- Remove from stats list
 					for j = #frameConfig.stats, 1, -1 do
-						if frameConfig.stats[j] == statKey then table.remove(frameConfig.stats, j) end
+						if frameConfig.stats[j] == statKey then
+							table.remove(frameConfig.stats, j)
+						end
 					end
 					-- Remove from visibility settings
-					if frameConfig.statVisibility then frameConfig.statVisibility[statKey] = nil end
+					if frameConfig.statVisibility then
+						frameConfig.statVisibility[statKey] = nil
+					end
 					-- Remove currency goal if it's a currency
 					if statKey:match('^currency_') then
 						StatsTracker.DB.currencyGoals[statKey] = nil
 					end
 					StatsTracker:CreateDisplayFrames()
 					buildStatsList(frameKey)
-				end,
+				end
 			}
 			order = order + 1
 
 			frameArgs['stat_' .. statKey .. '_spacer'] = {
 				type = 'description',
 				name = '',
-				order = order,
+				order = order
 			}
 			order = order + 1
 		end
@@ -239,11 +254,9 @@ function StatsTracker:Options()
 					else
 						StatsTracker:OnDisable()
 					end
-				end,
+				end
 			},
-
-			spacer1 = { type = 'header', order = 10, name = '' },
-
+			spacer1 = {type = 'header', order = 10, name = ''},
 			-- General Settings
 			generalGroup = {
 				name = L['General Settings'],
@@ -268,7 +281,7 @@ function StatsTracker:Options()
 								StatsTracker:OnDisable()
 								StatsTracker:OnEnable()
 							end
-						end,
+						end
 					},
 					adaptiveColors = {
 						name = L['Adaptive Colors'],
@@ -280,7 +293,7 @@ function StatsTracker:Options()
 						end,
 						set = function(_, val)
 							StatsTracker.DB.adaptiveColors = val
-						end,
+						end
 					},
 					textColor = {
 						name = L['Text Color'],
@@ -295,14 +308,12 @@ function StatsTracker:Options()
 							return color[1], color[2], color[3]
 						end,
 						set = function(_, r, g, b)
-							StatsTracker.DB.textColor = { r, g, b }
-						end,
-					},
-				},
+							StatsTracker.DB.textColor = {r, g, b}
+						end
+					}
+				}
 			},
-
-			spacer2 = { type = 'header', order = 30, name = '' },
-
+			spacer2 = {type = 'header', order = 30, name = ''},
 			-- Frame Management
 			frameManagementGroup = {
 				name = L['Frame Management'],
@@ -314,7 +325,7 @@ function StatsTracker:Options()
 						name = L['Create and manage multiple display panels to show different sets of statistics in different locations'],
 						type = 'description',
 						order = 1,
-						fontSize = 'medium',
+						fontSize = 'medium'
 					},
 					createFrame = {
 						name = L['Create New Frame'],
@@ -338,12 +349,12 @@ function StatsTracker:Options()
 									growDirection = 'right',
 									mouseoverPosition = 'below',
 									mouseoverSpacing = 5,
-									statVisibility = {},
+									statVisibility = {}
 								}
 								StatsTracker:CreateDisplayFrames()
 								StatsTracker:BuildFrameOptions()
 							end
-						end,
+						end
 					},
 					deleteFrame = {
 						name = L['Delete Frame'],
@@ -368,24 +379,20 @@ function StatsTracker:Options()
 								StatsTracker:CreateDisplayFrames()
 								StatsTracker:BuildFrameOptions()
 							end
-						end,
-					},
-				},
+						end
+					}
+				}
 			},
-
-			spacer5 = { type = 'header', order = 50, name = '' },
-
+			spacer5 = {type = 'header', order = 50, name = ''},
 			-- Dynamic Frame Tabs will be added here
 			frames = {
 				name = L['Display Frames'],
 				type = 'group',
 				order = 60,
 				childGroups = 'tab',
-				args = {},
+				args = {}
 			},
-
-			spacer6 = { type = 'header', order = 70, name = '' },
-
+			spacer6 = {type = 'header', order = 70, name = ''},
 			-- Actions
 			actionsGroup = {
 				name = L['Actions'],
@@ -400,7 +407,7 @@ function StatsTracker:Options()
 						order = 1,
 						func = function()
 							StatsTracker:InitializeSession()
-						end,
+						end
 					},
 					refreshFrames = {
 						name = L['Refresh Display Frames'],
@@ -409,7 +416,7 @@ function StatsTracker:Options()
 						order = 2,
 						func = function()
 							StatsTracker:CreateDisplayFrames()
-						end,
+						end
 					},
 					moveFrames = {
 						name = L['Move Frames'],
@@ -418,12 +425,14 @@ function StatsTracker:Options()
 						order = 3,
 						func = function()
 							local MoveIt = SUI:GetModule('MoveIt')
-							if MoveIt then MoveIt:MoveIt() end
-						end,
-					},
-				},
-			},
-		},
+							if MoveIt then
+								MoveIt:MoveIt()
+							end
+						end
+					}
+				}
+			}
+		}
 	}
 
 	-- Build frame options
@@ -451,9 +460,8 @@ function StatsTracker:BuildFrameOptions()
 					set = function(_, val)
 						frameConfig.enabled = val
 						StatsTracker:CreateDisplayFrames()
-					end,
+					end
 				},
-
 				displayGroup = {
 					name = L['Display Settings'],
 					type = 'group',
@@ -471,7 +479,7 @@ function StatsTracker:BuildFrameOptions()
 							set = function(_, val)
 								frameConfig.showLabels = val
 								StatsTracker:CreateDisplayFrames()
-							end,
+							end
 						},
 						showIcons = {
 							name = L['Show Icons'],
@@ -484,7 +492,7 @@ function StatsTracker:BuildFrameOptions()
 							set = function(_, val)
 								frameConfig.showIcons = val
 								StatsTracker:CreateDisplayFrames()
-							end,
+							end
 						},
 						elementWidth = {
 							name = L['Element Width'],
@@ -500,7 +508,7 @@ function StatsTracker:BuildFrameOptions()
 							set = function(_, val)
 								frameConfig.elementWidth = val
 								StatsTracker:CreateDisplayFrames()
-							end,
+							end
 						},
 						showProgressBars = {
 							name = L['Show Progress Bars'],
@@ -513,7 +521,7 @@ function StatsTracker:BuildFrameOptions()
 							set = function(_, val)
 								frameConfig.showProgressBars = val
 								StatsTracker:CreateDisplayFrames()
-							end,
+							end
 						},
 						progressBarHeight = {
 							name = L['Progress Bar Height'],
@@ -533,11 +541,10 @@ function StatsTracker:BuildFrameOptions()
 							set = function(_, val)
 								frameConfig.progressBarHeight = val
 								StatsTracker:CreateDisplayFrames()
-							end,
-						},
-					},
+							end
+						}
+					}
 				},
-
 				settingsGroup = {
 					name = L['Frame Settings'],
 					type = 'group',
@@ -550,7 +557,7 @@ function StatsTracker:BuildFrameOptions()
 							order = 1,
 							values = {
 								horizontal = L['Horizontal'],
-								vertical = L['Vertical'],
+								vertical = L['Vertical']
 							},
 							get = function()
 								return frameConfig.layout or 'vertical'
@@ -567,7 +574,7 @@ function StatsTracker:BuildFrameOptions()
 								StatsTracker:CreateDisplayFrames()
 								-- Rebuild options to refresh the grow direction dropdown
 								StatsTracker:BuildFrameOptions()
-							end,
+							end
 						},
 						growDirection = {
 							name = L['Grow Direction'],
@@ -579,12 +586,12 @@ function StatsTracker:BuildFrameOptions()
 								if layout == 'horizontal' then
 									return {
 										right = L['Right'],
-										left = L['Left'],
+										left = L['Left']
 									}
 								else -- vertical
 									return {
 										up = L['Up'],
-										down = L['Down'],
+										down = L['Down']
 									}
 								end
 							end,
@@ -606,7 +613,7 @@ function StatsTracker:BuildFrameOptions()
 								StatsTracker:CreateDisplayFrames()
 								-- Rebuild options to refresh the grow direction dropdown
 								StatsTracker:BuildFrameOptions()
-							end,
+							end
 						},
 						spacing = {
 							name = L['Element Spacing'],
@@ -621,7 +628,7 @@ function StatsTracker:BuildFrameOptions()
 							set = function(_, val)
 								frameConfig.spacing = val
 								StatsTracker:CreateDisplayFrames()
-							end,
+							end
 						},
 						scale = {
 							name = L['Scale'],
@@ -636,11 +643,10 @@ function StatsTracker:BuildFrameOptions()
 							set = function(_, val)
 								frameConfig.scale = val
 								StatsTracker:CreateDisplayFrames()
-							end,
-						},
-					},
+							end
+						}
+					}
 				},
-
 				mouseoverGroup = {
 					name = L['Mouseover Settings'],
 					type = 'group',
@@ -656,7 +662,7 @@ function StatsTracker:BuildFrameOptions()
 								above = L['Above'],
 								below = L['Below'],
 								left = L['Left'],
-								right = L['Right'],
+								right = L['Right']
 							},
 							get = function()
 								return frameConfig.mouseoverPosition or 'below'
@@ -664,7 +670,7 @@ function StatsTracker:BuildFrameOptions()
 							set = function(_, val)
 								frameConfig.mouseoverPosition = val
 								StatsTracker:CreateDisplayFrames()
-							end,
+							end
 						},
 						mouseoverSpacing = {
 							name = L['Mouseover Spacing'],
@@ -680,19 +686,18 @@ function StatsTracker:BuildFrameOptions()
 							set = function(_, val)
 								frameConfig.mouseoverSpacing = val
 								StatsTracker:CreateDisplayFrames()
-							end,
-						},
-					},
+							end
+						}
+					}
 				},
-
 				statsManagement = {
 					name = L['Statistics Management'],
 					type = 'group',
 					inline = true,
 					order = 30,
-					args = {},
-				},
-			},
+					args = {}
+				}
+			}
 		}
 
 		-- Build stats list for this frame

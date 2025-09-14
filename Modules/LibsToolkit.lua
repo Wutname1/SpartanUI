@@ -6,7 +6,9 @@ module.HideModule = true
 ----------------------------------------------------------------------------------------------------
 
 local function SetupTweaks()
-	if SUI.IsClassic then return end
+	if SUI.IsClassic then
+		return
+	end
 
 	local LibsToolkit = {
 		ID = 'LibsToolkit',
@@ -41,29 +43,40 @@ local function SetupTweaks()
 				ShowNameplates:SetChecked(true)
 				-- If the user has more than 2 SUI Profile they should be 'experienced' so check this by default
 				local tmpprofiles = {}
-				if #SUI.SpartanUIDB:GetProfiles(tmpprofiles) >= 2 then DisableTutorials:SetChecked(true) end
+				if #SUI.SpartanUIDB:GetProfiles(tmpprofiles) >= 2 then
+					DisableTutorials:SetChecked(true)
+				end
 
-				Nameplate:HookScript('OnClick', function()
-					if Nameplate:GetValue() or false then
-						SetCVar('nameplateShowSelf', 0)
-					else
-						SetCVar('nameplateShowSelf', 1)
+				Nameplate:HookScript(
+					'OnClick',
+					function()
+						if Nameplate:GetValue() or false then
+							SetCVar('nameplateShowSelf', 0)
+						else
+							SetCVar('nameplateShowSelf', 1)
+						end
 					end
-				end)
-				AutoLoot:HookScript('OnClick', function()
-					if AutoLoot:GetValue() or false then
-						SetCVar('autoLootDefault', 1)
-					else
-						SetCVar('autoLootDefault', 0)
+				)
+				AutoLoot:HookScript(
+					'OnClick',
+					function()
+						if AutoLoot:GetValue() or false then
+							SetCVar('autoLootDefault', 1)
+						else
+							SetCVar('autoLootDefault', 0)
+						end
 					end
-				end)
-				ShowNameplates:HookScript('OnClick', function()
-					if ShowNameplates:GetValue() or false then
-						SetCVar('nameplateShowAll', 1)
-					else
-						SetCVar('nameplateShowAll', 0)
+				)
+				ShowNameplates:HookScript(
+					'OnClick',
+					function()
+						if ShowNameplates:GetValue() or false then
+							SetCVar('nameplateShowAll', 1)
+						else
+							SetCVar('nameplateShowAll', 0)
+						end
 					end
-				end)
+				)
 
 				CheckboxItem['tut'] = DisableTutorials
 				CheckboxItem['prd'] = Nameplate
@@ -74,14 +87,17 @@ local function SetupTweaks()
 					DBM_MinimapIcon.hide = true
 					local DBMMinimap = StdUi:Checkbox(LibsToolkit, 'Hide DBM Minimap Icon', 240, 20)
 					DBMMinimap:SetChecked(true)
-					DBMMinimap:HookScript('OnClick', function()
-						DBM_MinimapIcon.hide = (not DBMMinimap:GetValue() or false)
-						if DBMMinimap:GetValue() or false then
-							LDBIcon:Hide('DBM')
-						else
-							LDBIcon:Show('DBM')
+					DBMMinimap:HookScript(
+						'OnClick',
+						function()
+							DBM_MinimapIcon.hide = (not DBMMinimap:GetValue() or false)
+							if DBMMinimap:GetValue() or false then
+								LDBIcon:Hide('DBM')
+							else
+								LDBIcon:Show('DBM')
+							end
 						end
-					end)
+					)
 					CheckboxItem['dbm'] = DBMMinimap
 				end
 
@@ -91,14 +107,17 @@ local function SetupTweaks()
 
 					local BT4MiniMap = StdUi:Checkbox(LibsToolkit, 'Hide Bartender4 Minimap Icon', 240, 20)
 					BT4MiniMap:SetChecked(true)
-					BT4MiniMap:HookScript('OnClick', function()
-						Bartender4.db.profile.minimapIcon.hide = (not BT4MiniMap:GetValue() or false)
-						if BT4MiniMap:GetValue() or false then
-							LDBIcon:Hide('Bartender4')
-						else
-							LDBIcon:Show('Bartender4')
+					BT4MiniMap:HookScript(
+						'OnClick',
+						function()
+							Bartender4.db.profile.minimapIcon.hide = (not BT4MiniMap:GetValue() or false)
+							if BT4MiniMap:GetValue() or false then
+								LDBIcon:Hide('Bartender4')
+							else
+								LDBIcon:Show('Bartender4')
+							end
 						end
-					end)
+					)
 					CheckboxItem['bt4'] = BT4MiniMap
 				end
 
@@ -108,14 +127,17 @@ local function SetupTweaks()
 
 					local WAMiniMap = StdUi:Checkbox(LibsToolkit, 'Hide WeakAuras Minimap Icon', 240, 20)
 					WAMiniMap:SetChecked(true)
-					WAMiniMap:HookScript('OnClick', function()
-						Bartender4.db.profile.minimapIcon.hide = (not WAMiniMap:GetValue() or false)
-						if WAMiniMap:GetValue() or false then
-							LDBIcon:Hide('WeakAuras')
-						else
-							LDBIcon:Show('WeakAuras')
+					WAMiniMap:HookScript(
+						'OnClick',
+						function()
+							Bartender4.db.profile.minimapIcon.hide = (not WAMiniMap:GetValue() or false)
+							if WAMiniMap:GetValue() or false then
+								LDBIcon:Hide('WeakAuras')
+							else
+								LDBIcon:Show('WeakAuras')
+							end
 						end
-					end)
+					)
 					CheckboxItem['wa'] = WAMiniMap
 				end
 
@@ -206,15 +228,17 @@ local function SetupTweaks()
 						LE_FRAME_TUTORIAL_CLUB_FINDER_NEW_GUILD_LEADER,
 						LE_FRAME_TUTORIAL_CLUB_FINDER_NEW_COMMUNITY_LEADER,
 						LE_FRAME_TUTORIAL_CLUB_FINDER_NEW_APPLICANTS_GUILD_LEADER,
-						LE_FRAME_TUTORIAL_CLUB_FINDER_LINKING,
+						LE_FRAME_TUTORIAL_CLUB_FINDER_LINKING
 					}
 					for i, v in ipairs(bitfieldListing) do
-						if v then SetCVarBitfield('closedInfoFrames', v, true) end
+						if v then
+							SetCVarBitfield('closedInfoFrames', v, true)
+						end
 					end
 					SetCVar('showTutorials', 0)
 				end
 			end
-		end,
+		end
 	}
 	SUI.Setup:AddPage(LibsToolkit)
 end
@@ -223,6 +247,8 @@ function module:OnInitialize()
 	SetupTweaks()
 end
 
-function module:OnEnable() end
+function module:OnEnable()
+end
 
-function module:Options() end
+function module:Options()
+end

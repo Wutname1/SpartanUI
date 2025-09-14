@@ -10,7 +10,9 @@ local ExtraAB = SUI:NewModule('ExtraAB') ---@type SUI.Module
 local function ResetPosition(frame, _, anchor)
 	local holder = frame.SUIHolder
 	if holder and anchor ~= holder then
-		if InCombatLockdown() then return end
+		if InCombatLockdown() then
+			return
+		end
 		frame:ClearAllPoints()
 		frame:SetPoint('CENTER' or frame.SUIHolderMountPoint, holder)
 	end
@@ -83,7 +85,9 @@ end
 ---@param holder Frame
 ---@param pos? FramePoint
 local function AttachToHolder(frame, holder, pos)
-	if not frame then return end
+	if not frame then
+		return
+	end
 	frame:ClearAllPoints()
 	frame:SetPoint(pos or 'CENTER', holder)
 	frame.SUIHolder = holder
@@ -102,10 +106,13 @@ local function TalkingHead()
 		UIPARENT_MANAGED_FRAME_POSITIONS.TalkingHeadFrame = nil
 		THUIHolder:SetSize(TalkingHeadFrame:GetSize())
 		MoveIt:CreateMover(THUIHolder, 'THUIHolder', 'Talking Head Frame', nil, 'Blizzard UI')
-		TalkingHeadFrame:HookScript('OnShow', function()
-			TalkingHeadFrame:ClearAllPoints()
-			TalkingHeadFrame:SetPoint('CENTER', THUIHolder, 'CENTER', 0, 0)
-		end)
+		TalkingHeadFrame:HookScript(
+			'OnShow',
+			function()
+				TalkingHeadFrame:ClearAllPoints()
+				TalkingHeadFrame:SetPoint('CENTER', THUIHolder, 'CENTER', 0, 0)
+			end
+		)
 	end
 	if C_AddOns.IsAddOnLoaded('Blizzard_TalkingHeadUI') then
 		SetupTalkingHead()
@@ -113,11 +120,14 @@ local function TalkingHead()
 		--We want the mover to be available immediately, so we load it ourselves
 		local f = CreateFrame('Frame')
 		f:RegisterEvent('PLAYER_ENTERING_WORLD')
-		f:SetScript('OnEvent', function(frame, event)
-			frame:UnregisterEvent(event)
-			TalkingHead_LoadUI()
-			SetupTalkingHead()
-		end)
+		f:SetScript(
+			'OnEvent',
+			function(frame, event)
+				frame:UnregisterEvent(event)
+				TalkingHead_LoadUI()
+				SetupTalkingHead()
+			end
+		)
 	end
 end
 
@@ -164,20 +174,28 @@ local function AbilityBars()
 	end
 
 	-- Hook functions to prevent movement
-	hooksecurefunc(ExtraActionBarFrame, 'SetPoint', function(self)
-		if self:GetParent() ~= ExtraActionBarHolder then
-			self:ClearAllPoints()
-			self:SetPoint('CENTER', ExtraActionBarHolder, 'CENTER')
+	hooksecurefunc(
+		ExtraActionBarFrame,
+		'SetPoint',
+		function(self)
+			if self:GetParent() ~= ExtraActionBarHolder then
+				self:ClearAllPoints()
+				self:SetPoint('CENTER', ExtraActionBarHolder, 'CENTER')
+			end
 		end
-	end)
+	)
 
 	if ZoneAbilityFrame then
-		hooksecurefunc(ZoneAbilityFrame, 'SetPoint', function(self)
-			if self:GetParent() ~= ZoneAbilityHolder then
-				self:ClearAllPoints()
-				self:SetPoint('CENTER', ZoneAbilityHolder, 'CENTER')
+		hooksecurefunc(
+			ZoneAbilityFrame,
+			'SetPoint',
+			function(self)
+				if self:GetParent() ~= ZoneAbilityHolder then
+					self:ClearAllPoints()
+					self:SetPoint('CENTER', ZoneAbilityHolder, 'CENTER')
+				end
 			end
-		end)
+		)
 	end
 
 	-- Create movers
@@ -187,16 +205,32 @@ local function AbilityBars()
 	ExtraActionBarHolder:EnableMouse(false)
 	ZoneAbilityHolder:EnableMouse(false)
 	-- Update the layout when new frames are added
-	hooksecurefunc(ExtraAbilityContainer, 'AddFrame', function()
-		ExtraAB.Reparent()
-	end)
+	hooksecurefunc(
+		ExtraAbilityContainer,
+		'AddFrame',
+		function()
+			ExtraAB.Reparent()
+		end
+	)
 
-	hooksecurefunc(ZoneAbilityFrame, 'SetParent', function(_, parent)
-		if parent ~= ZoneAbilityHolder and not NeedsReparent then ExtraAB.Reparent() end
-	end)
-	hooksecurefunc(ExtraActionBarFrame, 'SetParent', function(_, parent)
-		if parent ~= ExtraActionBarHolder and not NeedsReparent then ExtraAB.Reparent() end
-	end)
+	hooksecurefunc(
+		ZoneAbilityFrame,
+		'SetParent',
+		function(_, parent)
+			if parent ~= ZoneAbilityHolder and not NeedsReparent then
+				ExtraAB.Reparent()
+			end
+		end
+	)
+	hooksecurefunc(
+		ExtraActionBarFrame,
+		'SetParent',
+		function(_, parent)
+			if parent ~= ExtraActionBarHolder and not NeedsReparent then
+				ExtraAB.Reparent()
+			end
+		end
+	)
 end
 
 local function FramerateFrame()
@@ -229,13 +263,17 @@ local function VehicleLeaveButton()
 
 		MainMenuBarVehicleLeaveButton:ClearAllPoints()
 		MainMenuBarVehicleLeaveButton:SetPoint('CENTER', VehicleBtnHolder, 'CENTER')
-		hooksecurefunc(MainMenuBarVehicleLeaveButton, 'SetPoint', function(_, _, parent)
-			if parent ~= VehicleBtnHolder then
-				MainMenuBarVehicleLeaveButton:ClearAllPoints()
-				MainMenuBarVehicleLeaveButton:SetParent(UIParent)
-				MainMenuBarVehicleLeaveButton:SetPoint('CENTER', VehicleBtnHolder, 'CENTER')
+		hooksecurefunc(
+			MainMenuBarVehicleLeaveButton,
+			'SetPoint',
+			function(_, _, parent)
+				if parent ~= VehicleBtnHolder then
+					MainMenuBarVehicleLeaveButton:ClearAllPoints()
+					MainMenuBarVehicleLeaveButton:SetParent(UIParent)
+					MainMenuBarVehicleLeaveButton:SetPoint('CENTER', VehicleBtnHolder, 'CENTER')
+				end
 			end
-		end)
+		)
 	end
 
 	-- Delay this so unit frames have been generated

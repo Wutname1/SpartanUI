@@ -18,7 +18,9 @@ local function Builder(frame)
 	UF.Elements:Build(frame, 'ThreatIndicator', elementDB['ThreatIndicator'])
 	UF.Elements:Build(frame, 'Range', elementDB['Range'])
 
-	if not SUI.IsRetail then UF.Elements:Build(frame, 'HappinessIndicator', elementDB['HappinessIndicator']) end
+	if not SUI.IsRetail then
+		UF.Elements:Build(frame, 'HappinessIndicator', elementDB['HappinessIndicator'])
+	end
 	if PetCastingBarFrame.SetUnit then
 		PetCastingBarFrame:SetUnit(nil)
 	end
@@ -27,7 +29,8 @@ local function Builder(frame)
 	end
 end
 
-local function Options() end
+local function Options()
+end
 
 ---@type SUI.UF.Unit.Settings
 local Settings = {
@@ -39,20 +42,20 @@ local Settings = {
 			colorReaction = false,
 			text = {
 				['1'] = {
-					text = '[SUIHealth(short,displayDead)] [($>SUIHealth<$)(percentage,hideDead,hideMax)]',
-				},
-			},
+					text = '[SUIHealth(short,displayDead)] [($>SUIHealth<$)(percentage,hideDead,hideMax)]'
+				}
+			}
 		},
 		Power = {
 			height = 2,
 			text = {
 				['1'] = {
-					enabled = false,
-				},
+					enabled = false
+				}
 			},
 			position = {
-				y = 0,
-			},
+				y = 0
+			}
 		},
 		Name = {
 			enabled = true,
@@ -61,10 +64,10 @@ local Settings = {
 			position = {
 				y = 1,
 				anchor = 'BOTTOM',
-				relativePoint = 'TOP',
-			},
-		},
-	},
+				relativePoint = 'TOP'
+			}
+		}
+	}
 }
 
 UF.Unit:Add('pet', Builder, Settings)

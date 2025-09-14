@@ -28,7 +28,9 @@ local function Build(frame, DB)
 		end
 	end
 	local function PostCastStop(self)
-		if timers[unitName] then UF:CancelTimer(timers[unitName]) end
+		if timers[unitName] then
+			UF:CancelTimer(timers[unitName])
+		end
 	end
 
 	local cast = CreateFrame('StatusBar', nil, frame)
@@ -79,7 +81,7 @@ local function Build(frame, DB)
 	cast.PostCastStop = PostCastStop
 	cast.TextElements = {
 		['1'] = cast.Text,
-		['2'] = cast.Time,
+		['2'] = cast.Time
 	}
 
 	frame.Castbar = cast
@@ -118,7 +120,7 @@ local function Update(frame, settings)
 	-- Basic Bar updates
 	element:SetStatusBarTexture(UF:FindStatusBarTexture(DB.texture))
 	element.bg:SetTexture(UF:FindStatusBarTexture(DB.texture))
-	element.bg:SetVertexColor(unpack(DB.bg.color or { 1, 1, 1, 0.2 }))
+	element.bg:SetVertexColor(unpack(DB.bg.color or {1, 1, 1, 0.2}))
 
 	for i, key in pairs(DB.text) do
 		if element.TextElements[i] then
@@ -159,17 +161,20 @@ local function Update(frame, settings)
 				return false
 			end
 		end
-		for _, k in ipairs({ 'PlayerCastingBarFrame', 'PetCastingBarFrame' }) do
+		for _, k in ipairs({'PlayerCastingBarFrame', 'PetCastingBarFrame'}) do
 			local castFrame = _G[k]
 			castFrame.showCastbar = false
 			castFrame:SetUnit(nil)
 			castFrame:UnregisterAllEvents()
 			castFrame:Hide()
-			castFrame:HookScript('OnShow', function(self)
-				self:Hide()
-				self.showCastbar = false
-				self:SetUnit(nil)
-			end)
+			castFrame:HookScript(
+				'OnShow',
+				function(self)
+					self:Hide()
+					self.showCastbar = false
+					self:SetUnit(nil)
+				end
+			)
 		end
 	end
 end
@@ -186,7 +191,7 @@ local function Options(frameName, OptionSet)
 				name = L['Flash on interruptible cast'],
 				type = 'toggle',
 				width = 'double',
-				order = 10,
+				order = 10
 			},
 			InterruptSpeed = {
 				name = L['Interrupt flash speed'],
@@ -195,18 +200,18 @@ local function Options(frameName, OptionSet)
 				min = 0.01,
 				max = 1,
 				step = 0.01,
-				order = 11,
+				order = 11
 			},
 			interruptable = {
 				name = L['Show interrupt or spell steal'],
 				type = 'toggle',
 				width = 'double',
-				order = 20,
+				order = 20
 			},
 			latency = {
 				name = L['Show latency'],
 				type = 'toggle',
-				order = 21,
+				order = 21
 			},
 			Icon = {
 				name = L['Spell icon'],
@@ -228,7 +233,7 @@ local function Options(frameName, OptionSet)
 					enabled = {
 						name = L['Enable'],
 						type = 'toggle',
-						order = 1,
+						order = 1
 					},
 					size = {
 						name = L['Size'],
@@ -236,7 +241,7 @@ local function Options(frameName, OptionSet)
 						min = 0,
 						max = 100,
 						step = 0.1,
-						order = 5,
+						order = 5
 					},
 					position = {
 						name = L['Position'],
@@ -261,7 +266,7 @@ local function Options(frameName, OptionSet)
 								order = 1,
 								min = -100,
 								max = 100,
-								step = 1,
+								step = 1
 							},
 							y = {
 								name = L['Y Axis'],
@@ -269,22 +274,24 @@ local function Options(frameName, OptionSet)
 								order = 2,
 								min = -100,
 								max = 100,
-								step = 1,
+								step = 1
 							},
 							anchor = {
 								name = L['Anchor point'],
 								type = 'select',
 								order = 3,
-								values = UF.Options.CONST.anchorPoints,
-							},
-						},
-					},
-				},
-			},
-		},
+								values = UF.Options.CONST.anchorPoints
+							}
+						}
+					}
+				}
+			}
+		}
 	}
 
-	if frameName == 'player' or frameName == 'party' or frameName == 'raid' then OptionSet.args.general.args.interruptable.hidden = true end
+	if frameName == 'player' or frameName == 'party' or frameName == 'raid' then
+		OptionSet.args.general.args.interruptable.hidden = true
+	end
 
 	UF.Options:AddDynamicText(frameName, OptionSet, 'Castbar')
 end
@@ -301,7 +308,7 @@ local Settings = {
 	InterruptSpeed = 0.1,
 	bg = {
 		enabled = true,
-		color = { 1, 1, 1, 0.2 },
+		color = {1, 1, 1, 0.2}
 	},
 	Icon = {
 		enabled = true,
@@ -309,8 +316,8 @@ local Settings = {
 		position = {
 			anchor = 'LEFT',
 			x = 0,
-			y = 0,
-		},
+			y = 0
+		}
 	},
 	text = {
 		['1'] = {
@@ -319,8 +326,8 @@ local Settings = {
 			position = {
 				anchor = 'CENTER',
 				x = 0,
-				y = 0,
-			},
+				y = 0
+			}
 		},
 		['2'] = {
 			enabled = true,
@@ -329,15 +336,15 @@ local Settings = {
 			position = {
 				anchor = 'RIGHT',
 				x = 0,
-				y = 0,
-			},
-		},
+				y = 0
+			}
+		}
 	},
 	position = {
-		anchor = 'TOP',
+		anchor = 'TOP'
 	},
 	config = {
-		type = 'StatusBar',
-	},
+		type = 'StatusBar'
+	}
 }
 UF.Elements:Register('Castbar', Build, Update, Options, Settings)

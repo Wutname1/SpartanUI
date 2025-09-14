@@ -28,12 +28,12 @@ local Settings = {
 	position = {
 		anchor = 'TOP',
 		x = 0,
-		y = 0,
+		y = 0
 	},
 	config = {
 		type = 'Indicator',
-		DisplayName = 'Phase',
-	},
+		DisplayName = 'Phase'
+	}
 }
 
 UF.Elements:Register('PhaseIndicator', Build, nil, Options, Settings)

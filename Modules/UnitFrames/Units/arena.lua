@@ -1,4 +1,6 @@
-if SUI.IsClassic then return end
+if SUI.IsClassic then
+	return
+end
 
 local UF = SUI.UF
 local elementList = {
@@ -17,7 +19,7 @@ local elementList = {
 	'Range',
 	'PVPSpecIcon',
 	'GroupRoleIndicator',
-	'RaidRoleIndicator',
+	'RaidRoleIndicator'
 }
 
 local function GroupBuilder(holder)
@@ -53,35 +55,35 @@ local Settings = {
 	columnSpacing = 1,
 	yOffset = -25,
 	elements = {
-		Name = { text = '[SUI_ColorClass][name] [arenaspec]' },
+		Name = {text = '[SUI_ColorClass][name] [arenaspec]'},
 		Power = {
-			height = 5,
+			height = 5
 		},
 		Portrait = {
-			enabled = false,
+			enabled = false
 		},
 		Castbar = {
 			enabled = true,
-			height = 15,
+			height = 15
 		},
 		Health = {
 			position = {
 				anchor = 'TOP',
 				relativeTo = 'Castbar',
-				relativePoint = 'BOTTOM',
-			},
+				relativePoint = 'BOTTOM'
+			}
 		},
 		ThreatIndicator = {
 			enabled = true,
-			points = 'Name',
+			points = 'Name'
 		},
 		ClassIcon = {
-			enabled = true,
-		},
+			enabled = true
+		}
 	},
 	config = {
-		IsGroup = true,
-	},
+		IsGroup = true
+	}
 }
 
 UF.Unit:Add('arena', Builder, Settings, Options, GroupBuilder)

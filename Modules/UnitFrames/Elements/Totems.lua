@@ -49,7 +49,8 @@ end
 
 ---@param unitName string
 ---@param OptionSet AceConfig.OptionsTable
-local function Options(unitName, OptionSet) end
+local function Options(unitName, OptionSet)
+end
 
 ---@type SUI.UF.Elements.Settings
 local Settings = {
@@ -60,12 +61,12 @@ local Settings = {
 		anchor = 'TOPLEFT',
 		relativePoint = 'BOTTOMLEFT',
 		relativeTo = 'Name',
-		y = 0,
+		y = 0
 	},
 	config = {
 		type = 'Indicator',
-		DisplayName = 'Totems',
-	},
+		DisplayName = 'Totems'
+	}
 }
 
 UF.Elements:Register('Totems', Build, Update, nil, Settings)

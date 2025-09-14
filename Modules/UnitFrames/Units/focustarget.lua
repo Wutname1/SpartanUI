@@ -12,7 +12,7 @@ local elementList = {
 	'RaidTargetIndicator',
 	'Range',
 	'ThreatIndicator',
-	'RaidRoleIndicator',
+	'RaidRoleIndicator'
 }
 
 local function Builder(frame)
@@ -23,28 +23,29 @@ local function Builder(frame)
 	end
 end
 
-local function Options() end
+local function Options()
+end
 
 ---@type SUI.UF.Unit.Settings
 local Settings = {
 	width = 90,
 	elements = {
 		Castbar = {
-			enabled = true,
+			enabled = true
 		},
 		Health = {
 			position = {
 				anchor = 'TOP',
 				relativeTo = 'Castbar',
-				relativePoint = 'BOTTOM',
-			},
+				relativePoint = 'BOTTOM'
+			}
 		},
-		Power = { enabled = false },
+		Power = {enabled = false}
 	},
 	config = {
 		Requires = 'focus',
-		isFriendly = true,
-	},
+		isFriendly = true
+	}
 }
 
 UF.Unit:Add('focustarget', Builder, Settings)

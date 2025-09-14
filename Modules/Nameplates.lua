@@ -46,7 +46,7 @@ local ElementDefaults = {
 	Name = {
 		enabled = true,
 		textSize = 8,
-		SetJustifyH = 'CENTER',
+		SetJustifyH = 'LEFT',
 		position = {
 			anchor = 'BOTTOM',
 			relativeTo = 'Frame',
@@ -92,7 +92,7 @@ local ElementDefaults = {
 				size = 8,
 				text = '[SUIHealth(percentage)]',
 				position = {
-					anchor = 'CENTER',
+					anchor = 'RIGHT',
 					x = 0,
 					y = 0
 				}

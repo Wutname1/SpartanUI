@@ -7,7 +7,7 @@ local function Build(frame, DB)
 	element:SetSize(20, 20)
 	element:Hide()
 
-	for _, object in ipairs({ 'Default', 'Item', 'Skull', 'Chat' }) do
+	for _, object in ipairs({'Default', 'Item', 'Skull', 'Chat'}) do
 		local icon = element:CreateTexture(nil, 'BORDER', nil, 1)
 		icon.Text = element:CreateFontString(nil, 'OVERLAY')
 		SUI.Font:Format(icon.Text, 12, 'Nameplates')
@@ -41,12 +41,12 @@ end
 ---@type SUI.UF.Elements.Settings
 local Settings = {
 	position = {
-		anchor = 'RIGHT',
+		anchor = 'RIGHT'
 	},
 	config = {
 		DisplayName = 'Quest',
-		type = 'Indicator',
-	},
+		type = 'Indicator'
+	}
 }
 
 UF.Elements:Register('QuestMob', Build, nil, Options, Settings)

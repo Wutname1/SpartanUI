@@ -14,12 +14,12 @@ local Settings = {
 		anchor = 'LEFT',
 		relativePoint = 'LEFT',
 		x = 0,
-		y = 0,
+		y = 0
 	},
 	config = {
 		type = 'Indicator',
-		DisplayName = 'Raid Target Icon',
-	},
+		DisplayName = 'Raid Target Icon'
+	}
 }
 
 UF.Elements:Register('RaidTargetIndicator', Build, nil, nil, Settings)

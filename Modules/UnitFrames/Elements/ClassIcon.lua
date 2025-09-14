@@ -28,16 +28,14 @@ local function Update(frame, settings)
 	local element = frame.ClassIcon
 	local DB = settings or element.DB
 	local reaction = UnitReaction(frame.unit, 'player')
-	if not reaction then return end
+	if not reaction then
+		return
+	end
 
 	if
-		(
-			(reaction <= 2 and DB.VisibleOn == 'hostile')
-			or (reaction >= 3 and DB.VisibleOn == 'friendly')
-			or (UnitPlayerControlled(frame.unit) and DB.VisibleOn == 'PlayerControlled')
-			or DB.VisibleOn == 'all'
-		) and DB.enabled
-	then
+		((reaction <= 2 and DB.VisibleOn == 'hostile') or (reaction >= 3 and DB.VisibleOn == 'friendly') or (UnitPlayerControlled(frame.unit) and DB.VisibleOn == 'PlayerControlled') or DB.VisibleOn == 'all') and
+			DB.enabled
+	 then
 		element:Show()
 		element.shadow:Show()
 		element:SetSize(DB.size, DB.size)
@@ -67,14 +65,14 @@ local function Options(unitName, OptionSet)
 			all = L['Always'],
 			hostile = L['Hostile Units'],
 			friendly = L['Friendly Units'],
-			PlayerControlled = L['Player Controlled Units'],
+			PlayerControlled = L['Player Controlled Units']
 		},
 		get = function()
 			return ElementSettings.VisibleOn
 		end,
 		set = function(_, val)
 			OptUpdate('VisibleOn', val)
-		end,
+		end
 	}
 
 	OptionSet.args.shadow = {
@@ -87,7 +85,7 @@ local function Options(unitName, OptionSet)
 		end,
 		set = function(_, val)
 			OptUpdate('shadow', val)
-		end,
+		end
 	}
 end
 
@@ -98,12 +96,12 @@ local Settings = {
 	position = {
 		anchor = 'BOTTOMLEFT',
 		x = -12,
-		y = 0,
+		y = 0
 	},
 	config = {
 		type = 'Indicator',
-		DisplayName = 'Class Icon',
-	},
+		DisplayName = 'Class Icon'
+	}
 }
 
 UF.Elements:Register('ClassIcon', Build, Update, Options, Settings)
@@ -113,7 +111,9 @@ do -- ClassIcon as an SUIUF module
 		local icon = self.ClassIcon
 		if icon then
 			local _, class = UnitClass(self.unit)
-			if not class then return end
+			if not class then
+				return
+			end
 
 			local path = 'Interface\\AddOns\\SpartanUI\\images\\flat_classicons\\' .. (string.lower(class))
 
@@ -130,7 +130,9 @@ do -- ClassIcon as an SUIUF module
 				icon:Hide()
 				icon.shadow:Hide()
 			end
-			if icon.PostUpdate then return icon:PostUpdate() end
+			if icon.PostUpdate then
+				return icon:PostUpdate()
+			end
 		end
 	end
 

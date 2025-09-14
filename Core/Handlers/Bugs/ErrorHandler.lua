@@ -20,11 +20,15 @@ local function colorStack(ret)
 	ret = ret:gsub('/([^/]+%.lua)', '/|cff4EC9B0%1|r')
 
 	-- Color the full path, with non-important parts in light grey
-	ret = ret:gsub('(%[)(@?)([^%]]+)(%])', function(open, at, path, close)
-		-- Color 'string' purple when it's the first word in the path
-		local coloredPath = path:gsub('^(string%s)', '|cffC586C0%1|r')
-		return '|r' .. open .. at .. '|r|cffCE9178' .. coloredPath:gsub('"', '|r"|r') .. '|r' .. close .. '|r'
-	end)
+	ret =
+		ret:gsub(
+		'(%[)(@?)([^%]]+)(%])',
+		function(open, at, path, close)
+			-- Color 'string' purple when it's the first word in the path
+			local coloredPath = path:gsub('^(string%s)', '|cffC586C0%1|r')
+			return '|r' .. open .. at .. '|r|cffCE9178' .. coloredPath:gsub('"', '|r"|r') .. '|r' .. close .. '|r'
+		end
+	)
 
 	-- Color partial paths
 	ret = ret:gsub('(<%.%.%.%S+/)', '|cffCE9178%1|r')
@@ -33,13 +37,17 @@ local function colorStack(ret)
 	ret = ret:gsub(':(%d+)', ':|cffD7BA7D%1|r')
 
 	-- Color error messages (main error text)
-	ret = ret:gsub('([^:\n]+):([^\n]*)', function(prefix, message)
-		if not prefix:match('[/\\]') and not prefix:match('^%d+$') then
-			return '|cffFF5252' .. prefix .. ':' .. message .. '|r'
-		else
-			return '|cffCE9178' .. prefix .. ':|r|cffFF5252' .. message .. '|r'
+	ret =
+		ret:gsub(
+		'([^:\n]+):([^\n]*)',
+		function(prefix, message)
+			if not prefix:match('[/\\]') and not prefix:match('^%d+$') then
+				return '|cffFF5252' .. prefix .. ':' .. message .. '|r'
+			else
+				return '|cffCE9178' .. prefix .. ':|r|cffFF5252' .. message .. '|r'
+			end
 		end
-	end)
+	)
 
 	-- Color method names, function calls, and variables orange
 	ret = ret:gsub("'([^']+)'", "|cffFFA500'%1'|r|r")
@@ -71,16 +79,20 @@ local function colorStack(ret)
 		['until'] = true,
 		['while'] = true,
 		['boolean'] = true,
-		['string'] = true,
+		['string'] = true
 	}
-	ret = ret:gsub('%f[%w](%a+)%f[%W]', function(word)
-		if keywords[word] then
-			return '|cffC586C0' .. word .. '|r'
-		elseif word == 'in' then
-			return '|r' .. word .. '|r'
+	ret =
+		ret:gsub(
+		'%f[%w](%a+)%f[%W]',
+		function(word)
+			if keywords[word] then
+				return '|cffC586C0' .. word .. '|r'
+			elseif word == 'in' then
+				return '|r' .. word .. '|r'
+			end
+			return word
 		end
-		return word
-	end)
+	)
 
 	-- Color the error count at the start
 	ret = ret:gsub('^(%d+x)', '|cffa6fd79%1|r')
@@ -150,7 +162,9 @@ end
 function addon.ErrorHandler:OnBugGrabbed(callback, errorObject)
 	self:ProcessError(errorObject)
 	-- Check if the error window is shown and update the display
-	if addon.BugWindow.window and addon.BugWindow.window:IsShown() then addon.BugWindow:updateDisplay(true) end
+	if addon.BugWindow.window and addon.BugWindow.window:IsShown() then
+		addon.BugWindow:updateDisplay(true)
+	end
 end
 
 function addon.ErrorHandler:ProcessError(errorObject)
@@ -160,7 +174,7 @@ function addon.ErrorHandler:ProcessError(errorObject)
 		locals = errorObject.locals,
 		time = errorObject.time,
 		session = errorObject.session,
-		counter = 1,
+		counter = 1
 	}
 
 	-- Check for duplicate errors
@@ -176,10 +190,14 @@ function addon.ErrorHandler:ProcessError(errorObject)
 	table.insert(errorDB, err)
 
 	-- Trim old errors if necessary
-	if #errorDB > MAX_ERRORS then table.remove(errorDB, 1) end
+	if #errorDB > MAX_ERRORS then
+		table.remove(errorDB, 1)
+	end
 
 	-- Trigger the onError function from the main addon file
-	if addon.onError then addon.onError() end
+	if addon.onError then
+		addon.onError()
+	end
 end
 
 function addon.ErrorHandler:CaptureError(errorObject)
@@ -189,7 +207,7 @@ function addon.ErrorHandler:CaptureError(errorObject)
 		locals = errorObject.locals,
 		time = errorObject.time,
 		session = currentSession,
-		counter = 1,
+		counter = 1
 	}
 
 	-- Check for duplicate errors
@@ -205,20 +223,30 @@ function addon.ErrorHandler:CaptureError(errorObject)
 	table.insert(errorDB, err)
 
 	-- Trim old errors if necessary
-	if #errorDB > MAX_ERRORS then table.remove(errorDB, 1) end
+	if #errorDB > MAX_ERRORS then
+		table.remove(errorDB, 1)
+	end
 
 	-- Auto popup if enabled
-	if addon.Config:Get('autoPopup') then addon.BugWindow:OpenErrorWindow() end
+	if addon.Config:Get('autoPopup') then
+		addon.BugWindow:OpenErrorWindow()
+	end
 
 	-- Print to chat if enabled
-	if addon.Config:Get('chatframe') then print('|cffff4411' .. L['SpartanUI Error'] .. ':|r ' .. L['New error captured. Type /suierrors to view.']) end
+	if addon.Config:Get('chatframe') then
+		print('|cffff4411' .. L['SpartanUI Error'] .. ':|r ' .. L['New error captured. Type /suierrors to view.'])
+	end
 end
 
 function addon.ErrorHandler:GetErrors(sessionId)
-	if not sessionId then return errorDB end
+	if not sessionId then
+		return errorDB
+	end
 	local sessionErrors = {}
 	for _, err in ipairs(errorDB) do
-		if err.session == sessionId then table.insert(sessionErrors, err) end
+		if err.session == sessionId then
+			table.insert(sessionErrors, err)
+		end
 	end
 	return sessionErrors
 end

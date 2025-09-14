@@ -16,7 +16,7 @@ local linkTypes = {
 	glyph = true,
 	currency = true,
 	unit = true,
-	quest = true,
+	quest = true
 }
 local ChatLevelLog, nameColor = {}, {}
 local chatTypeMap = {
@@ -28,7 +28,7 @@ local chatTypeMap = {
 	CHAT_MSG_OFFICER = 'OFFICER',
 	CHAT_MSG_WHISPER = 'WHISPER',
 	CHAT_MSG_WHISPER_INFORM = 'WHISPER_INFORM',
-	CHAT_MSG_INSTANCE_CHAT = 'INSTANCE_CHAT',
+	CHAT_MSG_INSTANCE_CHAT = 'INSTANCE_CHAT'
 }
 
 local LeaveCount = 0
@@ -37,7 +37,9 @@ local battleOver = false
 local function StripTextures(object)
 	for i = 1, object:GetNumRegions() do
 		local region = select(i, object:GetRegions())
-		if region and region:GetObjectType() == 'Texture' then region:SetTexture(nil) end
+		if region and region:GetObjectType() == 'Texture' then
+			region:SetTexture(nil)
+		end
 	end
 end
 
@@ -57,17 +59,25 @@ function module:GetColor(input)
 		className = input
 	end
 
-	if className then color = RAID_CLASS_COLORS[className] end
+	if className then
+		color = RAID_CLASS_COLORS[className]
+	end
 
-	if color then return ('%02x%02x%02x'):format(color.r * 255, color.g * 255, color.b * 255) end
+	if color then
+		return ('%02x%02x%02x'):format(color.r * 255, color.g * 255, color.b * 255)
+	end
 
 	-- Default color if we couldn't determine the class color
 	return 'ffffff'
 end
 
 local function get_color(c)
-	if type(c.r) == 'number' and type(c.g) == 'number' and type(c.b) == 'number' and type(c.a) == 'number' then return c.r, c.g, c.b, c.a end
-	if type(c.r) == 'number' and type(c.g) == 'number' and type(c.b) == 'number' then return c.r, c.g, c.b, 0.8 end
+	if type(c.r) == 'number' and type(c.g) == 'number' and type(c.b) == 'number' and type(c.a) == 'number' then
+		return c.r, c.g, c.b, c.a
+	end
+	if type(c.r) == 'number' and type(c.g) == 'number' and type(c.b) == 'number' then
+		return c.r, c.g, c.b, 0.8
+	end
 	return 1.0, 1.0, 1.0, 0.8
 end
 
@@ -107,8 +117,12 @@ local changeName = function(fullName, misc, nameToChange, colon)
 			if n then
 				n = Ambiguate(n, 'none')
 				if n == name then
-					if ChatLevelLog and l and l > 0 then ChatLevelLog[n] = tostring(l) end
-					if nameColor and c and not hasColor then nameColor[n] = module:GetColor(c) end
+					if ChatLevelLog and l and l > 0 then
+						ChatLevelLog[n] = tostring(l)
+					end
+					if nameColor and c and not hasColor then
+						nameColor[n] = module:GetColor(c)
+					end
 					break
 				end
 			end
@@ -122,8 +136,12 @@ local changeName = function(fullName, misc, nameToChange, colon)
 				local tbl = C_FriendList.GetWhoInfo(i)
 				local n, l, c = tbl.fullName, tbl.level, tbl.filename
 				if n == name and l and l > 0 then
-					if ChatLevelLog then ChatLevelLog[n] = tostring(l) end
-					if nameColor and c then nameColor[n] = module:GetColor(c) end
+					if ChatLevelLog then
+						ChatLevelLog[n] = tostring(l)
+					end
+					if nameColor and c then
+						nameColor[n] = module:GetColor(c)
+					end
 					break
 				end
 			end
@@ -146,17 +164,23 @@ function module:PlayerName(text)
 end
 
 function module:TimeStamp(text)
-	if module.DB.timestampFormat == '' then return text end
+	if module.DB.timestampFormat == '' then
+		return text
+	end
 
 	-- Check if the message already has a timestamp
-	if text:match('^|cff7d7d7d%[%d+:%d+:%d+%]|r') then return text end
+	if text:match('^|cff7d7d7d%[%d+:%d+:%d+%]|r') then
+		return text
+	end
 
 	local timestamp = date(module.DB.timestampFormat)
 	return '|cff7d7d7d' .. timestamp .. ' | |r' .. text
 end
 
 local function shortenChannel(text)
-	if not module.DB.shortenChannelNames then return text end
+	if not module.DB.shortenChannelNames then
+		return text
+	end
 
 	local rplc = {
 		'[I]', --Instance
@@ -169,7 +193,7 @@ local function shortenChannel(text)
 		'[R]', --Raid
 		'[RL]', --Raid Leader
 		'[RW]', --Raid Warning
-		'[%1]', --Custom Channels
+		'[%1]' --Custom Channels
 	}
 	local gsub = gsub
 	local chn = {
@@ -183,7 +207,7 @@ local function shortenChannel(text)
 		gsub(CHAT_RAID_GET, '.*%[(.*)%].*', '%%[%1%%]'),
 		gsub(CHAT_RAID_LEADER_GET, '.*%[(.*)%].*', '%%[%1%%]'),
 		gsub(CHAT_RAID_WARNING_GET, '.*%[(.*)%].*', '%%[%1%%]'),
-		'%[(%d%d?)%. ([^%]]+)%]', --Custom Channels
+		'%[(%d%d?)%. ([^%]]+)%]' --Custom Channels
 	}
 
 	local num = #chn
@@ -194,21 +218,29 @@ local function shortenChannel(text)
 end
 
 local ModifyMessage = function(self)
-	if SUI:IsModuleDisabled('Chatbox') then return end
+	if SUI:IsModuleDisabled('Chatbox') then
+		return
+	end
 	local num = self.headIndex
-	if num == 0 then num = self.maxElements end
+	if num == 0 then
+		num = self.maxElements
+	end
 	local tbl = self.elements[num]
 	local text = tbl and tbl.message
 
 	if text then
 		--Check if the message is from someone leaving the battle
-		if text:find('has left the battle') and not battleOver then LeaveCount = LeaveCount + 1 end
+		if text:find('has left the battle') and not battleOver then
+			LeaveCount = LeaveCount + 1
+		end
 		-- See if the alliance or horde has won the battle
 		if text:find('The Alliance Wins!') or text:find('The Horde Wins!') then
 			--Print the number of leavers
 			SUI:Print('Leavers: ' .. LeaveCount)
 			--Output to Instance chat if over 15 leavers
-			if LeaveCount > 15 and module.DB.autoLeaverOutput then C_ChatInfo.SendChatMessage('SpartanUI: BG Leavers counter: ' .. LeaveCount, 'INSTANCE_CHAT') end
+			if LeaveCount > 15 and module.DB.autoLeaverOutput then
+				C_ChatInfo.SendChatMessage('SpartanUI: BG Leavers counter: ' .. LeaveCount, 'INSTANCE_CHAT')
+			end
 			battleOver = true
 		end
 
@@ -270,22 +302,28 @@ function module:OnInitialize()
 				CHAT_MSG_WHISPER = true,
 				CHAT_MSG_WHISPER_INFORM = true,
 				CHAT_MSG_INSTANCE_CHAT = true,
-				CHAT_MSG_CHANNEL = true,
+				CHAT_MSG_CHANNEL = true
 			},
 			blacklist = {
 				enabled = true,
-				strings = { 'WTS' },
-			},
-		},
+				strings = {'WTS'}
+			}
+		}
 	}
-	module.Database = SUI.SpartanUIDB:RegisterNamespace('Chatbox', { profile = defaults })
+	module.Database = SUI.SpartanUIDB:RegisterNamespace('Chatbox', {profile = defaults})
 	module.DB = module.Database.profile ---@type SUI.Chat.DB
 
-	if not SUI.CharDB.ChatHistory then SUI.CharDB.ChatHistory = {} end
-	if not SUI.CharDB.ChatEditHistory then SUI.CharDB.ChatEditHistory = {} end
+	if not SUI.CharDB.ChatHistory then
+		SUI.CharDB.ChatHistory = {}
+	end
+	if not SUI.CharDB.ChatEditHistory then
+		SUI.CharDB.ChatEditHistory = {}
+	end
 
-	if SUI:IsModuleDisabled(module) then return end
-	local ChatAddons = { 'Chatter', 'BasicChatMods', 'Prat-3.0' }
+	if SUI:IsModuleDisabled(module) then
+		return
+	end
+	local ChatAddons = {'Chatter', 'BasicChatMods', 'Prat-3.0'}
 	for _, addonName in pairs(ChatAddons) do
 		if SUI:IsAddonEnabled(addonName) then
 			SUI:Print('Chat module disabling ' .. addonName .. ' Detected')
@@ -314,7 +352,9 @@ function module:OnInitialize()
 
 	-- Set the portrait/logo
 	if popup.portrait then
-		if popup.portrait.SetTexture then popup.portrait:SetTexture('Interface\\AddOns\\SpartanUI\\images\\LogoSpartanUI') end
+		if popup.portrait.SetTexture then
+			popup.portrait:SetTexture('Interface\\AddOns\\SpartanUI\\images\\LogoSpartanUI')
+		end
 	end
 
 	-- Set title
@@ -349,12 +389,18 @@ function module:OnInitialize()
 	popup.editBox:SetAutoFocus(false)
 	popup.editBox:EnableMouse(true)
 	popup.editBox:SetTextColor(1, 1, 1)
-	popup.editBox:SetScript('OnTextChanged', function(self)
-		ScrollingEdit_OnTextChanged(self, self:GetParent())
-	end)
-	popup.editBox:SetScript('OnCursorChanged', function(self, x, y, w, h)
-		ScrollingEdit_OnCursorChanged(self, x, y - 10, w, h)
-	end)
+	popup.editBox:SetScript(
+		'OnTextChanged',
+		function(self)
+			ScrollingEdit_OnTextChanged(self, self:GetParent())
+		end
+	)
+	popup.editBox:SetScript(
+		'OnCursorChanged',
+		function(self, x, y, w, h)
+			ScrollingEdit_OnCursorChanged(self, x, y - 10, w, h)
+		end
+	)
 	popup.TextPanel:SetScrollChild(popup.editBox)
 
 	-- Create font for text processing (keep for compatibility)
@@ -362,12 +408,17 @@ function module:OnInitialize()
 	popup.font:Hide()
 
 	-- Auto-scroll to bottom when shown
-	popup:HookScript('OnShow', function()
-		popup.TextPanel:SetVerticalScroll((popup.TextPanel:GetVerticalScrollRange()) or 0)
-	end)
+	popup:HookScript(
+		'OnShow',
+		function()
+			popup.TextPanel:SetVerticalScroll((popup.TextPanel:GetVerticalScrollRange()) or 0)
+		end
+	)
 
 	-- Disable Blizz class color
-	if GetCVar('chatClassColorOverride') ~= '0' then SetCVar('chatClassColorOverride', '0') end
+	if GetCVar('chatClassColorOverride') ~= '0' then
+		SetCVar('chatClassColorOverride', '0')
+	end
 	-- Disable Blizz time stamping
 	if GetCVar('showTimestamps') ~= 'none' then
 		SetCVar('showTimestamps', 'none')
@@ -379,7 +430,9 @@ end
 
 function module:OnEnable()
 	module:BuildOptions()
-	if SUI:IsModuleDisabled(module) then return end
+	if SUI:IsModuleDisabled(module) then
+		return
+	end
 
 	-- Setup Player level monitor
 	module.PLAYER_TARGET_CHANGED = function()
@@ -387,7 +440,9 @@ function module:OnEnable()
 			local n, s = UnitName('target')
 			local l = UnitLevel('target')
 			if n and l and l > 0 then
-				if s and s ~= '' then n = n .. '-' .. s end
+				if s and s ~= '' then
+					n = n .. '-' .. s
+				end
 				ChatLevelLog[n] = tostring(l)
 			end
 		end
@@ -399,7 +454,9 @@ function module:OnEnable()
 			local n, s = UnitName('mouseover')
 			local l = UnitLevel('mouseover')
 			if n and l and l > 0 then
-				if s and s ~= '' then n = n .. '-' .. s end
+				if s and s ~= '' then
+					n = n .. '-' .. s
+				end
 				ChatLevelLog[n] = tostring(l)
 			end
 		end
@@ -410,18 +467,29 @@ function module:OnEnable()
 	module:SetupChatboxes()
 
 	--Add a chat command to print the number of leavers
-	SUI:AddChatCommand('leavers', function(output)
-		--If output is true then tell the instance chat
-		if output then C_ChatInfo.SendChatMessage('SpartanUI: BG Leavers counter: ' .. LeaveCount, 'INSTANCE_CHAT') end
-		SUI:Print('Leavers: ' .. LeaveCount)
-	end, 'Prints the number of leavers in the current battleground, addings anything after leavers will output to instance chat')
+	SUI:AddChatCommand(
+		'leavers',
+		function(output)
+			--If output is true then tell the instance chat
+			if output then
+				C_ChatInfo.SendChatMessage('SpartanUI: BG Leavers counter: ' .. LeaveCount, 'INSTANCE_CHAT')
+			end
+			SUI:Print('Leavers: ' .. LeaveCount)
+		end,
+		'Prints the number of leavers in the current battleground, addings anything after leavers will output to instance chat'
+	)
 	--Detect when we leave the battleground and reset the counter
-	module:SecureHook('LeaveBattlefield', function()
-		LeaveCount = 0
-		battleOver = false
-	end)
+	module:SecureHook(
+		'LeaveBattlefield',
+		function()
+			LeaveCount = 0
+			battleOver = false
+		end
+	)
 
-	if self.DB.chatLog.enabled then self:EnableChatLog() end
+	if self.DB.chatLog.enabled then
+		self:EnableChatLog()
+	end
 
 	self:RegisterEvent('PLAYER_ENTERING_WORLD')
 end
@@ -429,9 +497,12 @@ end
 function module:PLAYER_ENTERING_WORLD(event, isInitialLogin, isReloadingUi)
 	if isInitialLogin and self.DB.chatLog.cleanupLoginMessages then
 		-- Delay the cleanup to ensure it happens after login is complete
-		C_Timer.After(5, function()
-			self:CleanupLoginMessages()
-		end)
+		C_Timer.After(
+			5,
+			function()
+				self:CleanupLoginMessages()
+			end
+		)
 	end
 end
 
@@ -453,7 +524,9 @@ function module:DisableChatLog()
 end
 
 function module:LogChatMessage(event, message, sender, languageName, channelName, _, _, _, channelIndex, channelBaseName, _, _, guid, _, _, _, _, _)
-	if not self.DB.chatLog.enabled then return end
+	if not self.DB.chatLog.enabled then
+		return
+	end
 
 	-- Check against blacklist
 	if self.DB.chatLog.blacklist.enabled then
@@ -473,7 +546,7 @@ function module:LogChatMessage(event, message, sender, languageName, channelName
 		channelName = channelName,
 		channelIndex = channelIndex,
 		channelBaseName = channelBaseName,
-		languageName = languageName,
+		languageName = languageName
 	}
 
 	table.insert(self.DB.chatLog.history, entry)
@@ -498,7 +571,9 @@ function module:CleanupLoginMessages()
 end
 
 function module:RestoreChatHistory()
-	if self.DB.chatLog.cleanupLoginMessages then self:CleanupLoginMessages() end
+	if self.DB.chatLog.cleanupLoginMessages then
+		self:CleanupLoginMessages()
+	end
 
 	local chatFrame = DEFAULT_CHAT_FRAME
 	local playerRealm = GetRealmName()
@@ -511,10 +586,14 @@ function module:RestoreChatHistory()
 		end
 
 		local displayName = senderName
-		if senderRealm ~= playerRealm then displayName = displayName .. '-' .. senderRealm end
+		if senderRealm ~= playerRealm then
+			displayName = displayName .. '-' .. senderRealm
+		end
 
 		local chatType = chatTypeMap[entry.event] or 'SYSTEM'
-		if entry.event == 'CHAT_MSG_CHANNEL' and entry.channelIndex then chatType = 'CHANNEL' .. entry.channelIndex end
+		if entry.event == 'CHAT_MSG_CHANNEL' and entry.channelIndex then
+			chatType = 'CHANNEL' .. entry.channelIndex
+		end
 		local info = ChatTypeInfo[chatType]
 
 		local messageWithName = ''
@@ -540,7 +619,9 @@ function module:RestoreChatHistory()
 			channelInfo = module.DB.shortenChannelNames and '[I] ' or '[Instance] '
 		end
 
-		if entry.languageName and entry.languageName ~= '' and entry.languageName ~= select(1, GetDefaultLanguage()) then languageInfo = string.format('[%s]', entry.languageName) end
+		if entry.languageName and entry.languageName ~= '' and entry.languageName ~= select(1, GetDefaultLanguage()) then
+			languageInfo = string.format('[%s]', entry.languageName)
+		end
 
 		local coloredName = string.format('[|cFF%s%s|r]', module:GetColor(entry.guid), displayName)
 
@@ -596,7 +677,9 @@ end
 function module:ChatEdit_OnKeyDown(key)
 	-- Make sure we are setup and valid
 	local history = SUI.CharDB.ChatEditHistory
-	if (not history) or #history == 0 then return end
+	if (not history) or #history == 0 then
+		return
+	end
 
 	--Grab the next item in the history
 	if key == 'DOWN' then
@@ -610,7 +693,9 @@ function module:ChatEdit_OnKeyDown(key)
 	elseif key == 'UP' then
 		self.historyIndex = self.historyIndex + 1
 
-		if self.historyIndex > #history then self.historyIndex = #history end
+		if self.historyIndex > #history then
+			self.historyIndex = #history
+		end
 	else
 		return
 	end
@@ -626,7 +711,9 @@ function module:ChatEdit_AddHistory(_, line)
 	if line and strlen(line) > 0 then
 		local cmd = strmatch(line, '^/%w+')
 		-- block secure commands from history
-		if cmd and IsSecureCmd(cmd) then return end
+		if cmd and IsSecureCmd(cmd) then
+			return
+		end
 
 		for index, text in pairs(SUI.CharDB.ChatEditHistory) do
 			if text == line then
@@ -637,12 +724,16 @@ function module:ChatEdit_AddHistory(_, line)
 
 		tinsert(SUI.CharDB.ChatEditHistory, line)
 
-		if #SUI.CharDB.ChatEditHistory > 50 then tremove(SUI.CharDB.ChatEditHistory, 1) end
+		if #SUI.CharDB.ChatEditHistory > 50 then
+			tremove(SUI.CharDB.ChatEditHistory, 1)
+		end
 	end
 end
 
 function module:SetupChatboxes()
-	if SUI:IsModuleDisabled(module) then return end
+	if SUI:IsModuleDisabled(module) then
+		return
+	end
 	-- DEFAULT_CHATFRAME_ALPHA = 0.7
 	-- DEFAULT_CHATFRAME_COLOR = {r = .05, g = .05, b = .05}
 	-- DEFAULT_TAB_SELECTED_COLOR_TABLE = {r = .9, g = .9, b = .9}
@@ -654,33 +745,44 @@ function module:SetupChatboxes()
 		edgeFile = [[Interface\Buttons\WHITE8X8]],
 		tile = true,
 		tileSize = 16,
-		edgeSize = 2,
+		edgeSize = 2
 	}
 
-	local c = { r = 0.05, g = 0.05, b = 0.05, a = 0.7 }
+	local c = {r = 0.05, g = 0.05, b = 0.05, a = 0.7}
 	local filterFunc = function(a, b, msg, ...)
-		if not module.DB.webLinks then return end
+		if not module.DB.webLinks then
+			return
+		end
 
-		local newMsg, found = gsub(
+		local newMsg, found =
+			gsub(
 			msg,
-			'[^ "£%^`¬{}%[%]\\|<>]*[^ \'%-=%./,"£%^`¬{}%[%]\\|<>%d][^ \'%-=%./,"£%^`¬{}%[%]\\|<>%d]%.[^ \'%-=%./,"£%^`¬{}%[%]\\|<>%d][^ \'%-=%./,"£%^`¬{}%[%]\\|<>%d][^ "£%^`¬{}%[%]\\|<>]*',
+			"[^ \"£%^`¬{}%[%]\\|<>]*[^ '%-=%./,\"£%^`¬{}%[%]\\|<>%d][^ '%-=%./,\"£%^`¬{}%[%]\\|<>%d]%.[^ '%-=%./,\"£%^`¬{}%[%]\\|<>%d][^ '%-=%./,\"£%^`¬{}%[%]\\|<>%d][^ \"£%^`¬{}%[%]\\|<>]*",
 			'|cffffffff|Hbcmurl~%1|h[%1]|h|r'
 		)
-		if found > 0 then return false, newMsg, ... end
-		newMsg, found = gsub(
+		if found > 0 then
+			return false, newMsg, ...
+		end
+		newMsg, found =
+			gsub(
 			msg,
 			-- This is our IPv4/v6 pattern at the beggining of a sentence.
 			'^%x+[%.:]%x+[%.:]%x+[%.:]%x+[^ "£%^`¬{}%[%]\\|<>]*',
 			'|cffffffff|Hbcmurl~%1|h[%1]|h|r'
 		)
-		if found > 0 then return false, newMsg, ... end
-		newMsg, found = gsub(
+		if found > 0 then
+			return false, newMsg, ...
+		end
+		newMsg, found =
+			gsub(
 			msg,
 			-- Mid-sentence IPv4/v6 pattern
 			' %x+[%.:]%x+[%.:]%x+[%.:]%x+[^ "£%^`¬{}%[%]\\|<>]*',
 			'|cffffffff|Hbcmurl~%1|h[%1]|h|r'
 		)
-		if found > 0 then return false, newMsg, ... end
+		if found > 0 then
+			return false, newMsg, ...
+		end
 	end
 
 	--Copying Functions
@@ -712,10 +814,14 @@ function module:SetupChatboxes()
 			end
 		end
 
-		if ChatFrameEdit:IsVisible() then ChatFrameEdit:Hide() end
+		if ChatFrameEdit:IsVisible() then
+			ChatFrameEdit:Hide()
+		end
 	end
 	local TabHintEnter = function(frame)
-		if not module.DB.ChatCopyTip then return end
+		if not module.DB.ChatCopyTip then
+			return
+		end
 
 		ShowUIPanel(GameTooltip)
 		GameTooltip:SetOwner(frame, 'ANCHOR_TOP')
@@ -724,13 +830,17 @@ function module:SetupChatboxes()
 		GameTooltip:Show()
 	end
 	local TabHintLeave = function(frame)
-		if not module.DB.ChatCopyTip then return end
+		if not module.DB.ChatCopyTip then
+			return
+		end
 
 		HideUIPanel(GameTooltip)
 	end
 
 	local GDM = _G['GeneralDockManager']
-	if not GDM.SetBackdrop then Mixin(GDM, BackdropTemplateMixin) end
+	if not GDM.SetBackdrop then
+		Mixin(GDM, BackdropTemplateMixin)
+	end
 
 	if GDM.SetBackdrop then
 		GDM:SetBackdrop(chatBG)
@@ -753,20 +863,30 @@ function module:SetupChatboxes()
 		QJTB:ClearAllPoints()
 		QJTB:SetPoint('TOPRIGHT', GDM, 'TOPRIGHT', -2, -3)
 		QJTB.FriendCount:Hide()
-		hooksecurefunc(QJTB, 'UpdateQueueIcon', function(frame)
-			if not frame.displayedToast then return end
-			frame.FriendsButton:SetTexture(icon)
-			frame.QueueButton:SetTexture(icon)
-			frame.FlashingLayer:SetTexture(icon)
-			frame.FriendsButton:SetShown(false)
-			frame.FriendCount:SetShown(false)
-		end)
-		hooksecurefunc(QJTB, 'SetPoint', function(frame, point, anchor)
-			if anchor ~= GDM and point ~= 'TOPRIGHT' then
-				frame:ClearAllPoints()
-				frame:SetPoint('TOPRIGHT', GDM, 'TOPRIGHT', -2, -3)
+		hooksecurefunc(
+			QJTB,
+			'UpdateQueueIcon',
+			function(frame)
+				if not frame.displayedToast then
+					return
+				end
+				frame.FriendsButton:SetTexture(icon)
+				frame.QueueButton:SetTexture(icon)
+				frame.FlashingLayer:SetTexture(icon)
+				frame.FriendsButton:SetShown(false)
+				frame.FriendCount:SetShown(false)
 			end
-		end)
+		)
+		hooksecurefunc(
+			QJTB,
+			'SetPoint',
+			function(frame, point, anchor)
+				if anchor ~= GDM and point ~= 'TOPRIGHT' then
+					frame:ClearAllPoints()
+					frame:SetPoint('TOPRIGHT', GDM, 'TOPRIGHT', -2, -3)
+				end
+			end
+		)
 
 		local function updateTexture()
 			QJTB.FriendsButton:SetTexture(icon)
@@ -866,7 +986,9 @@ function module:SetupChatboxes()
 			FCF_SetWindowColor(ChatFrame, DEFAULT_CHATFRAME_COLOR.r, DEFAULT_CHATFRAME_COLOR.g, DEFAULT_CHATFRAME_COLOR.b)
 			FCF_SetWindowAlpha(ChatFrame, DEFAULT_CHATFRAME_ALPHA)
 		end
-		if ChatFrame.SetBackdrop then ChatFrame:SetBackdrop(nil) end
+		if ChatFrame.SetBackdrop then
+			ChatFrame:SetBackdrop(nil)
+		end
 
 		--Setup Scrollbar
 		if ChatFrame.ScrollBar and ChatFrame.ScrollBar.ThumbTexture then
@@ -894,8 +1016,8 @@ function module:SetupChatboxes()
 		ChatFrameTab.Text:SetPoint('CENTER', ChatFrameTab)
 
 		if SUI.IsRetail then
-			local sides = { 'Left', 'Middle', 'Right' }
-			local modes = { 'Active', 'Highlight', '' }
+			local sides = {'Left', 'Middle', 'Right'}
+			local modes = {'Active', 'Highlight', ''}
 
 			for _, mode in ipairs(modes) do
 				for _, side in ipairs(sides) do
@@ -903,7 +1025,7 @@ function module:SetupChatboxes()
 				end
 			end
 		else
-			for _, v in ipairs({ 'left', 'middle', 'right' }) do
+			for _, v in ipairs({'left', 'middle', 'right'}) do
 				ChatFrameTab[v .. 'HighlightTexture']:SetTexture(nil)
 				ChatFrameTab[v .. 'SelectedTexture']:SetTexture(nil)
 				ChatFrameTab[v .. 'Texture']:SetTexture(nil)
@@ -924,9 +1046,15 @@ function module:SetupChatboxes()
 		SUI.Font:Format(ChatFrame, module.DB.fontSize, 'Chatbox')
 		SUI.Font:Format(ChatFrameEdit, module.DB.fontSize, 'Chatbox')
 
-		if _G[ChatFrameName .. 'EditBoxFocusLeft'] ~= nil then _G[ChatFrameName .. 'EditBoxFocusLeft']:SetTexture(nil) end
-		if _G[ChatFrameName .. 'EditBoxFocusRight'] ~= nil then _G[ChatFrameName .. 'EditBoxFocusRight']:SetTexture(nil) end
-		if _G[ChatFrameName .. 'EditBoxFocusMid'] ~= nil then _G[ChatFrameName .. 'EditBoxFocusMid']:SetTexture(nil) end
+		if _G[ChatFrameName .. 'EditBoxFocusLeft'] ~= nil then
+			_G[ChatFrameName .. 'EditBoxFocusLeft']:SetTexture(nil)
+		end
+		if _G[ChatFrameName .. 'EditBoxFocusRight'] ~= nil then
+			_G[ChatFrameName .. 'EditBoxFocusRight']:SetTexture(nil)
+		end
+		if _G[ChatFrameName .. 'EditBoxFocusMid'] ~= nil then
+			_G[ChatFrameName .. 'EditBoxFocusMid']:SetTexture(nil)
+		end
 
 		ChatFrameEdit:Hide()
 		ChatFrameEdit:SetHeight(22)
@@ -941,16 +1069,18 @@ function module:SetupChatboxes()
 			element:Hide()
 		end
 
-		if not ChatFrameEdit.SetBackdrop then Mixin(ChatFrameEdit, BackdropTemplateMixin) end
+		if not ChatFrameEdit.SetBackdrop then
+			Mixin(ChatFrameEdit, BackdropTemplateMixin)
+		end
 		if ChatFrameEdit.SetBackdrop then
 			ChatFrameEdit:SetBackdrop(chatBG)
-			local bg = { ChatFrame.Background:GetVertexColor() }
+			local bg = {ChatFrame.Background:GetVertexColor()}
 			ChatFrameEdit:SetBackdropColor(unpack(bg))
 			ChatFrameEdit:SetBackdropBorderColor(unpack(bg))
 		end
 
 		local function BackdropColorUpdate(frame, r, g, b)
-			local bg = { ChatFrame.Background:GetVertexColor() }
+			local bg = {ChatFrame.Background:GetVertexColor()}
 			if ChatFrameEdit.SetBackdrop then
 				ChatFrameEdit:SetBackdropColor(unpack(bg))
 				ChatFrameEdit:SetBackdropBorderColor(unpack(bg))
@@ -1007,7 +1137,9 @@ function ItemRefTooltip:SetHyperlink(data, ...)
 end
 
 function module:CleanupOldChatLog()
-	if not self.DB.chatLog.history then return end
+	if not self.DB.chatLog.history then
+		return
+	end
 
 	local currentTime = time()
 	local expirationTime = currentTime - (self.DB.chatLog.expireDays * 24 * 60 * 60)
@@ -1015,7 +1147,9 @@ function module:CleanupOldChatLog()
 
 	-- Remove expired entries
 	for i = #self.DB.chatLog.history, 1, -1 do
-		if self.DB.chatLog.history[i].timestamp < expirationTime then table.remove(self.DB.chatLog.history, i) end
+		if self.DB.chatLog.history[i].timestamp < expirationTime then
+			table.remove(self.DB.chatLog.history, i)
+		end
 	end
 
 	-- Trim to max entries
@@ -1026,7 +1160,9 @@ end
 
 -- Add functions to manage the blacklist
 function module:AddBlacklistString(string)
-	if not tContains(self.DB.chatLog.blacklist.strings, string) then table.insert(self.DB.chatLog.blacklist.strings, string) end
+	if not tContains(self.DB.chatLog.blacklist.strings, string) then
+		table.insert(self.DB.chatLog.blacklist.strings, string)
+	end
 end
 
 function module:RemoveBlacklistString(string)
@@ -1043,7 +1179,9 @@ function module:ClearAllChatLogs()
 
 	-- Clear chat logs from all other profiles
 	for profileName, profileData in pairs(SUI.SpartanUIDB.profiles) do
-		if profileData.Chatbox and profileData.Chatbox.chatLog then wipe(profileData.Chatbox.chatLog.history) end
+		if profileData.Chatbox and profileData.Chatbox.chatLog then
+			wipe(profileData.Chatbox.chatLog.history)
+		end
 	end
 
 	SUI:Print(L['All chat logs cleared from all profiles'])
@@ -1077,35 +1215,35 @@ function module:BuildOptions()
 					['%X'] = 'HH:MM:SS (24-hour)',
 					['%I:%M'] = 'HH:MM (12-hour)',
 					['%H:%M'] = 'HH:MM (24-hour)',
-					['%M:%S'] = 'MM:SS',
-				},
+					['%M:%S'] = 'MM:SS'
+				}
 			},
 			autoLeaverOutput = {
 				name = L['Automatically output number of BG leavers to instance chat if over 15'],
-				type = 'toggle',
+				type = 'toggle'
 			},
 			shortenChannelNames = {
 				name = L['Shorten channel names'],
-				type = 'toggle',
+				type = 'toggle'
 			},
 			EditBoxTop = {
 				name = L['Edit box on top'],
-				type = 'toggle',
+				type = 'toggle'
 			},
 			playerlevel = {
 				name = L['Display level'],
 				type = 'toggle',
-				order = 1,
+				order = 1
 			},
 			webLinks = {
 				name = L['Clickable web link'],
 				type = 'toggle',
-				order = 20,
+				order = 20
 			},
 			LinkHover = {
 				name = L['Hoveable game links'],
 				type = 'toggle',
-				order = 21,
+				order = 21
 			},
 			chatLog = {
 				name = L['Chat Log'],
@@ -1126,7 +1264,7 @@ function module:BuildOptions()
 								module:DisableChatLog()
 							end
 						end,
-						order = 1,
+						order = 1
 					},
 					clearLog = {
 						name = L['Clear Chat Log'],
@@ -1135,7 +1273,7 @@ function module:BuildOptions()
 						func = function()
 							module:ClearChatLog()
 						end,
-						order = 2,
+						order = 2
 					},
 					clearAllLogs = {
 						name = L['Clear All Chat Logs'],
@@ -1144,7 +1282,7 @@ function module:BuildOptions()
 						func = function()
 							module:ClearAllChatLogs()
 						end,
-						order = 2.5, -- Place it after the existing clear log button
+						order = 2.5 -- Place it after the existing clear log button
 					},
 					cleanupLoginMessages = {
 						name = L['Clean Up Login Messages'],
@@ -1159,7 +1297,7 @@ function module:BuildOptions()
 						set = function(_, val)
 							module.DB.chatLog.cleanupLoginMessages = val
 						end,
-						order = 3,
+						order = 3
 					},
 					maxEntries = {
 						name = L['Max Log Entries'],
@@ -1179,7 +1317,7 @@ function module:BuildOptions()
 							module.DB.chatLog.maxEntries = val
 							module:CleanupOldChatLog()
 						end,
-						order = 4,
+						order = 4
 					},
 					expireDays = {
 						name = L['Log Expiration (Days)'],
@@ -1199,7 +1337,7 @@ function module:BuildOptions()
 							module.DB.chatLog.expireDays = val
 							module:CleanupOldChatLog()
 						end,
-						order = 5,
+						order = 5
 					},
 					typesToLog = {
 						name = L['Chat Types to Log'],
@@ -1217,7 +1355,7 @@ function module:BuildOptions()
 							CHAT_MSG_WHISPER = L['Whisper'],
 							CHAT_MSG_WHISPER_INFORM = L['Whisper Sent'],
 							CHAT_MSG_INSTANCE_CHAT = L['Instance'],
-							CHAT_MSG_CHANNEL = L['Channels'],
+							CHAT_MSG_CHANNEL = L['Channels']
 						},
 						get = function(info, key)
 							return module.DB.chatLog.typesToLog[key]
@@ -1226,7 +1364,7 @@ function module:BuildOptions()
 							module.DB.chatLog.typesToLog[key] = value
 							module:EnableChatLog()
 						end,
-						order = 6,
+						order = 6
 					},
 					blacklist = {
 						name = L['Blacklist'],
@@ -1236,16 +1374,18 @@ function module:BuildOptions()
 						disabled = function()
 							return not module.DB.chatLog.enabled
 						end,
-						args = {},
-					},
-				},
-			},
-		},
+						args = {}
+					}
+				}
+			}
+		}
 	}
 
 	local function isBlacklistDuplicate(newString)
 		for _, existingString in ipairs(module.DB.chatLog.blacklist.strings) do
-			if newString:lower() == existingString:lower() then return true end
+			if newString:lower() == existingString:lower() then
+				return true
+			end
 		end
 		return false
 	end
@@ -1260,7 +1400,9 @@ function module:BuildOptions()
 				removed = removed + 1
 			end
 		end
-		if removed > 0 then SUI:Print(string.format(L['Removed %d entries containing %s'], removed, blacklistString)) end
+		if removed > 0 then
+			SUI:Print(string.format(L['Removed %d entries containing %s'], removed, blacklistString))
+		end
 		module.DB.chatLog.history = newHistory
 	end
 
@@ -1271,7 +1413,7 @@ function module:BuildOptions()
 		blacklistOpt.desc = {
 			name = L['Blacklisted strings will not be logged'],
 			type = 'description',
-			order = 1,
+			order = 1
 		}
 
 		blacklistOpt.add = {
@@ -1287,7 +1429,7 @@ function module:BuildOptions()
 					applyBlacklistToHistory(val)
 					buildBlacklistOptions()
 				end
-			end,
+			end
 		}
 
 		blacklistOpt.list = {
@@ -1295,7 +1437,7 @@ function module:BuildOptions()
 			type = 'group',
 			inline = true,
 			name = L['Blacklist'],
-			args = {},
+			args = {}
 		}
 
 		for index, entry in ipairs(module.DB.chatLog.blacklist.strings) do
@@ -1304,7 +1446,7 @@ function module:BuildOptions()
 				width = 'double',
 				fontSize = 'medium',
 				order = index * 2 - 1,
-				name = entry,
+				name = entry
 			}
 			blacklistOpt.list.args[tostring(index)] = {
 				type = 'execute',
@@ -1314,7 +1456,7 @@ function module:BuildOptions()
 				func = function()
 					table.remove(module.DB.chatLog.blacklist.strings, index)
 					buildBlacklistOptions()
-				end,
+				end
 			}
 		end
 	end
@@ -1326,10 +1468,14 @@ function module:BuildOptions()
 end
 
 function module:SetEditBoxMessage(msg)
-	if not ChatFrame1EditBox:IsShown() then ChatEdit_ActivateChat(ChatFrame1EditBox) end
+	if not ChatFrame1EditBox:IsShown() then
+		ChatEdit_ActivateChat(ChatFrame1EditBox)
+	end
 
 	local editBoxText = ChatFrame1EditBox:GetText()
-	if editBoxText and editBoxText ~= '' then ChatFrame1EditBox:SetText('') end
+	if editBoxText and editBoxText ~= '' then
+		ChatFrame1EditBox:SetText('')
+	end
 	ChatFrame1EditBox:Insert(msg)
 	ChatFrame1EditBox:HighlightText()
 end

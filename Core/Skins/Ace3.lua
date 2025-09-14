@@ -12,7 +12,9 @@ end
 
 local function ConfigOpened(self, name)
 	local frame = GetAce3ConfigWindow(name)
-	if not frame or frame.Close then return end
+	if not frame or frame.Close then
+		return
+	end
 	for i = 1, frame:GetNumChildren() do
 		local child = select(i, frame:GetChildren())
 		SUI.Log('Child ' .. (child:GetName() or 'NoName') .. ' ' .. (child:GetObjectType() or 'NoType'), 'Skiner')
@@ -52,20 +54,22 @@ end
 
 local function SkinAce3()
 	local AceGUI = LibStub('AceGUI-3.0', true)
-	if not AceGUI then return end
+	if not AceGUI then
+		return
+	end
 
 	local ProxyType = {
 		['InlineGroup'] = true,
 		['TreeGroup'] = true,
 		['TabGroup'] = true,
 		['SimpleGroup'] = true,
-		['DropdownGroup'] = true,
+		['DropdownGroup'] = true
 	}
 	local classId = select(3, UnitClass('player'))
 
 	local regWidget = AceGUI.RegisterAsWidget
 	local regContainer = AceGUI.RegisterAsContainer
-	local nextPrevColor = { r = 1, g = 0.8, b = 0 }
+	local nextPrevColor = {r = 1, g = 0.8, b = 0}
 
 	--Skin main window elements
 	local RegisterAsWidget = function(self, widget)
@@ -109,21 +113,25 @@ local function SkinAce3()
 			local check = widget.check
 			local checkbg = widget.checkbg
 			local highlight = widget.highlight
-			hooksecurefunc(widget, 'SetType', function(self, mode)
-				checkbg:SetSize(28, 28)
-				checkbg:SetTexture([[Interface\Addons\SpartanUI\images\UI-CheckBox]])
-				check:SetTexture([[Interface\Addons\SpartanUI\images\UI-CheckBox]])
-				highlight:SetTexture([[Interface\Addons\SpartanUI\images\UI-CheckBox]])
-				checkbg:SetTexCoord(0, 0.25, 0, 1)
-				highlight:SetTexCoord(0.25, 0.5, 0, 1)
-				if mode == 'radio' then
-					check:SetTexCoord(0.75, 1, 0, 1)
-				else
-					check:SetTexCoord(0.5, 0.75, 0, 1)
+			hooksecurefunc(
+				widget,
+				'SetType',
+				function(self, mode)
+					checkbg:SetSize(28, 28)
+					checkbg:SetTexture([[Interface\Addons\SpartanUI\images\UI-CheckBox]])
+					check:SetTexture([[Interface\Addons\SpartanUI\images\UI-CheckBox]])
+					highlight:SetTexture([[Interface\Addons\SpartanUI\images\UI-CheckBox]])
+					checkbg:SetTexCoord(0, 0.25, 0, 1)
+					highlight:SetTexCoord(0.25, 0.5, 0, 1)
+					if mode == 'radio' then
+						check:SetTexCoord(0.75, 1, 0, 1)
+					else
+						check:SetTexCoord(0.5, 0.75, 0, 1)
+					end
+					checkbg:SetVertexColor(unpack(SUI.Skins.colors:GetPrimaryColor('Ace3')))
+					highlight:SetVertexColor(unpack(SUI.Skins.colors:GetPrimaryColor('Ace3')))
 				end
-				checkbg:SetVertexColor(unpack(SUI.Skins.colors:GetPrimaryColor('Ace3')))
-				highlight:SetVertexColor(unpack(SUI.Skins.colors:GetPrimaryColor('Ace3')))
-			end)
+			)
 			Skin(widgetType, widget, 'Light', 'Ace3')
 		elseif widgetType == 'Heading' or widgetType == 'Label' then
 			-- local _, fontHeight, fontFlags = widget.label:GetFont()
@@ -158,9 +166,12 @@ local function SkinAce3()
 				closeBtn:SetText('X')
 				closeBtn.frame:SetSize(20, 20)
 				closeBtn.frame:SetParent(AppBar)
-				closeBtn.frame:HookScript('OnClick', function()
-					frame.CloseBtn:Click()
-				end)
+				closeBtn.frame:HookScript(
+					'OnClick',
+					function()
+						frame.CloseBtn:Click()
+					end
+				)
 				closeBtn.frame:Show()
 				closeBtn.frame:SetPoint('TOPRIGHT', -1, -1)
 				AppBar.closeBtn = closeBtn
@@ -206,7 +217,9 @@ local function SkinAce3()
 				if childFrame:GetObjectType() == 'Button' and childFrame:GetText() then
 					RemoveTextures(childFrame)
 					Skin('Button', childFrame, 'Light', 'Ace3')
-					if childFrame:GetText() == CLOSE then frame.CloseBtn = childFrame end
+					if childFrame:GetText() == CLOSE then
+						frame.CloseBtn = childFrame
+					end
 				elseif not childFrame.ignore then
 					RemoveTextures(childFrame)
 				end
@@ -223,57 +236,72 @@ local function SkinAce3()
 					RemoveTextures(newButton.toggle)
 					newButton.toggle:SetNormalTexture('Interface\\AddOns\\SpartanUI\\images\\textures\\PlusButton')
 					newButton.toggle:SetPushedTexture('Interface\\AddOns\\SpartanUI\\images\\textures\\PushButton')
-					hooksecurefunc(newButton.toggle, 'SetNormalTexture', function(frame, texture)
-						local tex = tostring(frame:GetNormalTexture():GetTexture())
-						if tex == '130838' then
-							frame:SetNormalTexture('Interface\\AddOns\\SpartanUI\\images\\textures\\PlusButton')
-						elseif tex == '130821' then
-							frame:SetNormalTexture('Interface\\AddOns\\SpartanUI\\images\\textures\\MinusButton')
+					hooksecurefunc(
+						newButton.toggle,
+						'SetNormalTexture',
+						function(frame, texture)
+							local tex = tostring(frame:GetNormalTexture():GetTexture())
+							if tex == '130838' then
+								frame:SetNormalTexture('Interface\\AddOns\\SpartanUI\\images\\textures\\PlusButton')
+							elseif tex == '130821' then
+								frame:SetNormalTexture('Interface\\AddOns\\SpartanUI\\images\\textures\\MinusButton')
+							end
 						end
-					end)
-					hooksecurefunc(newButton.toggle, 'SetPushedTexture', function(frame, texture)
-						if not strfind(texture, 'PushButton') then frame:SetPushedTexture('Interface\\AddOns\\SpartanUI\\images\\textures\\PushButton') end
-					end)
+					)
+					hooksecurefunc(
+						newButton.toggle,
+						'SetPushedTexture',
+						function(frame, texture)
+							if not strfind(texture, 'PushButton') then
+								frame:SetPushedTexture('Interface\\AddOns\\SpartanUI\\images\\textures\\PushButton')
+							end
+						end
+					)
 					Skin('Button', newButton.toggle)
 
 					-- Add Shift+Click handler for navigation commands
-					newButton:HookScript('OnClick', function(frame, button, down)
-						if IsShiftKeyDown() and button == 'LeftButton' and frame.uniquevalue then
-							-- Check if we're in a SpartanUI options window
-							local isSpartanUIWindow = false
-							if Lib.AceCD and Lib.AceCD.OpenFrames then
-								for appName, configData in pairs(Lib.AceCD.OpenFrames) do
-									if (appName == 'SpartanUI' or appName == 'SpartanUIBliz') and configData.frame and configData.frame:IsVisible() then
-										-- Check if this button belongs to the SpartanUI config window
-										local parent = frame:GetParent()
-										while parent do
-											if parent == configData.frame then
-												isSpartanUIWindow = true
+					newButton:HookScript(
+						'OnClick',
+						function(frame, button, down)
+							if IsShiftKeyDown() and button == 'LeftButton' and frame.uniquevalue then
+								-- Check if we're in a SpartanUI options window
+								local isSpartanUIWindow = false
+								if Lib.AceCD and Lib.AceCD.OpenFrames then
+									for appName, configData in pairs(Lib.AceCD.OpenFrames) do
+										if (appName == 'SpartanUI' or appName == 'SpartanUIBliz') and configData.frame and configData.frame:IsVisible() then
+											-- Check if this button belongs to the SpartanUI config window
+											local parent = frame:GetParent()
+											while parent do
+												if parent == configData.frame then
+													isSpartanUIWindow = true
+													break
+												end
+												parent = parent:GetParent()
+											end
+											if isSpartanUIWindow then
 												break
 											end
-											parent = parent:GetParent()
 										end
-										if isSpartanUIWindow then break end
+									end
+								end
+
+								-- Only execute if we're in a SpartanUI options window
+								if isSpartanUIWindow then
+									-- Convert the uniquevalue to a path for the /sui > command
+									local pathParts = {strsplit('\001', frame.uniquevalue)}
+									local pathString = table.concat(pathParts, ' > ')
+
+									-- Set the chat edit box text
+									if ChatEdit_GetActiveWindow() then
+										ChatEdit_GetActiveWindow():SetText('/sui > ' .. pathString)
+									else
+										-- If no chat window is active, open the default chat frame
+										ChatFrame_OpenChat('/sui > ' .. pathString, DEFAULT_CHAT_FRAME)
 									end
 								end
 							end
-
-							-- Only execute if we're in a SpartanUI options window
-							if isSpartanUIWindow then
-								-- Convert the uniquevalue to a path for the /sui > command
-								local pathParts = { strsplit('\001', frame.uniquevalue) }
-								local pathString = table.concat(pathParts, ' > ')
-
-								-- Set the chat edit box text
-								if ChatEdit_GetActiveWindow() then
-									ChatEdit_GetActiveWindow():SetText('/sui > ' .. pathString)
-								else
-									-- If no chat window is active, open the default chat frame
-									ChatFrame_OpenChat('/sui > ' .. pathString, DEFAULT_CHAT_FRAME)
-								end
-							end
 						end
-					end)
+					)
 
 					return newButton
 				end
@@ -291,9 +319,11 @@ local function SkinAce3()
 				end
 			end
 
-			if widget.scrollbar then Skin('ScrollBar', widget.scrollBar) end
-			-- else
-			-- 	SUI.Log('No Widget skin ' .. widgetType, 'Skinning')
+			if widget.scrollbar then
+				Skin('ScrollBar', widget.scrollBar)
+			end
+		-- else
+		-- 	SUI.Log('No Widget skin ' .. widgetType, 'Skinning')
 		end
 		return regContainer(self, widget)
 	end
@@ -320,12 +350,15 @@ local function attemptSkin()
 
 	local AceGUI = LibStub('AceGUI-3.0', true)
 	if AceGUI and (AceGUI.RegisterAsContainer ~= RegisterAsContainer or AceGUI.RegisterAsWidget ~= RegisterAsWidget) then
-		if SUI:IsAddonEnabled('ElvUI') then return end
+		if SUI:IsAddonEnabled('ElvUI') then
+			return
+		end
 		SkinAce3()
 	end
 end
 
 ---@param optTable AceConfig.OptionsTable
-local function Options(optTable) end
+local function Options(optTable)
+end
 
 SUI.Skins:Register('Ace3', attemptSkin, nil, Options)

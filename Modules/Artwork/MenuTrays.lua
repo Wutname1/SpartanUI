@@ -7,11 +7,11 @@ local skinTrayFrames = {} -- Skin-provided frame lists (not saved to DB)
 
 ---@class SUI.Module.MenuTrays.DB
 local DbDefaults = {
-	Trays = {},
+	Trays = {}
 }
 local trayIDs = {
 	'left',
-	'right',
+	'right'
 }
 
 local SetBarVisibility = function(side, state)
@@ -20,9 +20,11 @@ local SetBarVisibility = function(side, state)
 		['BT4BarPetBar'] = 'left',
 		['MultiCastActionBarFrame'] = 'left',
 		['BT4BarBagBar'] = 'right',
-		['BT4BarMicroMenu'] = 'right',
+		['BT4BarMicroMenu'] = 'right'
 	}
-	if not module:GetTraySettings(side).enabled then return end
+	if not module:GetTraySettings(side).enabled then
+		return
+	end
 
 	-- Handle default BT4 frames (only if not moved by user)
 	for k, v in pairs(bt4Positions) do
@@ -42,7 +44,7 @@ local SetBarVisibility = function(side, state)
 	-- Get combined frame list: skin-provided + user custom frames
 	local allFrames = module:GetCombinedFrameList(side)
 	if allFrames and allFrames ~= '' then
-		local frames = { strsplit(',', allFrames) }
+		local frames = {strsplit(',', allFrames)}
 		for _, frameName in ipairs(frames) do
 			local trimmed = strtrim(frameName)
 			if trimmed ~= '' and _G[trimmed] then
@@ -57,7 +59,9 @@ local SetBarVisibility = function(side, state)
 end
 
 local trayWatcherEvents = function()
-	if InCombatLockdown() then return end
+	if InCombatLockdown() then
+		return
+	end
 
 	-- Make sure we are in the right spot
 	module:updateOffset()
@@ -118,61 +122,60 @@ local DefaultTraySettings = {
 		-- UP direction (default)
 		up = {
 			expanded = {
-				background = { 0.15234375, 1, 0.0, 0.091796875 }, -- Expanded: 78,512,0,47
-				arrowPosition = { 'BOTTOM', 0, 2 },
+				background = {0.15234375, 1, 0.0, 0.091796875}, -- Expanded: 78,512,0,47
+				arrowPosition = {'BOTTOM', 0, 2}
 			},
 			collapsed = {
-				background = { 0.15234375, 1, 0.091796875, 0.126953125 }, -- Collapse: 78,512,47,65
-				arrowPosition = { 'TOP', 0, -6 },
-			},
+				background = {0.15234375, 1, 0.091796875, 0.126953125}, -- Collapse: 78,512,47,65
+				arrowPosition = {'TOP', 0, -6}
+			}
 		},
 		-- DOWN direction
 		down = {
 			expanded = {
-				background = { 0.15234375, 1, 0.091796875, 0 }, -- Expanded: 78,512,47,0
-				arrowPosition = { 'TOP', 0, -2 },
+				background = {0.15234375, 1, 0.091796875, 0}, -- Expanded: 78,512,47,0
+				arrowPosition = {'TOP', 0, -2}
 			},
 			collapsed = {
-				background = { 0.15234375, 1, 0.126953125, 0.091796875 }, -- Collapse: 78,512,65,47
-				arrowPosition = { 'BOTTOM', 0, 6 },
-			},
+				background = {0.15234375, 1, 0.126953125, 0.091796875}, -- Collapse: 78,512,65,47
+				arrowPosition = {'BOTTOM', 0, 6}
+			}
 		},
 		-- LEFT direction
 		left = {
 			expanded = {
-				background = { 0, 0.091796875, 0, 0.84765625 }, -- 0, 47, 0, 434
-				arrowPosition = { 'RIGHT', -2, 0 },
+				background = {0, 0.091796875, 0, 0.84765625}, -- 0, 47, 0, 434
+				arrowPosition = {'RIGHT', -2, 0}
 			},
 			collapsed = {
-				background = { 0.091796875, 0.130859375, 0.0, 0.84765625 }, -- 47, 67, 0, 434
-				arrowPosition = { 'LEFT', 6, 0 },
-			},
+				background = {0.091796875, 0.130859375, 0.0, 0.84765625}, -- 47, 67, 0, 434
+				arrowPosition = {'LEFT', 6, 0}
+			}
 		},
 		-- RIGHT direction
 		right = {
 			expanded = {
-				background = { 0.091796875, 0.0, 0, 0.84765625 }, -- 47, 0, 0, 434
-				arrowPosition = { 'LEFT', 2, 0 },
+				background = {0.091796875, 0.0, 0, 0.84765625}, -- 47, 0, 0, 434
+				arrowPosition = {'LEFT', 2, 0}
 			},
 			collapsed = {
-				background = { 0.130859375, 0.091796875, 0.0, 0.84765625 }, -- 67, 47, 0, 434
-				arrowPosition = { 'RIGHT', -6, 0 },
-			},
-		},
+				background = {0.130859375, 0.091796875, 0.0, 0.84765625}, -- 67, 47, 0, 434
+				arrowPosition = {'RIGHT', -6, 0}
+			}
+		}
 	},
-
 	-- Arrow icon coordinates
 	arrows = {
-		default = { 0.962890625, 0.98046875, 0.033203125, 0.06640625 }, -- 493,502,17,34
-		mouseover = { 0.984375, 1.0, 0.033203125, 0.06640625 }, -- 504,512,17,34
-	},
+		default = {0.962890625, 0.98046875, 0.033203125, 0.06640625}, -- 493,502,17,34
+		mouseover = {0.984375, 1.0, 0.033203125, 0.06640625} -- 504,512,17,34
+	}
 }
 
 -- Artwork Stuff
 function module:SlidingTrays(StyleSettings)
 	-- Initialize DB if this is the first call
 	if not module.TrayDB then
-		module.TrayDB = SUI.SpartanUIDB:RegisterNamespace('MenuTrays', { profile = DbDefaults })
+		module.TrayDB = SUI.SpartanUIDB:RegisterNamespace('MenuTrays', {profile = DbDefaults})
 		module.TrayData = module.TrayDB.profile ---@type SUI.Module.MenuTrays.DB
 	end
 
@@ -180,7 +183,7 @@ function module:SlidingTrays(StyleSettings)
 	settings = SUI:CopyTable({}, DefaultTraySettings)
 
 	-- Apply skin settings if provided
-	if StyleSettings then 
+	if StyleSettings then
 		settings = SUI:CopyTable(settings, StyleSettings)
 		-- Store the skin name and register the skin settings
 		local skinName = SUI.DB.Artwork.Style
@@ -310,37 +313,37 @@ end
 
 function module:GetTraySettings(side)
 	local currentSkin = SUI.DB.Artwork.Style
-	
+
 	-- Initialize skin data if needed
 	if not module.TrayData.Trays[currentSkin] then
 		module.TrayData.Trays[currentSkin] = {}
 	end
-	
+
 	-- Build settings hierarchy: base -> skin -> user
 	local finalSettings = {
 		enabled = true,
-		size = { width = 410, height = 45 },
+		size = {width = 410, height = 45},
 		collapseDirection = 'up',
 		customFrames = '',
-		color = { r = 1, g = 1, b = 1, a = 1 },
+		color = {r = 1, g = 1, b = 1, a = 1}
 	}
-	
+
 	-- Apply skin defaults if they exist
 	if module.TrayData.Trays[currentSkin].skinDefaults and module.TrayData.Trays[currentSkin].skinDefaults.defaultTrayColor then
 		finalSettings.color = module.TrayData.Trays[currentSkin].skinDefaults.defaultTrayColor
 	end
-	
+
 	-- Apply user settings if they exist
 	if module.TrayData.Trays[currentSkin][side] then
 		finalSettings = SUI:CopyTable(finalSettings, module.TrayData.Trays[currentSkin][side])
 	end
-	
+
 	return finalSettings
 end
 
 function module:SetTraySettings(side, key, value)
 	local currentSkin = SUI.DB.Artwork.Style
-	
+
 	-- Initialize skin data if needed
 	if not module.TrayData.Trays[currentSkin] then
 		module.TrayData.Trays[currentSkin] = {}
@@ -348,17 +351,19 @@ function module:SetTraySettings(side, key, value)
 	if not module.TrayData.Trays[currentSkin][side] then
 		module.TrayData.Trays[currentSkin][side] = {}
 	end
-	
+
 	module.TrayData.Trays[currentSkin][side][key] = value
 end
 
 function module:Options()
 	-- Ensure we have the DB initialized
-	if not module.TrayData then return end
-	
+	if not module.TrayData then
+		return
+	end
+
 	-- Apply default color from style settings if provided and not already set by user
 	if settings and settings.defaultTrayColor then
-		for _, side in ipairs({ 'left', 'right' }) do
+		for _, side in ipairs({'left', 'right'}) do
 			local currentSettings = module:GetTraySettings(side)
 			-- Only apply if user hasn't customized the color (check if it's still default)
 			if currentSettings.color.r == 1 and currentSettings.color.g == 1 and currentSettings.color.b == 1 and currentSettings.color.a == 1 then
@@ -368,8 +373,10 @@ function module:Options()
 	end
 
 	local function getFrameListColor(frameList)
-		if not frameList or frameList == '' then return '' end
-		local frames = { strsplit(',', frameList) }
+		if not frameList or frameList == '' then
+			return ''
+		end
+		local frames = {strsplit(',', frameList)}
 		local allValid = true
 		for _, frameName in ipairs(frames) do
 			local trimmed = strtrim(frameName)
@@ -416,7 +423,7 @@ function module:Options()
 						set = function(info, val)
 							module:SetTraySettings('left', 'enabled', val)
 							trayWatcherEvents() -- Update visibility immediately
-						end,
+						end
 					},
 					size = {
 						name = L['Tray Size'],
@@ -443,7 +450,7 @@ function module:Options()
 									module:SetTraySettings('left', 'size', size)
 									module:UpdateTraySizes()
 									module:updateOffset()
-								end,
+								end
 							},
 							height = {
 								name = L['Height'],
@@ -459,9 +466,9 @@ function module:Options()
 									SUI.DB.Artwork.Trays[SUI.DB.Artwork.Style].left.size.height = val
 									module:UpdateTraySizes()
 									module:updateOffset()
-								end,
-							},
-						},
+								end
+							}
+						}
 					},
 					collapseDirection = {
 						name = L['Collapse Direction'],
@@ -474,7 +481,7 @@ function module:Options()
 							left = L['Left'],
 							right = L['Right'],
 							up = L['Up'],
-							down = L['Down'],
+							down = L['Down']
 						},
 						get = function(info)
 							return SUI.DB.Artwork.Trays[SUI.DB.Artwork.Style].left.collapseDirection
@@ -489,7 +496,7 @@ function module:Options()
 								module:ApplyTrayCoordinates('left', trayImage)
 							end
 							module:updateOffset()
-						end,
+						end
 					},
 					frameManager = {
 						name = L['Frame Manager'],
@@ -503,7 +510,7 @@ function module:Options()
 							description = {
 								type = 'description',
 								name = L['Manage which frames are hidden/shown with this tray. Skin-provided frames are shown in blue, custom frames in white.'],
-								order = 1,
+								order = 1
 							},
 							skinFrames = {
 								name = function()
@@ -515,7 +522,7 @@ function module:Options()
 								end,
 								type = 'description',
 								order = 2,
-								width = 'full',
+								width = 'full'
 							},
 							customFrames = {
 								name = function()
@@ -533,14 +540,16 @@ function module:Options()
 								end,
 								set = function(info, val)
 									SUI.DB.Artwork.Trays[SUI.DB.Artwork.Style].left.customFrames = val
-								end,
+								end
 							},
 							addFrame = {
 								name = L['Add Frame'],
 								type = 'input',
 								order = 4,
 								desc = L['Enter frame name to add to custom frames list'],
-								get = function() return '' end,
+								get = function()
+									return ''
+								end,
 								set = function(info, val)
 									if val and val ~= '' then
 										local current = SUI.DB.Artwork.Trays[SUI.DB.Artwork.Style].left.customFrames
@@ -550,7 +559,7 @@ function module:Options()
 											SUI.DB.Artwork.Trays[SUI.DB.Artwork.Style].left.customFrames = current .. ',' .. val
 										end
 									end
-								end,
+								end
 							},
 							clearFrames = {
 								name = L['Clear All Custom'],
@@ -559,9 +568,9 @@ function module:Options()
 								desc = L['Clear all custom frames from this tray'],
 								func = function()
 									SUI.DB.Artwork.Trays[SUI.DB.Artwork.Style].left.customFrames = ''
-								end,
-							},
-						},
+								end
+							}
+						}
 					},
 					color = {
 						name = L['Tray Color'],
@@ -577,12 +586,12 @@ function module:Options()
 							return color.r, color.g, color.b, color.a
 						end,
 						set = function(info, r, g, b, a)
-							SUI.DB.Artwork.Trays[SUI.DB.Artwork.Style].left.color = { r = r, g = g, b = b, a = a }
+							SUI.DB.Artwork.Trays[SUI.DB.Artwork.Style].left.color = {r = r, g = g, b = b, a = a}
 							if module.Trays and module.Trays.left and settings then
 								local trayImage = settings.trayImage or 'Interface\\\\AddOns\\\\SpartanUI\\\\images\\\\Trays.png'
 								module:ApplyTrayCoordinates('left', trayImage)
 							end
-						end,
+						end
 					},
 					resetToDefaults = {
 						name = L['Reset to Defaults'],
@@ -594,9 +603,9 @@ function module:Options()
 						desc = L['Reset this tray to default settings'],
 						func = function()
 							resetTrayToDefaults('left')
-						end,
-					},
-				},
+						end
+					}
+				}
 			},
 			-- Right Tray
 			RightTrayGroup = {
@@ -615,7 +624,7 @@ function module:Options()
 						set = function(info, val)
 							SUI.DB.Artwork.Trays[SUI.DB.Artwork.Style].right.enabled = val
 							trayWatcherEvents() -- Update visibility immediately
-						end,
+						end
 					},
 					size = {
 						name = L['Tray Size'],
@@ -640,7 +649,7 @@ function module:Options()
 									SUI.DB.Artwork.Trays[SUI.DB.Artwork.Style].right.size.width = val
 									module:UpdateTraySizes()
 									module:updateOffset()
-								end,
+								end
 							},
 							height = {
 								name = L['Height'],
@@ -656,9 +665,9 @@ function module:Options()
 									SUI.DB.Artwork.Trays[SUI.DB.Artwork.Style].right.size.height = val
 									module:UpdateTraySizes()
 									module:updateOffset()
-								end,
-							},
-						},
+								end
+							}
+						}
 					},
 					collapseDirection = {
 						name = L['Collapse Direction'],
@@ -671,7 +680,7 @@ function module:Options()
 							left = L['Left'],
 							right = L['Right'],
 							up = L['Up'],
-							down = L['Down'],
+							down = L['Down']
 						},
 						get = function(info)
 							return SUI.DB.Artwork.Trays[SUI.DB.Artwork.Style].right.collapseDirection
@@ -686,7 +695,7 @@ function module:Options()
 								module:ApplyTrayCoordinates('right', trayImage)
 							end
 							module:updateOffset()
-						end,
+						end
 					},
 					frameManager = {
 						name = L['Frame Manager'],
@@ -700,7 +709,7 @@ function module:Options()
 							description = {
 								type = 'description',
 								name = L['Manage which frames are hidden/shown with this tray. Skin-provided frames are shown in blue, custom frames in white.'],
-								order = 1,
+								order = 1
 							},
 							skinFrames = {
 								name = function()
@@ -712,7 +721,7 @@ function module:Options()
 								end,
 								type = 'description',
 								order = 2,
-								width = 'full',
+								width = 'full'
 							},
 							customFrames = {
 								name = function()
@@ -730,14 +739,16 @@ function module:Options()
 								end,
 								set = function(info, val)
 									SUI.DB.Artwork.Trays[SUI.DB.Artwork.Style].right.customFrames = val
-								end,
+								end
 							},
 							addFrame = {
 								name = L['Add Frame'],
 								type = 'input',
 								order = 4,
 								desc = L['Enter frame name to add to custom frames list'],
-								get = function() return '' end,
+								get = function()
+									return ''
+								end,
 								set = function(info, val)
 									if val and val ~= '' then
 										local current = SUI.DB.Artwork.Trays[SUI.DB.Artwork.Style].right.customFrames
@@ -747,7 +758,7 @@ function module:Options()
 											SUI.DB.Artwork.Trays[SUI.DB.Artwork.Style].right.customFrames = current .. ',' .. val
 										end
 									end
-								end,
+								end
 							},
 							clearFrames = {
 								name = L['Clear All Custom'],
@@ -756,9 +767,9 @@ function module:Options()
 								desc = L['Clear all custom frames from this tray'],
 								func = function()
 									SUI.DB.Artwork.Trays[SUI.DB.Artwork.Style].right.customFrames = ''
-								end,
-							},
-						},
+								end
+							}
+						}
 					},
 					color = {
 						name = L['Tray Color'],
@@ -774,12 +785,12 @@ function module:Options()
 							return color.r, color.g, color.b, color.a
 						end,
 						set = function(info, r, g, b, a)
-							SUI.DB.Artwork.Trays[SUI.DB.Artwork.Style].right.color = { r = r, g = g, b = b, a = a }
+							SUI.DB.Artwork.Trays[SUI.DB.Artwork.Style].right.color = {r = r, g = g, b = b, a = a}
 							if module.Trays and module.Trays.right and settings then
 								local trayImage = settings.trayImage or 'Interface\\\\AddOns\\\\SpartanUI\\\\images\\\\Trays.png'
 								module:ApplyTrayCoordinates('right', trayImage)
 							end
-						end,
+						end
 					},
 					resetToDefaults = {
 						name = L['Reset to Defaults'],
@@ -791,22 +802,23 @@ function module:Options()
 						desc = L['Reset this tray to default settings'],
 						func = function()
 							resetTrayToDefaults('right')
-						end,
-					},
-				},
-			},
-		},
+						end
+					}
+				}
+			}
+		}
 	}
 end
 
 -- Apply coordinate-based tray settings based on collapse direction
 function module:ApplyTrayCoordinates(key, trayImage)
-	if not module.Trays[key] or not settings or not settings.coordinates then return end
+	if not module.Trays[key] or not settings or not settings.coordinates then
+		return
+	end
 
 	local tray = module.Trays[key]
 	local traySettings = module:GetTraySettings(key)
 	local direction = (traySettings and traySettings.collapseDirection) or 'up'
-
 
 	-- Set textures to the tray image
 	tray.expanded.bg:SetTexture(trayImage)
@@ -880,7 +892,9 @@ end
 
 -- Update tray sizes from database settings
 function module:UpdateTraySizes()
-	if not module.Trays then return end
+	if not module.Trays then
+		return
+	end
 
 	-- Update container dimensions based on collapse direction (this handles the actual SetSize)
 	module:UpdateContainerDimensions()
@@ -900,9 +914,8 @@ function module:UpdateTextureOrientations()
 			local direction = module:GetTraySettings(key).collapseDirection or 'up'
 
 			-- Use arrow coordinates from settings
-			local arrowDefault = settings.arrows and settings.arrows.default or { 0.962890625, 0.98046875, 0.033203125, 0.06640625 }
-			local arrowMouseover = settings.arrows and settings.arrows.mouseover or { 0.984375, 1.0, 0.033203125, 0.06640625 }
-
+			local arrowDefault = settings.arrows and settings.arrows.default or {0.962890625, 0.98046875, 0.033203125, 0.06640625}
+			local arrowMouseover = settings.arrows and settings.arrows.mouseover or {0.984375, 1.0, 0.033203125, 0.06640625}
 
 			-- Use default arrow coordinates for both states - direction-specific positioning is handled in ApplyTrayCoordinates
 			local expandedCoord = arrowDefault
@@ -912,21 +925,23 @@ function module:UpdateTextureOrientations()
 			module.Trays[key].expanded.texture:SetRotation(0)
 			module.Trays[key].collapsed.texture:SetRotation(0)
 
-
 			module.Trays[key].expanded.texture:SetTexCoord(unpack(expandedCoord))
 			module.Trays[key].collapsed.texture:SetTexCoord(unpack(collapsedCoord))
 
 			-- Apply mouseover coordinates
 			module.Trays[key].expanded.textureMouseover:SetTexCoord(unpack(arrowMouseover))
 			module.Trays[key].collapsed.textureMouseover:SetTexCoord(unpack(arrowMouseover))
-
 		end
 	end
 
 	-- Ensure SlidingTrays is initialized
-	if not SUI.DB.Artwork.SlidingTrays then SUI.DB.Artwork.SlidingTrays = {} end
+	if not SUI.DB.Artwork.SlidingTrays then
+		SUI.DB.Artwork.SlidingTrays = {}
+	end
 	for _, key in ipairs(trayIDs) do
-		if not SUI.DB.Artwork.SlidingTrays[key] then SUI.DB.Artwork.SlidingTrays[key] = { collapsed = false } end
+		if not SUI.DB.Artwork.SlidingTrays[key] then
+			SUI.DB.Artwork.SlidingTrays[key] = {collapsed = false}
+		end
 	end
 
 	-- Update container dimensions for left/right collapse
@@ -941,7 +956,9 @@ end
 
 -- Update container dimensions - swap width/height for left/right collapse
 function module:UpdateContainerDimensions()
-	if not module.Trays then return end
+	if not module.Trays then
+		return
+	end
 
 	for _, key in ipairs(trayIDs) do
 		if module.Trays[key] and module:GetTraySettings(key) then
@@ -978,7 +995,9 @@ end
 
 -- Update arrow button positions and sizes based on tray size and collapse direction
 function module:UpdateArrowPositions()
-	if not module.Trays then return end
+	if not module.Trays then
+		return
+	end
 
 	for _, key in ipairs(trayIDs) do
 		if module.Trays[key] and module:GetTraySettings(key) then
@@ -1038,7 +1057,9 @@ end
 
 -- Update collapsed background positioning based on collapse direction
 function module:UpdateBackgroundPositions()
-	if not module.Trays then return end
+	if not module.Trays then
+		return
+	end
 
 	for _, key in ipairs(trayIDs) do
 		if module.Trays[key] and module:GetTraySettings(key) then
@@ -1080,7 +1101,9 @@ end
 
 -- Register skin-provided tray frames (not saved to DB)
 function module:RegisterSkinTrayFrames(styleName, frames)
-	if not skinTrayFrames[styleName] then skinTrayFrames[styleName] = {} end
+	if not skinTrayFrames[styleName] then
+		skinTrayFrames[styleName] = {}
+	end
 	skinTrayFrames[styleName] = frames
 end
 
@@ -1090,7 +1113,9 @@ function module:GetCombinedFrameList(side)
 	local userFrames = ''
 
 	-- Get skin-provided frames for current style
-	if skinTrayFrames[SUI.DB.Artwork.Style] and skinTrayFrames[SUI.DB.Artwork.Style][side] then skinFrames = skinTrayFrames[SUI.DB.Artwork.Style][side] end
+	if skinTrayFrames[SUI.DB.Artwork.Style] and skinTrayFrames[SUI.DB.Artwork.Style][side] then
+		skinFrames = skinTrayFrames[SUI.DB.Artwork.Style][side]
+	end
 
 	-- Get user custom frames from DB
 	userFrames = module:GetTraySettings(side).customFrames or ''
@@ -1098,21 +1123,27 @@ function module:GetCombinedFrameList(side)
 	-- Filter out moved frames from skin frames
 	local filteredSkinFrames = {}
 	if skinFrames ~= '' then
-		local frames = { strsplit(',', skinFrames) }
+		local frames = {strsplit(',', skinFrames)}
 		for _, frameName in ipairs(frames) do
 			local trimmed = strtrim(frameName)
 			if trimmed ~= '' and _G[trimmed] then
 				-- Check if frame has been moved by user
 				local isMoved = (_G[trimmed].isMoved and _G[trimmed].isMoved()) or false
-				if not isMoved then table.insert(filteredSkinFrames, trimmed) end
+				if not isMoved then
+					table.insert(filteredSkinFrames, trimmed)
+				end
 			end
 		end
 	end
 
 	-- Combine them (filtered skin frames first, then user frames)
 	local combined = {}
-	if #filteredSkinFrames > 0 then table.insert(combined, table.concat(filteredSkinFrames, ',')) end
-	if userFrames ~= '' then table.insert(combined, userFrames) end
+	if #filteredSkinFrames > 0 then
+		table.insert(combined, table.concat(filteredSkinFrames, ','))
+	end
+	if userFrames ~= '' then
+		table.insert(combined, userFrames)
+	end
 
 	return table.concat(combined, ',')
 end

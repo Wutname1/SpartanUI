@@ -13,7 +13,7 @@ local markingTimer = nil -- Ace3 timer handle
 local function debugMsg(msg, level)
 	-- Use the BagMarking component of the AutoSell logger
 	-- This creates the hierarchy: AutoSell -> BagMarking
-	SUI.ModuleLog(module, msg, "BagMarking", level or "debug")
+	SUI.ModuleLog(module, msg, 'BagMarking', level or 'debug')
 end
 
 -- Function to show the sell icon on an item button
@@ -34,12 +34,16 @@ end
 
 -- Function to hide the sell icon on an item button
 local function hideSellIcon(itemButton)
-	if itemButton.autoSellIcon then itemButton.autoSellIcon:Hide() end
+	if itemButton.autoSellIcon then
+		itemButton.autoSellIcon:Hide()
+	end
 end
 
 -- Check if item should be marked and display/hide icon accordingly
 local function displaySellIcon(bagNumber, slotNumber, itemButton)
-	if not bagNumber or not slotNumber or not itemButton then return end
+	if not bagNumber or not slotNumber or not itemButton then
+		return
+	end
 
 	local itemInfo, _, _, _, _, _, link, _, _, itemID = C_Container.GetContainerItemInfo(bagNumber, slotNumber)
 
@@ -68,7 +72,9 @@ end
 
 -- Bag addon specific marking functions
 local function markBagginsBags()
-	if not Baggins or not Baggins.bagframes then return end
+	if not Baggins or not Baggins.bagframes then
+		return
+	end
 
 	for bagid, bag in ipairs(Baggins.bagframes) do
 		for sectionid, section in ipairs(bag.sections) do
@@ -85,7 +91,9 @@ local function markBagnonBags()
 	for slotNumber = 1, 250 do
 		local itemButton = _G['BagnonContainerItem' .. slotNumber]
 
-		if not itemButton then return end
+		if not itemButton then
+			return
+		end
 
 		local itemButtonParent = itemButton:GetParent()
 		if itemButtonParent then
@@ -133,7 +141,9 @@ local function markBaudBagBags()
 		local bagsSlotCount = C_Container.GetContainerNumSlots(bagNumber)
 		for slotNumber = 1, bagsSlotCount do
 			local itemButton = _G['BaudBagSubBag' .. bagNumber .. 'Item' .. slotNumber]
-			if itemButton then displaySellIcon(bagNumber, slotNumber, itemButton) end
+			if itemButton then
+				displaySellIcon(bagNumber, slotNumber, itemButton)
+			end
 		end
 	end
 end
@@ -161,7 +171,9 @@ local function markAdiBagBags()
 			bag = tonumber(bag)
 			slot = tonumber(slot)
 
-			if bag and slot then displaySellIcon(bag, slot, itemButton) end
+			if bag and slot then
+				displaySellIcon(bag, slot, itemButton)
+			end
 		end
 	end
 end
@@ -171,7 +183,9 @@ local function markArkInventoryBags()
 		local bagsSlotCount = C_Container.GetContainerNumSlots(bagNumber)
 		for slotNumber = 1, bagsSlotCount do
 			local itemButton = _G['ARKINV_Frame1ScrollContainerBag' .. bagNumber + 1 .. 'Item' .. slotNumber]
-			if itemButton then displaySellIcon(bagNumber, slotNumber, itemButton) end
+			if itemButton then
+				displaySellIcon(bagNumber, slotNumber, itemButton)
+			end
 		end
 	end
 end
@@ -219,7 +233,9 @@ local function markDerpyBags()
 		local bagsSlotCount = C_Container.GetContainerNumSlots(bagNumber)
 		for slotNumber = 1, bagsSlotCount do
 			local itemButton = _G['StuffingBag' .. bagNumber .. '_' .. slotNumber]
-			if itemButton then displaySellIcon(bagNumber, slotNumber, itemButton) end
+			if itemButton then
+				displaySellIcon(bagNumber, slotNumber, itemButton)
+			end
 		end
 	end
 end
@@ -237,7 +253,9 @@ local function markElvUIBags()
 			end
 
 			local itemButton = _G[containerFrameName .. containerFrameBagNumber .. 'Slot' .. slotNumber]
-			if itemButton then displaySellIcon(bagNumber, slotNumber, itemButton) end
+			if itemButton then
+				displaySellIcon(bagNumber, slotNumber, itemButton)
+			end
 		end
 	end
 end
@@ -260,7 +278,9 @@ local function markInventorianBags()
 end
 
 local function markLiteBagBags()
-	if not LiteBagInventoryPanel or not LiteBagInventoryPanel.itemButtons then return end
+	if not LiteBagInventoryPanel or not LiteBagInventoryPanel.itemButtons then
+		return
+	end
 
 	for i = 1, LiteBagInventoryPanel.size do
 		local button = LiteBagInventoryPanel.itemButtons[i]
@@ -277,7 +297,9 @@ local function markfamBagsBags()
 		local bagsSlotCount = C_Container.GetContainerNumSlots(bagNumber)
 		for slotNumber = 1, bagsSlotCount do
 			local itemButton = _G['famBagsButton_' .. bagNumber .. '_' .. slotNumber]
-			if itemButton then displaySellIcon(bagNumber, slotNumber, itemButton) end
+			if itemButton then
+				displaySellIcon(bagNumber, slotNumber, itemButton)
+			end
 		end
 	end
 end
@@ -287,7 +309,9 @@ local function markLUIBags()
 		local bagsSlotCount = C_Container.GetContainerNumSlots(bagNumber)
 		for slotNumber = 1, bagsSlotCount do
 			local itemButton = _G['LUIBags_Item' .. bagNumber .. '_' .. slotNumber]
-			if itemButton then displaySellIcon(bagNumber, slotNumber, itemButton) end
+			if itemButton then
+				displaySellIcon(bagNumber, slotNumber, itemButton)
+			end
 		end
 	end
 end
@@ -316,25 +340,27 @@ end
 
 -- Default WoW bags (and compatible addons like bBag)
 local function markNormalBags()
-	debugMsg('markNormalBags() called', "debug")
+	debugMsg('markNormalBags() called', 'debug')
 
 	local combinedBags = _G['ContainerFrameCombinedBags']
-	debugMsg('CombinedBags frame: ' .. tostring(combinedBags), "debug")
-	debugMsg('CombinedBags shown: ' .. tostring(combinedBags and combinedBags:IsShown()), "debug")
+	debugMsg('CombinedBags frame: ' .. tostring(combinedBags), 'debug')
+	debugMsg('CombinedBags shown: ' .. tostring(combinedBags and combinedBags:IsShown()), 'debug')
 
 	-- Check individual containers first
 	local anyContainerShown = false
 	for containerNumber = 0, BAG_COUNT do
 		local container = _G['ContainerFrame' .. containerNumber + 1]
 		local isShown = container and container:IsShown()
-		debugMsg('Container ' .. containerNumber .. ': frame=' .. tostring(container) .. ', shown=' .. tostring(isShown), "debug")
-		if isShown then anyContainerShown = true end
+		debugMsg('Container ' .. containerNumber .. ': frame=' .. tostring(container) .. ', shown=' .. tostring(isShown), 'debug')
+		if isShown then
+			anyContainerShown = true
+		end
 	end
-	debugMsg('Any individual container shown: ' .. tostring(anyContainerShown), "debug")
+	debugMsg('Any individual container shown: ' .. tostring(anyContainerShown), 'debug')
 
 	-- Use the proper WoW API method to enumerate item buttons
 	if combinedBags and combinedBags:IsShown() then
-		debugMsg('Combined bags are shown - using EnumerateValidItems', "info")
+		debugMsg('Combined bags are shown - using EnumerateValidItems', 'info')
 
 		-- Use the WoW API method to get all item buttons
 		if combinedBags.EnumerateValidItems then
@@ -344,12 +370,12 @@ local function markNormalBags()
 				local bagID = itemButton:GetBagID()
 				local slotID = itemButton:GetID()
 
-				debugMsg('Item button ' .. itemCount .. ': bagID=' .. tostring(bagID) .. ', slotID=' .. tostring(slotID), "debug")
+				debugMsg('Item button ' .. itemCount .. ': bagID=' .. tostring(bagID) .. ', slotID=' .. tostring(slotID), 'debug')
 				displaySellIcon(bagID, slotID, itemButton)
 			end
-			debugMsg('Processed ' .. itemCount .. ' item buttons via EnumerateValidItems', "info")
+			debugMsg('Processed ' .. itemCount .. ' item buttons via EnumerateValidItems', 'info')
 		else
-			debugMsg('Combined bags frame does not have EnumerateValidItems method', "warning")
+			debugMsg('Combined bags frame does not have EnumerateValidItems method', 'warning')
 		end
 	else
 		-- Handle individual container frames
@@ -357,7 +383,7 @@ local function markNormalBags()
 			local container = _G['ContainerFrame' .. containerNumber + 1]
 
 			if container and container:IsShown() then
-				debugMsg('Processing individual container ' .. containerNumber .. ' with EnumerateValidItems', "info")
+				debugMsg('Processing individual container ' .. containerNumber .. ' with EnumerateValidItems', 'info')
 
 				if container.EnumerateValidItems then
 					local itemCount = 0
@@ -366,15 +392,15 @@ local function markNormalBags()
 						local bagID = itemButton:GetBagID()
 						local slotID = itemButton:GetID()
 
-						debugMsg('Container ' .. containerNumber .. ' item ' .. itemCount .. ': bagID=' .. tostring(bagID) .. ', slotID=' .. tostring(slotID), "debug")
+						debugMsg('Container ' .. containerNumber .. ' item ' .. itemCount .. ': bagID=' .. tostring(bagID) .. ', slotID=' .. tostring(slotID), 'debug')
 						displaySellIcon(bagID, slotID, itemButton)
 					end
-					debugMsg('Processed ' .. itemCount .. ' items in container ' .. containerNumber, "info")
+					debugMsg('Processed ' .. itemCount .. ' items in container ' .. containerNumber, 'info')
 				else
-					debugMsg('Container ' .. containerNumber .. ' does not have EnumerateValidItems method', "warning")
+					debugMsg('Container ' .. containerNumber .. ' does not have EnumerateValidItems method', 'warning')
 				end
 			else
-				debugMsg('Skipping container ' .. containerNumber .. ' - not shown', "debug")
+				debugMsg('Skipping container ' .. containerNumber .. ' - not shown', 'debug')
 			end
 		end
 	end
@@ -382,15 +408,19 @@ end
 
 -- Main marking function that determines which bag addon is active
 local function markItems()
-	if SUI:IsModuleDisabled('AutoSell') then return end
+	if SUI:IsModuleDisabled('AutoSell') then
+		return
+	end
 
 	-- Throttle marking operations to prevent performance issues
 	local currentTime = GetTime()
 	local throttleTime = vendorOpen and 1.0 or MARK_THROTTLE -- More aggressive throttling when vendor is open
-	if currentTime - lastMarkTime < throttleTime then return end
+	if currentTime - lastMarkTime < throttleTime then
+		return
+	end
 	lastMarkTime = currentTime
 
-	debugMsg('Marking items for sale', "info")
+	debugMsg('Marking items for sale', 'info')
 
 	if C_AddOns.IsAddOnLoaded('Baganator') then
 		-- Baganator uses junk plugin API, no need for manual marking
@@ -439,7 +469,7 @@ end
 -- Start the marking timer when bags are opened
 local function startMarkingTimer()
 	if not markingTimer then
-		debugMsg('Starting marking timer (1 second interval)', "info")
+		debugMsg('Starting marking timer (1 second interval)', 'info')
 		markingTimer = module:ScheduleRepeatingTimer(markItems, 1.0) -- Mark every second
 	end
 end
@@ -447,7 +477,7 @@ end
 -- Stop the marking timer when bags are closed
 local function stopMarkingTimer()
 	if markingTimer then
-		debugMsg('Stopping marking timer', "info")
+		debugMsg('Stopping marking timer', 'info')
 		module:CancelTimer(markingTimer)
 		markingTimer = nil
 	end
@@ -468,30 +498,35 @@ end
 -- Register Baganator junk plugin
 local function registerBaganatorPlugin()
 	if not Baganator or not Baganator.API then
-		debugMsg('Baganator API not available', "warning")
+		debugMsg('Baganator API not available', 'warning')
 		return
 	end
 
-	local success, err = pcall(function()
-		Baganator.API.RegisterJunkPlugin(
-			'SpartanUI AutoSell', -- label (shown in Baganator settings)
-			'SpartanUI_AutoSell', -- id (unique identifier)
-			baganatorJunkCallback -- callback function
-		)
-	end)
+	local success, err =
+		pcall(
+		function()
+			Baganator.API.RegisterJunkPlugin(
+				'SpartanUI AutoSell', -- label (shown in Baganator settings)
+				'SpartanUI_AutoSell', -- id (unique identifier)
+				baganatorJunkCallback -- callback function
+			)
+		end
+	)
 
 	if success then
-		debugMsg('Baganator junk plugin registered successfully', "info")
+		debugMsg('Baganator junk plugin registered successfully', 'info')
 	else
-		debugMsg('Baganator junk plugin registration failed: ' .. tostring(err), "error")
+		debugMsg('Baganator junk plugin registration failed: ' .. tostring(err), 'error')
 	end
 end
 
 -- Initialize bag marking system
 function module:InitializeBagMarking()
-	if markingFrame then return end
+	if markingFrame then
+		return
+	end
 
-	debugMsg('InitializeBagMarking() called', "info")
+	debugMsg('InitializeBagMarking() called', 'info')
 	markingFrame = CreateFrame('Frame', 'AutoSellBagMarking', UIParent)
 	markingFrame:RegisterEvent('PLAYER_ENTERING_WORLD')
 	markingFrame:RegisterEvent('BAG_UPDATE')
@@ -504,62 +539,73 @@ function module:InitializeBagMarking()
 	markingFrame:RegisterEvent('BAG_CLOSED')
 
 	-- Set up Baggins support if available
-	if C_AddOns.IsAddOnLoaded('Baggins') and Baggins then Baggins:RegisterSignal('Baggins_BagOpened', handleBagginsOpened, Baggins) end
+	if C_AddOns.IsAddOnLoaded('Baggins') and Baggins then
+		Baggins:RegisterSignal('Baggins_BagOpened', handleBagginsOpened, Baggins)
+	end
 
 	-- Register Baganator junk plugin if available
-	if C_AddOns.IsAddOnLoaded('Baganator') then registerBaganatorPlugin() end
+	if C_AddOns.IsAddOnLoaded('Baganator') then
+		registerBaganatorPlugin()
+	end
 
-	markingFrame:SetScript('OnEvent', function(self, event, ...)
-		if event == 'PLAYER_ENTERING_WORLD' then
-			-- Register for bag updates after entering world
-			debugMsg('Player entering world, setting up bag marking', "info")
-			-- Try to register Baganator plugin again in case it wasn't loaded yet
-			if C_AddOns.IsAddOnLoaded('Baganator') then registerBaganatorPlugin() end
-		elseif event == 'BAG_OPEN' then
-			debugMsg('BAG_OPEN event - starting marking timer and marking immediately', "info")
-			-- Mark items immediately when bags are opened
-			markItems()
-			-- Start the repeating timer for continuous marking
-			startMarkingTimer()
-		elseif event == 'BAG_CLOSED' then
-			debugMsg('BAG_CLOSED event - stopping marking timer', "info")
-			-- Stop the repeating timer when bags are closed
-			stopMarkingTimer()
-		elseif event == 'MERCHANT_SHOW' then
-			vendorOpen = true
-			-- Mark items when vendor opens (but throttled)
-			markItems()
-			-- Start timer if not already running
-			startMarkingTimer()
-		elseif event == 'MERCHANT_CLOSED' then
-			vendorOpen = false
-			-- Keep timer running if bags are still open, otherwise stop it
-			local combinedBags = _G['ContainerFrameCombinedBags']
-			local anyBagOpen = false
-			for i = 0, BAG_COUNT do
-				local container = _G['ContainerFrame' .. i + 1]
-				if (container and container:IsShown()) or (combinedBags and combinedBags:IsShown()) then
-					anyBagOpen = true
-					break
+	markingFrame:SetScript(
+		'OnEvent',
+		function(self, event, ...)
+			if event == 'PLAYER_ENTERING_WORLD' then
+				-- Register for bag updates after entering world
+				debugMsg('Player entering world, setting up bag marking', 'info')
+				-- Try to register Baganator plugin again in case it wasn't loaded yet
+				if C_AddOns.IsAddOnLoaded('Baganator') then
+					registerBaganatorPlugin()
 				end
-			end
-			if not anyBagOpen then stopMarkingTimer() end
-		elseif event == 'BAG_UPDATE' or event == 'BAG_UPDATE_DELAYED' then
-			-- Only trigger immediate marking if timer isn't running
-			if not markingTimer then
-				-- When vendor is open, be much more conservative about marking
-				if vendorOpen then
-					-- Use longer delay and throttling when vendor is open to prevent spam
-					C_Timer.After(0.5, markItems)
-				else
-					-- Normal marking when vendor is closed
-					C_Timer.After(0.1, markItems)
+			elseif event == 'BAG_OPEN' then
+				debugMsg('BAG_OPEN event - starting marking timer and marking immediately', 'info')
+				-- Mark items immediately when bags are opened
+				markItems()
+				-- Start the repeating timer for continuous marking
+				startMarkingTimer()
+			elseif event == 'BAG_CLOSED' then
+				debugMsg('BAG_CLOSED event - stopping marking timer', 'info')
+				-- Stop the repeating timer when bags are closed
+				stopMarkingTimer()
+			elseif event == 'MERCHANT_SHOW' then
+				vendorOpen = true
+				-- Mark items when vendor opens (but throttled)
+				markItems()
+				-- Start timer if not already running
+				startMarkingTimer()
+			elseif event == 'MERCHANT_CLOSED' then
+				vendorOpen = false
+				-- Keep timer running if bags are still open, otherwise stop it
+				local combinedBags = _G['ContainerFrameCombinedBags']
+				local anyBagOpen = false
+				for i = 0, BAG_COUNT do
+					local container = _G['ContainerFrame' .. i + 1]
+					if (container and container:IsShown()) or (combinedBags and combinedBags:IsShown()) then
+						anyBagOpen = true
+						break
+					end
+				end
+				if not anyBagOpen then
+					stopMarkingTimer()
+				end
+			elseif event == 'BAG_UPDATE' or event == 'BAG_UPDATE_DELAYED' then
+				-- Only trigger immediate marking if timer isn't running
+				if not markingTimer then
+					-- When vendor is open, be much more conservative about marking
+					if vendorOpen then
+						-- Use longer delay and throttling when vendor is open to prevent spam
+						C_Timer.After(0.5, markItems)
+					else
+						-- Normal marking when vendor is closed
+						C_Timer.After(0.1, markItems)
+					end
 				end
 			end
 		end
-	end)
+	)
 
-	debugMsg('Bag marking system initialized', "info")
+	debugMsg('Bag marking system initialized', 'info')
 end
 
 -- Cleanup function
@@ -572,7 +618,7 @@ function module:CleanupBagMarking()
 		markingFrame:SetScript('OnEvent', nil)
 		markingFrame = nil
 	end
-	debugMsg('Bag marking system cleaned up', "info")
+	debugMsg('Bag marking system cleaned up', 'info')
 end
 
 -- Public interface

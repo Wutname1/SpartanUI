@@ -22,7 +22,7 @@ For optimal IntelliSense support, include these type definitions in your addon:
 ```lua
 ---@alias LogLevel
 ---| "debug"    # Detailed debugging information
----| "info"     # General informational messages  
+---| "info"     # General informational messages
 ---| "warning"  # Warning conditions
 ---| "error"    # Error conditions
 ---| "critical" # Critical system failures
@@ -30,7 +30,7 @@ For optimal IntelliSense support, include these type definitions in your addon:
 ---Logger function returned by RegisterAddon
 ---@alias SimpleLogger fun(message: string, level?: LogLevel): nil
 
----Logger table returned by RegisterAddonCategory  
+---Logger table returned by RegisterAddonCategory
 ---@alias ComplexLoggers table<string, SimpleLogger>
 
 ---@class SUI.Logger
@@ -49,6 +49,7 @@ For addons that need basic logging functionality, use the simple registration me
 Registers your addon for logging under the "External Addons" category.
 
 **Type Signature:**
+
 ```lua
 ---@param addonName string Name of your addon
 ---@return SimpleLogger logger Logger function that accepts (message, level?)
@@ -56,9 +57,11 @@ function SUI.Logger.RegisterAddon(addonName)
 ```
 
 **Parameters:**
+
 - `addonName` (string): Name of your addon
 
 **Returns:**
+
 - `SimpleLogger`: Logger function that accepts `(message: string, level?: LogLevel)`
 
 **Example:**
@@ -82,25 +85,28 @@ For complex addons that need multiple logging categories, use the advanced regis
 Creates a custom expandable category for your addon with subcategories.
 
 **Type Signature:**
+
 ```lua
 ---@param addonName string Name of your addon (becomes the category name)
----@param subcategories string[] Array of subcategory names  
+---@param subcategories string[] Array of subcategory names
 ---@return ComplexLoggers loggers Table of logger functions keyed by subcategory name
 function SUI.Logger.RegisterAddonCategory(addonName, subcategories)
 ```
 
 **Parameters:**
+
 - `addonName` (string): Name of your addon (becomes the category name)
 - `subcategories` (string[]): Array of subcategory names
 
 **Returns:**
+
 - `ComplexLoggers`: Table of logger functions keyed by subcategory name
 
 **Example:**
 
 ```lua
 -- Registration (do this once during addon initialization)
-local loggers = SUI.Logger:RegisterAddonCategory("LibsDataBar", {
+local loggers = SUI.Logger.RegisterAddonCategory("LibsDataBar", {
     "core", "modules", "display", "plugins"
 })
 
@@ -122,7 +128,7 @@ The Logger automatically detects and creates hierarchical structures based on yo
 SUI.Log("Combat module loaded", "MyAddon.Combat")
 -- → Category: "MyAddon", SubCategory: "Combat" (selectable)
 
--- Three-level pattern: "AddonName.SubCategory.SubSubCategory"  
+-- Three-level pattern: "AddonName.SubCategory.SubSubCategory"
 SUI.Log("Spell rotation started", "MyAddon.Combat.Rotation")
 SUI.Log("Cooldown tracked", "MyAddon.Combat.Cooldowns")
 -- → Category: "MyAddon", SubCategory: "Combat" (expandable)
@@ -136,13 +142,13 @@ For complex addons, you can combine registration with hierarchical source names:
 
 ```lua
 -- Register your main category
-local loggers = SUI.Logger:RegisterAddonCategory("MyRaidAddon", {
+local loggers = SUI.Logger.RegisterAddonCategory("MyRaidAddon", {
     "core", "ui", "data"
 })
 
 -- Use basic subcategories
 loggers.core("Addon initialized")
-loggers.ui("Interface loaded") 
+loggers.ui("Interface loaded")
 
 -- Use hierarchical patterns for granular logging
 SUI.Log("Player data updated", "MyRaidAddon.data.player")
@@ -179,7 +185,7 @@ module.DisplayName = "My Custom Module"
 
 function module:OnInitialize()
     SUI.ModuleLog(self, "Module initialized successfully")
-    SUI.ModuleLog(self, "Database connection established", "Database", "info") 
+    SUI.ModuleLog(self, "Database connection established", "Database", "info")
     SUI.ModuleLog(self, "Configuration loaded", "Config.Settings", "debug")
 end
 ```
@@ -189,6 +195,7 @@ end
 Recommended setup function that returns pre-configured loggers:
 
 **Simple Logging Setup:**
+
 ```lua
 local module = SUI:NewModule('AutoTurnIn')
 module.DisplayName = "Auto turn in"
@@ -196,7 +203,7 @@ module.DisplayName = "Auto turn in"
 function module:OnInitialize()
     -- Creates a simple logger that automatically uses "Auto turn in"
     self.logger = SUI.SetupModuleLogging(self)
-    
+
     -- Usage throughout the module
     self.logger("Quest auto-accept enabled")
     self.logger("Processing quest turn-in", "debug")
@@ -205,6 +212,7 @@ end
 ```
 
 **Component-Based Logging Setup:**
+
 ```lua
 local module = SUI:NewModule('ObjectiveTracker')
 
@@ -213,13 +221,13 @@ function module:OnInitialize()
     self.loggers = SUI.SetupModuleLogging(self, {
         "rules", "actions", "ui", "events"
     })
-    
+
     -- Usage with specific components
-    self.loggers.rules("Rule evaluation started") 
+    self.loggers.rules("Rule evaluation started")
     self.loggers.actions("Executing hide action on quest")
     self.loggers.ui("Updating objective display")
     self.loggers.events("QUEST_LOG_UPDATE received", "debug")
-    
+
     -- General logging without component
     self.loggers.general("Module fully initialized")
 end
@@ -235,12 +243,12 @@ self.logger("Quest completed")
 -- → Category: "UI Components", SubCategory: "Auto turn in"
 
 -- With components
-self.loggers.database("Player data saved")  
+self.loggers.database("Player data saved")
 -- → Category: "UI Components", SubCategory: "Auto turn in.database"
 
--- With sub-components 
+-- With sub-components
 SUI.ModuleLog(self, "Connection timeout", "database.connection", "warning")
--- → Category: "UI Components" 
+-- → Category: "UI Components"
 --   SubCategory: "Auto turn in.database" (expandable)
 --   SubSubCategory: "connection" (selectable)
 ```
@@ -248,12 +256,14 @@ SUI.ModuleLog(self, "Connection timeout", "database.connection", "warning")
 ### Migration from Direct SUI.Log Calls
 
 **Old Pattern:**
+
 ```lua
 SUI.Log("Player health updated", "UnitFrames.Player.Health", "debug")
-SUI.Log("Action bar button created", "ActionBars", "info") 
+SUI.Log("Action bar button created", "ActionBars", "info")
 ```
 
 **New Recommended Pattern:**
+
 ```lua
 -- In module initialization
 self.loggers = SUI.SetupModuleLogging(self, {"player", "target", "party"})
@@ -294,19 +304,25 @@ The Logger uses a 5-tier priority system with color coding:
 The Logger uses a sophisticated three-level hierarchy system that matches Blizzard's AuctionHouse organization:
 
 ### Level 1: Categories
+
 Top-level organizational groups:
+
 - **External Addons**: Simple registered addons (using `RegisterAddon()`)
 - **Custom Categories**: Complex registered addons (using `RegisterAddonCategory()`)
 - **SpartanUI Internal**: Core, UI Components, Handlers, Development
 
-### Level 2: SubCategories  
+### Level 2: SubCategories
+
 Secondary organization within categories:
+
 - **For External Addons**: Individual addon names (e.g., "MyAddon")
-- **For Custom Categories**: User-defined subcategories (e.g., "Combat", "Interface") 
+- **For Custom Categories**: User-defined subcategories (e.g., "Combat", "Interface")
 - **For SpartanUI Internal**: System components (e.g., "UnitFrames", "Database")
 
 ### Level 3: SubSubCategories
+
 Granular log source organization:
+
 - **Automatic Detection**: Sources like "MyAddon.Combat.Spells" automatically create hierarchy
 - **Expandable Groups**: SubCategories with multiple SubSubCategories become expandable
 - **Direct Logging**: Individual log sources are selectable for focused viewing
@@ -315,7 +331,7 @@ Granular log source organization:
 
 ```
 📁 MyAddon (5)                    ← Category (your custom category)
-├── 📂 Combat (3)                 ← SubCategory (expandable) 
+├── 📂 Combat (3)                 ← SubCategory (expandable)
 │   ├── 📄 Spells                 ← SubSubCategory (selectable log source)
 │   ├── 📄 Rotation               ← SubSubCategory (selectable log source)
 │   └── 📄 Cooldowns              ← SubSubCategory (selectable log source)
@@ -375,7 +391,7 @@ local logger = SUI.Logger.RegisterAddon(addonName) ---@type SimpleLogger
 -- Throughout your addon code
 function TotemBar:Initialize()
     logger("Totem bar system starting up")
-    
+
     local success = self:LoadConfiguration()
     if success then
         logger("Configuration loaded successfully", "info")
@@ -386,13 +402,13 @@ end
 
 function TotemBar:CreateTotemButton(spellID)
     logger("Creating totem button for spell: " .. spellID, "debug")
-    
+
     local spellInfo = GetSpellInfo(spellID)
     if not spellInfo then
         logger("Spell data not available for ID: " .. spellID, "warning")
         return false
     end
-    
+
     logger("Totem button created: " .. spellInfo.name, "info")
     return true
 end
@@ -414,10 +430,10 @@ function DataBar:Initialize()
     loggers.core("DataBar system ready")
 end
 
--- Module management logging  
+-- Module management logging
 function DataBar:LoadModule(moduleName)
     loggers.modules("Loading module: " .. moduleName, "debug")
-    
+
     local success, module = pcall(self.LoadModuleFile, moduleName)
     if success then
         loggers.modules("Module loaded: " .. moduleName, "info")
@@ -485,10 +501,10 @@ The Logger system is designed for minimal performance impact:
 For Logger integration questions or issues:
 
 1. Check SpartanUI documentation and options panel
-2. Use `/logs` command to view your addon's logging output  
+2. Use `/logs` command to view your addon's logging output
 3. Export logs when reporting issues to SpartanUI developers
 
 ---
 
-**SpartanUI Logger External Addon Integration Guide**  
-*For addon developers integrating with SpartanUI's logging system*
+**SpartanUI Logger External Addon Integration Guide**
+_For addon developers integrating with SpartanUI's logging system_

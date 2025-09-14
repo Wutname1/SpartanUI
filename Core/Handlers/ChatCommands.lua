@@ -14,7 +14,7 @@ function SUI:ChatCommand(input)
 	-- If input begins with '>' character, handle it as a path
 	if input:sub(1, 1) == '>' then
 		local pathInput = input:sub(2) -- Remove the leading '>'
-		local args = { strsplit('>', pathInput) }
+		local args = {strsplit('>', pathInput)}
 		for i, arg in ipairs(args) do
 			args[i] = arg:trim()
 		end
@@ -32,33 +32,35 @@ function SUI:ChatCommand(input)
 end
 
 if AddonCompartmentFrame then
-	AddonCompartmentFrame:RegisterAddon({
-		text = 'Spartan|cffe21f1fUI',
-		icon = 'Interface\\AddOns\\SpartanUI\\images\\Spartan-Helm',
-		registerForAnyClick = true,
-		notCheckable = true,
-		func = function(btn, arg1, arg2, checked, mouseButton)
-		if IsShiftKeyDown() then
-			SUI.MoveIt:MoveIt()
-			return
-		end
-		-- if mouseButton == 'LeftButton' then
-		-- elseif mouseButton == 'MiddleButton' then
-		-- elseif mouseButton == 'RightButton' then
-		-- end
+	AddonCompartmentFrame:RegisterAddon(
+		{
+			text = 'Spartan|cffe21f1fUI',
+			icon = 'Interface\\AddOns\\SpartanUI\\images\\Spartan-Helm',
+			registerForAnyClick = true,
+			notCheckable = true,
+			func = function(btn, arg1, arg2, checked, mouseButton)
+				if IsShiftKeyDown() then
+					SUI.MoveIt:MoveIt()
+					return
+				end
+				-- if mouseButton == 'LeftButton' then
+				-- elseif mouseButton == 'MiddleButton' then
+				-- elseif mouseButton == 'RightButton' then
+				-- end
 
-		SUI.Options:ToggleOptions()
-	end,
-	funcOnEnter = function()
-		-- GameTooltip:ClearLines()
-		GameTooltip:SetOwner(AddonCompartmentFrame, 'ANCHOR_CURSOR_RIGHT')
-		GameTooltip:AddDoubleLine('|TInterface/Addons/SpartanUI/images/Spartan-helm:20:20|t |cffffffffSpartan|cffe21f1fUI', '|cffffffff' .. (SUI.releaseType or '') .. tostring(SUI.Version))
-		GameTooltip:AddLine(' ', 1, 1, 1)
-		GameTooltip:AddLine('|cffeda55fLeft-Click|r to toggle the options window.', 1, 1, 1)
-		GameTooltip:AddLine('|cffeda55fShift-Click|r to toggle the movement system.', 1, 1, 1)
-		GameTooltip:Show()
-	end,
-	})
+				SUI.Options:ToggleOptions()
+			end,
+			funcOnEnter = function()
+				-- GameTooltip:ClearLines()
+				GameTooltip:SetOwner(AddonCompartmentFrame, 'ANCHOR_CURSOR_RIGHT')
+				GameTooltip:AddDoubleLine('|TInterface/Addons/SpartanUI/images/Spartan-helm:20:20|t |cffffffffSpartan|cffe21f1fUI', '|cffffffff' .. (SUI.releaseType or '') .. tostring(SUI.Version))
+				GameTooltip:AddLine(' ', 1, 1, 1)
+				GameTooltip:AddLine('|cffeda55fLeft-Click|r to toggle the options window.', 1, 1, 1)
+				GameTooltip:AddLine('|cffeda55fShift-Click|r to toggle the movement system.', 1, 1, 1)
+				GameTooltip:Show()
+			end
+		}
+	)
 end
 
 local function AddToOptions(arg)
@@ -80,9 +82,10 @@ local function AddToOptions(arg)
 						get = function()
 							return '/sui ' .. arg
 						end,
-						set = function() end,
-					},
-				},
+						set = function()
+						end
+					}
+				}
 			}
 			local i = 2
 			for k, v in pairs(settings.arguments) do
@@ -95,7 +98,8 @@ local function AddToOptions(arg)
 						get = function()
 							return '/sui ' .. arg .. ' ' .. k
 						end,
-						set = function() end,
+						set = function()
+						end
 					}
 					i = i + 1
 				end
@@ -109,7 +113,8 @@ local function AddToOptions(arg)
 			get = function()
 				return '/sui ' .. arg
 			end,
-			set = function() end,
+			set = function()
+			end
 		}
 	end
 end
@@ -121,7 +126,9 @@ end
 ---@param silent? boolean if adding the command should error silently
 function SUI:AddChatCommand(arg, func, commandDescription, arguments, silent)
 	if SUIChatCommands[arg] then
-		if not silent then SUI:Error(arg .. ' Chat command has already been added') end
+		if not silent then
+			SUI:Error(arg .. ' Chat command has already been added')
+		end
 		return
 	end
 
@@ -132,18 +139,20 @@ function SUI:AddChatCommand(arg, func, commandDescription, arguments, silent)
 	CommandDetails[arg] = {
 		func = func,
 		commandDescription = commandDescription,
-		arguments = arguments,
+		arguments = arguments
 	}
 
 	-- if OnEnable has ran add to options
-	if enabled then AddToOptions(arg) end
+	if enabled then
+		AddToOptions(arg)
+	end
 end
 
 function module:OnEnable()
 	SUI.opt.args.Help.args.ChatCommands = {
 		name = L['Chat commands'],
 		type = 'group',
-		args = {},
+		args = {}
 	}
 	for k, _ in pairs(CommandDetails) do
 		AddToOptions(k)

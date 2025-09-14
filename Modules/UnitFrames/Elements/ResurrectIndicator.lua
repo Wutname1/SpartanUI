@@ -20,8 +20,8 @@ local Settings = {
 	size = 20,
 	config = {
 		type = 'Indicator',
-		DisplayName = 'Resurrect',
-	},
+		DisplayName = 'Resurrect'
+	}
 }
 
 UF.Elements:Register('ResurrectIndicator', Build, Update, nil, Settings)

@@ -33,12 +33,12 @@ local Settings = {
 	position = {
 		anchor = 'CENTER',
 		x = 0,
-		y = 0,
+		y = 0
 	},
 	config = {
 		type = 'Indicator',
-		DisplayName = 'Status Text',
-	},
+		DisplayName = 'Status Text'
+	}
 }
 
 UF.Elements:Register('StatusText', Build, Update, Options, Settings)

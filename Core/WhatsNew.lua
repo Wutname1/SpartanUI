@@ -39,13 +39,19 @@ function SUI:WhatsNew()
 	module.window.Skip:SetPoint('BOTTOMLEFT', module.window, 'BOTTOMLEFT', 5, 5)
 	module.window.Next:SetPoint('BOTTOMRIGHT', module.window, 'BOTTOMRIGHT', -5, 5)
 
-	module.window.Skip:SetScript('OnClick', function(this)
-		module.window:Hide()
-	end)
+	module.window.Skip:SetScript(
+		'OnClick',
+		function(this)
+			module.window:Hide()
+		end
+	)
 
-	module.window.Next:SetScript('OnClick', function(this)
-		module.window:Hide()
-	end)
+	module.window.Next:SetScript(
+		'OnClick',
+		function(this)
+			module.window:Hide()
+		end
+	)
 
 	-- Display first page
 	module.window.closeBtn:Hide()
@@ -53,10 +59,14 @@ function SUI:WhatsNew()
 end
 
 function module:OnInitialize()
-	if SUI[db].WhatsNew == nil then SUI[db].WhatsNew = true end
+	if SUI[db].WhatsNew == nil then
+		SUI[db].WhatsNew = true
+	end
 	--Only display if the setup has been done, and the SUI.DB version is lower than release build, AND the user has not told us to never tell them about new stuff
 
-	if SUI[db].Version and SUI[db].Version < '6.0.0' and SUI[db].SetupDone and SUI[db].WhatsNew then SUI:WhatsNew() end
+	if SUI[db].Version and SUI[db].Version < '6.0.0' and SUI[db].SetupDone and SUI[db].WhatsNew then
+		SUI:WhatsNew()
+	end
 
 	-- Update SUI.DB Version
 	SUI[db].Version = SUI.Version

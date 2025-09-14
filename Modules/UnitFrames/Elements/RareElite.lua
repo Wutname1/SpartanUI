@@ -36,19 +36,19 @@ local Settings = {
 			anchor = 'TOPLEFT',
 			relativeTo = 'Frame',
 			x = 0,
-			y = 0,
+			y = 0
 		},
 		['2'] = {
 			anchor = 'BOTTOMRIGHT',
 			relativeTo = 'Frame',
 			x = 0,
-			y = 0,
-		},
+			y = 0
+		}
 	},
 	config = {
 		type = 'Indicator',
-		DisplayName = 'Rare/Elite',
-	},
+		DisplayName = 'Rare/Elite'
+	}
 }
 
 UF.Elements:Register('RareElite', Build, Update, Options, Settings)

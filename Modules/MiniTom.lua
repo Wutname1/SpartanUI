@@ -78,17 +78,17 @@ local function Options()
 				end,
 				set = function(value)
 					SUI:DisableModule(not value)
-				end,
+				end
 			},
 			desc1 = {
 				name = 'This module enables a simple "Mini" version of the larger TomTom addon. It allows you to set waypoints using the /way command.',
 				type = 'description',
-				order = 2,
+				order = 2
 			},
 			desc2 = {
 				name = 'This module is not compatible with the full TomTom addon. If you have TomTom enabled, this module will be automatically disabled.',
 				type = 'description',
-				order = 3,
+				order = 3
 			},
 			desc3 = {
 				name = 'Example waypoint commands:',
@@ -98,7 +98,8 @@ local function Options()
 				get = function()
 					return '/way 58 68'
 				end,
-				set = function() end,
+				set = function()
+				end
 			},
 			desc4 = {
 				name = '',
@@ -108,7 +109,8 @@ local function Options()
 				get = function()
 					return '/way Waking Shore 58 68'
 				end,
-				set = function() end,
+				set = function()
+				end
 			},
 			desc5 = {
 				name = '',
@@ -118,7 +120,8 @@ local function Options()
 				get = function()
 					return '/way Waking Shore 58 68 Tail Fragment'
 				end,
-				set = function() end,
+				set = function()
+				end
 			},
 			desc6 = {
 				name = '',
@@ -128,24 +131,29 @@ local function Options()
 				get = function()
 					return '/way #2022 58 68 Tail Fragment'
 				end,
-				set = function() end,
-			},
-		},
+				set = function()
+				end
+			}
+		}
 	}
 
 	SUI.Options:AddOptions(OptTable, 'MiniTom', nil)
 end
 
 function module:OnInitialize()
-	module.Database = SUI.SpartanUIDB:RegisterNamespace('MiniTom', { profile = DBDefaults })
+	module.Database = SUI.SpartanUIDB:RegisterNamespace('MiniTom', {profile = DBDefaults})
 	---@type MiniTomDB
 	module.DB = module.Database.profile
-	if SUI:IsAddonEnabled('TomTom') then module.override = true end
+	if SUI:IsAddonEnabled('TomTom') then
+		module.override = true
+	end
 end
 
 function module:OnEnable()
 	Options()
-	if SUI:IsModuleDisabled(module) then return end
+	if SUI:IsModuleDisabled(module) then
+		return
+	end
 
 	local function SetWaypoint(args)
 		-- Remove any commas or periods from the numbers
@@ -168,7 +176,9 @@ function module:OnEnable()
 
 		local zone = table.concat(inputSections, ' ', 1, zoneEnd)
 		local x, y, desc = select(zoneEnd + 1, unpack(inputSections))
-		if desc then desc = table.concat(inputSections, ' ', zoneEnd + 3) end
+		if desc then
+			desc = table.concat(inputSections, ' ', zoneEnd + 3)
+		end
 
 		if inputSections[1] and not tonumber(inputSections[1]) then
 			-- Find MapID

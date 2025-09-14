@@ -11,11 +11,11 @@ end
 ---@type SUI.UF.Elements.Settings
 local Settings = {
 	position = {
-		anchor = 'RIGHT',
+		anchor = 'RIGHT'
 	},
 	config = {
-		NoBulkUpdate = false,
-	},
+		NoBulkUpdate = false
+	}
 }
 
 UF.Elements:Register('PVPSpecIcon', Build, nil, nil, Settings)

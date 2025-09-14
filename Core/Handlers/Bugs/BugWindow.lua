@@ -12,9 +12,13 @@ local categoryButtons = {}
 addon.BugWindow.window = window
 
 local function updateDisplay(forceRefresh)
-	if not window then addon.BugWindow.Create() end
+	if not window then
+		addon.BugWindow.Create()
+	end
 
-	if forceRefresh or not currentErrorIndex then currentErrorIndex = #currentErrorList end
+	if forceRefresh or not currentErrorIndex then
+		currentErrorIndex = #currentErrorList
+	end
 
 	local err = currentErrorList[currentErrorIndex]
 	if err then
@@ -44,7 +48,9 @@ end
 local function createButton(parent, text, id)
 	local button = CreateFrame('Button', nil, parent)
 	button:SetSize(120, 25)
-	if id then button:SetID(id) end
+	if id then
+		button:SetID(id)
+	end
 
 	button:SetNormalAtlas('auctionhouse-nav-button')
 	button:SetHighlightAtlas('auctionhouse-nav-button-highlight')
@@ -59,13 +65,19 @@ local function createButton(parent, text, id)
 	button.Text:SetText(text)
 	button.Text:SetTextColor(1, 1, 1, 1)
 
-	button:HookScript('OnDisable', function(self)
-		self.Text:SetTextColor(0.6, 0.6, 0.6, 0.6)
-	end)
+	button:HookScript(
+		'OnDisable',
+		function(self)
+			self.Text:SetTextColor(0.6, 0.6, 0.6, 0.6)
+		end
+	)
 
-	button:HookScript('OnEnable', function(self)
-		self.Text:SetTextColor(1, 1, 1, 1)
-	end)
+	button:HookScript(
+		'OnEnable',
+		function(self)
+			self.Text:SetTextColor(1, 1, 1, 1)
+		end
+	)
 
 	return button
 end
@@ -97,18 +109,29 @@ local function createCategoryButton(parent, id, text, point)
 	button.Text:SetTextColor(0.6, 0.6, 0.6)
 	button:SetPoint(unpack(point))
 
-	button:SetScript('OnClick', function(self)
-		setActiveCategory(self)
-	end)
+	button:SetScript(
+		'OnClick',
+		function(self)
+			setActiveCategory(self)
+		end
+	)
 
-	button:SetScript('OnEnter', function(self)
-		self.Text:SetTextColor(1, 1, 1)
-	end)
+	button:SetScript(
+		'OnEnter',
+		function(self)
+			self.Text:SetTextColor(1, 1, 1)
+		end
+	)
 
-	button:SetScript('OnLeave', function(self)
-		if button == ActiveButton then return end
-		self.Text:SetTextColor(0.6, 0.6, 0.6)
-	end)
+	button:SetScript(
+		'OnLeave',
+		function(self)
+			if button == ActiveButton then
+				return
+			end
+			self.Text:SetTextColor(0.6, 0.6, 0.6)
+		end
+	)
 
 	return button
 end
@@ -120,7 +143,9 @@ local function filterErrors()
 	else
 		currentErrorList = {}
 		for _, err in ipairs(addon.ErrorHandler:GetErrors()) do
-			if err.message:lower():find(searchText) or err.stack:lower():find(searchText) or (err.locals and err.locals:lower():find(searchText)) then table.insert(currentErrorList, err) end
+			if err.message:lower():find(searchText) or err.stack:lower():find(searchText) or (err.locals and err.locals:lower():find(searchText)) then
+				table.insert(currentErrorList, err)
+			end
 		end
 	end
 	updateDisplay(true)
@@ -140,12 +165,20 @@ function addon.BugWindow.Create()
 	window.Buttons = {}
 
 	-- Make window draggable
-	window:SetScript('OnMouseDown', function(self, button)
-		if button == 'LeftButton' then self:StartMoving() end
-	end)
-	window:SetScript('OnMouseUp', function(self, button)
-		self:StopMovingOrSizing()
-	end)
+	window:SetScript(
+		'OnMouseDown',
+		function(self, button)
+			if button == 'LeftButton' then
+				self:StartMoving()
+			end
+		end
+	)
+	window:SetScript(
+		'OnMouseUp',
+		function(self, button)
+			self:StopMovingOrSizing()
+		end
+	)
 
 	local title = window:CreateFontString(nil, 'OVERLAY', 'GameFontNormalLarge')
 	title:SetPoint('TOPLEFT', 32, -27)
@@ -163,9 +196,9 @@ function addon.BugWindow.Create()
 	innerFrame:SetPoint('BOTTOMRIGHT', -17, 50)
 
 	-- Create category buttons
-	local buttonNames = { L['All Errors'], L['Current Session'], L['Previous Session'] }
+	local buttonNames = {L['All Errors'], L['Current Session'], L['Previous Session']}
 	for i, name in ipairs(buttonNames) do
-		local point = { 'BOTTOMLEFT', innerFrame, 'TOPLEFT', 0 + (i - 1) * 125, 0 }
+		local point = {'BOTTOMLEFT', innerFrame, 'TOPLEFT', 0 + (i - 1) * 125, 0}
 		local button = createCategoryButton(window, i, name, point)
 		table.insert(categoryButtons, button)
 	end
@@ -198,33 +231,41 @@ function addon.BugWindow.Create()
 	window.Buttons.Prev = createButton(window, L['< Previous'])
 	-- window.Buttons.Prev:SetSize(100, 22)
 	window.Buttons.Prev:SetPoint('BOTTOMLEFT', 16, 16)
-	window.Buttons.Prev:SetScript('OnClick', function()
-		if currentErrorIndex > 1 then
-			currentErrorIndex = currentErrorIndex - 1
-			updateDisplay()
+	window.Buttons.Prev:SetScript(
+		'OnClick',
+		function()
+			if currentErrorIndex > 1 then
+				currentErrorIndex = currentErrorIndex - 1
+				updateDisplay()
+			end
 		end
-	end)
+	)
 
 	window.Buttons.Next = createButton(window, L['Next >'])
 	window.Buttons.Next:SetPoint('BOTTOMRIGHT', -16, 16)
-	window.Buttons.Next:SetScript('OnClick', function()
-		if currentErrorIndex < #currentErrorList then
-			currentErrorIndex = currentErrorIndex + 1
-			updateDisplay()
+	window.Buttons.Next:SetScript(
+		'OnClick',
+		function()
+			if currentErrorIndex < #currentErrorList then
+				currentErrorIndex = currentErrorIndex + 1
+				updateDisplay()
+			end
 		end
-	end)
+	)
 
 	window.Buttons.CopyAll = createButton(window, L['Easy Copy All'])
 	window.Buttons.CopyAll:SetPoint('BOTTOM', 0, 16)
-	window.Buttons.CopyAll:SetScript('OnClick', function()
-		local allErrors = ''
-		for i, err in ipairs(currentErrorList) do
-			allErrors = allErrors
-				.. string.format('---------------------------------\n                  Error #%d\n---------------------------------\n\n%s\n\n', i, addon.ErrorHandler:FormatError(err))
+	window.Buttons.CopyAll:SetScript(
+		'OnClick',
+		function()
+			local allErrors = ''
+			for i, err in ipairs(currentErrorList) do
+				allErrors = allErrors .. string.format('---------------------------------\n                  Error #%d\n---------------------------------\n\n%s\n\n', i, addon.ErrorHandler:FormatError(err))
+			end
+			textArea:SetText(allErrors)
+			scrollFrame:UpdateScrollChildRect()
 		end
-		textArea:SetText(allErrors)
-		scrollFrame:UpdateScrollChildRect()
-	end)
+	)
 
 	local search = CreateFrame('EditBox', nil, window, 'SearchBoxTemplate')
 	search:SetSize(200, 20)
@@ -236,9 +277,12 @@ function addon.BugWindow.Create()
 	local clearAllBtn = createButton(window, L['Clear all errors'])
 	clearAllBtn:SetSize(120, 22)
 	clearAllBtn:SetPoint('BOTTOMRIGHT', search, 'TOPRIGHT', 0, 5)
-	clearAllBtn:SetScript('OnClick', function()
-		addon.Reset()
-	end)
+	clearAllBtn:SetScript(
+		'OnClick',
+		function()
+			addon.Reset()
+		end
+	)
 	window.Buttons.ClearAll = clearAllBtn
 
 	window.currentErrorList = currentErrorList
@@ -254,21 +298,31 @@ function addon.BugWindow.Create()
 	sizer:SetNormalTexture([[Interface\ChatFrame\UI-ChatIM-SizeGrabber-Up]])
 	sizer:SetHighlightTexture([[Interface\ChatFrame\UI-ChatIM-SizeGrabber-Highlight]])
 	sizer:SetPushedTexture([[Interface\ChatFrame\UI-ChatIM-SizeGrabber-Down]])
-	sizer:SetScript('OnMouseDown', function(_, button)
-		if button == 'LeftButton' then window:StartSizing('BOTTOMRIGHT') end
-	end)
-	sizer:SetScript('OnMouseUp', function()
-		window:StopMovingOrSizing()
-		scrollFrame:SetWidth(innerFrame:GetWidth() - 30)
-		textArea:SetWidth(scrollFrame:GetWidth())
-	end)
+	sizer:SetScript(
+		'OnMouseDown',
+		function(_, button)
+			if button == 'LeftButton' then
+				window:StartSizing('BOTTOMRIGHT')
+			end
+		end
+	)
+	sizer:SetScript(
+		'OnMouseUp',
+		function()
+			window:StopMovingOrSizing()
+			scrollFrame:SetWidth(innerFrame:GetWidth() - 30)
+			textArea:SetWidth(scrollFrame:GetWidth())
+		end
+	)
 
 	-- Set the first button as active
 	setActiveCategory(categoryButtons[1])
 end
 
 function addon.BugWindow:OpenErrorWindow()
-	if not window then addon.BugWindow.Create() end
+	if not window then
+		addon.BugWindow.Create()
+	end
 
 	if not window:IsShown() then
 		currentErrorList = addon.ErrorHandler:GetErrors()
@@ -282,13 +336,17 @@ function addon.BugWindow:OpenErrorWindow()
 end
 
 function addon.BugWindow:CloseErrorWindow()
-	if window then window:Hide() end
+	if window then
+		window:Hide()
+	end
 end
 
 function addon.BugWindow:UpdateFontSize()
 	if textArea then
 		textArea:SetFontObject(_G[addon.Config.fontSize] or GameFontHighlight)
-		if window:IsShown() then updateDisplay(true) end
+		if window:IsShown() then
+			updateDisplay(true)
+		end
 	end
 end
 

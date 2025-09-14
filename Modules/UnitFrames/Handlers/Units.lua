@@ -8,7 +8,7 @@ local Unit = {
 	UnitsLoaded = {}, ---@type table<UnitFrameName, SUI.UF.Unit.Config>
 	UnitsBuilt = {}, ---@type table<UnitFrameName, SUI.UF.Unit.Config>
 	GroupsLoaded = {}, ---@type table<UnitFrameName, SUI.UF.Unit.Config>
-	defaultConfigs = {}, ---@type table<string, SUI.UF.Unit.Settings>
+	defaultConfigs = {} ---@type table<string, SUI.UF.Unit.Settings>
 }
 
 ---@param frameName string
@@ -31,19 +31,19 @@ function Unit:Add(frameName, builder, settings, options, groupbuilder, updater)
 			showInCombat = true,
 			showWithTarget = false,
 			showInRaid = false,
-			showInParty = false,
+			showInParty = false
 		},
 		position = {
 			point = 'BOTTOM',
 			relativeTo = 'Frame',
 			relativePoint = 'BOTTOM',
 			xOfs = 0,
-			yOfs = 0,
+			yOfs = 0
 		},
 		elements = {},
 		config = {
-			IsGroup = false,
-		},
+			IsGroup = false
+		}
 	}
 	local ElementList = UF.Elements.List
 
@@ -52,7 +52,7 @@ function Unit:Add(frameName, builder, settings, options, groupbuilder, updater)
 		updater = updater,
 		settings = settings,
 		options = options,
-		groupbuilder = groupbuilder,
+		groupbuilder = groupbuilder
 	}
 
 	for elementName, elementData in pairs(ElementList) do
@@ -62,12 +62,16 @@ function Unit:Add(frameName, builder, settings, options, groupbuilder, updater)
 	Unit.defaultConfigs[frameName] = SUI:CopyData(settings, Defaults)
 
 	Unit.UnitsLoaded[frameName] = Unit.defaultConfigs[frameName].config
-	if Unit.defaultConfigs[frameName].config.IsGroup then Unit.GroupsLoaded[frameName] = Unit.defaultConfigs[frameName].config end
+	if Unit.defaultConfigs[frameName].config.IsGroup then
+		Unit.GroupsLoaded[frameName] = Unit.defaultConfigs[frameName].config
+	end
 end
 
 ---@param frame table
 function Unit:Update(frame)
-	if not FrameData[frame.unitOnCreate].updater then return end
+	if not FrameData[frame.unitOnCreate].updater then
+		return
+	end
 	FrameData[frame.unitOnCreate].updater(frame)
 end
 
@@ -86,7 +90,9 @@ end
 ---@param groupName string
 ---@return SUI.UF.Unit.Frame?
 function Unit:BuildGroup(groupName)
-	if not Unit.defaultConfigs[groupName].config.IsGroup then return end
+	if not Unit.defaultConfigs[groupName].config.IsGroup then
+		return
+	end
 
 	local holder = CreateFrame('Frame', 'SUI_UF_' .. groupName .. '_Holder')
 	holder:Hide()
@@ -105,7 +111,9 @@ end
 ---Toggles the force display of a frame
 ---@param frame string|SUI.UF.Unit.Frame
 function Unit:ToggleForceShow(frame)
-	if type(frame) == 'string' then frame = Unit:Get(frame) end
+	if type(frame) == 'string' then
+		frame = Unit:Get(frame)
+	end
 	if frame.isForced then
 		Unit:UnforceShow(frame)
 	else
@@ -116,9 +124,13 @@ end
 ---Force a frame to show
 ---@param frame SUI.UF.Unit.Frame
 function Unit:ForceShow(frame)
-	if InCombatLockdown() then return end
+	if InCombatLockdown() then
+		return
+	end
 
-	if type(frame) == 'string' then frame = Unit:Get(frame) end
+	if type(frame) == 'string' then
+		frame = Unit:Get(frame)
+	end
 
 	if frame.header and frame.frames then
 		for i, childFrame in ipairs(frame.frames) do
@@ -146,17 +158,25 @@ function Unit:ForceShow(frame)
 
 	frame:Show()
 
-	if frame.UpdateAll then frame:UpdateAll() end
+	if frame.UpdateAll then
+		frame:UpdateAll()
+	end
 
-	if _G[frame:GetName() .. 'Target'] then self:ForceShow(_G[frame:GetName() .. 'Target']) end
+	if _G[frame:GetName() .. 'Target'] then
+		self:ForceShow(_G[frame:GetName() .. 'Target'])
+	end
 
-	if _G[frame:GetName() .. 'Pet'] then self:ForceShow(_G[frame:GetName() .. 'Pet']) end
+	if _G[frame:GetName() .. 'Pet'] then
+		self:ForceShow(_G[frame:GetName() .. 'Pet'])
+	end
 end
 
 ---If the frame is forced to show, unforce it
 ---@param frame any
 function Unit:UnforceShow(frame)
-	if InCombatLockdown() then return end
+	if InCombatLockdown() then
+		return
+	end
 
 	if frame.header and frame.frames then
 		for _, childFrame in ipairs(frame.frames) do
@@ -166,7 +186,9 @@ function Unit:UnforceShow(frame)
 		return
 	end
 
-	if not frame.isForced then return end
+	if not frame.isForced then
+		return
+	end
 	frame.forceShowAuras = nil
 	frame.isForced = nil
 
@@ -183,11 +205,17 @@ function Unit:UnforceShow(frame)
 
 	frame.unit = frame.oldUnit or frame.unit
 
-	if _G[frame:GetName() .. 'Target'] then self:UnforceShow(_G[frame:GetName() .. 'Target']) end
+	if _G[frame:GetName() .. 'Target'] then
+		self:UnforceShow(_G[frame:GetName() .. 'Target'])
+	end
 
-	if _G[frame:GetName() .. 'Pet'] then self:UnforceShow(_G[frame:GetName() .. 'Pet']) end
+	if _G[frame:GetName() .. 'Pet'] then
+		self:UnforceShow(_G[frame:GetName() .. 'Pet'])
+	end
 
-	if frame.UpdateAll then frame:UpdateAll() end
+	if frame.UpdateAll then
+		frame:UpdateAll()
+	end
 end
 
 ---Returns the unitframe object
@@ -212,13 +240,17 @@ end
 ---@param frameName UnitFrameName
 ---@param frame table
 function Unit:BuildFrame(frameName, frame)
-	if not FrameData[frameName] then return end
+	if not FrameData[frameName] then
+		return
+	end
 
 	FrameData[frameName].builder(frame)
 	frame.config = UF.Unit:GetConfig(frameName)
 
 	if Unit:GetConfig(frameName).config.IsGroup then
-		if not BuiltFrames[frameName] then return end
+		if not BuiltFrames[frameName] then
+			return
+		end
 
 		table.insert(BuiltFrames[frameName].frames, frame)
 	else
@@ -238,7 +270,9 @@ end
 ---@param onlyGroups any
 ---@return table<UnitFrameName, SUI.UF.Unit.Config>
 function Unit:GetFrameList(onlyGroups)
-	if onlyGroups then return Unit.GroupsLoaded end
+	if onlyGroups then
+		return Unit.GroupsLoaded
+	end
 
 	return Unit.UnitsLoaded
 end
@@ -247,7 +281,9 @@ end
 ---@param frameName UnitFrameName
 ---@param OptionsSet AceConfig.OptionsTable
 function Unit:BuildOptions(frameName, OptionsSet)
-	if not FrameData[frameName] or not FrameData[frameName].options then return end
+	if not FrameData[frameName] or not FrameData[frameName].options then
+		return
+	end
 
 	FrameData[frameName].options(OptionsSet)
 end
@@ -258,7 +294,9 @@ end
 function Unit:isFriendly(unit)
 	local config = Unit:GetConfig(unit)
 
-	if not unit then return false end
+	if not unit then
+		return false
+	end
 
 	return config.config.isFriendly
 end

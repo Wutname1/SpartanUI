@@ -29,7 +29,9 @@ local function Build(frame, DB)
 		frame:Tag(NewString, key.text)
 
 		health.TextElements[i] = NewString
-		if not key.enabled then health.TextElements[i]:Hide() end
+		if not key.enabled then
+			health.TextElements[i]:Hide()
+		end
 	end
 
 	-- TWW Added a Temp health Loss bar
@@ -50,7 +52,7 @@ local function Build(frame, DB)
 	frame.Health.colorSmooth = DB.colorSmooth or true
 	frame.Health.colorClass = DB.colorClass or false
 
-	frame.colors.smooth = { 1, 0, 0, 1, 1, 0, 0, 1, 0 }
+	frame.colors.smooth = {1, 0, 0, 1, 1, 0, 0, 1, 0}
 	frame.Health.colorHealth = true
 
 	frame.Health.DataTable = DB.text
@@ -116,7 +118,7 @@ local function Build(frame, DB)
 		healAbsorbBar = healAbsorbBar,
 		overAbsorb = overAbsorb,
 		overHealAbsorb = overHealAbsorb,
-		maxOverflow = 2,
+		maxOverflow = 2
 	}
 end
 
@@ -135,14 +137,22 @@ local function Update(frame, settings)
 
 	element:SetStatusBarTexture(UF:FindStatusBarTexture(DB.texture))
 	element.bg:SetTexture(UF:FindStatusBarTexture(DB.texture))
-	element.bg:SetVertexColor(unpack(DB.bg.color or { 1, 1, 1, 0.2 }))
+	element.bg:SetVertexColor(unpack(DB.bg.color or {1, 1, 1, 0.2}))
 
 	-- Update HealthPrediction bar textures
 	if frame.HealthPrediction then
-		if frame.HealthPrediction.myBar then frame.HealthPrediction.myBar:SetStatusBarTexture(UF:FindStatusBarTexture(DB.shieldTexture or DB.texture)) end
-		if frame.HealthPrediction.otherBar then frame.HealthPrediction.otherBar:SetStatusBarTexture(UF:FindStatusBarTexture(DB.shieldTexture or DB.texture)) end
-		if frame.HealthPrediction.absorbBar then frame.HealthPrediction.absorbBar:SetStatusBarTexture(UF:FindStatusBarTexture(DB.absorbTexture or DB.texture)) end
-		if frame.HealthPrediction.healAbsorbBar then frame.HealthPrediction.healAbsorbBar:SetStatusBarTexture(UF:FindStatusBarTexture(DB.absorbTexture or DB.texture)) end
+		if frame.HealthPrediction.myBar then
+			frame.HealthPrediction.myBar:SetStatusBarTexture(UF:FindStatusBarTexture(DB.shieldTexture or DB.texture))
+		end
+		if frame.HealthPrediction.otherBar then
+			frame.HealthPrediction.otherBar:SetStatusBarTexture(UF:FindStatusBarTexture(DB.shieldTexture or DB.texture))
+		end
+		if frame.HealthPrediction.absorbBar then
+			frame.HealthPrediction.absorbBar:SetStatusBarTexture(UF:FindStatusBarTexture(DB.absorbTexture or DB.texture))
+		end
+		if frame.HealthPrediction.healAbsorbBar then
+			frame.HealthPrediction.healAbsorbBar:SetStatusBarTexture(UF:FindStatusBarTexture(DB.absorbTexture or DB.texture))
+		end
 	end
 
 	for i, key in pairs(DB.text) do
@@ -180,12 +190,12 @@ local function Options(frameName, OptionSet)
 			healthprediction = {
 				name = L['Health prediction'],
 				type = 'toggle',
-				order = 5,
+				order = 5
 			},
 			DispelHighlight = {
 				name = L['Dispel highlight'],
 				type = 'toggle',
-				order = 5,
+				order = 5
 			},
 			textures = {
 				name = L['Bar Textures'],
@@ -199,7 +209,7 @@ local function Options(frameName, OptionSet)
 						order = 1,
 						width = 'double',
 						name = L['Health Bar Texture'],
-						values = SUI.Lib.LSM:HashTable('statusbar'),
+						values = SUI.Lib.LSM:HashTable('statusbar')
 					},
 					shieldTexture = {
 						type = 'select',
@@ -208,7 +218,7 @@ local function Options(frameName, OptionSet)
 						width = 'double',
 						name = L['Shield Bar Texture'],
 						desc = L['Texture used for shield and incoming heal bars'],
-						values = SUI.Lib.LSM:HashTable('statusbar'),
+						values = SUI.Lib.LSM:HashTable('statusbar')
 					},
 					absorbTexture = {
 						type = 'select',
@@ -217,9 +227,9 @@ local function Options(frameName, OptionSet)
 						width = 'double',
 						name = L['Absorb Bar Texture'],
 						desc = L['Texture used for absorb and heal absorb bars'],
-						values = SUI.Lib.LSM:HashTable('statusbar'),
-					},
-				},
+						values = SUI.Lib.LSM:HashTable('statusbar')
+					}
+				}
 			},
 			coloring = {
 				name = L['Color health bar by:'],
@@ -232,38 +242,40 @@ local function Options(frameName, OptionSet)
 						name = L['Tapped'],
 						desc = "Color's the bar if the unit isn't tapped by the player",
 						type = 'toggle',
-						order = 1,
+						order = 1
 					},
 					colorDisconnected = {
 						name = L['Disconnected'],
 						desc = L['Color the bar if the player is offline'],
 						type = 'toggle',
-						order = 2,
+						order = 2
 					},
 					colorClass = {
 						name = L['Class'],
 						desc = L['Color the bar based on unit class'],
 						type = 'toggle',
-						order = 3,
+						order = 3
 					},
 					colorReaction = {
 						name = L['Reaction'],
 						desc = "color the bar based on the player's reaction towards the player.",
 						type = 'toggle',
-						order = 4,
+						order = 4
 					},
 					colorSmooth = {
 						name = L['Smooth'],
 						desc = "color the bar with a smooth gradient based on the player's current health percentage",
 						type = 'toggle',
-						order = 5,
-					},
-				},
-			},
-		},
+						order = 5
+					}
+				}
+			}
+		}
 	}
 
-	if not UF.Unit:isFriendly(frameName) then OptionSet.args.general.args.DispelHighlight.hidden = true end
+	if not UF.Unit:isFriendly(frameName) then
+		OptionSet.args.general.args.DispelHighlight.hidden = true
+	end
 
 	UF.Options:AddDynamicText(frameName, OptionSet, 'Health')
 end
@@ -273,6 +285,7 @@ local Settings = {
 	enabled = true,
 	height = 40,
 	width = false,
+	FrameLevel = 4,
 	FrameStrata = 'BACKGROUND',
 	texture = 'SpartanUI Default',
 	shieldTexture = 'Stripes',
@@ -284,7 +297,7 @@ local Settings = {
 	colorDisconnected = true,
 	bg = {
 		enabled = true,
-		color = { 1, 1, 1, 0.2 },
+		color = {1, 1, 1, 0.2}
 	},
 	text = {
 		['1'] = {
@@ -293,24 +306,24 @@ local Settings = {
 			position = {
 				anchor = 'CENTER',
 				x = 0,
-				y = 0,
-			},
+				y = 0
+			}
 		},
 		['2'] = {
 			text = '[perhp]%',
 			position = {
 				anchor = 'RIGHT',
 				x = 0,
-				y = 0,
-			},
-		},
+				y = 0
+			}
+		}
 	},
 	position = {
-		anchor = 'TOP',
+		anchor = 'TOP'
 	},
 	config = {
-		type = 'StatusBar',
-	},
+		type = 'StatusBar'
+	}
 }
 
 UF.Elements:Register('Health', Build, Update, Options, Settings)

@@ -21,7 +21,7 @@ local expansionOrder = {
 	['TWW'] = 6, -- The War Within
 	['MID'] = 7, -- Midnight (best guess)
 	['TLT'] = 8, -- The Last Titan (best guess)
-	[''] = 999, -- Non-expansion items (Great Vault, etc.) - force to bottom
+	[''] = 999 -- Non-expansion items (Great Vault, etc.) - force to bottom
 }
 
 -- Default expansion registrations
@@ -32,12 +32,14 @@ local defaultExpansions = {
 		enabled = true,
 		icon = 'warwithin-landingbutton-up',
 		onClick = function()
-			if not ExpansionLandingPageMinimapButton then return end
+			if not ExpansionLandingPageMinimapButton then
+				return
+			end
 			ExpansionLandingPageMinimapButton:ToggleLandingPage()
 		end,
 		requirementCheck = function()
 			return GetExpansionLevel() >= 10 -- The War Within
-		end,
+		end
 	},
 	{
 		expansion = '',
@@ -45,27 +47,31 @@ local defaultExpansions = {
 		enabled = true,
 		icon = function()
 			-- Dynamic icon based on Great Vault state
-			if not C_WeeklyRewards then return 'mythicplus-greatvault-incomplete' end
+			if not C_WeeklyRewards then
+				return 'mythicplus-greatvault-incomplete'
+			end
 
 			-- Ensure weekly rewards addon is loaded
-			if not C_AddOns.IsAddOnLoaded('Blizzard_WeeklyRewards') then C_AddOns.LoadAddOn('Blizzard_WeeklyRewards') end
+			if not C_AddOns.IsAddOnLoaded('Blizzard_WeeklyRewards') then
+				C_AddOns.LoadAddOn('Blizzard_WeeklyRewards')
+			end
 
 			-- Check if there are rewards available to collect
-			if C_WeeklyRewards.HasAvailableRewards and C_WeeklyRewards.HasAvailableRewards() then return 'mythicplus-greatvault-collect' end
+			if C_WeeklyRewards.HasAvailableRewards and C_WeeklyRewards.HasAvailableRewards() then
+				return 'mythicplus-greatvault-collect'
+			end
 
 			-- Check if any activities are completed but already claimed
 			local activities = C_WeeklyRewards.GetActivities()
-			if not activities or #activities == 0 then return 'mythicplus-greatvault-incomplete' end
+			if not activities or #activities == 0 then
+				return 'mythicplus-greatvault-incomplete'
+			end
 
 			local hasComplete = false
 
 			for _, activity in ipairs(activities) do
 				-- Check all activity types
-				if
-					activity.type == Enum.WeeklyRewardChestThresholdType.Activities
-					or activity.type == Enum.WeeklyRewardChestThresholdType.Raid
-					or activity.type == Enum.WeeklyRewardChestThresholdType.World
-				then
+				if activity.type == Enum.WeeklyRewardChestThresholdType.Activities or activity.type == Enum.WeeklyRewardChestThresholdType.Raid or activity.type == Enum.WeeklyRewardChestThresholdType.World then
 					if activity.progress >= activity.threshold then
 						hasComplete = true
 						break
@@ -85,7 +91,9 @@ local defaultExpansions = {
 				return
 			end
 
-			if not WeeklyRewardsFrame then UIParentLoadAddOn('Blizzard_WeeklyRewards') end
+			if not WeeklyRewardsFrame then
+				UIParentLoadAddOn('Blizzard_WeeklyRewards')
+			end
 
 			if _G['WeeklyRewardsFrame'] then
 				ShowUIPanel(WeeklyRewardsFrame, true)
@@ -95,7 +103,7 @@ local defaultExpansions = {
 		end,
 		requirementCheck = function()
 			return GetExpansionLevel() >= 8 -- Available since Shadowlands
-		end,
+		end
 	},
 	{
 		expansion = '',
@@ -108,7 +116,9 @@ local defaultExpansions = {
 				return
 			end
 
-			if GenericTraitFrame and GenericTraitFrame:IsShown() then GenericTraitFrame:Hide() end
+			if GenericTraitFrame and GenericTraitFrame:IsShown() then
+				GenericTraitFrame:Hide()
+			end
 
 			GenericTraitUI_LoadUI()
 			GenericTraitFrame:SetSystemID(30)
@@ -117,7 +127,7 @@ local defaultExpansions = {
 		end,
 		requirementCheck = function()
 			return GetExpansionLevel() >= 10 -- The War Within (Skyriding available)
-		end,
+		end
 	},
 	{
 		expansion = 'TWW',
@@ -125,7 +135,9 @@ local defaultExpansions = {
 		enabled = true,
 		icon = 'delves-bountiful',
 		onClick = function()
-			if not DelvesCompanionConfigurationFrame then C_AddOns.LoadAddOn('Blizzard_DelvesCompanionConfiguration') end
+			if not DelvesCompanionConfigurationFrame then
+				C_AddOns.LoadAddOn('Blizzard_DelvesCompanionConfiguration')
+			end
 			if not DelvesCompanionConfigurationFrame:IsShown() then
 				ShowUIPanel(DelvesCompanionConfigurationFrame)
 			else
@@ -134,7 +146,7 @@ local defaultExpansions = {
 		end,
 		requirementCheck = function()
 			return GetExpansionLevel() >= 10
-		end,
+		end
 	},
 	{
 		expansion = 'TWW',
@@ -151,17 +163,17 @@ local defaultExpansions = {
 				GenericTraitFrame:Hide()
 				return
 			end
-			C_AddOns.LoadAddOn("Blizzard_GenericTraitUI")
-			if tIndexOf(UISpecialFrames, "GenericTraitFrame") == nil then
-				table.insert(UISpecialFrames, "GenericTraitFrame")
+			C_AddOns.LoadAddOn('Blizzard_GenericTraitUI')
+			if tIndexOf(UISpecialFrames, 'GenericTraitFrame') == nil then
+				table.insert(UISpecialFrames, 'GenericTraitFrame')
 			end
 			GenericTraitFrame:SetTreeID(1056)
 			GenericTraitFrame:Show()
-			GenericTraitFrame:SetPoint("CENTER")
+			GenericTraitFrame:SetPoint('CENTER')
 		end,
 		requirementCheck = function()
 			return GetExpansionLevel() >= 10 -- The War Within
-		end,
+		end
 	},
 	{
 		expansion = 'TWW',
@@ -169,7 +181,9 @@ local defaultExpansions = {
 		enabled = true,
 		icon = 'Interface\\Icons\\Inv_cape_armor_etherealshawl_d_01',
 		onClick = function()
-			if GenericTraitFrame and GenericTraitFrame:IsShown() then GenericTraitFrame:Hide() end
+			if GenericTraitFrame and GenericTraitFrame:IsShown() then
+				GenericTraitFrame:Hide()
+			end
 
 			GenericTraitUI_LoadUI()
 			GenericTraitFrame:SetSystemID(29)
@@ -177,15 +191,21 @@ local defaultExpansions = {
 			ToggleFrame(GenericTraitFrame)
 		end,
 		requirementCheck = function()
-			if GetExpansionLevel() < 10 then return false end
+			if GetExpansionLevel() < 10 then
+				return false
+			end
 			local itemID = 235499 -- Reshii Wraps item ID
 			-- Check equipped slots
-			if GetInventoryItemID('player', 15) == itemID then return true end
+			if GetInventoryItemID('player', 15) == itemID then
+				return true
+			end
 
 			-- Check bags
 			for bag = 0, NUM_BAG_SLOTS do
 				for slot = 1, C_Container.GetContainerNumSlots(bag) do
-					if C_Container.GetContainerItemID(bag, slot) == itemID then return true end
+					if C_Container.GetContainerItemID(bag, slot) == itemID then
+						return true
+					end
 				end
 			end
 			return false
@@ -193,7 +213,7 @@ local defaultExpansions = {
 		showWhenDisabled = function()
 			return GetExpansionLevel() == 10 -- Show in TWW even if wraps not owned
 		end,
-		disabledTooltip = 'Reshii Wraps not found in bags or equipped',
+		disabledTooltip = 'Reshii Wraps not found in bags or equipped'
 	},
 	{
 		expansion = 'DF',
@@ -211,9 +231,13 @@ local defaultExpansions = {
 			end
 
 			-- Close any conflicting frames
-			if GarrisonLandingPage and GarrisonLandingPage:IsShown() then HideUIPanel(GarrisonLandingPage) end
+			if GarrisonLandingPage and GarrisonLandingPage:IsShown() then
+				HideUIPanel(GarrisonLandingPage)
+			end
 
-			if ExpansionLandingPage:IsShown() and ExpansionLandingPage.expansionLandingPageType ~= dragonflightLandingPageTypeID then HideUIPanel(ExpansionLandingPage) end
+			if ExpansionLandingPage:IsShown() and ExpansionLandingPage.expansionLandingPageType ~= dragonflightLandingPageTypeID then
+				HideUIPanel(ExpansionLandingPage)
+			end
 
 			-- Set the expansion landing page type
 			ExpansionLandingPage.expansionLandingPageType = dragonflightLandingPageTypeID
@@ -221,14 +245,18 @@ local defaultExpansions = {
 			-- Create and apply Dragonflight overlay using built-in Blizzard mixin
 			local function ApplyDragonflightOverlay()
 				-- Hide existing overlay if present
-				if ExpansionLandingPage.overlayFrame then ExpansionLandingPage.overlayFrame:Hide() end
+				if ExpansionLandingPage.overlayFrame then
+					ExpansionLandingPage.overlayFrame:Hide()
+				end
 
 				-- Create Dragonflight overlay using Blizzard's built-in mixin
 				if DragonflightLandingOverlayMixin then
 					local dragonflightOverlay = CreateFromMixins(DragonflightLandingOverlayMixin)
 					if dragonflightOverlay and dragonflightOverlay.CreateOverlay then
 						ExpansionLandingPage.overlayFrame = dragonflightOverlay.CreateOverlay(ExpansionLandingPage.Overlay)
-						if ExpansionLandingPage.overlayFrame then ExpansionLandingPage.overlayFrame:Show() end
+						if ExpansionLandingPage.overlayFrame then
+							ExpansionLandingPage.overlayFrame:Show()
+						end
 					else
 						print('Warning: Could not create Dragonflight overlay')
 					end
@@ -245,7 +273,7 @@ local defaultExpansions = {
 		end,
 		requirementCheck = function()
 			return GetExpansionLevel() >= 9 -- Dragonflight
-		end,
+		end
 	},
 	{
 		expansion = 'SL',
@@ -277,27 +305,34 @@ local defaultExpansions = {
 			end
 
 			-- Load Garrison UI for Shadowlands covenant missions/followers
-			if not C_AddOns.IsAddOnLoaded('Blizzard_GarrisonUI') then C_AddOns.LoadAddOn('Blizzard_GarrisonUI') end
+			if not C_AddOns.IsAddOnLoaded('Blizzard_GarrisonUI') then
+				C_AddOns.LoadAddOn('Blizzard_GarrisonUI')
+			end
 
 			-- Small delay to ensure addon is loaded
-			C_Timer.After(0.1, function()
-				-- Enum.GarrisonType.Type_9_0_Garrison = Shadowlands Covenant
-				if _G['ShowGarrisonLandingPage'] and Enum.GarrisonType.Type_9_0_Garrison then
-					ShowGarrisonLandingPage(Enum.GarrisonType.Type_9_0_Garrison)
-				else
-					SUI:Print('Covenant missions could not be loaded.')
+			C_Timer.After(
+				0.1,
+				function()
+					-- Enum.GarrisonType.Type_9_0_Garrison = Shadowlands Covenant
+					if _G['ShowGarrisonLandingPage'] and Enum.GarrisonType.Type_9_0_Garrison then
+						ShowGarrisonLandingPage(Enum.GarrisonType.Type_9_0_Garrison)
+					else
+						SUI:Print('Covenant missions could not be loaded.')
+					end
 				end
-			end)
+			)
 		end,
 		requirementCheck = function()
 			return GetExpansionLevel() >= 8 and C_Covenants and C_Covenants.GetActiveCovenantID
 		end,
 		isDisabled = function()
 			-- Disable if no covenant is selected
-			if not C_Covenants or not C_Covenants.GetActiveCovenantID then return true end
+			if not C_Covenants or not C_Covenants.GetActiveCovenantID then
+				return true
+			end
 			return C_Covenants.GetActiveCovenantID() == 0
 		end,
-		disabledTooltip = 'No Covenant Selected',
+		disabledTooltip = 'No Covenant Selected'
 	},
 	{
 		expansion = 'BFA',
@@ -311,21 +346,26 @@ local defaultExpansions = {
 			end
 
 			-- Load BFA Garrison UI
-			if not C_AddOns.IsAddOnLoaded('Blizzard_GarrisonUI') then C_AddOns.LoadAddOn('Blizzard_GarrisonUI') end
+			if not C_AddOns.IsAddOnLoaded('Blizzard_GarrisonUI') then
+				C_AddOns.LoadAddOn('Blizzard_GarrisonUI')
+			end
 
 			-- Small delay to ensure addon is loaded
-			C_Timer.After(0.1, function()
-				-- Enum.GarrisonType.Type_8_0_Garrison = BFA Mission Table
-				if _G['ShowGarrisonLandingPage'] and Enum.GarrisonType.Type_8_0_Garrison then
-					ShowGarrisonLandingPage(Enum.GarrisonType.Type_8_0_Garrison)
-				else
-					SUI:Print('BFA Mission Table could not be loaded.')
+			C_Timer.After(
+				0.1,
+				function()
+					-- Enum.GarrisonType.Type_8_0_Garrison = BFA Mission Table
+					if _G['ShowGarrisonLandingPage'] and Enum.GarrisonType.Type_8_0_Garrison then
+						ShowGarrisonLandingPage(Enum.GarrisonType.Type_8_0_Garrison)
+					else
+						SUI:Print('BFA Mission Table could not be loaded.')
+					end
 				end
-			end)
+			)
 		end,
 		requirementCheck = function()
 			return GetExpansionLevel() >= 7 -- Battle for Azeroth
-		end,
+		end
 	},
 	{
 		expansion = 'WOD',
@@ -339,21 +379,26 @@ local defaultExpansions = {
 			end
 
 			-- Load WoD Garrison UI
-			if not C_AddOns.IsAddOnLoaded('Blizzard_GarrisonUI') then C_AddOns.LoadAddOn('Blizzard_GarrisonUI') end
+			if not C_AddOns.IsAddOnLoaded('Blizzard_GarrisonUI') then
+				C_AddOns.LoadAddOn('Blizzard_GarrisonUI')
+			end
 
 			-- Small delay to ensure addon is loaded
-			C_Timer.After(0.1, function()
-				-- Enum.GarrisonType.Type_6_0_Garrison = WoD Garrison
-				if _G['ShowGarrisonLandingPage'] and Enum.GarrisonType.Type_6_0_Garrison then
-					ShowGarrisonLandingPage(Enum.GarrisonType.Type_6_0_Garrison)
-				else
-					SUI:Print('WoD Garrison could not be loaded.')
+			C_Timer.After(
+				0.1,
+				function()
+					-- Enum.GarrisonType.Type_6_0_Garrison = WoD Garrison
+					if _G['ShowGarrisonLandingPage'] and Enum.GarrisonType.Type_6_0_Garrison then
+						ShowGarrisonLandingPage(Enum.GarrisonType.Type_6_0_Garrison)
+					else
+						SUI:Print('WoD Garrison could not be loaded.')
+					end
 				end
-			end)
+			)
 		end,
 		requirementCheck = function()
 			return GetExpansionLevel() >= 5 -- Warlords of Draenor
-		end,
+		end
 	},
 	{
 		expansion = 'LEG',
@@ -377,22 +422,27 @@ local defaultExpansions = {
 			end
 
 			-- Load Legion Garrison UI
-			if not C_AddOns.IsAddOnLoaded('Blizzard_GarrisonUI') then C_AddOns.LoadAddOn('Blizzard_GarrisonUI') end
+			if not C_AddOns.IsAddOnLoaded('Blizzard_GarrisonUI') then
+				C_AddOns.LoadAddOn('Blizzard_GarrisonUI')
+			end
 
 			-- Small delay to ensure addon is loaded
-			C_Timer.After(0.1, function()
-				-- Enum.GarrisonType.Type_7_0_Garrison = Legion Order Hall
-				if _G['ShowGarrisonLandingPage'] and Enum.GarrisonType.Type_7_0_Garrison then
-					ShowGarrisonLandingPage(Enum.GarrisonType.Type_7_0_Garrison)
-				else
-					SUI:Print('Legion Order Hall could not be loaded.')
+			C_Timer.After(
+				0.1,
+				function()
+					-- Enum.GarrisonType.Type_7_0_Garrison = Legion Order Hall
+					if _G['ShowGarrisonLandingPage'] and Enum.GarrisonType.Type_7_0_Garrison then
+						ShowGarrisonLandingPage(Enum.GarrisonType.Type_7_0_Garrison)
+					else
+						SUI:Print('Legion Order Hall could not be loaded.')
+					end
 				end
-			end)
+			)
 		end,
 		requirementCheck = function()
 			return GetExpansionLevel() >= 6 -- Legion
-		end,
-	},
+		end
+	}
 }
 
 ----------------------------------------------------------------------------------------------------
@@ -419,29 +469,32 @@ function module:RegisterExpansionItem(expansion, displayText, onClick, requireme
 		displayText = displayText,
 		onClick = onClick,
 		requirementCheck = requirementCheck or function()
-			return true
-		end,
+				return true
+			end,
 		enabled = enabled ~= false,
 		icon = icon,
 		isDisabled = isDisabled,
 		disabledTooltip = disabledTooltip,
 		showWhenDisabled = showWhenDisabled,
-		id = expansion .. '_' .. displayText:gsub('[^%w]', ''),
+		id = expansion .. '_' .. displayText:gsub('[^%w]', '')
 	}
 
 	table.insert(registeredExpansions, item)
 
 	-- Sort by expansion then by display text using global expansion order
-	table.sort(registeredExpansions, function(a, b)
-		local orderA = expansionOrder[a.expansion] or 999
-		local orderB = expansionOrder[b.expansion] or 999
+	table.sort(
+		registeredExpansions,
+		function(a, b)
+			local orderA = expansionOrder[a.expansion] or 999
+			local orderB = expansionOrder[b.expansion] or 999
 
-		if orderA == orderB then
-			-- Same expansion, sort by display text
-			return a.displayText < b.displayText
+			if orderA == orderB then
+				-- Same expansion, sort by display text
+				return a.displayText < b.displayText
+			end
+			return orderA < orderB
 		end
-		return orderA < orderB
-	end)
+	)
 end
 
 ---Unregister an expansion item by ID
@@ -487,25 +540,31 @@ local function CreateLibQTipMenu()
 
 	-- Hide any existing tooltips to prevent overlap
 	GameTooltip:Hide()
-	if ExpansionLandingPageMinimapButton and ExpansionLandingPageMinimapButton.tooltip then ExpansionLandingPageMinimapButton.tooltip:Hide() end
+	if ExpansionLandingPageMinimapButton and ExpansionLandingPageMinimapButton.tooltip then
+		ExpansionLandingPageMinimapButton.tooltip:Hide()
+	end
 
 	menuFrame = LibQTip:Acquire('SUI_ExpandedExpansionMenu', 2, 'LEFT', 'LEFT')
 
-	if not menuFrame then return end
+	if not menuFrame then
+		return
+	end
 	menuFrame:SetAutoHideDelay(0.1, ExpansionLandingPageMinimapButton)
 	menuFrame:SmartAnchorTo(ExpansionLandingPageMinimapButton)
 
 	-- Apply SpartanUI theming with modern backdrop support
 	if BackdropTemplateMixin then
 		Mixin(menuFrame, BackdropTemplateMixin)
-		menuFrame:SetBackdrop({
-			bgFile = 'Interface\\ChatFrame\\ChatFrameBackground',
-			edgeFile = 'Interface\\DialogFrame\\UI-DialogBox-Border',
-			tile = true,
-			tileSize = 16,
-			edgeSize = 16,
-			insets = { left = 4, right = 4, top = 4, bottom = 4 },
-		})
+		menuFrame:SetBackdrop(
+			{
+				bgFile = 'Interface\\ChatFrame\\ChatFrameBackground',
+				edgeFile = 'Interface\\DialogFrame\\UI-DialogBox-Border',
+				tile = true,
+				tileSize = 16,
+				edgeSize = 16,
+				insets = {left = 4, right = 4, top = 4, bottom = 4}
+			}
+		)
 		menuFrame:SetBackdropColor(0.05, 0.05, 0.15, 0.95)
 		menuFrame:SetBackdropBorderColor(0.6, 0.6, 0.8, 1)
 	end
@@ -527,7 +586,9 @@ local function CreateLibQTipMenu()
 
 		-- Show item if: requirement met and enabled, OR if showWhenDisabled is true
 		if (requirementMet and itemEnabled) or (showWhenDisabled and itemEnabled) then
-			if not expansionGroups[item.expansion] then expansionGroups[item.expansion] = {} end
+			if not expansionGroups[item.expansion] then
+				expansionGroups[item.expansion] = {}
+			end
 			table.insert(expansionGroups[item.expansion], item)
 		end
 	end
@@ -538,19 +599,24 @@ local function CreateLibQTipMenu()
 	-- Create sorted list of expansions
 	local sortedExpansions = {}
 	for expansion, items in pairs(expansionGroups) do
-		table.insert(sortedExpansions, { expansion = expansion, items = items })
+		table.insert(sortedExpansions, {expansion = expansion, items = items})
 	end
 
 	-- Sort expansions by our defined order
-	table.sort(sortedExpansions, function(a, b)
-		local orderA = expansionOrder[a.expansion] or 999
-		local orderB = expansionOrder[b.expansion] or 999
-		return orderA < orderB
-	end)
+	table.sort(
+		sortedExpansions,
+		function(a, b)
+			local orderA = expansionOrder[a.expansion] or 999
+			local orderB = expansionOrder[b.expansion] or 999
+			return orderA < orderB
+		end
+	)
 
 	-- Display expansions in sorted order
 	for _, expansionData in ipairs(sortedExpansions) do
-		if not firstGroup then menuFrame:AddSeparator() end
+		if not firstGroup then
+			menuFrame:AddSeparator()
+		end
 		firstGroup = false
 		local items = expansionData.items
 
@@ -566,7 +632,9 @@ local function CreateLibQTipMenu()
 			local iconPath = item.icon
 
 			-- Handle dynamic icon functions
-			if type(iconPath) == 'function' then iconPath = iconPath() end
+			if type(iconPath) == 'function' then
+				iconPath = iconPath()
+			end
 
 			if iconPath and iconPath ~= '' then
 				-- Check if it's an atlas texture (no Interface\ prefix) or regular texture
@@ -597,7 +665,9 @@ local function CreateLibQTipMenu()
 			end
 
 			-- Dim icon if disabled
-			if isItemDisabled then iconContent = '|cff666666' .. iconContent .. '|r' end
+			if isItemDisabled then
+				iconContent = '|cff666666' .. iconContent .. '|r'
+			end
 
 			menuFrame:SetCell(line, 1, iconContent, 'CENTER')
 
@@ -622,57 +692,88 @@ local function CreateLibQTipMenu()
 			menuFrame:SetCell(line, 2, coloredText, 'LEFT')
 
 			-- Add hover effects and tooltip handling
-			menuFrame:SetLineScript(line, 'OnEnter', function(self)
-				-- Show tooltip if item is disabled
-				if isItemDisabled and item.disabledTooltip then
-					GameTooltip:SetOwner(self, 'ANCHOR_CURSOR')
-					GameTooltip:SetText(item.disabledTooltip, 1, 0.8, 0, 1, true)
-					GameTooltip:Show()
+			menuFrame:SetLineScript(
+				line,
+				'OnEnter',
+				function(self)
+					-- Show tooltip if item is disabled
+					if isItemDisabled and item.disabledTooltip then
+						GameTooltip:SetOwner(self, 'ANCHOR_CURSOR')
+						GameTooltip:SetText(item.disabledTooltip, 1, 0.8, 0, 1, true)
+						GameTooltip:Show()
+					end
 				end
-			end)
-			menuFrame:SetLineScript(line, 'OnLeave', function(self)
-				GameTooltip:Hide()
-			end)
+			)
+			menuFrame:SetLineScript(
+				line,
+				'OnLeave',
+				function(self)
+					GameTooltip:Hide()
+				end
+			)
 
 			-- Set up click handler using LibQTip's cell click method
 			-- LibQTip specific cell click handler
-			menuFrame:SetCellScript(line, 2, 'OnMouseUp', function(self, button)
-				-- Don't execute if item is disabled
-				if isItemDisabled then return end
-
-				-- LibQTip might pass button differently
-				if not button or button == 'LeftButton' then
-					-- Hide menu first
-					if menuFrame then
-						menuFrame:Release()
-						menuFrame = nil
+			menuFrame:SetCellScript(
+				line,
+				2,
+				'OnMouseUp',
+				function(self, button)
+					-- Don't execute if item is disabled
+					if isItemDisabled then
+						return
 					end
 
-					-- Execute the function with a small delay to ensure menu is hidden
-					C_Timer.After(0.1, function()
-						local success, errorMsg = pcall(item.onClick)
-						if not success then SUI:Print('Error executing ' .. item.displayText .. ': ' .. tostring(errorMsg)) end
-					end)
+					-- LibQTip might pass button differently
+					if not button or button == 'LeftButton' then
+						-- Hide menu first
+						if menuFrame then
+							menuFrame:Release()
+							menuFrame = nil
+						end
+
+						-- Execute the function with a small delay to ensure menu is hidden
+						C_Timer.After(
+							0.1,
+							function()
+								local success, errorMsg = pcall(item.onClick)
+								if not success then
+									SUI:Print('Error executing ' .. item.displayText .. ': ' .. tostring(errorMsg))
+								end
+							end
+						)
+					end
 				end
-			end)
+			)
 
 			-- Also set line script as fallback
-			menuFrame:SetLineScript(line, 'OnMouseUp', function(self, button)
-				-- Don't execute if item is disabled
-				if isItemDisabled then return end
-
-				if not button or button == 'LeftButton' then
-					if menuFrame then
-						menuFrame:Release()
-						menuFrame = nil
+			menuFrame:SetLineScript(
+				line,
+				'OnMouseUp',
+				function(self, button)
+					-- Don't execute if item is disabled
+					if isItemDisabled then
+						return
 					end
 
-					C_Timer.After(0.1, function()
-						local success, errorMsg = pcall(item.onClick)
-						if not success then SUI:Print('Error executing ' .. item.displayText .. ': ' .. tostring(errorMsg)) end
-					end)
+					if not button or button == 'LeftButton' then
+						if menuFrame then
+							menuFrame:Release()
+							menuFrame = nil
+						end
+
+						C_Timer.After(
+							0.1,
+							function()
+								local success, errorMsg = pcall(item.onClick)
+								if not success then
+									SUI:Print('Error executing ' .. item.displayText .. ': ' .. tostring(errorMsg))
+								end
+							end
+						)
+					end
 				end
-			end)
+			)
 		end
 	end
 
@@ -683,41 +784,68 @@ local function CreateLibQTipMenu()
 		menuFrame:SetCell(line, 1, '|A:mechagon-projects:16:16:0:0|a', 'CENTER')
 		menuFrame:SetCell(line, 2, '|cff999999Settings...|r', 'LEFT')
 		-- Use both cell and line scripts for settings too
-		menuFrame:SetCellScript(line, 2, 'OnMouseUp', function(self, button)
-			if not button or button == 'LeftButton' then
-				-- Hide menu first
-				if menuFrame then
-					menuFrame:Release()
-					menuFrame = nil
+		menuFrame:SetCellScript(
+			line,
+			2,
+			'OnMouseUp',
+			function(self, button)
+				if not button or button == 'LeftButton' then
+					-- Hide menu first
+					if menuFrame then
+						menuFrame:Release()
+						menuFrame = nil
+					end
+
+					-- Open settings with a small delay
+					C_Timer.After(
+						0.1,
+						function()
+							local success, errorMsg = pcall(module.OpenSettings, module)
+							if not success then
+								SUI:Print('Error opening settings: ' .. tostring(errorMsg))
+							end
+						end
+					)
 				end
-
-				-- Open settings with a small delay
-				C_Timer.After(0.1, function()
-					local success, errorMsg = pcall(module.OpenSettings, module)
-					if not success then SUI:Print('Error opening settings: ' .. tostring(errorMsg)) end
-				end)
 			end
-		end)
+		)
 
-		menuFrame:SetLineScript(line, 'OnMouseUp', function(self, button)
-			if not button or button == 'LeftButton' then
-				if menuFrame then
-					menuFrame:Release()
-					menuFrame = nil
+		menuFrame:SetLineScript(
+			line,
+			'OnMouseUp',
+			function(self, button)
+				if not button or button == 'LeftButton' then
+					if menuFrame then
+						menuFrame:Release()
+						menuFrame = nil
+					end
+
+					C_Timer.After(
+						0.1,
+						function()
+							local success, errorMsg = pcall(module.OpenSettings, module)
+							if not success then
+								SUI:Print('Error opening settings: ' .. tostring(errorMsg))
+							end
+						end
+					)
 				end
-
-				C_Timer.After(0.1, function()
-					local success, errorMsg = pcall(module.OpenSettings, module)
-					if not success then SUI:Print('Error opening settings: ' .. tostring(errorMsg)) end
-				end)
 			end
-		end)
-		menuFrame:SetLineScript(line, 'OnEnter', function(self)
-			-- LibQTip will handle highlighting
-		end)
-		menuFrame:SetLineScript(line, 'OnLeave', function(self)
-			-- LibQTip will handle highlighting
-		end)
+		)
+		menuFrame:SetLineScript(
+			line,
+			'OnEnter',
+			function(self)
+				-- LibQTip will handle highlighting
+			end
+		)
+		menuFrame:SetLineScript(
+			line,
+			'OnLeave',
+			function(self)
+				-- LibQTip will handle highlighting
+			end
+		)
 	end
 
 	menuFrame:Show()
@@ -734,7 +862,9 @@ local function CreateDropdownMenu()
 		local expansionGroups = {}
 		for _, item in ipairs(registeredExpansions) do
 			if item.requirementCheck() and module:IsItemEnabled(item.id) then
-				if not expansionGroups[item.expansion] then expansionGroups[item.expansion] = {} end
+				if not expansionGroups[item.expansion] then
+					expansionGroups[item.expansion] = {}
+				end
 				table.insert(expansionGroups[item.expansion], item)
 			end
 		end
@@ -816,7 +946,9 @@ end
 
 function module:OpenSettings()
 	-- Open SpartanUI settings to the ExpandedExpansionButton panel
-	if SUI.Options and SUI.Options.ToggleOptions then SUI.Options:ToggleOptions({ 'Modules', 'ExpandedExpansionButton' }) end
+	if SUI.Options and SUI.Options.ToggleOptions then
+		SUI.Options:ToggleOptions({'Modules', 'ExpandedExpansionButton'})
+	end
 end
 
 function module:BuildOptions()
@@ -827,7 +959,7 @@ function module:BuildOptions()
 			description = {
 				type = 'description',
 				name = 'Configure which expansion features appear in the right-click menu.',
-				order = 1,
+				order = 1
 			},
 			menuTriggers = {
 				type = 'group',
@@ -845,7 +977,7 @@ function module:BuildOptions()
 						set = function(_, value)
 							module.DB.menuTriggers.rightClick = value
 						end,
-						order = 1,
+						order = 1
 					},
 					leftClick = {
 						type = 'toggle',
@@ -857,18 +989,18 @@ function module:BuildOptions()
 						set = function(_, value)
 							module.DB.menuTriggers.leftClick = value
 						end,
-						order = 2,
-					},
-				},
+						order = 2
+					}
+				}
 			},
 			enabledItems = {
 				type = 'group',
 				name = 'Menu Items',
 				inline = true,
 				order = 3,
-				args = {},
-			},
-		},
+				args = {}
+			}
+		}
 	}
 
 	-- Dynamically add options for each registered item
@@ -884,7 +1016,7 @@ function module:BuildOptions()
 				set = function(_, value)
 					module:SetItemEnabled(item.id, value)
 				end,
-				order = i,
+				order = i
 			}
 		end
 	end
@@ -902,11 +1034,11 @@ function module:OnInitialize()
 		enabledItems = {},
 		menuTriggers = {
 			rightClick = true,
-			leftClick = false,
-		},
+			leftClick = false
+		}
 	}
 
-	module.Database = SUI.SpartanUIDB:RegisterNamespace('ExpandedExpansionButton', { profile = defaults })
+	module.Database = SUI.SpartanUIDB:RegisterNamespace('ExpandedExpansionButton', {profile = defaults})
 	module.DB = module.Database.profile ---@type SUI.ExpandedExpansionButton.Database
 
 	-- Register default expansion items
@@ -916,10 +1048,14 @@ function module:OnInitialize()
 end
 
 function module:OnEnable()
-	if SUI:IsModuleDisabled('ExpandedExpansionButton') then return end
+	if SUI:IsModuleDisabled('ExpandedExpansionButton') then
+		return
+	end
 
 	-- Verify LibQTip is available
-	if not LibQTip then return end
+	if not LibQTip then
+		return
+	end
 
 	-- Hook the expansion button right-click
 	if ExpansionLandingPageMinimapButton then
@@ -928,30 +1064,43 @@ function module:OnEnable()
 		-- Store original script
 		local originalOnClick = ExpansionLandingPageMinimapButton:GetScript('OnClick')
 
-		ExpansionLandingPageMinimapButton:SetScript('OnClick', function(self, button, down)
-			local handled = OnExpansionButtonClick(button)
-			if not handled and originalOnClick then originalOnClick(self, button, down) end
-		end)
+		ExpansionLandingPageMinimapButton:SetScript(
+			'OnClick',
+			function(self, button, down)
+				local handled = OnExpansionButtonClick(button)
+				if not handled and originalOnClick then
+					originalOnClick(self, button, down)
+				end
+			end
+		)
 	else
 		-- Wait for the button to be created
 		local frame = CreateFrame('Frame')
 		frame:RegisterEvent('ADDON_LOADED')
 		frame:RegisterEvent('PLAYER_ENTERING_WORLD')
-		frame:SetScript('OnEvent', function(_, event, addonName)
-			if ExpansionLandingPageMinimapButton then
-				ExpansionLandingPageMinimapButton:RegisterForClicks('LeftButtonUp', 'RightButtonUp')
+		frame:SetScript(
+			'OnEvent',
+			function(_, event, addonName)
+				if ExpansionLandingPageMinimapButton then
+					ExpansionLandingPageMinimapButton:RegisterForClicks('LeftButtonUp', 'RightButtonUp')
 
-				-- Store original script
-				local originalOnClick = ExpansionLandingPageMinimapButton:GetScript('OnClick')
+					-- Store original script
+					local originalOnClick = ExpansionLandingPageMinimapButton:GetScript('OnClick')
 
-				ExpansionLandingPageMinimapButton:SetScript('OnClick', function(self, button, down)
-					local handled = OnExpansionButtonClick(button)
-					if not handled and originalOnClick then originalOnClick(self, button, down) end
-				end)
+					ExpansionLandingPageMinimapButton:SetScript(
+						'OnClick',
+						function(self, button, down)
+							local handled = OnExpansionButtonClick(button)
+							if not handled and originalOnClick then
+								originalOnClick(self, button, down)
+							end
+						end
+					)
 
-				frame:UnregisterAllEvents()
+					frame:UnregisterAllEvents()
+				end
 			end
-		end)
+		)
 	end
 
 	-- Build options panel
@@ -971,5 +1120,5 @@ SUI.ExpandedExpansionButton = {
 	end,
 	GetRegisteredItems = function()
 		return module:GetRegisteredItems()
-	end,
+	end
 }

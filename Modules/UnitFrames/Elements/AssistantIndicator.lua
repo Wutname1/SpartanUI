@@ -13,12 +13,12 @@ local Settings = {
 	position = {
 		anchor = 'TOP',
 		x = 0,
-		y = 6,
+		y = 6
 	},
 	config = {
 		type = 'Indicator',
-		DisplayName = 'Raid Assistant',
-	},
+		DisplayName = 'Raid Assistant'
+	}
 }
 
 UF.Elements:Register('AssistantIndicator', Build, nil, nil, Settings)

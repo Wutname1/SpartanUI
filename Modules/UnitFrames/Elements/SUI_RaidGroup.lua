@@ -28,12 +28,12 @@ local Settings = {
 	position = {
 		anchor = 'BOTTOMRIGHT',
 		x = 0,
-		y = 10,
+		y = 10
 	},
 	config = {
 		type = 'Indicator',
-		DisplayName = 'Raid Group',
-	},
+		DisplayName = 'Raid Group'
+	}
 }
 
 UF.Elements:Register('SUI_RaidGroup', Build, Update, nil, Settings)

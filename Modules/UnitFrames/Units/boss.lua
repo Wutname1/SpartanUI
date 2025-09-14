@@ -12,7 +12,7 @@ local elementList = {
 	'RaidTargetIndicator',
 	'Range',
 	'ThreatIndicator',
-	'RaidRoleIndicator',
+	'RaidRoleIndicator'
 }
 
 local function GroupBuilder(holder)
@@ -53,33 +53,33 @@ local Settings = {
 		-- Name = {
 		-- },
 		Portrait = {
-			enabled = false,
+			enabled = false
 		},
 		Castbar = {
 			enabled = true,
 			Icon = {
-				enabled = false,
-			},
+				enabled = false
+			}
 		},
 		Health = {
 			position = {
 				anchor = 'TOP',
 				relativeTo = 'Castbar',
-				relativePoint = 'BOTTOM',
+				relativePoint = 'BOTTOM'
 			},
 			text = {
 				['1'] = {
-					text = '[SUIHealth(dynamic,displayDead)] [($>SUIHealth<$)(percentage,hideDead,hideMax)]',
-				},
-			},
+					text = '[SUIHealth(dynamic,displayDead)] [($>SUIHealth<$)(percentage,hideDead,hideMax)]'
+				}
+			}
 		},
 		Power = {
-			height = 5,
-		},
+			height = 5
+		}
 	},
 	config = {
-		IsGroup = true,
-	},
+		IsGroup = true
+	}
 }
 
 UF.Unit:Add('boss', Builder, Settings, Options, GroupBuilder)

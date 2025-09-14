@@ -18,8 +18,8 @@ end
 local Settings = {
 	config = {
 		type = 'Indicator',
-		DisplayName = 'Combat',
-	},
+		DisplayName = 'Combat'
+	}
 }
 
 UF.Elements:Register('CombatIndicator', Build, nil, nil, Settings)

@@ -10,13 +10,15 @@ local anchorPoints = {
 	['LEFT'] = 'LEFT',
 	['BOTTOMLEFT'] = 'BOTTOM LEFT',
 	['BOTTOM'] = 'BOTTOM',
-	['BOTTOMRIGHT'] = 'BOTTOM RIGHT',
+	['BOTTOMRIGHT'] = 'BOTTOM RIGHT'
 }
 
 ---@param optTable AceConfig.OptionsTable
 local function SUIHealth(optTable)
 	local mode = 'Health'
-	if optTable.name == 'SUIPower' then mode = 'Power' end
+	if optTable.name == 'SUIPower' then
+		mode = 'Power'
+	end
 
 	local prefix = ''
 	local suffix = ''
@@ -31,7 +33,7 @@ local function SUIHealth(optTable)
 		formatted = true,
 		current = true,
 		max = false,
-		missing = false,
+		missing = false
 	}
 	local tagText = 'current'
 	local tagTextMode = 'formatted'
@@ -43,7 +45,7 @@ local function SUIHealth(optTable)
 		description = {
 			name = 'This is a custom dynamic text tag that you can use to display information about the ' .. mode .. ' of the unit. You can use the following options to customize the text.',
 			type = 'description',
-			order = 0,
+			order = 0
 		},
 		output = {
 			name = optTable.name or '',
@@ -63,14 +65,20 @@ local function SUIHealth(optTable)
 				end
 
 				--Setup the misc stuff
-				if opt ~= '' then opt = '(' .. opt .. ')' end
+				if opt ~= '' then
+					opt = '(' .. opt .. ')'
+				end
 				local finalPrefix = ''
 				local finalSuffix = ''
-				if prefix ~= '' then finalPrefix = prefix .. '$>' end
-				if suffix ~= '' then finalSuffix = '<$' .. suffix end
+				if prefix ~= '' then
+					finalPrefix = prefix .. '$>'
+				end
+				if suffix ~= '' then
+					finalSuffix = '<$' .. suffix
+				end
 
 				return '[' .. finalPrefix .. optTable.name .. finalSuffix .. opt .. ']'
-			end,
+			end
 		},
 		prefix = {
 			name = 'Prefix',
@@ -81,7 +89,7 @@ local function SUIHealth(optTable)
 			end,
 			set = function(info, value)
 				prefix = value
-			end,
+			end
 		},
 		suffix = {
 			name = 'Suffix',
@@ -92,7 +100,7 @@ local function SUIHealth(optTable)
 			end,
 			set = function(info, value)
 				suffix = value
-			end,
+			end
 		},
 		tagText = {
 			name = mode .. ' text to show',
@@ -113,8 +121,8 @@ local function SUIHealth(optTable)
 			values = {
 				['missing'] = 'Missing ' .. mode,
 				['current'] = 'Current ' .. mode,
-				['max'] = 'Max ' .. mode,
-			},
+				['max'] = 'Max ' .. mode
+			}
 		},
 		tagTextMode = {
 			name = 'How to show selected text',
@@ -138,8 +146,8 @@ local function SUIHealth(optTable)
 				['formatted'] = 'Formatted',
 				['short'] = 'Short',
 				['dynamic'] = 'Dynamic',
-				['percentage'] = 'Percentage',
-			},
+				['percentage'] = 'Percentage'
+			}
 		},
 		options = {
 			type = 'group',
@@ -157,129 +165,129 @@ local function SUIHealth(optTable)
 					type = 'toggle',
 					name = 'Display Dead',
 					desc = "Display 'DEAD' when the unit is dead",
-					order = 1,
+					order = 1
 				},
 				hideDead = {
 					type = 'toggle',
 					name = 'Hide Dead',
 					desc = 'Show nothing when the unit is dead',
-					order = 2,
+					order = 2
 				},
 				hideMax = {
 					type = 'toggle',
 					name = 'Hide Max',
 					desc = 'Show nothing when the unit is at full health',
-					order = 3,
+					order = 3
 				},
 				hideZero = {
 					type = 'toggle',
 					name = 'Hide Zero',
 					desc = 'Show nothing when the specified health data is at 0',
-					order = 4,
+					order = 4
 				},
 				line = {
 					type = 'description',
 					name = '',
-					order = 5,
-				},
-			},
-		},
+					order = 5
+				}
+			}
+		}
 	}
 end
 
 local TagList = {
 	--Health
-	['SUIHealth'] = { category = 'Health', description = 'SUIHealth', func = SUIHealth },
-	['curhp'] = { category = 'Health', description = 'Displays the current HP without decimals' },
-	['deficit:name'] = { category = 'Health', description = 'Displays the health as a deficit and the name at full health' },
+	['SUIHealth'] = {category = 'Health', description = 'SUIHealth', func = SUIHealth},
+	['curhp'] = {category = 'Health', description = 'Displays the current HP without decimals'},
+	['deficit:name'] = {category = 'Health', description = 'Displays the health as a deficit and the name at full health'},
 	['perhp'] = {
 		category = 'Health',
-		description = 'Displays percentage HP without decimals or the % sign. You can display the percent sign by adjusting the tag to [perhp<$%].',
+		description = 'Displays percentage HP without decimals or the % sign. You can display the percent sign by adjusting the tag to [perhp<$%].'
 	},
-	['maxhp'] = { category = 'Health', description = 'Displays max HP without decimals' },
+	['maxhp'] = {category = 'Health', description = 'Displays max HP without decimals'},
 	['missinghp'] = {
 		category = 'Health',
-		description = 'Displays the missing health of the unit in whole numbers, when not at full health',
+		description = 'Displays the missing health of the unit in whole numbers, when not at full health'
 	},
 	--Power
-	['SUIPower'] = { category = 'Power', description = 'SUIPower', func = SUIHealth },
-	['perpp'] = { category = 'Power', description = "Displays the unit's percentage power without decimals " },
-	['curpp'] = { category = 'Power', description = "Displays the unit's current power without decimals" },
+	['SUIPower'] = {category = 'Power', description = 'SUIPower', func = SUIHealth},
+	['perpp'] = {category = 'Power', description = "Displays the unit's percentage power without decimals "},
+	['curpp'] = {category = 'Power', description = "Displays the unit's current power without decimals"},
 	['maxpp'] = {
 		category = 'Power',
-		description = 'Displays the max amount of power of the unit in whole numbers without decimals',
+		description = 'Displays the max amount of power of the unit in whole numbers without decimals'
 	},
 	['missingpp'] = {
 		category = 'Power',
-		description = 'Displays the missing power of the unit in whole numbers when not at full power',
+		description = 'Displays the missing power of the unit in whole numbers when not at full power'
 	},
 	--Mana
-	['curmana'] = { category = 'Mana', description = 'Displays the current mana without decimals' },
-	['maxmana'] = { category = 'Mana', description = 'Displays the max amount of mana the unit can have' },
+	['curmana'] = {category = 'Mana', description = 'Displays the current mana without decimals'},
+	['maxmana'] = {category = 'Mana', description = 'Displays the max amount of mana the unit can have'},
 	--Status
-	['status'] = { category = 'Status', description = 'Displays zzz, dead, ghost, offline' },
-	['afkdnd'] = { category = 'Status', description = 'Displays AFK or DND if the unit is afk or in Do not Disturb' },
-	['dead'] = { category = 'Status', description = 'Displays <DEAD> if the unit is dead' },
-	['offline'] = { category = 'Status', description = "Displays 'OFFLINE' if the unit is disconnected" },
-	['resting'] = { category = 'Status', description = "Displays 'zzz' if the unit is resting" },
+	['status'] = {category = 'Status', description = 'Displays zzz, dead, ghost, offline'},
+	['afkdnd'] = {category = 'Status', description = 'Displays AFK or DND if the unit is afk or in Do not Disturb'},
+	['dead'] = {category = 'Status', description = 'Displays <DEAD> if the unit is dead'},
+	['offline'] = {category = 'Status', description = "Displays 'OFFLINE' if the unit is disconnected"},
+	['resting'] = {category = 'Status', description = "Displays 'zzz' if the unit is resting"},
 	--Classification
 	['classification'] = {
 		category = 'Classification',
-		description = "Displays the unit's classification (e.g. 'ELITE' and 'RARE')",
+		description = "Displays the unit's classification (e.g. 'ELITE' and 'RARE')"
 	},
 	['plus'] = {
 		category = 'Classification',
-		description = "Displays the character '+' if the unit is an elite or rare-elite",
+		description = "Displays the character '+' if the unit is an elite or rare-elite"
 	},
-	['rare'] = { category = 'Classification', description = "Displays 'Rare' when the unit is a rare or rareelite" },
+	['rare'] = {category = 'Classification', description = "Displays 'Rare' when the unit is a rare or rareelite"},
 	['shortclassification'] = {
 		category = 'Classification',
-		description = "Displays the unit's classification in short form (e.g. '+' for ELITE and 'R' for RARE)",
+		description = "Displays the unit's classification in short form (e.g. '+' for ELITE and 'R' for RARE)"
 	},
 	--Classpower
 	['cpoints'] = {
 		category = 'Classpower',
-		description = 'Displays amount of combo points the player has (only for player, shows nothing on 0)',
+		description = 'Displays amount of combo points the player has (only for player, shows nothing on 0)'
 	},
-	['arcanecharges'] = { category = 'Classpower', description = 'Displays the arcane charges (Mage)' },
-	['chi'] = { category = 'Classpower', description = 'Displays the chi points (Monk)' },
-	['holypower'] = { category = 'Classpower', description = 'Displays the holy power (Paladin)' },
-	['runes'] = { category = 'Classpower', description = 'Displays the runes (Death Knight)' },
-	['soulshards'] = { category = 'Classpower', description = 'Displays the soulshards (Warlock)' },
+	['arcanecharges'] = {category = 'Classpower', description = 'Displays the arcane charges (Mage)'},
+	['chi'] = {category = 'Classpower', description = 'Displays the chi points (Monk)'},
+	['holypower'] = {category = 'Classpower', description = 'Displays the holy power (Paladin)'},
+	['runes'] = {category = 'Classpower', description = 'Displays the runes (Death Knight)'},
+	['soulshards'] = {category = 'Classpower', description = 'Displays the soulshards (Warlock)'},
 	--Colors
 	['difficulty'] = {
 		category = 'Colors',
-		description = 'Changes color of the next tag based on how difficult the unit is compared to the players level',
+		description = 'Changes color of the next tag based on how difficult the unit is compared to the players level'
 	},
-	['powercolor'] = { category = 'Colors', description = 'Colors the power text based upon its type' },
-	['SUI_ColorClass'] = { category = 'Colors', description = 'Changes the text color based on the class' },
+	['powercolor'] = {category = 'Colors', description = 'Colors the power text based upon its type'},
+	['SUI_ColorClass'] = {category = 'Colors', description = 'Changes the text color based on the class'},
 	--PvP
-	['faction'] = { category = 'PvP', description = "Displays 'Alliance' or 'Horde'" },
-	['pvp'] = { category = 'PvP', description = "Displays 'PvP' if the unit is pvp flagged" },
-	['arenaspec'] = { category = 'PvP', description = 'Displays the area spec of an unit' },
+	['faction'] = {category = 'PvP', description = "Displays 'Alliance' or 'Horde'"},
+	['pvp'] = {category = 'PvP', description = "Displays 'PvP' if the unit is pvp flagged"},
+	['arenaspec'] = {category = 'PvP', description = 'Displays the area spec of an unit'},
 	--Party and Raid
-	['group'] = { category = 'Party and Raid', description = "Displays the group number the unit is in ('1' - '8')" },
-	['leader'] = { category = 'Party and Raid', description = "Displays 'L' if the unit is the group/raid leader" },
-	['leaderlong'] = { category = 'Party and Raid', description = "Displays 'Leader' if the unit is the group/raid leader" },
+	['group'] = {category = 'Party and Raid', description = "Displays the group number the unit is in ('1' - '8')"},
+	['leader'] = {category = 'Party and Raid', description = "Displays 'L' if the unit is the group/raid leader"},
+	['leaderlong'] = {category = 'Party and Raid', description = "Displays 'Leader' if the unit is the group/raid leader"},
 	--Level
-	['level'] = { category = 'Level', description = 'Displays the level of the unit' },
-	['smartlevel'] = { category = 'Level', description = "Only display the unit's level if it is not the same as yours" },
+	['level'] = {category = 'Level', description = 'Displays the level of the unit'},
+	['smartlevel'] = {category = 'Level', description = "Only display the unit's level if it is not the same as yours"},
 	--Names
-	['name'] = { category = 'Names', description = 'Displays the full name of the unit without any letter limitation' },
-	['affix'] = { category = 'Miscellaneous', description = 'Displays low level critter mobs' },
+	['name'] = {category = 'Names', description = 'Displays the full name of the unit without any letter limitation'},
+	['affix'] = {category = 'Miscellaneous', description = 'Displays low level critter mobs'},
 	['specialization'] = {
 		category = 'Miscellaneous',
-		description = 'Displays your current specialization as text',
+		description = 'Displays your current specialization as text'
 	},
 	['threat'] = {
 		category = 'Threat',
-		description = 'Displays the current threat situation (Aggro is secure tanking, -- is losing threat and ++ is gaining threat)',
+		description = 'Displays the current threat situation (Aggro is secure tanking, -- is losing threat and ++ is gaining threat)'
 	},
-	['title'] = { category = 'Names', description = 'Displays player title' },
+	['title'] = {category = 'Names', description = 'Displays player title'},
 	['threatcolor'] = {
 		category = 'Colors',
-		description = "Changes the text color, depending on the unit's threat situation",
-	},
+		description = "Changes the text color, depending on the unit's threat situation"
+	}
 }
 local Options = {}
 ----------------------------------------------------------------------------------------------------
@@ -306,28 +314,28 @@ function Options:CreateFrameOptionSet(frameName, get, set)
 				disabled = (frameName == 'raid' or frameName == 'boss' or frameName == 'arena'),
 				func = function()
 					UF.Unit:ToggleForceShow(frameName)
-				end,
+				end
 			},
 			General = {
 				name = L['General'],
 				desc = L['General display settings'],
 				type = 'group',
 				order = 10,
-				args = {},
+				args = {}
 			},
 			StatusBar = {
 				name = L['Bars'],
 				type = 'group',
 				order = 20,
 				childGroups = 'tree',
-				args = {},
+				args = {}
 			},
 			Indicator = {
 				name = L['Indicators'],
 				type = 'group',
 				order = 30,
 				childGroups = 'tree',
-				args = {},
+				args = {}
 			},
 			-- Text = {
 			-- 	name = L['Text'],
@@ -350,9 +358,9 @@ function Options:CreateFrameOptionSet(frameName, get, set)
 				type = 'group',
 				childGroups = 'tree',
 				order = 50,
-				args = {},
-			},
-		},
+				args = {}
+			}
+		}
 	} ---@type AceConfig.OptionsTable
 
 	return OptionSet
@@ -374,10 +382,10 @@ function Options:AddGeneral(OptionSet)
 					order = 2,
 					min = 1,
 					max = 300,
-					step = 0.1,
-				},
-			},
-		},
+					step = 0.1
+				}
+			}
+		}
 	}
 end
 
@@ -396,12 +404,12 @@ function Options:AddAuraLayout(frameName, OptionSet)
 				order = 20,
 				min = 1,
 				max = 30,
-				step = 1,
+				step = 1
 			},
 			showType = {
 				name = L['Show type'],
 				type = 'toggle',
-				order = 30,
+				order = 30
 			},
 			selfScale = {
 				order = 2,
@@ -411,7 +419,7 @@ function Options:AddAuraLayout(frameName, OptionSet)
 				min = 0,
 				max = 3,
 				step = 0.10,
-				isPercent = true,
+				isPercent = true
 			},
 			spacing = {
 				name = L['Spacing'],
@@ -419,7 +427,7 @@ function Options:AddAuraLayout(frameName, OptionSet)
 				order = 41,
 				min = 1,
 				max = 30,
-				step = 1,
+				step = 1
 			},
 			rows = {
 				name = L['Rows'],
@@ -427,7 +435,7 @@ function Options:AddAuraLayout(frameName, OptionSet)
 				order = 50,
 				min = 1,
 				max = 30,
-				step = 1,
+				step = 1
 			},
 			growthx = {
 				name = L['Growth x'],
@@ -435,8 +443,8 @@ function Options:AddAuraLayout(frameName, OptionSet)
 				order = 71,
 				values = {
 					['RIGHT'] = 'RIGHT',
-					['LEFT'] = 'LEFT',
-				},
+					['LEFT'] = 'LEFT'
+				}
 			},
 			growthy = {
 				name = L['Growth y'],
@@ -444,10 +452,10 @@ function Options:AddAuraLayout(frameName, OptionSet)
 				order = 72,
 				values = {
 					['UP'] = 'UP',
-					['DOWN'] = 'DOWN',
-				},
-			},
-		},
+					['DOWN'] = 'DOWN'
+				}
+			}
+		}
 	}
 end
 
@@ -464,23 +472,23 @@ function Options:AddAuraWhitelistBlacklist(frameName, OptionSet, create)
 			desc = {
 				name = L['Whitelisted auras will always be shown'],
 				type = 'description',
-				order = 1,
+				order = 1
 			},
 			create = {
 				name = L['Add spell name or ID'],
 				type = 'input',
 				order = 2,
 				width = 'full',
-				set = create,
+				set = create
 			},
 			spells = {
 				order = 3,
 				type = 'group',
 				inline = true,
 				name = L['Auras list'],
-				args = {},
-			},
-		},
+				args = {}
+			}
+		}
 	}
 	OptionSet.args.blacklist = {
 		name = L['Blacklist'],
@@ -491,23 +499,23 @@ function Options:AddAuraWhitelistBlacklist(frameName, OptionSet, create)
 			desc = {
 				name = L['Blacklisted auras will never be shown'],
 				type = 'description',
-				order = 1,
+				order = 1
 			},
 			create = {
 				name = L['Add spell name or ID'],
 				type = 'input',
 				order = 2,
 				width = 'full',
-				set = create,
+				set = create
 			},
 			spells = {
 				order = 3,
 				type = 'group',
 				inline = true,
 				name = L['Auras list'],
-				args = {},
-			},
-		},
+				args = {}
+			}
+		}
 	}
 end
 
@@ -532,7 +540,7 @@ function Options:AddAuraFilters(frameName, OptionSet, set, get)
 					enabled = {
 						name = L['Duration rules enabled'],
 						type = 'toggle',
-						order = 1,
+						order = 1
 					},
 					mode = {
 						name = L['Duration mode'],
@@ -540,8 +548,8 @@ function Options:AddAuraFilters(frameName, OptionSet, set, get)
 						order = 2,
 						values = {
 							['exclude'] = 'Exclusionary',
-							['include'] = 'Inclusionary',
-						},
+							['include'] = 'Inclusionary'
+						}
 					},
 					minTime = {
 						name = L['Minimum Duration'],
@@ -550,7 +558,7 @@ function Options:AddAuraFilters(frameName, OptionSet, set, get)
 						order = 2,
 						min = 0,
 						max = 600,
-						step = 1,
+						step = 1
 					},
 					maxTime = {
 						name = L['Maximum Duration'],
@@ -559,9 +567,9 @@ function Options:AddAuraFilters(frameName, OptionSet, set, get)
 						order = 3,
 						min = 0,
 						max = 3600,
-						step = 1,
-					},
-				},
+						step = 1
+					}
+				}
 			},
 			rules = {
 				name = L['Basic states'],
@@ -575,10 +583,10 @@ function Options:AddAuraFilters(frameName, OptionSet, set, get)
 					isMount = L['Mount'],
 					showPlayers = L['Player casted'],
 					isRaid = L['Raid'],
-					isStealable = L['Stealable'],
-				},
-			},
-		},
+					isStealable = L['Stealable']
+				}
+			}
+		}
 	}
 end
 
@@ -595,14 +603,14 @@ function Options:TextBasicDisplay(frameName, ElementOptSet)
 				name = L['Text'],
 				type = 'input',
 				width = 'full',
-				order = 1,
+				order = 1
 			},
 			taglist = {
 				name = L['Text tag list'],
 				type = 'execute',
 				func = function(info)
 					SUI.Lib.AceCD:SelectGroup('SpartanUI', 'Help', 'UnitFrames')
-				end,
+				end
 			},
 			textSize = {
 				name = L['Size'],
@@ -611,7 +619,7 @@ function Options:TextBasicDisplay(frameName, ElementOptSet)
 				min = 1,
 				max = 30,
 				step = 1,
-				order = 1.5,
+				order = 1.5
 			},
 			SetJustifyH = {
 				name = L['Horizontal alignment'],
@@ -620,8 +628,8 @@ function Options:TextBasicDisplay(frameName, ElementOptSet)
 				values = {
 					['LEFT'] = 'Left',
 					['CENTER'] = 'Center',
-					['RIGHT'] = 'Right',
-				},
+					['RIGHT'] = 'Right'
+				}
 			},
 			SetJustifyV = {
 				name = L['Vertical alignment'],
@@ -630,10 +638,10 @@ function Options:TextBasicDisplay(frameName, ElementOptSet)
 				values = {
 					['TOP'] = 'Top',
 					['MIDDLE'] = 'Middle',
-					['BOTTOM'] = 'Bottom',
-				},
-			},
-		},
+					['BOTTOM'] = 'Bottom'
+				}
+			}
+		}
 	}
 end
 
@@ -647,7 +655,7 @@ function Options:StatusBarDefaults(frameName, ElementOptSet, elementName)
 		order = 2,
 		width = 'double',
 		name = 'Bar Texture',
-		values = AceGUIWidgetLSMlists.statusbar,
+		values = AceGUIWidgetLSMlists.statusbar
 	}
 	ElementOptSet.args.height = {
 		name = L['Height'],
@@ -656,7 +664,7 @@ function Options:StatusBarDefaults(frameName, ElementOptSet, elementName)
 		order = 5,
 		min = 2,
 		max = 100,
-		step = 1,
+		step = 1
 	}
 	ElementOptSet.args.Background = {
 		name = L['Background'],
@@ -674,9 +682,9 @@ function Options:StatusBarDefaults(frameName, ElementOptSet, elementName)
 		set = function(info, val, ...)
 			if info.type == 'color' then
 				--Update memory
-				UF.CurrentSettings[frameName].elements[elementName].bg[info[#info]] = { val, ... }
+				UF.CurrentSettings[frameName].elements[elementName].bg[info[#info]] = {val, ...}
 				--Update the DB
-				UF.DB.UserSettings[UF.DB.Style][frameName].elements[elementName].bg[info[#info]] = { val, ... }
+				UF.DB.UserSettings[UF.DB.Style][frameName].elements[elementName].bg[info[#info]] = {val, ...}
 			else
 				--Update memory
 				UF.CurrentSettings[frameName].elements[elementName].bg[info[#info]] = val
@@ -690,15 +698,15 @@ function Options:StatusBarDefaults(frameName, ElementOptSet, elementName)
 			enabled = {
 				name = L['Enable'],
 				type = 'toggle',
-				order = 1,
+				order = 1
 			},
 			color = {
 				name = L['Color'],
 				type = 'color',
 				order = 2,
-				hasAlpha = true,
-			},
-		},
+				hasAlpha = true
+			}
+		}
 	}
 end
 
@@ -716,7 +724,7 @@ function Options:IndicatorAddDisplay(ElementOptSet)
 				min = 0,
 				max = 100,
 				step = 0.1,
-				order = 1,
+				order = 1
 			},
 			scale = {
 				name = L['Scale'],
@@ -724,7 +732,7 @@ function Options:IndicatorAddDisplay(ElementOptSet)
 				min = 0.1,
 				max = 3,
 				step = 0.01,
-				order = 2,
+				order = 2
 			},
 			alpha = {
 				name = L['Alpha'],
@@ -732,9 +740,9 @@ function Options:IndicatorAddDisplay(ElementOptSet)
 				min = 0,
 				max = 1,
 				step = 0.01,
-				order = 3,
-			},
-		},
+				order = 3
+			}
+		}
 	}
 end
 
@@ -744,7 +752,7 @@ end
 ---@param set function
 function Options:AddPositioning(anchors, ElementOptSet, get, set)
 	local AnchorablePoints = {
-		['Frame'] = 'Unit Frame',
+		['Frame'] = 'Unit Frame'
 	}
 	SUI:CopyData(AnchorablePoints, anchors)
 
@@ -762,7 +770,7 @@ function Options:AddPositioning(anchors, ElementOptSet, get, set)
 				order = 1,
 				min = -200,
 				max = 200,
-				step = 1,
+				step = 1
 			},
 			y = {
 				name = L['Y Axis'],
@@ -770,27 +778,27 @@ function Options:AddPositioning(anchors, ElementOptSet, get, set)
 				order = 2,
 				min = -200,
 				max = 200,
-				step = 1,
+				step = 1
 			},
 			anchor = {
 				name = L['Anchor point'],
 				type = 'select',
 				order = 3,
-				values = anchorPoints,
+				values = anchorPoints
 			},
 			relativeTo = {
 				name = 'Relative To',
 				type = 'select',
 				order = 3,
-				values = AnchorablePoints,
+				values = AnchorablePoints
 			},
 			relativePoint = {
 				name = 'Relative Point',
 				type = 'select',
 				order = 3,
-				values = anchorPoints,
-			},
-		},
+				values = anchorPoints
+			}
+		}
 	}
 end
 
@@ -809,9 +817,9 @@ function Options:AddDynamicText(frameName, OptionSet, element)
 				order = 0.1,
 				func = function(info)
 					SUI.Lib.AceCD:SelectGroup('SpartanUI', 'Help', 'UnitFrames')
-				end,
-			},
-		},
+				end
+			}
+		}
 	}
 
 	for count in pairs(UF.CurrentSettings[frameName].elements[element].text) do
@@ -858,13 +866,11 @@ function Options:AddDynamicText(frameName, OptionSet, element)
 							UF.Unit[frameName][element].TextElements[count]:Show()
 						else
 							-- Safety check: ensure unit frame and element exist
-							if UF.Unit[frameName] and UF.Unit[frameName][element] and 
-							   UF.Unit[frameName][element].TextElements and 
-							   UF.Unit[frameName][element].TextElements[count] then
+							if UF.Unit[frameName] and UF.Unit[frameName][element] and UF.Unit[frameName][element].TextElements and UF.Unit[frameName][element].TextElements[count] then
 								UF.Unit[frameName][element].TextElements[count]:Hide()
 							end
 						end
-					end,
+					end
 				},
 				text = {
 					name = L['Text'],
@@ -881,7 +887,7 @@ function Options:AddDynamicText(frameName, OptionSet, element)
 							UF.Unit[frameName]:Tag(UF.Unit[frameName][element].TextElements[count], val)
 							UF.Unit[frameName]:UpdateTags()
 						end
-					end,
+					end
 				},
 				size = {
 					name = L['Size'],
@@ -898,7 +904,7 @@ function Options:AddDynamicText(frameName, OptionSet, element)
 						UF.DB.UserSettings[UF.DB.Style][frameName].elements[element].text[count].size = val
 						--Update the screen
 						SUI.Font:UpdateDefaultSize(UF.Unit[frameName][element].TextElements[count], val, 'UnitFrames')
-					end,
+					end
 				},
 				position = {
 					name = L['Position'],
@@ -925,7 +931,7 @@ function Options:AddDynamicText(frameName, OptionSet, element)
 							order = 1,
 							min = -200,
 							max = 200,
-							step = 1,
+							step = 1
 						},
 						y = {
 							name = L['Y Axis'],
@@ -933,17 +939,17 @@ function Options:AddDynamicText(frameName, OptionSet, element)
 							order = 2,
 							min = -200,
 							max = 200,
-							step = 1,
+							step = 1
 						},
 						anchor = {
 							name = L['Anchor point'],
 							type = 'select',
 							order = 3,
-							values = anchorPoints,
-						},
-					},
-				},
-			},
+							values = anchorPoints
+						}
+					}
+				}
+			}
 		}
 	end
 end
@@ -969,24 +975,24 @@ function Options:AddGroupDisplay(frameName, OptionSet)
 			showRaid = {
 				name = L['Show while in raid'],
 				type = 'toggle',
-				order = 1,
+				order = 1
 			},
 			showParty = {
 				name = L['Show while in party'],
 				type = 'toggle',
-				order = 2,
+				order = 2
 			},
 			showPlayer = {
 				name = L['Show player'],
 				type = 'toggle',
-				order = 2,
+				order = 2
 			},
 			showSolo = {
 				name = L['Show solo'],
 				type = 'toggle',
-				order = 2,
-			},
-		},
+				order = 2
+			}
+		}
 	}
 end
 
@@ -1014,7 +1020,7 @@ function Options:AddGroupLayout(frameName, OptionSet)
 				width = 'full',
 				step = 1,
 				min = 1,
-				max = 40,
+				max = 40
 			},
 			unitsPerColumn = {
 				name = L['Units Per Column'],
@@ -1023,7 +1029,7 @@ function Options:AddGroupLayout(frameName, OptionSet)
 				width = 'full',
 				step = 1,
 				min = 1,
-				max = 40,
+				max = 40
 			},
 			columnSpacing = {
 				name = L['Column Spacing'],
@@ -1032,9 +1038,9 @@ function Options:AddGroupLayout(frameName, OptionSet)
 				width = 'full',
 				step = 1,
 				min = -200,
-				max = 200,
+				max = 200
 			},
-			bar1 = { name = 'Offsets', type = 'header', order = 20 },
+			bar1 = {name = 'Offsets', type = 'header', order = 20},
 			yOffset = {
 				name = L['Vertical offset'],
 				type = 'range',
@@ -1042,7 +1048,7 @@ function Options:AddGroupLayout(frameName, OptionSet)
 				width = 'full',
 				step = 1,
 				min = -200,
-				max = 200,
+				max = 200
 			},
 			xOffset = {
 				name = L['Horizonal offset'],
@@ -1051,9 +1057,9 @@ function Options:AddGroupLayout(frameName, OptionSet)
 				width = 'full',
 				step = 1,
 				min = -200,
-				max = 200,
-			},
-		},
+				max = 200
+			}
+		}
 	}
 end
 
@@ -1070,29 +1076,32 @@ function Options:Initialize()
 				name = L['Health'],
 				type = 'group',
 				order = 0.1,
-				args = {},
+				args = {}
 			},
 			Power = {
 				name = L['Power'],
 				type = 'group',
 				order = 0.2,
-				args = {},
+				args = {}
 			},
 			Names = {
 				name = 'Names',
 				type = 'group',
 				order = 0.3,
-				args = {},
-			},
-		},
+				args = {}
+			}
+		}
 	}
 	for k, v in pairs(TagList) do
-		if v.category and not HelpScreen.args[v.category] then HelpScreen.args[v.category] = {
-			name = v.category,
-			type = 'group',
-			args = {},
-			set = function(info, val) end,
-		} end
+		if v.category and not HelpScreen.args[v.category] then
+			HelpScreen.args[v.category] = {
+				name = v.category,
+				type = 'group',
+				args = {},
+				set = function(info, val)
+				end
+			}
+		end
 
 		HelpScreen.args[v.category].args[k] = {
 			name = v.description or '',
@@ -1100,9 +1109,11 @@ function Options:Initialize()
 			width = 'full',
 			get = function(info)
 				return '[' .. k .. ']'
-			end,
+			end
 		}
-		if v.func then v.func(HelpScreen.args[v.category].args[k]) end
+		if v.func then
+			v.func(HelpScreen.args[v.category].args[k])
+		end
 	end
 	SUI.opt.args.Help.args.UnitFrames = HelpScreen
 
@@ -1114,7 +1125,7 @@ function Options:Initialize()
 		order = 90,
 		func = function()
 			UF:ResetSettings()
-		end,
+		end
 	}
 
 	-- Construct base Options object
@@ -1134,23 +1145,23 @@ function Options:Initialize()
 				order = 1,
 				func = function()
 					UF:ResetSettings()
-				end,
+				end
 			},
 			BaseStyle = {
 				name = L['Base frame style'],
 				type = 'group',
 				inline = true,
 				order = 30,
-				args = {},
+				args = {}
 			},
 			EnabledFrame = {
 				name = L['Enabled frames'],
 				type = 'group',
 				inline = true,
 				order = 90,
-				args = {},
-			},
-		},
+				args = {}
+			}
+		}
 	}
 
 	for frameName, _ in pairs(UF.Unit:GetFrameList()) do
@@ -1174,7 +1185,7 @@ function Options:Initialize()
 						frame:Disable()
 					end
 				end
-			end,
+			end
 		}
 	end
 
@@ -1189,11 +1200,11 @@ function Options:Initialize()
 				return data.setup.image or ('interface\\addons\\SpartanUI\\images\\setup\\Style_Frames_' .. styleName), 120, 60
 			end,
 			imageCoords = function()
-				return data.setup.imageCoords or { 0, 0.5, 0, 0.5 }
+				return data.setup.imageCoords or {0, 0.5, 0, 0.5}
 			end,
 			func = function()
 				UF:SetActiveStyle(styleName)
-			end,
+			end
 		}
 	end
 
@@ -1202,16 +1213,21 @@ function Options:Initialize()
 
 	-- Build frame options
 	for frameName, _ in pairs(UF.Unit:GetBuiltFrameList()) do
-		local FrameOptSet = Options:CreateFrameOptionSet(frameName, function(info)
-			return UF.CurrentSettings[frameName][info[#info]] or false
-		end, function(info, val)
-			--Update memory
-			UF.CurrentSettings[frameName][info[#info]] = val
-			--Update the DB
-			UF.DB.UserSettings[UF.DB.Style][frameName][info[#info]] = val
-			--Update the screen
-			UF.Unit[frameName]:UpdateAll()
-		end)
+		local FrameOptSet =
+			Options:CreateFrameOptionSet(
+			frameName,
+			function(info)
+				return UF.CurrentSettings[frameName][info[#info]] or false
+			end,
+			function(info, val)
+				--Update memory
+				UF.CurrentSettings[frameName][info[#info]] = val
+				--Update the DB
+				UF.DB.UserSettings[UF.DB.Style][frameName][info[#info]] = val
+				--Update the screen
+				UF.Unit[frameName]:UpdateAll()
+			end
+		)
 		Options:AddGeneral(FrameOptSet)
 
 		-- Add Element Options
@@ -1257,9 +1273,9 @@ function Options:Initialize()
 
 							-- Refresh the options UI
 							SUI.Lib.AceConfigRegistry:NotifyChange('SpartanUI')
-						end,
-					},
-				},
+						end
+					}
+				}
 			}
 
 			local PositionGet = function(info)
@@ -1338,10 +1354,12 @@ function Options:Initialize()
 						local name = 'unknown'
 						if id then
 							local spellInfo = C_Spell.GetSpellInfo(id)
-							if spellInfo then name = string.format('|T%s:14:14:0:0|t %s (#%i)', spellInfo.iconID or 'Interface\\Icons\\Inv_misc_questionmark', spellInfo.name or L['Unknown'], id) end
+							if spellInfo then
+								name = string.format('|T%s:14:14:0:0|t %s (#%i)', spellInfo.iconID or 'Interface\\Icons\\Inv_misc_questionmark', spellInfo.name or L['Unknown'], id)
+							end
 						end
 						return name
-					end,
+					end
 				}
 
 				local spellDelete = {
@@ -1361,7 +1379,7 @@ function Options:Initialize()
 						--Update Screen
 						buildItemList(info[#info - 2])
 						UF.Unit[frameName]:ElementUpdate(elementName)
-					end,
+					end
 				}
 
 				buildItemList = function(mode)
@@ -1418,7 +1436,7 @@ function Options:Initialize()
 				ElementOptSet.args.enabled = {
 					name = L['Enabled'],
 					type = 'toggle',
-					order = 1,
+					order = 1
 				}
 			end
 			-- Add element option to screen
@@ -1433,6 +1451,6 @@ function Options:Initialize()
 	SUI.opt.args.UnitFrames = UFOptions
 end
 
-Options.CONST = { anchorPoints = anchorPoints }
+Options.CONST = {anchorPoints = anchorPoints}
 
 UF.Options = Options

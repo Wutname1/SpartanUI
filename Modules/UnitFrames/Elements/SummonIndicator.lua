@@ -12,8 +12,8 @@ local Settings = {
 	config = {
 		type = 'Indicator',
 		DisplayName = 'Summon',
-		NoBulkUpdate = false,
-	},
+		NoBulkUpdate = false
+	}
 }
 
 UF.Elements:Register('SummonIndicator', Build, nil, nil, Settings)

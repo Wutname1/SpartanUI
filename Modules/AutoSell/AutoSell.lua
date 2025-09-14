@@ -16,7 +16,7 @@ local totalValue = 0
 local blacklistLookup = {
 	items = {},
 	types = {},
-	valid = false,
+	valid = false
 }
 
 ---@class SUI.Module.AutoSell.DB
@@ -100,16 +100,16 @@ local DbDefaults = {
 			2730,
 			--End Shredder Operating Manual pages
 			63207, -- Wrap of unity
-			63206, -- Wrap of unity
+			63206 -- Wrap of unity
 		},
 		Types = {
 			'Container',
 			'Companions',
 			'Holiday',
 			'Mounts',
-			'Quest',
-		},
-	},
+			'Quest'
+		}
+	}
 }
 
 ---@class SUI.Module.AutoSell.CharDB
@@ -134,7 +134,9 @@ end
 
 -- Build fast blacklist lookup tables
 local function buildBlacklistLookup()
-	if blacklistLookup.valid then return end
+	if blacklistLookup.valid then
+		return
+	end
 
 	-- Reset tables
 	blacklistLookup.items = {}
@@ -164,32 +166,41 @@ function module:InvalidateBlacklistCache()
 
 	-- Refresh bag markings when cache is invalidated
 	if module.DB.ShowBagMarking and module.markItems then
-		debugMsg("Refreshing bag markings after blacklist cache invalidation", "BagMarking", "debug")
+		debugMsg('Refreshing bag markings after blacklist cache invalidation', 'BagMarking', 'debug')
 		module.markItems()
 	end
 
 	-- Refresh Baganator when cache is invalidated
-	if C_AddOns.IsAddOnLoaded('Baganator') and Baganator and Baganator.API then Baganator.API.RequestItemButtonsRefresh() end
+	if C_AddOns.IsAddOnLoaded('Baganator') and Baganator and Baganator.API then
+		Baganator.API.RequestItemButtonsRefresh()
+	end
 end
 
 local function IsInGearset(bag, slot)
 	-- Skip gearset check if called without valid bag/slot (like from Baganator)
-	if not bag or not slot or bag < 0 or slot < 1 then return false end
-
-	local success, result = pcall(function()
-		local line
-		Tooltip:SetOwner(UIParent, 'ANCHOR_NONE')
-		Tooltip:SetBagItem(bag, slot)
-
-		for i = 1, Tooltip:NumLines() do
-			line = _G['AutoSellTooltipTextLeft' .. i]
-			if line and line:GetText() and line:GetText():find(EQUIPMENT_SETS:format('.*')) then return true end
-		end
+	if not bag or not slot or bag < 0 or slot < 1 then
 		return false
-	end)
+	end
+
+	local success, result =
+		pcall(
+		function()
+			local line
+			Tooltip:SetOwner(UIParent, 'ANCHOR_NONE')
+			Tooltip:SetBagItem(bag, slot)
+
+			for i = 1, Tooltip:NumLines() do
+				line = _G['AutoSellTooltipTextLeft' .. i]
+				if line and line:GetText() and line:GetText():find(EQUIPMENT_SETS:format('.*')) then
+					return true
+				end
+			end
+			return false
+		end
+	)
 
 	if not success then
-		debugMsg('IsInGearset error: ' .. tostring(result), "Selling", "error")
+		debugMsg('IsInGearset error: ' .. tostring(result), 'Selling', 'error')
 		return false
 	end
 
@@ -203,32 +214,34 @@ end
 function module:WouldBlizzardSell(item, quality)
 	-- Blizzard only sells gray (quality 0) junk items
 	-- and only if SellAllJunkItems is enabled
-	if SUI.IsRetail and quality == 0 and C_MerchantFrame and C_MerchantFrame.IsSellAllJunkEnabled then return C_MerchantFrame.IsSellAllJunkEnabled() end
+	if SUI.IsRetail and quality == 0 and C_MerchantFrame and C_MerchantFrame.IsSellAllJunkEnabled then
+		return C_MerchantFrame.IsSellAllJunkEnabled()
+	end
 	return false
 end
 
 function module:IsSellable(item, ilink, bag, slot)
 	if not item then
-		debugMsg('IsSellable: item is nil, returning false', "Selling", "warning")
+		debugMsg('IsSellable: item is nil, returning false', 'Selling', 'warning')
 		return false
 	end
 	local name, _, quality, _, _, itemType, itemSubType, _, equipSlot, _, vendorPrice, _, _, _, expacID, _, isCraftingReagent = C_Item.GetItemInfo(ilink)
 	if vendorPrice == 0 or name == nil then
-		debugMsg('IsSellable: no vendor price or name for item ' .. tostring(item), "Selling", "debug")
+		debugMsg('IsSellable: no vendor price or name for item ' .. tostring(item), 'Selling', 'debug')
 		return false
 	end
 
 	-- Check character-specific blacklist FIRST (highest priority)
 	if module.CharDB.Blacklist[item] then
-		debugMsg('--Decision: Not selling (character blacklist)--', "Blacklist", "debug")
+		debugMsg('--Decision: Not selling (character blacklist)--', 'Blacklist', 'debug')
 		return false
 	end
 
 	-- Check character-specific whitelist (overrides ALL other rules)
 	if module.CharDB.Whitelist[item] then
-		debugMsg('--Decision: Selling (character whitelist overrides all rules)--', "Blacklist", "debug")
-		debugMsg('Item: ' .. (name or 'Unknown') .. ' (Link: ' .. ilink .. ')', "Selling", "debug")
-		debugMsg('Vendor Price: ' .. tostring(vendorPrice), "Selling", "debug")
+		debugMsg('--Decision: Selling (character whitelist overrides all rules)--', 'Blacklist', 'debug')
+		debugMsg('Item: ' .. (name or 'Unknown') .. ' (Link: ' .. ilink .. ')', 'Selling', 'debug')
+		debugMsg('Vendor Price: ' .. tostring(vendorPrice), 'Selling', 'debug')
 		return true
 	end
 
@@ -244,79 +257,89 @@ function module:IsSellable(item, ilink, bag, slot)
 
 	-- Quality check
 	if
-		(quality == 0 and not module.DB.Gray)
-		or (quality == 1 and not module.DB.White)
-		or (quality == 2 and not module.DB.Green)
-		or (quality == 3 and not module.DB.Blue)
-		or (quality == 4 and not module.DB.Purple)
-		or (iLevel and iLevel > module.DB.MaxILVL)
-	then
+		(quality == 0 and not module.DB.Gray) or (quality == 1 and not module.DB.White) or (quality == 2 and not module.DB.Green) or (quality == 3 and not module.DB.Blue) or
+			(quality == 4 and not module.DB.Purple) or
+			(iLevel and iLevel > module.DB.MaxILVL)
+	 then
 		return false
 	end
 
 	--Gearset detection
-	if module.DB.NotInGearset and C_EquipmentSet.CanUseEquipmentSets() and IsInGearset(bag, slot) then return false end
+	if module.DB.NotInGearset and C_EquipmentSet.CanUseEquipmentSets() and IsInGearset(bag, slot) then
+		return false
+	end
 	-- Gear Tokens
-	if quality == 4 and itemType == 'Miscellaneous' and itemSubType == 'Junk' and equipSlot == '' and not module.DB.GearTokens then return false end
+	if quality == 4 and itemType == 'Miscellaneous' and itemSubType == 'Junk' and equipSlot == '' and not module.DB.GearTokens then
+		return false
+	end
 
 	--Crafting Items
 	if
-		(
-			(itemType == 'Gem' or itemType == 'Reagent' or itemType == 'Recipes' or itemType == 'Trade Goods' or itemType == 'Tradeskill')
-			or (itemType == 'Miscellaneous' and itemSubType == 'Reagent')
-			or (itemType == 'Item Enhancement')
-			or isCraftingReagent
-		) and module.DB.NotCrafting
-	then
+		((itemType == 'Gem' or itemType == 'Reagent' or itemType == 'Recipes' or itemType == 'Trade Goods' or itemType == 'Tradeskill') or (itemType == 'Miscellaneous' and itemSubType == 'Reagent') or
+			(itemType == 'Item Enhancement') or
+			isCraftingReagent) and
+			module.DB.NotCrafting
+	 then
 		return false
 	end
 
 	-- Dont sell pets
-	if itemSubType == 'Companion Pets' then return false end
+	if itemSubType == 'Companion Pets' then
+		return false
+	end
 	-- Transmog tokens
-	if expacID == 9 and (itemType == 'Miscellaneous' or (itemType == 'Armor' and itemSubType == 'Miscellaneous')) and iLevel == 0 and quality >= 2 then return false end
+	if expacID == 9 and (itemType == 'Miscellaneous' or (itemType == 'Armor' and itemSubType == 'Miscellaneous')) and iLevel == 0 and quality >= 2 then
+		return false
+	end
 
 	--Consumables
-	if module.DB.NotConsumables and (itemType == 'Consumable' or itemSubType == 'Consumables') and quality ~= 0 then return false end --Some junk is labeled as consumable
+	if module.DB.NotConsumables and (itemType == 'Consumable' or itemSubType == 'Consumables') and quality ~= 0 then
+		return false
+	end --Some junk is labeled as consumable
 
 	-- Check for items with "Use:" in tooltip (profession enhancement items, etc.)
 	if bag and slot then
-		local hasUseText = pcall(function()
-			Tooltip:SetOwner(UIParent, 'ANCHOR_NONE')
-			Tooltip:SetBagItem(bag, slot)
-			
-			for i = 1, Tooltip:NumLines() do
-				local line = _G['AutoSellTooltipTextLeft' .. i]
-				if line and line:GetText() then
-					local text = line:GetText():lower()
-					if text:find('^use:') or text:find('^%s*use:') then
-						Tooltip:Hide()
-						return true
+		local hasUseText =
+			pcall(
+			function()
+				Tooltip:SetOwner(UIParent, 'ANCHOR_NONE')
+				Tooltip:SetBagItem(bag, slot)
+
+				for i = 1, Tooltip:NumLines() do
+					local line = _G['AutoSellTooltipTextLeft' .. i]
+					if line and line:GetText() then
+						local text = line:GetText():lower()
+						if text:find('^use:') or text:find('^%s*use:') then
+							Tooltip:Hide()
+							return true
+						end
 					end
 				end
+				Tooltip:Hide()
+				return false
 			end
-			Tooltip:Hide()
-			return false
-		end)
-		
+		)
+
 		if hasUseText then
-			debugMsg('Item has "Use:" text in tooltip - skipping', "Selling", "debug")
+			debugMsg('Item has "Use:" text in tooltip - skipping', 'Selling', 'debug')
 			return false
 		end
 	end
 
-	if string.find(name, '') and quality == 1 then return false end
+	if string.find(name, '') and quality == 1 then
+		return false
+	end
 
 	-- Check profile blacklists (optimized lookups)
 	buildBlacklistLookup()
 	if not blacklistLookup.items[item] and not blacklistLookup.types[itemType] and not blacklistLookup.types[itemSubType] then
-		debugMsg('--Decision: Selling--', "Selling", "debug")
-		debugMsg('Item: ' .. (name or 'Unknown') .. ' (Link: ' .. ilink .. ')', "Selling", "debug")
-		debugMsg('Expansion ID: ' .. tostring(expacID), "Selling", "debug")
-		debugMsg('Item Level: ' .. tostring(iLevel), "Selling", "debug")
-		debugMsg('Item Type: ' .. itemType, "Selling", "debug")
-		debugMsg('Item Sub-Type: ' .. itemSubType, "Selling", "debug")
-		debugMsg('Vendor Price: ' .. tostring(vendorPrice), "Selling", "debug")
+		debugMsg('--Decision: Selling--', 'Selling', 'debug')
+		debugMsg('Item: ' .. (name or 'Unknown') .. ' (Link: ' .. ilink .. ')', 'Selling', 'debug')
+		debugMsg('Expansion ID: ' .. tostring(expacID), 'Selling', 'debug')
+		debugMsg('Item Level: ' .. tostring(iLevel), 'Selling', 'debug')
+		debugMsg('Item Type: ' .. itemType, 'Selling', 'debug')
+		debugMsg('Item Sub-Type: ' .. itemSubType, 'Selling', 'debug')
+		debugMsg('Vendor Price: ' .. tostring(vendorPrice), 'Selling', 'debug')
 		return true
 	end
 
@@ -348,47 +371,51 @@ function module:SellTrash()
 			end
 
 			if grayItemCount > 0 then
-				debugMsg('Using Blizzard SellAllJunkItems for ' .. grayItemCount .. ' gray items', "Selling", "info")
+				debugMsg('Using Blizzard SellAllJunkItems for ' .. grayItemCount .. ' gray items', 'Selling', 'info')
 				C_MerchantFrame.SellAllJunkItems()
-				-- blizzardSoldItems = true
-				-- Schedule our additional selling after a delay to let Blizzard's sell complete
-				-- module:ScheduleTimer('SellAdditionalItems', 1.0)
-				-- return
+			-- blizzardSoldItems = true
+			-- Schedule our additional selling after a delay to let Blizzard's sell complete
+			-- module:ScheduleTimer('SellAdditionalItems', 1.0)
+			-- return
 			end
 		end
 	end
 
 	--Find Items to sell and track highest iLVL
-	debugMsg('Starting to scan bags for sellable items...', "Selling", "info")
+	debugMsg('Starting to scan bags for sellable items...', 'Selling', 'info')
 	-- Scan through all possible bag slots (0-12 covers all normal bags plus extras)
 	for bag = 0, MAX_BAG_SLOTS do
 		for slot = 1, C_Container.GetContainerNumSlots(bag) do
 			local itemInfo, _, _, _, _, _, link, _, _, itemID = C_Container.GetContainerItemInfo(bag, slot)
 			if SUI.IsRetail and itemInfo then
 				local iLevel = SUI:GetiLVL(itemInfo.hyperlink)
-				if iLevel and iLevel > highestILVL then highestILVL = iLevel end
+				if iLevel and iLevel > highestILVL then
+					highestILVL = iLevel
+				end
 				local sellable = module:IsSellable(itemInfo.itemID, itemInfo.hyperlink, bag, slot)
 				if sellable then
-					ItemToSell[#ItemToSell + 1] = { bag, slot }
+					ItemToSell[#ItemToSell + 1] = {bag, slot}
 					totalValue = totalValue + (select(11, C_Item.GetItemInfo(itemInfo.itemID)) * itemInfo.stackCount)
 				end
 			elseif not SUI.IsRetail and itemID then
 				local iLevel = SUI:GetiLVL(link)
-				if iLevel and iLevel > highestILVL then highestILVL = iLevel end
+				if iLevel and iLevel > highestILVL then
+					highestILVL = iLevel
+				end
 				local sellable = module:IsSellable(itemID, link, bag, slot)
 				if sellable then
-					ItemToSell[#ItemToSell + 1] = { bag, slot }
+					ItemToSell[#ItemToSell + 1] = {bag, slot}
 					totalValue = totalValue + (select(11, C_Item.GetItemInfo(itemID)) * select(2, C_Container.GetContainerItemInfo(bag, slot)))
 				end
 			end
 		end
 	end
-	debugMsg('Finished scanning bags. Found ' .. #ItemToSell .. ' items to sell.', "Selling", "info")
+	debugMsg('Finished scanning bags. Found ' .. #ItemToSell .. ' items to sell.', 'Selling', 'info')
 
 	-- Auto-increase MaximumiLVL if we detected higher iLVL items
 	if highestILVL > 0 and (highestILVL + 50) > module.DB.MaximumiLVL then
 		module.DB.MaximumiLVL = highestILVL + 50
-		debugMsg('Auto-increased MaximumiLVL to: ' .. module.DB.MaximumiLVL .. ' (highest detected: ' .. highestILVL .. ')', "Selling", "info")
+		debugMsg('Auto-increased MaximumiLVL to: ' .. module.DB.MaximumiLVL .. ' (highest detected: ' .. highestILVL .. ')', 'Selling', 'info')
 	end
 
 	--Sell Items if needed
@@ -413,20 +440,24 @@ function module:SellAdditionalItems()
 			local itemInfo, _, _, _, _, _, link, _, _, itemID = C_Container.GetContainerItemInfo(bag, slot)
 			if SUI.IsRetail and itemInfo then
 				local iLevel = SUI:GetiLVL(itemInfo.hyperlink)
-				if iLevel and iLevel > highestILVL then highestILVL = iLevel end
+				if iLevel and iLevel > highestILVL then
+					highestILVL = iLevel
+				end
 				-- Skip gray items as they were already handled by Blizzard
 				local _, _, quality = C_Item.GetItemInfo(itemInfo.itemID)
 				if quality ~= 0 and module:IsSellable(itemInfo.itemID, itemInfo.hyperlink, bag, slot) then
-					ItemToSell[#ItemToSell + 1] = { bag, slot }
+					ItemToSell[#ItemToSell + 1] = {bag, slot}
 					totalValue = totalValue + (select(11, C_Item.GetItemInfo(itemInfo.itemID)) * itemInfo.stackCount)
 				end
 			elseif not SUI.IsRetail and itemID then
 				local iLevel = SUI:GetiLVL(link)
-				if iLevel and iLevel > highestILVL then highestILVL = iLevel end
+				if iLevel and iLevel > highestILVL then
+					highestILVL = iLevel
+				end
 				-- Skip gray items as they were already handled by Blizzard
 				local _, _, quality = C_Item.GetItemInfo(itemID)
 				if quality ~= 0 and module:IsSellable(itemID, link, bag, slot) then
-					ItemToSell[#ItemToSell + 1] = { bag, slot }
+					ItemToSell[#ItemToSell + 1] = {bag, slot}
 					totalValue = totalValue + (select(11, C_Item.GetItemInfo(itemID)) * select(2, C_Container.GetContainerItemInfo(bag, slot)))
 				end
 			end
@@ -436,12 +467,14 @@ function module:SellAdditionalItems()
 	-- Auto-increase MaximumiLVL if we detected higher iLVL items
 	if highestILVL > 0 and (highestILVL + 50) > module.DB.MaximumiLVL then
 		module.DB.MaximumiLVL = highestILVL + 50
-		debugMsg('Auto-increased MaximumiLVL to: ' .. module.DB.MaximumiLVL .. ' (highest detected: ' .. highestILVL .. ')', "Selling", "info")
+		debugMsg('Auto-increased MaximumiLVL to: ' .. module.DB.MaximumiLVL .. ' (highest detected: ' .. highestILVL .. ')', 'Selling', 'info')
 	end
 
 	--Sell Items if needed
 	if #ItemToSell == 0 then
-		if totalValue == 0 then SUI:Print(L['No items are to be auto sold']) end
+		if totalValue == 0 then
+			SUI:Print(L['No items are to be auto sold'])
+		end
 	else
 		SUI:Print('Need to sell ' .. #ItemToSell .. ' additional item(s) for ' .. SUI:GoldFormattedValue(totalValue))
 		--Start Loop to sell, reset locals
@@ -465,43 +498,51 @@ function module:SellTrashInBag(ItemListing)
 	C_Container.UseContainerItem(item[1], item[2])
 
 	-- If it was the last item stop timers
-	if #ItemListing == 0 then module:CancelAllTimers() end
+	if #ItemListing == 0 then
+		module:CancelAllTimers()
+	end
 end
 
 ---@param personalFunds? boolean
 function module:Repair(personalFunds)
 	-- First see if this vendor can repair & we need to
-	if not module.DB.AutoRepair or not CanMerchantRepair() or GetRepairAllCost() == 0 then return end
+	if not module.DB.AutoRepair or not CanMerchantRepair() or GetRepairAllCost() == 0 then
+		return
+	end
 
 	if CanGuildBankRepair() and module.DB.UseGuildBankRepair and not personalFunds then
-		debugMsg('Repairing with guild funds for ' .. SUI:GoldFormattedValue(GetRepairAllCost()), "Repair", "info")
+		debugMsg('Repairing with guild funds for ' .. SUI:GoldFormattedValue(GetRepairAllCost()), 'Repair', 'info')
 		SUI:Print(L['Auto repair cost'] .. ': ' .. SUI:GoldFormattedValue(GetRepairAllCost()) .. ' ' .. L['used guild funds'])
 		RepairAllItems(true)
 		module:ScheduleTimer('Repair', 0.7, true)
 	else
-		debugMsg('Repairing with personal funds for ' .. SUI:GoldFormattedValue(GetRepairAllCost()), "Repair", "info")
+		debugMsg('Repairing with personal funds for ' .. SUI:GoldFormattedValue(GetRepairAllCost()), 'Repair', 'info')
 		SUI:Print(L['Auto repair cost'] .. ': ' .. SUI:GoldFormattedValue(GetRepairAllCost()) .. ' ' .. L['used personal funds'])
 		RepairAllItems()
 	end
 end
 
 function module:MERCHANT_SHOW()
-	if SUI:IsModuleDisabled('AutoSell') then return end
-	debugMsg('Merchant window opened, starting auto-sell process', "Selling", "info")
+	if SUI:IsModuleDisabled('AutoSell') then
+		return
+	end
+	debugMsg('Merchant window opened, starting auto-sell process', 'Selling', 'info')
 	module:ScheduleTimer('SellTrash', 0.2)
 	module:Repair()
 end
 
 function module:MERCHANT_CLOSED()
-	debugMsg('Merchant window closed, canceling timers', "Selling", "info")
+	debugMsg('Merchant window closed, canceling timers', 'Selling', 'info')
 	module:CancelAllTimers()
-	if totalValue > 0 then totalValue = 0 end
+	if totalValue > 0 then
+		totalValue = 0
+	end
 end
 
 local function HandleItemLevelSquish()
 	-- Check if the WOW_PROJECT_ID has changed (indicating potential expansion change)
 	if module.DB.LastWowProjectID ~= WOW_PROJECT_ID then
-		debugMsg('Detected WOW_PROJECT_ID change from ' .. (module.DB.LastWowProjectID or 'unknown') .. ' to ' .. WOW_PROJECT_ID, "Selling", "info")
+		debugMsg('Detected WOW_PROJECT_ID change from ' .. (module.DB.LastWowProjectID or 'unknown') .. ' to ' .. WOW_PROJECT_ID, 'Selling', 'info')
 
 		-- Scan all items to find the new highest item level
 		local newHighestILVL = 0
@@ -514,7 +555,9 @@ local function HandleItemLevelSquish()
 				elseif not SUI.IsRetail and itemID then
 					iLevel = SUI:GetiLVL(link)
 				end
-				if iLevel and iLevel > newHighestILVL then newHighestILVL = iLevel end
+				if iLevel and iLevel > newHighestILVL then
+					newHighestILVL = iLevel
+				end
 			end
 		end
 
@@ -528,11 +571,13 @@ local function HandleItemLevelSquish()
 			local newMaxILVL = math.floor(oldMaxILVL * squishRatio)
 
 			-- Ensure we don't go below 1
-			if newMaxILVL < 1 then newMaxILVL = 1 end
+			if newMaxILVL < 1 then
+				newMaxILVL = 1
+			end
 
-			debugMsg('Item level squish detected!', "Selling", "warning")
-			debugMsg('Old MaximumiLVL: ' .. module.DB.MaximumiLVL .. ' -> New: ' .. newMaximumiLVL, "Selling", "info")
-			debugMsg('Old MaxILVL: ' .. oldMaxILVL .. ' -> New: ' .. newMaxILVL .. ' (ratio: ' .. string.format('%.2f', squishRatio) .. ')', "Selling", "info")
+			debugMsg('Item level squish detected!', 'Selling', 'warning')
+			debugMsg('Old MaximumiLVL: ' .. module.DB.MaximumiLVL .. ' -> New: ' .. newMaximumiLVL, 'Selling', 'info')
+			debugMsg('Old MaxILVL: ' .. oldMaxILVL .. ' -> New: ' .. newMaxILVL .. ' (ratio: ' .. string.format('%.2f', squishRatio) .. ')', 'Selling', 'info')
 
 			-- Apply the adjustments
 			module.DB.MaximumiLVL = newMaximumiLVL
@@ -542,7 +587,7 @@ local function HandleItemLevelSquish()
 		elseif newMaximumiLVL > module.DB.MaximumiLVL then
 			-- Normal case: just increase the maximum if we found higher level items
 			module.DB.MaximumiLVL = newMaximumiLVL
-			debugMsg('Increased MaximumiLVL to: ' .. newMaximumiLVL, "Selling", "info")
+			debugMsg('Increased MaximumiLVL to: ' .. newMaximumiLVL, 'Selling', 'info')
 		end
 
 		-- Update the stored project ID
@@ -576,7 +621,9 @@ function module:DebugItemSellability(link)
 				break
 			end
 		end
-		if actualBag then break end
+		if actualBag then
+			break
+		end
 	end
 
 	local iLevel = SUI:GetiLVL(link)
@@ -599,25 +646,28 @@ function module:DebugItemSellability(link)
 	-- Tooltip Analysis
 	print('|cffFFFF00--- Tooltip Analysis ------|r')
 	if actualBag and actualSlot then
-		local success, tooltipText = pcall(function()
-			Tooltip:SetOwner(UIParent, 'ANCHOR_NONE')
-			Tooltip:SetBagItem(actualBag, actualSlot)
-			
-			local lines = {}
-			for i = 1, Tooltip:NumLines() do
-				local leftText = _G['AutoSellTooltipTextLeft' .. i]
-				local rightText = _G['AutoSellTooltipTextRight' .. i]
-				if leftText and leftText:GetText() then
-					local lineText = leftText:GetText()
-					if rightText and rightText:GetText() then
-						lineText = lineText .. ' | ' .. rightText:GetText()
+		local success, tooltipText =
+			pcall(
+			function()
+				Tooltip:SetOwner(UIParent, 'ANCHOR_NONE')
+				Tooltip:SetBagItem(actualBag, actualSlot)
+
+				local lines = {}
+				for i = 1, Tooltip:NumLines() do
+					local leftText = _G['AutoSellTooltipTextLeft' .. i]
+					local rightText = _G['AutoSellTooltipTextRight' .. i]
+					if leftText and leftText:GetText() then
+						local lineText = leftText:GetText()
+						if rightText and rightText:GetText() then
+							lineText = lineText .. ' | ' .. rightText:GetText()
+						end
+						table.insert(lines, lineText)
 					end
-					table.insert(lines, lineText)
 				end
+				return table.concat(lines, '\n')
 			end
-			return table.concat(lines, '\n')
-		end)
-		
+		)
+
 		if success and tooltipText then
 			print('Tooltip Content:')
 			for line in tooltipText:gmatch('[^\n]+') do
@@ -626,7 +676,7 @@ function module:DebugItemSellability(link)
 		else
 			print('|cffFF0000ERROR:|r Could not read tooltip: ' .. tostring(tooltipText))
 		end
-		
+
 		Tooltip:Hide()
 	else
 		print('|cffFFFFFF WARNING:|r Could not dump tooltip - item not found in bags')
@@ -695,7 +745,9 @@ function module:DebugItemSellability(link)
 		print(string.format('|cff00FF00PASSED:|r iLevel check (max: %d)', module.DB.MaxILVL))
 	end
 
-	if qualityBlocked then return end
+	if qualityBlocked then
+		return
+	end
 
 	-- Gearset check (can't easily test without bag/slot)
 	print('|cffFFFFFF SKIPPED:|r Gearset check (requires bag position)')
@@ -709,10 +761,10 @@ function module:DebugItemSellability(link)
 	end
 
 	-- Crafting check
-	local isCraftingItem = (itemType == 'Gem' or itemType == 'Reagent' or itemType == 'Recipes' or itemType == 'Trade Goods' or itemType == 'Tradeskill')
-		or (itemType == 'Miscellaneous' and itemSubType == 'Reagent')
-		or (itemType == 'Item Enhancement')
-		or isCraftingReagent
+	local isCraftingItem =
+		(itemType == 'Gem' or itemType == 'Reagent' or itemType == 'Recipes' or itemType == 'Trade Goods' or itemType == 'Tradeskill') or (itemType == 'Miscellaneous' and itemSubType == 'Reagent') or
+		(itemType == 'Item Enhancement') or
+		isCraftingReagent
 
 	if isCraftingItem and module.DB.NotCrafting then
 		print('|cffFF0000BLOCKED:|r Crafting items disabled (NotCrafting = ' .. tostring(module.DB.NotCrafting) .. ')')
@@ -747,24 +799,27 @@ function module:DebugItemSellability(link)
 
 	-- Use text check
 	if actualBag and actualSlot then
-		local hasUseText = pcall(function()
-			Tooltip:SetOwner(UIParent, 'ANCHOR_NONE')
-			Tooltip:SetBagItem(actualBag, actualSlot)
-			
-			for i = 1, Tooltip:NumLines() do
-				local line = _G['AutoSellTooltipTextLeft' .. i]
-				if line and line:GetText() then
-					local text = line:GetText():lower()
-					if text:find('^use:') or text:find('^%s*use:') then
-						Tooltip:Hide()
-						return true
+		local hasUseText =
+			pcall(
+			function()
+				Tooltip:SetOwner(UIParent, 'ANCHOR_NONE')
+				Tooltip:SetBagItem(actualBag, actualSlot)
+
+				for i = 1, Tooltip:NumLines() do
+					local line = _G['AutoSellTooltipTextLeft' .. i]
+					if line and line:GetText() then
+						local text = line:GetText():lower()
+						if text:find('^use:') or text:find('^%s*use:') then
+							Tooltip:Hide()
+							return true
+						end
 					end
 				end
+				Tooltip:Hide()
+				return false
 			end
-			Tooltip:Hide()
-			return false
-		end)
-		
+		)
+
 		if hasUseText then
 			print('|cffFF0000BLOCKED:|r Item has "Use:" text in tooltip (profession enhancement protection)')
 			return
@@ -802,7 +857,9 @@ end
 
 ---Handle Alt+Right Click on items to add/remove from character-specific lists
 function module:HandleItemClick(link)
-	if not IsAltKeyDown() then return end
+	if not IsAltKeyDown() then
+		return
+	end
 
 	-- Control+Alt+Right Click for debugging
 	if IsControlKeyDown() then
@@ -812,10 +869,14 @@ function module:HandleItemClick(link)
 
 	-- Extract item ID from hyperlink using string matching
 	local itemID = tonumber(string.match(link, 'item:(%d+)'))
-	if not itemID then return end
+	if not itemID then
+		return
+	end
 
 	local itemName, _, quality = C_Item.GetItemInfo(itemID)
-	if not itemName then return end
+	if not itemName then
+		return
+	end
 
 	-- Find the actual bag/slot for this item to use exact same call as marking/selling
 	local actualBag, actualSlot, actualItemInfo = nil, nil, nil
@@ -827,14 +888,18 @@ function module:HandleItemClick(link)
 				break
 			end
 		end
-		if actualBag then break end
+		if actualBag then
+			break
+		end
 	end
 
 	-- Check current state of this item
 	local isInCharBlacklist = module.CharDB.Blacklist[itemID]
 	local isInCharWhitelist = module.CharDB.Whitelist[itemID]
 	local isSellable = false
-	if actualItemInfo then isSellable = module:IsSellable(actualItemInfo.itemID, actualItemInfo.hyperlink, actualBag, actualSlot) end
+	if actualItemInfo then
+		isSellable = module:IsSellable(actualItemInfo.itemID, actualItemInfo.hyperlink, actualBag, actualSlot)
+	end
 
 	if isInCharWhitelist then
 		-- State 1: In whitelist -> Move to blacklist
@@ -853,14 +918,14 @@ function module:HandleItemClick(link)
 
 	-- Refresh bag markings if enabled
 	if module.DB.ShowBagMarking and module.markItems then
-		debugMsg("Refreshing bag markings after item list changes", "BagMarking", "debug")
+		debugMsg('Refreshing bag markings after item list changes', 'BagMarking', 'debug')
 		module.markItems()
 	end
 
 	-- Request refresh for Baganator if loaded
 	if C_AddOns.IsAddOnLoaded('Baganator') and Baganator and Baganator.API then
 		-- Request refresh so junk plugin can re-evaluate all items
-		debugMsg("Requesting Baganator item button refresh", "BagMarking", "debug")
+		debugMsg('Requesting Baganator item button refresh', 'BagMarking', 'debug')
 		Baganator.API.RequestItemButtonsRefresh()
 	end
 end
@@ -868,25 +933,35 @@ end
 ---Set up click handler for Alt+Right Click functionality
 function module:SetupClickHandler()
 	-- Hook the global modified item click handler
-	hooksecurefunc('HandleModifiedItemClick', function(link)
-		module:HandleItemClick(link)
-	end)
+	hooksecurefunc(
+		'HandleModifiedItemClick',
+		function(link)
+			module:HandleItemClick(link)
+		end
+	)
 end
 
 function module:OnInitialize()
 	local CharDbDefaults = {
 		Whitelist = {},
-		Blacklist = {},
+		Blacklist = {}
 	}
 
-	module.Database = SUI.SpartanUIDB:RegisterNamespace('AutoSell', { profile = DbDefaults, char = CharDbDefaults })
+	module.Database = SUI.SpartanUIDB:RegisterNamespace('AutoSell', {profile = DbDefaults, char = CharDbDefaults})
 	module.DB = module.Database.profile ---@type SUI.Module.AutoSell.DB
 	module.CharDB = module.Database.char ---@type SUI.Module.AutoSell.CharDB
 
 	-- Setup hierarchical logging system for AutoSell
-	loggers = SUI.SetupModuleLogging(module, {
-		"BagMarking", "Selling", "Repair", "Blacklist"
-	})
+	loggers =
+		SUI.SetupModuleLogging(
+		module,
+		{
+			'BagMarking',
+			'Selling',
+			'Repair',
+			'Blacklist'
+		}
+	)
 
 	-- Handle potential item level squish after DB is initialized
 	HandleItemLevelSquish()
@@ -896,8 +971,12 @@ function module:OnInitialize()
 end
 
 function module:OnEnable()
-	if not LoadedOnce then module:InitializeOptions() end
-	if SUI:IsModuleDisabled(module) then return end
+	if not LoadedOnce then
+		module:InitializeOptions()
+	end
+	if SUI:IsModuleDisabled(module) then
+		return
+	end
 
 	module:RegisterEvent('MERCHANT_SHOW')
 	module:RegisterEvent('MERCHANT_CLOSED')
@@ -906,7 +985,7 @@ function module:OnEnable()
 
 	-- Initialize bag marking system if enabled
 	if module.DB.ShowBagMarking then
-		debugMsg("Initializing bag marking system", "BagMarking", "info")
+		debugMsg('Initializing bag marking system', 'BagMarking', 'info')
 		module:InitializeBagMarking()
 	end
 
@@ -922,7 +1001,7 @@ function module:OnDisable()
 	module:UnregisterEvent('MERCHANT_CLOSED')
 
 	-- Cleanup bag marking system
-	debugMsg("Cleaning up bag marking system", "BagMarking", "info")
+	debugMsg('Cleaning up bag marking system', 'BagMarking', 'info')
 	module:CleanupBagMarking()
 
 	-- Hide and cleanup vendor panels
@@ -930,7 +1009,9 @@ function module:OnDisable()
 		for _, panel in pairs(module.VendorPanels) do
 			if panel then
 				panel:Hide()
-				if panel.Panel then panel.Panel:Hide() end
+				if panel.Panel then
+					panel.Panel:Hide()
+				end
 			end
 		end
 	end

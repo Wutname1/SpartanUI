@@ -3,7 +3,9 @@ local UF = SUI.UF
 ---@param frame table
 ---@param DB table
 local function Build(frame, DB)
-	if frame.unitOnCreate ~= 'player' then return end
+	if frame.unitOnCreate ~= 'player' then
+		return
+	end
 	local playerClass = select(2, UnitClass('player'))
 	if playerClass == 'DEATHKNIGHT' then
 		frame.Runes = CreateFrame('Frame', nil, frame)
@@ -50,7 +52,7 @@ local function Options(unitName, OptionSet)
 		order = 2,
 		width = 'double',
 		name = 'Bar Texture',
-		values = AceGUIWidgetLSMlists.statusbar,
+		values = AceGUIWidgetLSMlists.statusbar
 	}
 end
 
@@ -59,8 +61,8 @@ local Settings = {
 	enabled = true,
 	config = {
 		type = 'Indicator',
-		NoBulkUpdate = true,
-	},
+		NoBulkUpdate = true
+	}
 }
 
 UF.Elements:Register('Runes', Build, Update, Options, Settings)

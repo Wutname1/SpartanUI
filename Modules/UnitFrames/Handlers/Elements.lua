@@ -7,7 +7,7 @@ local UF = SUI.UF
 ---@field OptionsTable? function
 ---@field ElementSettings? SUI.UF.Elements.Settings
 local Elements = {
-	Types = {},
+	Types = {}
 }
 
 ---@class SUI.UF.Elements.Settings
@@ -23,7 +23,7 @@ local DefaultSettings = {
 	texture = 'SpartanUI Default',
 	bg = {
 		enabled = false,
-		color = { 0, 0, 0, 0.2 },
+		color = {0, 0, 0, 0.2}
 	},
 	text = {
 		['**'] = {
@@ -35,25 +35,25 @@ local DefaultSettings = {
 			position = {
 				anchor = 'CENTER',
 				x = 0,
-				y = 0,
-			},
+				y = 0
+			}
 		},
 		['1'] = {
-			position = {},
+			position = {}
 		},
 		['2'] = {
-			position = {},
-		},
+			position = {}
+		}
 	},
 	position = {
 		anchor = 'CENTER',
 		relativeTo = 'Frame',
 		x = 0,
-		y = 0,
+		y = 0
 	},
 	rules = {
 		duration = {
-			mode = 'include',
+			mode = 'include'
 		},
 		whitelist = {},
 		blacklist = {},
@@ -64,12 +64,12 @@ local DefaultSettings = {
 		isHelpful = false,
 		isRaid = false,
 		isStealable = false,
-		IsDispellableByMe = false,
+		IsDispellableByMe = false
 	},
 	config = {
 		NoBulkUpdate = false,
-		type = 'General',
-	},
+		type = 'General'
+	}
 }
 
 Elements.Types.General = {}
@@ -98,7 +98,7 @@ function Elements:Register(ElementName, Build, Update, OptionsTable, ElementSett
 		Build = Build,
 		Update = Update,
 		OptionsTable = OptionsTable,
-		ElementSettings = ElementSettings,
+		ElementSettings = ElementSettings
 	}
 
 	Elements.Types[ElementSettings.config.type or 'Other'][ElementName] = ElementName
@@ -109,11 +109,15 @@ end
 ---@param DB? SUI.UF.Elements.Settings
 function Elements:Build(frame, ElementName, DB)
 	if UF.Elements.List[ElementName] then
-		if not frame.elementList then frame.elementList = {} end
+		if not frame.elementList then
+			frame.elementList = {}
+		end
 
 		frame.elementList[ElementName] = UF.Elements.List[ElementName].ElementSettings.config.DisplayName or ElementName
 		if frame.unitOnCreate then
-			if _G['SUI_UF_' .. frame.unitOnCreate .. '_Holder'] then _G['SUI_UF_' .. frame.unitOnCreate .. '_Holder'].elementList = frame.elementList end
+			if _G['SUI_UF_' .. frame.unitOnCreate .. '_Holder'] then
+				_G['SUI_UF_' .. frame.unitOnCreate .. '_Holder'].elementList = frame.elementList
+			end
 		end
 
 		UF.Elements.List[ElementName].Build(frame, DB or {})

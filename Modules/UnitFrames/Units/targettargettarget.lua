@@ -12,7 +12,7 @@ local elementList = {
 	'RaidTargetIndicator',
 	'Range',
 	'ThreatIndicator',
-	'RaidRoleIndicator',
+	'RaidRoleIndicator'
 }
 
 local function Builder(frame)
@@ -23,7 +23,8 @@ local function Builder(frame)
 	end
 end
 
-local function Options() end
+local function Options()
+end
 
 ---@type SUI.UF.Unit.Settings
 local Settings = {
@@ -32,24 +33,24 @@ local Settings = {
 	elements = {
 		auras = {
 			Debuffs = {
-				size = 10,
-			},
+				size = 10
+			}
 		},
 		ThreatIndicator = {
 			enabled = true,
-			points = 'Name',
+			points = 'Name'
 		},
 		Health = {
-			height = 30,
+			height = 30
 		},
 		Power = {
-			height = 5,
-		},
+			height = 5
+		}
 	},
 	config = {
 		Requires = 'target',
-		isFriendly = true,
-	},
+		isFriendly = true
+	}
 }
 
 UF.Unit:Add('targettargettarget', Builder, Settings)

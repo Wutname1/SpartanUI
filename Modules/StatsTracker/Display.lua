@@ -22,11 +22,13 @@ local function CreateProgressBar(parent, width, height)
 	bar:SetSize(width, height)
 
 	-- Background
-	bar:SetBackdrop({
-		bgFile = 'Interface\\AddOns\\SpartanUI\\images\\blank.tga',
-		edgeFile = 'Interface\\AddOns\\SpartanUI\\images\\blank.tga',
-		edgeSize = 1,
-	})
+	bar:SetBackdrop(
+		{
+			bgFile = 'Interface\\AddOns\\SpartanUI\\images\\blank.tga',
+			edgeFile = 'Interface\\AddOns\\SpartanUI\\images\\blank.tga',
+			edgeSize = 1
+		}
+	)
 	bar:SetBackdropColor(0.1, 0.1, 0.1, 0.8)
 	bar:SetBackdropBorderColor(0.3, 0.3, 0.3, 1)
 
@@ -34,16 +36,20 @@ local function CreateProgressBar(parent, width, height)
 	bar.fill = CreateFrame('Frame', nil, bar, 'BackdropTemplate')
 	bar.fill:SetPoint('LEFT')
 	bar.fill:SetHeight(height)
-	bar.fill:SetBackdrop({
-		bgFile = 'Interface\\AddOns\\SpartanUI\\images\\blank.tga',
-	})
+	bar.fill:SetBackdrop(
+		{
+			bgFile = 'Interface\\AddOns\\SpartanUI\\images\\blank.tga'
+		}
+	)
 	bar.fill:SetBackdropColor(0, 0.8, 0, 0.8)
 
 	-- Update function
 	bar.SetProgress = function(self, progress, color)
 		progress = math.max(0, math.min(1, progress or 0))
 		self.fill:SetWidth(width * progress)
-		if color then self.fill:SetBackdropColor(unpack(color)) end
+		if color then
+			self.fill:SetBackdropColor(unpack(color))
+		end
 	end
 
 	return bar
@@ -93,7 +99,7 @@ local function CreateStatElement(parent, statKey, index, isMouseover, frameConfi
 		end
 
 		self.frame:Show()
-		
+
 		-- Use per-frame formatting if available
 		local displayText = stat.displayValue or tostring(stat.value)
 		if stat.rawDisplayValue and frameConfig then
@@ -101,13 +107,19 @@ local function CreateStatElement(parent, statKey, index, isMouseover, frameConfi
 		end
 		self.text:SetText(displayText)
 
-		if stat.color then self.text:SetTextColor(unpack(stat.color)) end
+		if stat.color then
+			self.text:SetTextColor(unpack(stat.color))
+		end
 
-		if self.progressBar and stat.progress then self.progressBar:SetProgress(stat.progress, stat.color) end
+		if self.progressBar and stat.progress then
+			self.progressBar:SetProgress(stat.progress, stat.color)
+		end
 	end
 
 	-- Initially hide mouseover elements
-	if isMouseover then element.frame:Hide() end
+	if isMouseover then
+		element.frame:Hide()
+	end
 
 	return element
 end
@@ -123,10 +135,14 @@ local function PositionElements(elements, container, layout, spacing, growDirect
 
 	-- Get visible elements in order
 	for _, element in pairs(elements) do
-		if element.frame:IsShown() then table.insert(visibleElements, element) end
+		if element.frame:IsShown() then
+			table.insert(visibleElements, element)
+		end
 	end
 
-	if #visibleElements == 0 then return end
+	if #visibleElements == 0 then
+		return
+	end
 
 	-- Position elements based on layout and grow direction
 	for i, element in ipairs(visibleElements) do
@@ -180,14 +196,16 @@ local function CreateMouseoverContainer(parent, config)
 
 	-- Background (slightly different from main frame)
 	if StatsTracker.DB.backgroundColor then
-		container:SetBackdrop({
-			bgFile = 'Interface\\AddOns\\SpartanUI\\images\\blank.tga',
-			edgeFile = 'Interface\\AddOns\\SpartanUI\\images\\blank.tga',
-			edgeSize = 1,
-		})
+		container:SetBackdrop(
+			{
+				bgFile = 'Interface\\AddOns\\SpartanUI\\images\\blank.tga',
+				edgeFile = 'Interface\\AddOns\\SpartanUI\\images\\blank.tga',
+				edgeSize = 1
+			}
+		)
 		local bg = StatsTracker.DB.backgroundColor
 		container:SetBackdropColor(bg[1], bg[2], bg[3], (bg[4] or 0.7) * 0.9) -- Slightly more transparent
-		local border = StatsTracker.DB.borderColor or { 0.3, 0.3, 0.3, 1 }
+		local border = StatsTracker.DB.borderColor or {0.3, 0.3, 0.3, 1}
 		container:SetBackdropBorderColor(unpack(border))
 	end
 
@@ -218,7 +236,9 @@ end
 local function UpdateContainerSize(container, elements, layout, spacing)
 	local visibleElements = {}
 	for _, element in pairs(elements) do
-		if element.frame:IsShown() then table.insert(visibleElements, element) end
+		if element.frame:IsShown() then
+			table.insert(visibleElements, element)
+		end
 	end
 
 	if #visibleElements == 0 then
@@ -244,7 +264,9 @@ end
 ---@return StatsTracker.DisplayFrame
 function StatsTracker:CreateDisplayFrame(frameKey)
 	local config = self.DB.frames[frameKey]
-	if not config or not config.enabled then return end
+	if not config or not config.enabled then
+		return
+	end
 
 	---@type StatsTracker.DisplayFrame
 	local frame = CreateFrame('Frame', 'SUI_StatsTracker_' .. frameKey, UIParent, 'BackdropTemplate')
@@ -258,13 +280,15 @@ function StatsTracker:CreateDisplayFrame(frameKey)
 
 	-- Background
 	if StatsTracker.DB.backgroundColor then
-		frame:SetBackdrop({
-			bgFile = 'Interface\\AddOns\\SpartanUI\\images\\blank.tga',
-			edgeFile = 'Interface\\AddOns\\SpartanUI\\images\\blank.tga',
-			edgeSize = 1,
-		})
+		frame:SetBackdrop(
+			{
+				bgFile = 'Interface\\AddOns\\SpartanUI\\images\\blank.tga',
+				edgeFile = 'Interface\\AddOns\\SpartanUI\\images\\blank.tga',
+				edgeSize = 1
+			}
+		)
 		frame:SetBackdropColor(unpack(StatsTracker.DB.backgroundColor))
-		frame:SetBackdropBorderColor(unpack(StatsTracker.DB.borderColor or { 0.3, 0.3, 0.3, 1 }))
+		frame:SetBackdropBorderColor(unpack(StatsTracker.DB.borderColor or {0.3, 0.3, 0.3, 1}))
 	end
 
 	-- Parse position
@@ -335,7 +359,9 @@ function StatsTracker:CreateDisplayFrame(frameKey)
 		local visibleElements = 0
 
 		for _, element in pairs(self.alwaysShownElements) do
-			if element.frame:IsShown() then visibleElements = visibleElements + 1 end
+			if element.frame:IsShown() then
+				visibleElements = visibleElements + 1
+			end
 		end
 
 		local elementWidth = StatsTracker.DB.elementWidth or 150
@@ -346,63 +372,91 @@ function StatsTracker:CreateDisplayFrame(frameKey)
 		else
 			-- Horizontal layout
 			local totalWidth = (visibleElements * elementWidth) + (math.max(0, visibleElements - 1) * (config.spacing or 5)) + 4
-			if totalWidth > 0 then self:SetWidth(math.max(totalWidth, config.width or elementWidth)) end
+			if totalWidth > 0 then
+				self:SetWidth(math.max(totalWidth, config.width or elementWidth))
+			end
 		end
 	end
 
 	-- Mouseover handling
-	frame:SetScript('OnEnter', function(self)
-		self.isMouseOver = true
-		if next(self.mouseoverElements) then
-			self.mouseoverContainer:Show()
-			-- Show all mouseover elements that have been updated with data
-			for statKey, element in pairs(self.mouseoverElements) do
-				local currentStats = StatsTracker.GetCurrentStats()
-				if currentStats[statKey] then element.frame:Show() end
-			end
-			-- Update positioning
-			UpdateContainerSize(self.mouseoverContainer, self.mouseoverElements, config.layout, config.spacing)
-			PositionElements(self.mouseoverElements, self.mouseoverContainer, config.layout, config.spacing, config.growDirection)
-		end
-	end)
-
-	frame:SetScript('OnLeave', function(self)
-		self.isMouseOver = false
-		-- Delay hiding to prevent flickering when moving between frame and mouseover container
-		C_Timer.After(0.1, function()
-			if not self.isMouseOver and not self.mouseoverContainer.isMouseOver then
-				self.mouseoverContainer:Hide()
-				for _, element in pairs(self.mouseoverElements) do
-					element.frame:Hide()
+	frame:SetScript(
+		'OnEnter',
+		function(self)
+			self.isMouseOver = true
+			if next(self.mouseoverElements) then
+				self.mouseoverContainer:Show()
+				-- Show all mouseover elements that have been updated with data
+				for statKey, element in pairs(self.mouseoverElements) do
+					local currentStats = StatsTracker.GetCurrentStats()
+					if currentStats[statKey] then
+						element.frame:Show()
+					end
 				end
+				-- Update positioning
+				UpdateContainerSize(self.mouseoverContainer, self.mouseoverElements, config.layout, config.spacing)
+				PositionElements(self.mouseoverElements, self.mouseoverContainer, config.layout, config.spacing, config.growDirection)
 			end
-		end)
-	end)
+		end
+	)
+
+	frame:SetScript(
+		'OnLeave',
+		function(self)
+			self.isMouseOver = false
+			-- Delay hiding to prevent flickering when moving between frame and mouseover container
+			C_Timer.After(
+				0.1,
+				function()
+					if not self.isMouseOver and not self.mouseoverContainer.isMouseOver then
+						self.mouseoverContainer:Hide()
+						for _, element in pairs(self.mouseoverElements) do
+							element.frame:Hide()
+						end
+					end
+				end
+			)
+		end
+	)
 
 	-- Mouseover container handling
-	frame.mouseoverContainer:SetScript('OnEnter', function(self)
-		self.isMouseOver = true
-	end)
+	frame.mouseoverContainer:SetScript(
+		'OnEnter',
+		function(self)
+			self.isMouseOver = true
+		end
+	)
 
-	frame.mouseoverContainer:SetScript('OnLeave', function(self)
-		self.isMouseOver = false
-		C_Timer.After(0.1, function()
-			if not frame.isMouseOver and not self.isMouseOver then
-				self:Hide()
-				for _, element in pairs(frame.mouseoverElements) do
-					element.frame:Hide()
+	frame.mouseoverContainer:SetScript(
+		'OnLeave',
+		function(self)
+			self.isMouseOver = false
+			C_Timer.After(
+				0.1,
+				function()
+					if not frame.isMouseOver and not self.isMouseOver then
+						self:Hide()
+						for _, element in pairs(frame.mouseoverElements) do
+							element.frame:Hide()
+						end
+					end
 				end
-			end
-		end)
-	end)
+			)
+		end
+	)
 
 	-- Create mover if MoveIt is available
 	if MoveIt then
-		MoveIt:CreateMover(frame, 'StatsTracker_' .. frameKey, 'Stats: ' .. frameKey, function()
-			-- Post-drag callback
-			local point, anchor, secondaryPoint, x, y = frame:GetPoint()
-			StatsTracker.DB.frames[frameKey].position = string.format('%s,%s,%s,%d,%d', point, anchor:GetName(), secondaryPoint, x, y)
-		end, 'Stats & Tracking')
+		MoveIt:CreateMover(
+			frame,
+			'StatsTracker_' .. frameKey,
+			'Stats: ' .. frameKey,
+			function()
+				-- Post-drag callback
+				local point, anchor, secondaryPoint, x, y = frame:GetPoint()
+				StatsTracker.DB.frames[frameKey].position = string.format('%s,%s,%s,%d,%d', point, anchor:GetName(), secondaryPoint, x, y)
+			end,
+			'Stats & Tracking'
+		)
 	end
 
 	return frame
@@ -423,7 +477,9 @@ function StatsTracker:CreateDisplayFrames()
 	for frameKey, config in pairs(self.DB.frames) do
 		if config.enabled then
 			local frame = self:CreateDisplayFrame(frameKey)
-			if frame then displayFrames[frameKey] = frame end
+			if frame then
+				displayFrames[frameKey] = frame
+			end
 		end
 	end
 end
@@ -431,7 +487,9 @@ end
 ---Update all display frames
 function StatsTracker:UpdateDisplayFrames()
 	for _, frame in pairs(displayFrames) do
-		if frame and frame.Update then frame:Update() end
+		if frame and frame.Update then
+			frame:Update()
+		end
 	end
 end
 
@@ -441,9 +499,13 @@ end
 ---@param visibility string 'always' or 'mouseover'
 function StatsTracker:SetStatVisibility(frameKey, statKey, visibility)
 	local config = self.DB.frames[frameKey]
-	if not config then return end
+	if not config then
+		return
+	end
 
-	if not config.statVisibility then config.statVisibility = {} end
+	if not config.statVisibility then
+		config.statVisibility = {}
+	end
 
 	config.statVisibility[statKey] = visibility
 
@@ -457,7 +519,9 @@ end
 ---@param enabled boolean
 function StatsTracker:ToggleFrameStat(frameKey, statKey, enabled)
 	local config = self.DB.frames[frameKey]
-	if not config then return end
+	if not config then
+		return
+	end
 
 	local statList = config.stats or {}
 
@@ -470,11 +534,15 @@ function StatsTracker:ToggleFrameStat(frameKey, statKey, enabled)
 				break
 			end
 		end
-		if not found then table.insert(statList, statKey) end
+		if not found then
+			table.insert(statList, statKey)
+		end
 	else
 		-- Remove stat
 		for i = #statList, 1, -1 do
-			if statList[i] == statKey then table.remove(statList, i) end
+			if statList[i] == statKey then
+				table.remove(statList, i)
+			end
 		end
 	end
 
@@ -492,26 +560,22 @@ function StatsTracker:GetAvailableStats()
 		fps = L['FPS'],
 		latency = L['Latency'],
 		memory = L['Memory Usage'],
-
 		-- Character
 		bags = L['Bag Usage'],
 		durability = L['Durability'],
 		gold = L['Gold'],
-
 		-- Session
 		sessionTime = L['Session Time'],
 		totalTime = L['Total Time'],
-
 		-- Gameplay
 		xp = L['Experience'],
 		xpPerHour = L['XP per Hour'],
 		recentXpRate = L['Recent XP Rate'],
 		restedXP = L['Rested XP'],
-
 		-- Combat
 		kills = L['Kills'],
 		deaths = L['Deaths'],
-		kdr = L['K/D Ratio'],
+		kdr = L['K/D Ratio']
 	}
 
 	-- Add detected currencies
@@ -536,7 +600,7 @@ StatsTracker.InitializeDisplay = function(self)
 			width = 600,
 			height = 25,
 			scale = 1.0,
-			stats = { 'fps', 'latency', 'bags', 'durability', 'gold', 'sessionTime' },
+			stats = {'fps', 'latency', 'bags', 'durability', 'gold', 'sessionTime'},
 			layout = 'vertical',
 			spacing = 0,
 			growDirection = 'down',
@@ -553,8 +617,8 @@ StatsTracker.InitializeDisplay = function(self)
 				xp = 'mouseover',
 				xpPerHour = 'mouseover',
 				kills = 'mouseover',
-				deaths = 'mouseover',
-			},
+				deaths = 'mouseover'
+			}
 		}
 	end
 end

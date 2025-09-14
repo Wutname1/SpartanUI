@@ -32,23 +32,23 @@ Handler.DefaultSettings = {
 	background = {
 		enabled = true,
 		type = 'color',
-		color = { 0.1, 0.1, 0.1, 0.8 },
+		color = {0.1, 0.1, 0.1, 0.8},
 		texture = 'Interface\\Buttons\\WHITE8X8',
 		alpha = 0.8,
-		classColor = false,
+		classColor = false
 	},
 	border = {
 		enabled = false,
-		sides = { top = true, bottom = true, left = true, right = true },
+		sides = {top = true, bottom = true, left = true, right = true},
 		size = 1,
 		colors = {
-			top = { 1, 1, 1, 1 },
-			bottom = { 1, 1, 1, 1 },
-			left = { 1, 1, 1, 1 },
-			right = { 1, 1, 1, 1 },
+			top = {1, 1, 1, 1},
+			bottom = {1, 1, 1, 1},
+			left = {1, 1, 1, 1},
+			right = {1, 1, 1, 1}
 		},
-		classColors = { top = false, bottom = false, left = false, right = false },
-	},
+		classColors = {top = false, bottom = false, left = false, right = false}
+	}
 }
 
 ---Create a new background & border instance
@@ -57,7 +57,9 @@ Handler.DefaultSettings = {
 ---@param settings? SUI.BackgroundBorder.Settings Configuration settings
 ---@return SUI.BackgroundBorder.Instance
 function Handler:Create(parent, id, settings)
-	if self.instances[id] then self:Destroy(id) end
+	if self.instances[id] then
+		self:Destroy(id)
+	end
 
 	settings = SUI:MergeData(SUI:CopyData(self.DefaultSettings), settings or {})
 
@@ -68,7 +70,7 @@ function Handler:Create(parent, id, settings)
 		settings = settings,
 		background = nil,
 		borders = {},
-		visible = true,
+		visible = true
 	}
 
 	-- Create background frame
@@ -81,7 +83,7 @@ function Handler:Create(parent, id, settings)
 	instance.background.texture:SetAllPoints(instance.background)
 
 	-- Create border frames for each side
-	for _, side in ipairs({ 'top', 'bottom', 'left', 'right' }) do
+	for _, side in ipairs({'top', 'bottom', 'left', 'right'}) do
 		local border = CreateFrame('Frame', id .. '_Border_' .. side, parent)
 		border:SetFrameLevel(parent:GetFrameLevel() + settings.displayLevel + 1)
 		border.texture = border:CreateTexture(nil, 'BORDER')
@@ -101,10 +103,14 @@ end
 ---@param settings? SUI.BackgroundBorder.Settings New settings (will be merged)
 function Handler:Update(id, settings)
 	local instance = self.instances[id]
-	if not instance then return end
+	if not instance then
+		return
+	end
 
 	-- Merge new settings if provided
-	if settings then instance.settings = SUI:MergeData(instance.settings, settings) end
+	if settings then
+		instance.settings = SUI:MergeData(instance.settings, settings)
+	end
 
 	local config = instance.settings
 
@@ -131,7 +137,9 @@ end
 ---@param id string Instance identifier
 function Handler:UpdateBackground(id)
 	local instance = self.instances[id]
-	if not instance then return end
+	if not instance then
+		return
+	end
 
 	local bg = instance.settings.background
 	local texture = instance.background.texture
@@ -144,7 +152,9 @@ function Handler:UpdateBackground(id)
 			local texturePath = bg.texture
 			-- Try to get from LibSharedMedia if it's a key
 			local LSM = SUI.Lib.LSM
-			if LSM and LSM:Fetch('background', texturePath, true) then texturePath = LSM:Fetch('background', texturePath) end
+			if LSM and LSM:Fetch('background', texturePath, true) then
+				texturePath = LSM:Fetch('background', texturePath)
+			end
 			texture:SetTexture(texturePath)
 			texture:SetVertexColor(1, 1, 1, bg.alpha)
 		else
@@ -166,7 +176,9 @@ end
 ---@param id string Instance identifier
 function Handler:UpdateBorders(id)
 	local instance = self.instances[id]
-	if not instance then return end
+	if not instance then
+		return
+	end
 
 	local border = instance.settings.border
 
@@ -178,7 +190,7 @@ function Handler:UpdateBorders(id)
 	end
 
 	-- Position and show enabled border sides
-	for _, side in ipairs({ 'top', 'bottom', 'left', 'right' }) do
+	for _, side in ipairs({'top', 'bottom', 'left', 'right'}) do
 		local borderFrame = instance.borders[side]
 
 		if border.sides[side] then
@@ -223,7 +235,9 @@ end
 ---@param visible boolean Show or hide
 function Handler:SetVisible(id, visible)
 	local instance = self.instances[id]
-	if not instance then return end
+	if not instance then
+		return
+	end
 
 	instance.visible = visible
 	self:Update(id)
@@ -233,7 +247,9 @@ end
 ---@param id string Instance identifier
 function Handler:Destroy(id)
 	local instance = self.instances[id]
-	if not instance then return end
+	if not instance then
+		return
+	end
 
 	if instance.background then
 		instance.background:Hide()
@@ -284,8 +300,10 @@ function Handler:GenerateOptions(id, getFunc, setFunc, updateFunc)
 					local settings = getFunc()
 					settings.enabled = val
 					setFunc(settings)
-					if updateFunc then updateFunc() end
-				end,
+					if updateFunc then
+						updateFunc()
+					end
+				end
 			},
 			displayLevel = {
 				type = 'range',
@@ -302,8 +320,10 @@ function Handler:GenerateOptions(id, getFunc, setFunc, updateFunc)
 					local settings = getFunc()
 					settings.displayLevel = val
 					setFunc(settings)
-					if updateFunc then updateFunc() end
-				end,
+					if updateFunc then
+						updateFunc()
+					end
+				end
 			},
 			background = {
 				type = 'group',
@@ -322,8 +342,10 @@ function Handler:GenerateOptions(id, getFunc, setFunc, updateFunc)
 							local settings = getFunc()
 							settings.background.enabled = val
 							setFunc(settings)
-							if updateFunc then updateFunc() end
-						end,
+							if updateFunc then
+								updateFunc()
+							end
+						end
 					},
 					type = {
 						type = 'select',
@@ -331,7 +353,7 @@ function Handler:GenerateOptions(id, getFunc, setFunc, updateFunc)
 						order = 2,
 						values = {
 							color = L['Solid Color'] or 'Solid Color',
-							texture = L['Texture'] or 'Texture',
+							texture = L['Texture'] or 'Texture'
 						},
 						disabled = function()
 							return not getFunc().background.enabled
@@ -343,8 +365,10 @@ function Handler:GenerateOptions(id, getFunc, setFunc, updateFunc)
 							local settings = getFunc()
 							settings.background.type = val
 							setFunc(settings)
-							if updateFunc then updateFunc() end
-						end,
+							if updateFunc then
+								updateFunc()
+							end
+						end
 					},
 					color = {
 						type = 'color',
@@ -361,10 +385,12 @@ function Handler:GenerateOptions(id, getFunc, setFunc, updateFunc)
 						end,
 						set = function(_, r, g, b, a)
 							local settings = getFunc()
-							settings.background.color = { r, g, b, a }
+							settings.background.color = {r, g, b, a}
 							setFunc(settings)
-							if updateFunc then updateFunc() end
-						end,
+							if updateFunc then
+								updateFunc()
+							end
+						end
 					},
 					classColor = {
 						type = 'toggle',
@@ -381,8 +407,10 @@ function Handler:GenerateOptions(id, getFunc, setFunc, updateFunc)
 							local settings = getFunc()
 							settings.background.classColor = val
 							setFunc(settings)
-							if updateFunc then updateFunc() end
-						end,
+							if updateFunc then
+								updateFunc()
+							end
+						end
 					},
 					texture = {
 						type = 'select',
@@ -404,8 +432,10 @@ function Handler:GenerateOptions(id, getFunc, setFunc, updateFunc)
 							local settings = getFunc()
 							settings.background.texture = val
 							setFunc(settings)
-							if updateFunc then updateFunc() end
-						end,
+							if updateFunc then
+								updateFunc()
+							end
+						end
 					},
 					alpha = {
 						type = 'range',
@@ -424,10 +454,12 @@ function Handler:GenerateOptions(id, getFunc, setFunc, updateFunc)
 							local settings = getFunc()
 							settings.background.alpha = val
 							setFunc(settings)
-							if updateFunc then updateFunc() end
-						end,
-					},
-				},
+							if updateFunc then
+								updateFunc()
+							end
+						end
+					}
+				}
 			},
 			border = {
 				type = 'group',
@@ -446,8 +478,10 @@ function Handler:GenerateOptions(id, getFunc, setFunc, updateFunc)
 							local settings = getFunc()
 							settings.border.enabled = val
 							setFunc(settings)
-							if updateFunc then updateFunc() end
-						end,
+							if updateFunc then
+								updateFunc()
+							end
+						end
 					},
 					size = {
 						type = 'range',
@@ -466,8 +500,10 @@ function Handler:GenerateOptions(id, getFunc, setFunc, updateFunc)
 							local settings = getFunc()
 							settings.border.size = val
 							setFunc(settings)
-							if updateFunc then updateFunc() end
-						end,
+							if updateFunc then
+								updateFunc()
+							end
+						end
 					},
 					sides = {
 						type = 'multiselect',
@@ -477,7 +513,7 @@ function Handler:GenerateOptions(id, getFunc, setFunc, updateFunc)
 							top = L['Top'] or 'Top',
 							bottom = L['Bottom'] or 'Bottom',
 							left = L['Left'] or 'Left',
-							right = L['Right'] or 'Right',
+							right = L['Right'] or 'Right'
 						},
 						disabled = function()
 							return not getFunc().border.enabled
@@ -489,8 +525,10 @@ function Handler:GenerateOptions(id, getFunc, setFunc, updateFunc)
 							local settings = getFunc()
 							settings.border.sides[key] = val
 							setFunc(settings)
-							if updateFunc then updateFunc() end
-						end,
+							if updateFunc then
+								updateFunc()
+							end
+						end
 					},
 					colors = {
 						type = 'group',
@@ -500,7 +538,7 @@ function Handler:GenerateOptions(id, getFunc, setFunc, updateFunc)
 						disabled = function()
 							return not getFunc().border.enabled
 						end,
-						args = {},
+						args = {}
 					},
 					classColors = {
 						type = 'group',
@@ -510,11 +548,11 @@ function Handler:GenerateOptions(id, getFunc, setFunc, updateFunc)
 						disabled = function()
 							return not getFunc().border.enabled
 						end,
-						args = {},
-					},
-				},
-			},
-		},
+						args = {}
+					}
+				}
+			}
+		}
 	}
 end
 
@@ -525,12 +563,12 @@ end
 ---@param updateFunc function Function to call after changes
 function Handler:AddBorderSideOptions(options, getFunc, setFunc, updateFunc)
 	local L = SUI.L
-	local sides = { 'top', 'bottom', 'left', 'right' }
+	local sides = {'top', 'bottom', 'left', 'right'}
 	local sideNames = {
 		top = L['Top'] or 'Top',
 		bottom = L['Bottom'] or 'Bottom',
 		left = L['Left'] or 'Left',
-		right = L['Right'] or 'Right',
+		right = L['Right'] or 'Right'
 	}
 
 	-- Add color options for each side
@@ -545,15 +583,17 @@ function Handler:AddBorderSideOptions(options, getFunc, setFunc, updateFunc)
 				return not settings.border.enabled or not settings.border.sides[side] or settings.border.classColors[side]
 			end,
 			get = function()
-				local color = getFunc().border.colors[side] or { 1, 1, 1, 1 }
+				local color = getFunc().border.colors[side] or {1, 1, 1, 1}
 				return unpack(color)
 			end,
 			set = function(_, r, g, b, a)
 				local settings = getFunc()
-				settings.border.colors[side] = { r, g, b, a }
+				settings.border.colors[side] = {r, g, b, a}
 				setFunc(settings)
-				if updateFunc then updateFunc() end
-			end,
+				if updateFunc then
+					updateFunc()
+				end
+			end
 		}
 
 		-- Add class color toggle for each side
@@ -572,8 +612,10 @@ function Handler:AddBorderSideOptions(options, getFunc, setFunc, updateFunc)
 				local settings = getFunc()
 				settings.border.classColors[side] = val
 				setFunc(settings)
-				if updateFunc then updateFunc() end
-			end,
+				if updateFunc then
+					updateFunc()
+				end
+			end
 		}
 	end
 
@@ -625,7 +667,7 @@ end
 ---@param alpha? number Override alpha value
 ---@return SUI.BackgroundBorder.Settings
 function Handler:CreateColorBackground(color, alpha)
-	color = color or { 0.1, 0.1, 0.1, 0.8 }
+	color = color or {0.1, 0.1, 0.1, 0.8}
 	alpha = alpha or color[4] or 0.8
 
 	return {
@@ -636,11 +678,11 @@ function Handler:CreateColorBackground(color, alpha)
 			type = 'color',
 			color = color,
 			alpha = alpha,
-			classColor = false,
+			classColor = false
 		},
 		border = {
-			enabled = false,
-		},
+			enabled = false
+		}
 	}
 end
 
@@ -650,8 +692,8 @@ end
 ---@param borderSize? number Border thickness
 ---@return SUI.BackgroundBorder.Settings
 function Handler:CreateBackgroundWithBorder(backgroundColor, borderColor, borderSize)
-	backgroundColor = backgroundColor or { 0.1, 0.1, 0.1, 0.8 }
-	borderColor = borderColor or { 1, 1, 1, 1 }
+	backgroundColor = backgroundColor or {0.1, 0.1, 0.1, 0.8}
+	borderColor = borderColor or {1, 1, 1, 1}
 	borderSize = borderSize or 1
 
 	return {
@@ -662,20 +704,20 @@ function Handler:CreateBackgroundWithBorder(backgroundColor, borderColor, border
 			type = 'color',
 			color = backgroundColor,
 			alpha = backgroundColor[4] or 0.8,
-			classColor = false,
+			classColor = false
 		},
 		border = {
 			enabled = true,
-			sides = { top = true, bottom = true, left = true, right = true },
+			sides = {top = true, bottom = true, left = true, right = true},
 			size = borderSize,
 			colors = {
 				top = borderColor,
 				bottom = borderColor,
 				left = borderColor,
-				right = borderColor,
+				right = borderColor
 			},
-			classColors = { top = false, bottom = false, left = false, right = false },
-		},
+			classColors = {top = false, bottom = false, left = false, right = false}
+		}
 	}
 end
 
@@ -692,27 +734,27 @@ function Handler:CreateClassColoredBackground(useClassBorder, alpha)
 		background = {
 			enabled = true,
 			type = 'color',
-			color = { 1, 1, 1, alpha }, -- Will be overridden by class color
+			color = {1, 1, 1, alpha}, -- Will be overridden by class color
 			alpha = alpha,
-			classColor = true,
+			classColor = true
 		},
 		border = {
 			enabled = useClassBorder or false,
-			sides = { top = true, bottom = true, left = true, right = true },
+			sides = {top = true, bottom = true, left = true, right = true},
 			size = 1,
 			colors = {
-				top = { 1, 1, 1, 1 },
-				bottom = { 1, 1, 1, 1 },
-				left = { 1, 1, 1, 1 },
-				right = { 1, 1, 1, 1 },
+				top = {1, 1, 1, 1},
+				bottom = {1, 1, 1, 1},
+				left = {1, 1, 1, 1},
+				right = {1, 1, 1, 1}
 			},
 			classColors = {
 				top = useClassBorder or false,
 				bottom = useClassBorder or false,
 				left = useClassBorder or false,
-				right = useClassBorder or false,
-			},
-		},
+				right = useClassBorder or false
+			}
+		}
 	}
 end
 
@@ -739,7 +781,9 @@ end
 function Handler:GetInstancesByPrefix(prefix)
 	local matches = {}
 	for id, _ in pairs(self.instances) do
-		if id:match('^' .. prefix) then table.insert(matches, id) end
+		if id:match('^' .. prefix) then
+			table.insert(matches, id)
+		end
 	end
 	return matches
 end

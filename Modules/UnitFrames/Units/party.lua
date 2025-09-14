@@ -26,11 +26,12 @@ local elementList = {
 	'SummonIndicator',
 	'StatusText',
 	'SUI_RaidGroup',
-	'AuraWatch',
+	'AuraWatch'
 }
 
 local function GroupBuilder(holder)
-	holder.header = SUIUF:SpawnHeader(
+	holder.header =
+		SUIUF:SpawnHeader(
 		'SUI_UF_party_Header',
 		nil,
 		'party',
@@ -97,7 +98,7 @@ local Settings = {
 	columnSpacing = 2,
 	elements = {
 		AuraWatch = {
-			enabled = true,
+			enabled = true
 		},
 		Buffs = {
 			enabled = true,
@@ -106,8 +107,8 @@ local Settings = {
 			position = {
 				relativePoint = 'BOTTOMRIGHT',
 				anchor = 'BOTTOMLEFT',
-				x = -2,
-			},
+				x = -2
+			}
 		},
 		Debuffs = {
 			enabled = true,
@@ -117,44 +118,44 @@ local Settings = {
 				relativePoint = 'BOTTOMLEFT',
 				anchor = 'BOTTOMRIGHT',
 				x = 15,
-				y = 47,
-			},
+				y = 47
+			}
 		},
 		Castbar = {
-			enabled = true,
+			enabled = true
 		},
 		ThreatIndicator = {
 			enabled = true,
-			points = 'Name',
+			points = 'Name'
 		},
 		Health = {
 			text = {
 				['1'] = {
-					text = '[SUIHealth(displayDead)] [($>SUIHealth<$)(percentage,hideDead,hideMax)]',
-				},
+					text = '[SUIHealth(displayDead)] [($>SUIHealth<$)(percentage,hideDead,hideMax)]'
+				}
 			},
 			position = {
 				anchor = 'TOP',
 				relativeTo = 'Castbar',
-				relativePoint = 'BOTTOM',
-			},
+				relativePoint = 'BOTTOM'
+			}
 		},
 		ResurrectIndicator = {
-			enabled = true,
+			enabled = true
 		},
 		SummonIndicator = {
-			enabled = true,
+			enabled = true
 		},
 		GroupRoleIndicator = {
 			enabled = true,
 			position = {
 				anchor = 'TOPRIGHT',
 				x = 0,
-				y = 0,
-			},
+				y = 0
+			}
 		},
 		AssistantIndicator = {
-			enabled = true,
+			enabled = true
 		},
 		RaidTargetIndicator = {
 			enabled = true,
@@ -162,8 +163,8 @@ local Settings = {
 			position = {
 				anchor = 'RIGHT',
 				x = 5,
-				y = 0,
-			},
+				y = 0
+			}
 		},
 		ClassIcon = {
 			enabled = false,
@@ -171,21 +172,21 @@ local Settings = {
 			position = {
 				anchor = 'TOPLEFT',
 				x = 0,
-				y = 0,
-			},
+				y = 0
+			}
 		},
 		name = {
 			position = {
-				y = 12,
-			},
+				y = 12
+			}
 		},
 		Power = {
-			height = 5,
-		},
+			height = 5
+		}
 	},
 	config = {
-		IsGroup = true,
-	},
+		IsGroup = true
+	}
 }
 
 UF.Unit:Add('party', Builder, Settings, Options, GroupBuilder)
