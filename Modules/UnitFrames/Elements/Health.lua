@@ -22,7 +22,7 @@ local function Build(frame, DB)
 	for i, key in pairs(DB.text) do
 		local NewString = health:CreateFontString(nil, 'OVERLAY')
 		NewString:SetDrawLayer('OVERLAY', 7) -- Ensure text is above all bars
-		SUI.Font:Format(NewString, key.size, 'UnitFrames')
+		SUI.Font:Format(NewString, key.size or 5, 'UnitFrames')
 		NewString:SetJustifyH(key.SetJustifyH)
 		NewString:SetJustifyV(key.SetJustifyV)
 		NewString:SetPoint(key.position.anchor, health, key.position.anchor, key.position.x, key.position.y)

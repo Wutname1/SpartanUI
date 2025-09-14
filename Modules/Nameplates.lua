@@ -1,5 +1,5 @@
 local unpack, SUI, L, print, UF = unpack, SUI, SUI.L, SUI.print, SUI.UF
-local module = SUI:NewModule('Nameplates') ---@type SUI.Module
+local module = SUI:NewModule('Nameplates') ---@class SUI.Nameplates | SUI.Module
 module.description = 'Basic nameplate module'
 local Images = {
 	Alliance = {
@@ -43,18 +43,6 @@ local ElementList = {
 }
 ---@type table<SUI.UF.Elements.list, SUI.UF.Elements.Settings>
 local ElementDefaults = {
-	Name = {
-		enabled = true,
-		textSize = 8,
-		SetJustifyH = 'LEFT',
-		position = {
-			anchor = 'BOTTOM',
-			relativeTo = 'Frame',
-			relativePoint = 'TOP',
-			x = 0,
-			y = 0
-		}
-	},
 	Runes = {
 		enabled = true,
 		texture = 'SpartanUI Default'
@@ -70,33 +58,6 @@ local ElementDefaults = {
 			relativePoint = 'BOTTOMLEFT',
 			x = 0,
 			y = -2
-		}
-	},
-	Health = {
-		enabled = true,
-		height = 8,
-		offset = 0,
-		texture = 'SpartanUI Default',
-		colorReaction = true,
-		colorSmooth = true,
-		colorClass = true,
-		colorTapping = true,
-		colorDisconnected = true,
-		bg = {
-			enabled = true,
-			color = {1, 1, 1, 0.6}
-		},
-		text = {
-			['1'] = {
-				enabled = true,
-				size = 8,
-				text = '[SUIHealth(percentage)]',
-				position = {
-					anchor = 'RIGHT',
-					x = 0,
-					y = 0
-				}
-			}
 		}
 	},
 	QuestMob = {
@@ -609,15 +570,15 @@ function module:OnInitialize()
 			RareElite = {},
 			Name = {
 				enabled = true,
-				textSize = 8,
+				textSize = 7,
 				SetJustifyH = 'LEFT',
 				SetJustifyV = 'MIDDLE',
-				text = '[difficulty][level] [SUI_ColorClass][name]',
+				text = '[SUI_ColorClass][name]',
 				position = {
-					anchor = 'BOTTOM',
-					relativeTo = 'Frame',
-					relativePoint = 'TOP',
-					x = 0,
+					anchor = 'LEFT',
+					relativeTo = 'Health',
+					relativePoint = 'LEFT',
+					x = 3,
 					y = 0
 				}
 			},
@@ -642,7 +603,7 @@ function module:OnInitialize()
 						text = '[SUIHealth(percentage,hideMax)]',
 						position = {
 							anchor = 'RIGHT',
-							x = 0,
+							x = -2,
 							y = 0
 						}
 					}
@@ -1051,7 +1012,7 @@ function module:BuildOptions()
 				order = 10,
 				desc = 'Text format for nameplate names. Use [difficulty][level] [SUI_ColorClass][name] or custom format.',
 				get = function()
-					return ElementSettings.text or '[difficulty][level] [SUI_ColorClass][name]'
+					return ElementSettings.text or '[SUI_ColorClass][name]'
 				end,
 				set = function(_, val)
 					ElementSettings.text = val

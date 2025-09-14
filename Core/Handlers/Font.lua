@@ -1,7 +1,7 @@
 ---@class SUI
 local SUI = SUI
 local L = SUI.L
-local Font = SUI:NewModule('Handler.Font') ---@type SUI.Module
+local Font = SUI:NewModule('Handler.Font') ---@class SUI.Font | SUI.Module
 Font.Items = {}
 ---@class FontDB
 local DBDefaults = {
@@ -50,7 +50,7 @@ function Font:FormatNumber(number)
 	end
 end
 
----@param element Font
+---@param element FontString
 ---@param DefaultSize integer
 ---@param Module string
 function Font:StoreItem(element, DefaultSize, Module)
@@ -103,7 +103,7 @@ function Font:UpdateDefaultSize(element, size, Module)
 	end
 end
 
----@param element Font
+---@param element FontString
 ---@param size? integer
 ---@param Module? string
 ---@param UpdateOnly? boolean
@@ -118,7 +118,7 @@ function Font:Format(element, size, Module, UpdateOnly)
 	--If we are not initialized yet, save the data for latter processing and exit
 	if not Font.DB then
 		--Set a default font
-		element:SetFont(SUI.Lib.LSM:Fetch('font', 'Roboto Bold'), 8, '')
+		element:SetFont(SUI.Lib.LSM:Fetch('font', 'Roboto Bold'), size or 8, '')
 		--Save the data for later
 		if not Font.PreLoadItems then
 			Font.PreLoadItems = {}
