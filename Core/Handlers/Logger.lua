@@ -115,7 +115,7 @@ local function FilterButton_SetUp(button, info)
 		button.HighlightTexture:ClearAllPoints()
 		button.HighlightTexture:SetPoint('TOPLEFT', 10, 0)
 		button.HighlightTexture:SetBlendMode('BLEND')
-		button:SetText(info.name)
+		button:SetText(info.name or '')
 		normalText:SetPoint('LEFT', button, 'LEFT', 18, 0)
 		normalTexture:SetAlpha(1.0)
 		line:Hide()
@@ -1268,8 +1268,13 @@ SUI.Logger = {} ---@class SUI.Logger
 ---@param addonName string Name of the addon to register
 ---@return SimpleLogger logger Logger function that takes (message, level?)
 function SUI.Logger.RegisterAddon(addonName)
-	if not addonName or addonName == '' then
-		error('RegisterAddon: addonName cannot be empty')
+	-- Protect against incorrect colon syntax: SUI.Logger:RegisterAddon()
+	if type(addonName) == 'table' and addonName == SUI.Logger then
+		error('RegisterAddon: Called with colon syntax (:) - use dot syntax (.) instead: SUI.Logger.RegisterAddon(addonName)')
+	end
+
+	if not addonName or addonName == '' or type(addonName) ~= 'string' then
+		error('RegisterAddon: addonName must be a non-empty string')
 	end
 
 	-- Store registration
@@ -1295,11 +1300,32 @@ end
 ---@param subcategories string[] Array of subcategory names
 ---@return ComplexLoggers loggers Table of logger functions keyed by subcategory name
 function SUI.Logger.RegisterAddonCategory(addonName, subcategories)
-	if not addonName or addonName == '' then
-		error('RegisterAddonCategory: addonName cannot be empty')
+	-- Protect against incorrect colon syntax: SUI.Logger:RegisterAddonCategory()
+	if type(addonName) == 'table' and addonName == SUI.Logger then
+		error('RegisterAddonCategory: Called with colon syntax (:) - use dot syntax (.) instead: SUI.Logger.RegisterAddonCategory(addonName, subcategories)')
+	end
+
+	if not addonName or addonName == '' or type(addonName) ~= 'string' then
+		error('RegisterAddonCategory: addonName must be a non-empty string')
 	end
 	if not subcategories or type(subcategories) ~= 'table' or #subcategories == 0 then
 		error('RegisterAddonCategory: subcategories must be a non-empty array')
+	end
+
+	-- Validate all subcategory names are strings
+	for i, subcat in ipairs(subcategories) do
+		if type(subcat) ~= 'string' or subcat == '' then
+			error('RegisterAddonCategory: subcategory at index ' .. i .. ' must be a non-empty string, got: ' .. type(subcat))
+		end
+		-- Check for invalid characters that could cause parsing issues
+		if subcat:find('%.') then
+			error('RegisterAddonCategory: subcategory "' .. subcat .. '" cannot contain dots (.) as they are used for hierarchy parsing')
+		end
+	end
+
+	-- Validate addonName doesn't contain problematic characters
+	if addonName:find('%.') then
+		error('RegisterAddonCategory: addonName "' .. addonName .. '" cannot contain dots (.) as they are used for hierarchy parsing')
 	end
 
 	-- Store category registration
@@ -1334,6 +1360,14 @@ end
 ---@param level? LogLevel Log level - defaults to 'info'
 function SUI.Log(debugText, module, level)
 	level = level or 'info'
+
+	-- Validate module name to prevent invalid entries
+	if type(module) ~= 'string' or module == '' then
+		-- Log to a fallback module name and issue a warning
+		module = 'InvalidModule'
+		debugText = 'Invalid module name provided to SUI.Log: ' .. tostring(debugText)
+		level = 'warning'
+	end
 
 	-- Initialize module if it doesn't exist
 	if not LogMessages[module] then
@@ -1546,7 +1580,61 @@ function SUI.SetupModuleLogging(moduleObj, components)
 	end
 end
 
+-- Validate and purge invalid entries from the modules database
+local function ValidateAndPurgeModulesDB()
+	local invalidEntries = {}
+
+	-- Check for invalid entries in modules DB
+	for k, v in pairs(logger.DB.modules) do
+		if type(k) ~= 'string' then
+			-- Key is not a string, mark for removal
+			table.insert(invalidEntries, k)
+		elseif type(v) ~= 'boolean' then
+			-- Value is not a boolean, mark for removal
+			table.insert(invalidEntries, k)
+		end
+	end
+
+	-- Remove invalid entries
+	if #invalidEntries > 0 then
+		SUI.Log('Purging ' .. #invalidEntries .. ' invalid entries from logger modules database', 'Logger', 'warning')
+		for _, key in ipairs(invalidEntries) do
+			logger.DB.modules[key] = nil
+			if LogMessages[key] then
+				LogMessages[key] = nil
+			end
+			if ModuleLogLevels[key] then
+				ModuleLogLevels[key] = nil
+			end
+			if logger.DB.moduleLogLevels[key] then
+				logger.DB.moduleLogLevels[key] = nil
+			end
+		end
+	end
+
+	-- Also validate moduleLogLevels
+	invalidEntries = {}
+	for k, v in pairs(logger.DB.moduleLogLevels) do
+		if type(k) ~= 'string' or type(v) ~= 'number' then
+			table.insert(invalidEntries, k)
+		end
+	end
+
+	if #invalidEntries > 0 then
+		SUI.Log('Purging ' .. #invalidEntries .. ' invalid entries from logger moduleLogLevels database', 'Logger', 'warning')
+		for _, key in ipairs(invalidEntries) do
+			logger.DB.moduleLogLevels[key] = nil
+			if ModuleLogLevels[key] then
+				ModuleLogLevels[key] = nil
+			end
+		end
+	end
+end
+
 local function AddOptions()
+	-- Validate and purge invalid DB entries before building options
+	ValidateAndPurgeModulesDB()
+
 	---@type AceConfig.OptionsTable
 	local options = {
 		name = 'Logging',
@@ -1663,60 +1751,62 @@ local function AddOptions()
 	}
 
 	for k, _ in pairs(logger.DB.modules) do
-		options.args[k] = {
-			name = k,
-			desc = 'Set the minimum log level for the ' .. k .. ' module. Use "Global" to inherit the global log level setting.',
-			type = 'select',
-			values = function()
-				local values = {[0] = 'Global (inherit)'}
-				-- Create ordered list to ensure proper display order
-				local orderedLevels = {}
-				for level, data in pairs(LOG_LEVELS) do
-					table.insert(orderedLevels, {level = level, data = data})
-				end
-				table.sort(
-					orderedLevels,
-					function(a, b)
-						return a.data.priority < b.data.priority
+		if type(k) == 'string' then
+			options.args[k] = {
+				name = k,
+				desc = 'Set the minimum log level for the ' .. k .. ' module. Use "Global" to inherit the global log level setting.',
+				type = 'select',
+				values = function()
+					local values = {[0] = 'Global (inherit)'}
+					-- Create ordered list to ensure proper display order
+					local orderedLevels = {}
+					for level, data in pairs(LOG_LEVELS) do
+						table.insert(orderedLevels, {level = level, data = data})
 					end
-				)
+					table.sort(
+						orderedLevels,
+						function(a, b)
+							return a.data.priority < b.data.priority
+						end
+					)
 
-				for _, levelData in ipairs(orderedLevels) do
-					values[levelData.data.priority] = levelData.data.display
-				end
-				return values
-			end,
-			sorting = function()
-				-- Return sorted order for dropdown
-				local sorted = {0} -- Global first
-				local orderedLevels = {}
-				for level, data in pairs(LOG_LEVELS) do
-					table.insert(orderedLevels, {level = level, data = data})
-				end
-				table.sort(
-					orderedLevels,
-					function(a, b)
-						return a.data.priority < b.data.priority
+					for _, levelData in ipairs(orderedLevels) do
+						values[levelData.data.priority] = levelData.data.display
 					end
-				)
+					return values
+				end,
+				sorting = function()
+					-- Return sorted order for dropdown
+					local sorted = {0} -- Global first
+					local orderedLevels = {}
+					for level, data in pairs(LOG_LEVELS) do
+						table.insert(orderedLevels, {level = level, data = data})
+					end
+					table.sort(
+						orderedLevels,
+						function(a, b)
+							return a.data.priority < b.data.priority
+						end
+					)
 
-				for _, levelData in ipairs(orderedLevels) do
-					table.insert(sorted, levelData.data.priority)
-				end
-				return sorted
-			end,
-			get = function(info)
-				return logger.DB.moduleLogLevels[info[#info]] or 0
-			end,
-			set = function(info, val)
-				logger.DB.moduleLogLevels[info[#info]] = val
-				ModuleLogLevels[info[#info]] = val
-				if LogWindow then
-					UpdateLogDisplay()
-				end
-			end,
-			order = (#options.args + 1)
-		}
+					for _, levelData in ipairs(orderedLevels) do
+						table.insert(sorted, levelData.data.priority)
+					end
+					return sorted
+				end,
+				get = function(info)
+					return logger.DB.moduleLogLevels[info[#info]] or 0
+				end,
+				set = function(info, val)
+					logger.DB.moduleLogLevels[info[#info]] = val
+					ModuleLogLevels[info[#info]] = val
+					if LogWindow then
+						UpdateLogDisplay()
+					end
+				end,
+				order = (#options.args + 1)
+			}
+		end
 	end
 	logger.options = options
 	SUI.Options:AddOptions(options, 'Logging', 'Help')
@@ -1747,9 +1837,14 @@ function logger:OnInitialize()
 	logger.Database = SUI.SpartanUIDB:RegisterNamespace('Logger', {profile = defaults})
 	logger.DB = logger.Database.profile
 
+	-- Validate and purge any invalid entries from the database
+	ValidateAndPurgeModulesDB()
+
 	-- Initialize log structures
 	for k, _ in pairs(logger.DB.modules) do
-		LogMessages[k] = {}
+		if type(k) == 'string' then -- Extra safety check after validation
+			LogMessages[k] = {}
+		end
 	end
 
 	-- Load settings
