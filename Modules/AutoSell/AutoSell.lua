@@ -299,7 +299,7 @@ function module:IsSellable(item, ilink, bag, slot)
 
 	-- Check for items with "Use:" in tooltip (profession enhancement items, etc.)
 	if bag and slot then
-		local hasUseText =
+		local success, hasUseText =
 			pcall(
 			function()
 				Tooltip:SetOwner(UIParent, 'ANCHOR_NONE')
@@ -320,7 +320,7 @@ function module:IsSellable(item, ilink, bag, slot)
 			end
 		)
 
-		if hasUseText then
+		if success and hasUseText then
 			debugMsg('Item has "Use:" text in tooltip - skipping', 'Selling', 'debug')
 			return false
 		end
@@ -611,12 +611,12 @@ function module:DebugItemSellability(link)
 		return
 	end
 
-	-- Find the actual bag/slot for this item to use exact same call as marking/selling
+	-- Find the actual bag/slot for this exact item (matching full link, not just ID)
 	local actualBag, actualSlot = nil, nil
 	for bag = 0, MAX_BAG_SLOTS do
 		for slot = 1, C_Container.GetContainerNumSlots(bag) do
 			local itemInfo = C_Container.GetContainerItemInfo(bag, slot)
-			if itemInfo and itemInfo.itemID == itemID then
+			if itemInfo and itemInfo.hyperlink == link then
 				actualBag, actualSlot = bag, slot
 				break
 			end
@@ -799,7 +799,7 @@ function module:DebugItemSellability(link)
 
 	-- Use text check
 	if actualBag and actualSlot then
-		local hasUseText =
+		local success, hasUseText =
 			pcall(
 			function()
 				Tooltip:SetOwner(UIParent, 'ANCHOR_NONE')
@@ -820,7 +820,7 @@ function module:DebugItemSellability(link)
 			end
 		)
 
-		if hasUseText then
+		if success and hasUseText then
 			print('|cffFF0000BLOCKED:|r Item has "Use:" text in tooltip (profession enhancement protection)')
 			return
 		else
@@ -845,7 +845,7 @@ function module:DebugItemSellability(link)
 	end
 
 	-- Final decision
-	local finalDecision = module:IsSellable(itemID, link, 0, 1)
+	local finalDecision = module:IsSellable(itemID, link, actualBag, actualSlot)
 	print(string.format('|cffFFFFFF--- FINAL DECISION: %s ---|r', finalDecision and '|cff00FF00WILL SELL|r' or '|cffFF0000WILL NOT SELL|r'))
 
 	if finalDecision then
