@@ -350,13 +350,6 @@ function module:OnInitialize()
 	popup:SetScript('OnDragStart', popup.StartMoving)
 	popup:SetScript('OnDragStop', popup.StopMovingOrSizing)
 
-	-- Set the portrait/logo
-	if popup.portrait then
-		if popup.portrait.SetTexture then
-			popup.portrait:SetTexture('Interface\\AddOns\\SpartanUI\\images\\LogoSpartanUI')
-		end
-	end
-
 	-- Set title
 	popup:SetTitle('|cffffffffSpartan|cffe21f1fUI|r Chat Copy')
 

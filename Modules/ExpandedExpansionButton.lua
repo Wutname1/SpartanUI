@@ -103,6 +103,47 @@ local defaultExpansions = {
 		end,
 		requirementCheck = function()
 			return GetExpansionLevel() >= 8 -- Available since Shadowlands
+		end,
+		tooltipFunc = function()
+			local tooltip = {}
+
+			-- Add Great Vault progress
+			if C_WeeklyRewards and C_WeeklyRewards.GetActivities then
+				local activities = C_WeeklyRewards.GetActivities()
+				if activities and #activities > 0 then
+					table.insert(tooltip, '|cffFFD700Great Vault Progress|r')
+
+					for _, activity in ipairs(activities) do
+						local progress = activity.progress or 0
+						local threshold = activity.threshold or 0
+						local activityType = 'Unknown'
+
+						if activity.type == Enum.WeeklyRewardChestThresholdType.Activities then
+							activityType = 'Mythic+'
+						elseif activity.type == Enum.WeeklyRewardChestThresholdType.Raid then
+							activityType = 'Raid'
+						elseif activity.type == Enum.WeeklyRewardChestThresholdType.World then
+							activityType = 'World'
+						end
+
+						local color = progress >= threshold and '|cff00ff00' or '|cffff0000'
+						table.insert(tooltip, string.format('%s%s: %d/%d|r', color, activityType, progress, threshold))
+					end
+				end
+			end
+			-- 91175, 91176, 91177, 91178
+			local firstKeyQuestID = 91175
+			local keysObtained = 0
+			for i = 0, 3 do -- Check all 4 key quests
+				if C_QuestLog.IsQuestFlaggedCompleted(firstKeyQuestID + i) then
+					keysObtained = keysObtained + 1
+				end
+			end
+
+			local keysColor = keysObtained == 4 and '|cff00ff00' or '|cffff0000'
+			table.insert(tooltip, string.format('%sWeekly Delve Keys: %d/4|r', keysColor, keysObtained))
+
+			return tooltip
 		end
 	},
 	{
@@ -458,7 +499,8 @@ local defaultExpansions = {
 ---@param isDisabled function|nil Optional function to check if item should be disabled
 ---@param disabledTooltip string|nil Optional tooltip text when disabled
 ---@param showWhenDisabled function|nil Optional function to show item even when requirements aren't met
-function module:RegisterExpansionItem(expansion, displayText, onClick, requirementCheck, enabled, icon, isDisabled, disabledTooltip, showWhenDisabled)
+---@param tooltipFunc function|nil Optional function that returns tooltip lines
+function module:RegisterExpansionItem(expansion, displayText, onClick, requirementCheck, enabled, icon, isDisabled, disabledTooltip, showWhenDisabled, tooltipFunc)
 	if not expansion or not displayText or not onClick then
 		SUI:Error('ExpandedExpansionButton', 'Invalid registration parameters')
 		return
@@ -476,6 +518,7 @@ function module:RegisterExpansionItem(expansion, displayText, onClick, requireme
 		isDisabled = isDisabled,
 		disabledTooltip = disabledTooltip,
 		showWhenDisabled = showWhenDisabled,
+		tooltipFunc = tooltipFunc,
 		id = expansion .. '_' .. displayText:gsub('[^%w]', '')
 	}
 
@@ -551,6 +594,9 @@ local function CreateLibQTipMenu()
 	end
 	menuFrame:SetAutoHideDelay(0.1, ExpansionLandingPageMinimapButton)
 	menuFrame:SmartAnchorTo(ExpansionLandingPageMinimapButton)
+
+	-- Set menu frame to DIALOG strata so tooltips can appear above it
+	menuFrame:SetFrameStrata('DIALOG')
 
 	-- Apply SpartanUI theming with modern backdrop support
 	if BackdropTemplateMixin then
@@ -698,12 +744,75 @@ local function CreateLibQTipMenu()
 				function(self)
 					-- Show tooltip if item is disabled
 					if isItemDisabled and item.disabledTooltip then
+						-- Show custom tooltip if item has tooltipFunc
 						GameTooltip:SetOwner(self, 'ANCHOR_CURSOR')
 						GameTooltip:SetText(item.disabledTooltip, 1, 0.8, 0, 1, true)
+						-- Set higher strata to appear above menu
+						GameTooltip:SetFrameStrata('TOOLTIP')
 						GameTooltip:Show()
+					elseif not isItemDisabled and item.tooltipFunc then
+						local tooltipLines = item.tooltipFunc()
+						if tooltipLines and #tooltipLines > 0 then
+							GameTooltip:SetOwner(self, 'ANCHOR_CURSOR')
+							for i, ttline in ipairs(tooltipLines) do
+								if i == 1 then
+									GameTooltip:SetText(ttline, 1, 1, 1, 1, true)
+								else
+									GameTooltip:AddLine(ttline, 1, 1, 1, true)
+								end
+							end
+							-- Set higher strata to appear above menu
+							GameTooltip:SetFrameStrata('TOOLTIP')
+							GameTooltip:Show()
+						end
 					end
 				end
 			)
+
+			-- Also set cell scripts to ensure tooltip works over entire line
+			for cellIndex = 1, 2 do
+				menuFrame:SetCellScript(
+					line,
+					cellIndex,
+					'OnEnter',
+					function(self)
+						-- Show tooltip if item is disabled
+						if isItemDisabled and item.disabledTooltip then
+							-- Show custom tooltip if item has tooltipFunc
+							GameTooltip:SetOwner(self, 'ANCHOR_CURSOR')
+							GameTooltip:SetText(item.disabledTooltip, 1, 0.8, 0, 1, true)
+							-- Set higher strata to appear above menu
+							GameTooltip:SetFrameStrata('TOOLTIP')
+							GameTooltip:Show()
+						elseif not isItemDisabled and item.tooltipFunc then
+							local tooltipLines = item.tooltipFunc()
+							if tooltipLines and #tooltipLines > 0 then
+								GameTooltip:SetOwner(self, 'ANCHOR_CURSOR')
+								for i, ttline in ipairs(tooltipLines) do
+									if i == 1 then
+										GameTooltip:SetText(ttline, 1, 1, 1, 1, true)
+									else
+										GameTooltip:AddLine(ttline, 1, 1, 1, true)
+									end
+								end
+								-- Set higher strata to appear above menu
+								GameTooltip:SetFrameStrata('TOOLTIP')
+								GameTooltip:Show()
+							end
+						end
+					end
+				)
+
+				menuFrame:SetCellScript(
+					line,
+					cellIndex,
+					'OnLeave',
+					function(self)
+						GameTooltip:Hide()
+					end
+				)
+			end
+
 			menuFrame:SetLineScript(
 				line,
 				'OnLeave',
@@ -1043,7 +1152,18 @@ function module:OnInitialize()
 
 	-- Register default expansion items
 	for _, item in ipairs(defaultExpansions) do
-		module:RegisterExpansionItem(item.expansion, item.displayText, item.onClick, item.requirementCheck, item.enabled, item.icon, item.isDisabled, item.disabledTooltip, item.showWhenDisabled)
+		module:RegisterExpansionItem(
+			item.expansion,
+			item.displayText,
+			item.onClick,
+			item.requirementCheck,
+			item.enabled,
+			item.icon,
+			item.isDisabled,
+			item.disabledTooltip,
+			item.showWhenDisabled,
+			item.tooltipFunc
+		)
 	end
 end
 
