@@ -153,7 +153,19 @@ local function Update(frame, settings)
 
 	element:SetStatusBarTexture(UF:FindStatusBarTexture(DB.texture))
 	element.bg:SetTexture(UF:FindStatusBarTexture(DB.texture))
-	element.bg:SetVertexColor(unpack(DB.bg.color or {1, 1, 1, 0.2}))
+
+	-- Set background color (class color or custom color)
+	if DB.bg.useClassColor then
+		local color = (_G.CUSTOM_CLASS_COLORS and _G.CUSTOM_CLASS_COLORS[select(2, UnitClass('player'))]) or _G.RAID_CLASS_COLORS[select(2, UnitClass('player'))]
+		local bgColor = DB.bg.color or {1, 1, 1, 0.2}
+		if color then
+			element.bg:SetVertexColor(color.r, color.g, color.b, bgColor[4] or 0.2)
+		else
+			element.bg:SetVertexColor(unpack(bgColor))
+		end
+	else
+		element.bg:SetVertexColor(unpack(DB.bg.color or {1, 1, 1, 0.2}))
+	end
 
 	-- Update HealthPrediction bar textures and colors
 	if frame.HealthPrediction then
@@ -359,7 +371,8 @@ local Settings = {
 	colorDisconnected = true,
 	bg = {
 		enabled = true,
-		color = {1, 1, 1, 0.2}
+		color = {1, 1, 1, 0.2},
+		useClassColor = false
 	},
 	customColors = {
 		useCustom = false,

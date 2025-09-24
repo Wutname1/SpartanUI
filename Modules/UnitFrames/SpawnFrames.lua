@@ -59,7 +59,23 @@ local function CreateUnitFrame(self, unit)
 
 		if not self.DB or not self.DB.enabled then
 			self:Disable()
+			-- Hide frame background if frame is disabled
+			if SUI.Handlers.BackgroundBorder then
+				SUI.Handlers.BackgroundBorder:SetVisible('UnitFrame_' .. self.unitOnCreate, false)
+			end
 			return
+		end
+
+		-- Update frame background
+		if SUI.Handlers.BackgroundBorder and self.DB.frameBackground then
+			if not SUI.Handlers.BackgroundBorder.instances['UnitFrame_' .. self.unitOnCreate] then
+				-- Create BackgroundBorder instance if it doesn't exist
+				SUI.Handlers.BackgroundBorder:SetupUnitFrame(self, self.unitOnCreate, self.DB.frameBackground)
+			else
+				-- Update existing instance
+				SUI.Handlers.BackgroundBorder:Update('UnitFrame_' .. self.unitOnCreate, self.DB.frameBackground)
+			end
+			SUI.Handlers.BackgroundBorder:SetVisible('UnitFrame_' .. self.unitOnCreate, true)
 		end
 
 		UF.Unit:Update(self)

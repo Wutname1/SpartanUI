@@ -389,6 +389,36 @@ function Options:AddGeneral(OptionSet)
 	}
 end
 
+---Add frame background options using BackgroundBorder system
+---@param frameName UnitFrameName
+---@param OptionSet AceConfig.OptionsTable
+function Options:AddFrameBackground(frameName, OptionSet)
+	local BackgroundBorder = SUI.Handlers.BackgroundBorder
+	if not BackgroundBorder then return end
+
+	local function getSettings()
+		return UF.CurrentSettings[frameName].frameBackground or BackgroundBorder.DefaultSettings
+	end
+
+	local function setSettings(newSettings)
+		-- Update memory
+		UF.CurrentSettings[frameName].frameBackground = newSettings
+		-- Update the DB
+		UF.DB.UserSettings[UF.DB.Style][frameName].frameBackground = newSettings
+	end
+
+	local function updateDisplay()
+		-- Update the BackgroundBorder instance
+		BackgroundBorder:Update('UnitFrame_' .. frameName, getSettings())
+	end
+
+	-- Generate the complete options table
+	local backgroundBorderOptions = BackgroundBorder:GenerateCompleteOptions('UnitFrame_' .. frameName, getSettings, setSettings, updateDisplay)
+	backgroundBorderOptions.order = 50 -- Place it after the General group
+
+	OptionSet.args.General.args.FrameBackground = backgroundBorderOptions
+end
+
 ---@param frameName UnitFrameName
 ---@param OptionSet AceConfig.OptionsTable
 function Options:AddAuraLayout(frameName, OptionSet)
@@ -704,7 +734,16 @@ function Options:StatusBarDefaults(frameName, ElementOptSet, elementName)
 				name = L['Color'],
 				type = 'color',
 				order = 2,
-				hasAlpha = true
+				hasAlpha = true,
+				disabled = function()
+					return UF.CurrentSettings[frameName].elements[elementName].bg.useClassColor
+				end
+			},
+			useClassColor = {
+				name = L['Use class color'],
+				desc = L['Use the player\'s class color for the background'],
+				type = 'toggle',
+				order = 3
 			}
 		}
 	}
@@ -1275,6 +1314,7 @@ function Options:Initialize()
 			end
 		)
 		Options:AddGeneral(FrameOptSet)
+		Options:AddFrameBackground(frameName, FrameOptSet)
 
 		-- Add Element Options
 		local builtFrame = UF.Unit:Get(frameName)
