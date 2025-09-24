@@ -787,3 +787,6 @@ function Handler:GetInstancesByPrefix(prefix)
 	end
 	return matches
 end
+
+-- Make the handler globally accessible
+SUI.Handlers.BackgroundBorder = Handler

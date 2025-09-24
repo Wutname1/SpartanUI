@@ -121,6 +121,12 @@ Classes can be extended by redefining them in different files. This allows addin
 
 Always document function inputs and outputs to improve code maintainability and IDE support.
 
+### Logging and Debugging
+
+- **Use Logger System**: Always use `SUI.Handlers.Logger` for debugging and logging instead of `print()` statements
+- **Logger Usage**: The logger system provides better control, filtering, and categorization of debug output
+- **Avoid Print Statements**: Direct `print()` calls should be avoided in favor of the structured logging system
+
 ### Configuration System
 
 - Uses AceConfig for options UI

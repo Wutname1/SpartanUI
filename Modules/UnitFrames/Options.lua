@@ -394,7 +394,9 @@ end
 ---@param OptionSet AceConfig.OptionsTable
 function Options:AddFrameBackground(frameName, OptionSet)
 	local BackgroundBorder = SUI.Handlers.BackgroundBorder
-	if not BackgroundBorder then return end
+	if not BackgroundBorder then
+		return
+	end
 
 	local function getSettings()
 		return UF.CurrentSettings[frameName].frameBackground or BackgroundBorder.DefaultSettings
