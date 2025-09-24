@@ -737,7 +737,7 @@ function Options:StatusBarDefaults(frameName, ElementOptSet, elementName)
 				type = 'color',
 				order = 2,
 				hasAlpha = true,
-				disabled = function()
+				hidden = function()
 					return UF.CurrentSettings[frameName].elements[elementName].bg.useClassColor
 				end
 			},
@@ -746,6 +746,29 @@ function Options:StatusBarDefaults(frameName, ElementOptSet, elementName)
 				desc = L['Use the player\'s class color for the background'],
 				type = 'toggle',
 				order = 3
+			},
+			classColorAlpha = {
+				name = L['Class color alpha'],
+				desc = L['Transparency level for the class colored background'],
+				type = 'range',
+				order = 4,
+				min = 0,
+				max = 1,
+				step = 0.01,
+				hidden = function()
+					return not UF.CurrentSettings[frameName].elements[elementName].bg.useClassColor
+				end,
+				get = function()
+					return UF.CurrentSettings[frameName].elements[elementName].bg.classColorAlpha or 0.2
+				end,
+				set = function(info, val)
+					--Update memory
+					UF.CurrentSettings[frameName].elements[elementName].bg.classColorAlpha = val
+					--Update the DB
+					UF.DB.UserSettings[UF.DB.Style][frameName].elements[elementName].bg.classColorAlpha = val
+					--Update the screen
+					UF.Unit[frameName]:UpdateAll()
+				end
 			}
 		}
 	}
