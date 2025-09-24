@@ -14,7 +14,12 @@ local function Build(frame, DB)
 			elseif b == 0 and g == 0 then
 				self.Castbar:SetStatusBarColor(1, 1, 0)
 			else
-				self.Castbar:SetStatusBarColor(1, 1, 1)
+				-- Reset to custom color if enabled, otherwise use default
+				if DB.customColors and DB.customColors.useCustom then
+					self.Castbar:SetStatusBarColor(unpack(DB.customColors.barColor))
+				else
+					self.Castbar:SetStatusBarColor(1, 1, 1)
+				end
 			end
 			timers[unitName] = UF:ScheduleTimer(Flash, 0.1, self)
 		end
@@ -24,7 +29,12 @@ local function Build(frame, DB)
 			self:SetStatusBarColor(0, 0, 0)
 			timers[unitName] = UF:ScheduleTimer(Flash, DB.InterruptSpeed, self.__owner)
 		else
-			self:SetStatusBarColor(1, 0.7, 0)
+			-- Use custom color if enabled, otherwise use default
+			if DB.customColors and DB.customColors.useCustom then
+				self:SetStatusBarColor(unpack(DB.customColors.barColor))
+			else
+				self:SetStatusBarColor(1, 0.7, 0)
+			end
 		end
 	end
 	local function PostCastStop(self)
@@ -309,6 +319,10 @@ local Settings = {
 	bg = {
 		enabled = true,
 		color = {1, 1, 1, 0.2}
+	},
+	customColors = {
+		useCustom = false,
+		barColor = {1, 0.7, 0, 1}
 	},
 	Icon = {
 		enabled = true,

@@ -49,6 +49,17 @@ local function Update(frame, settings)
 		frame:DisableElement('PowerPrediction')
 	end
 
+	-- Handle custom coloring
+	if DB.customColors and DB.customColors.useCustom then
+		-- Disable automatic coloring when using custom colors
+		element.colorPower = false
+		-- Set custom color
+		element:SetStatusBarColor(unpack(DB.customColors.barColor))
+	else
+		-- Enable automatic coloring
+		element.colorPower = true
+	end
+
 	-- Basic Bar updates
 	element:SetStatusBarTexture(UF:FindStatusBarTexture(DB.texture))
 	element.bg:SetTexture(UF:FindStatusBarTexture(DB.texture))
@@ -110,6 +121,10 @@ local Settings = {
 	bg = {
 		enabled = true,
 		color = {1, 1, 1, 0.2}
+	},
+	customColors = {
+		useCustom = false,
+		barColor = {0, 0, 1, 1}
 	},
 	text = {
 		['1'] = {

@@ -135,23 +135,51 @@ local function Update(frame, settings)
 	element.colorSmooth = DB.colorSmooth
 	element.colorClass = DB.colorClass
 
+	-- Handle custom coloring
+	if DB.customColors and DB.customColors.useCustom then
+		-- Disable automatic coloring when using custom colors
+		element.colorDisconnected = false
+		element.colorTapping = false
+		element.colorReaction = false
+		element.colorSmooth = false
+		element.colorClass = false
+		element.colorHealth = false
+		-- Set custom color
+		element:SetStatusBarColor(unpack(DB.customColors.barColor))
+	else
+		-- Enable automatic coloring
+		element.colorHealth = true
+	end
+
 	element:SetStatusBarTexture(UF:FindStatusBarTexture(DB.texture))
 	element.bg:SetTexture(UF:FindStatusBarTexture(DB.texture))
 	element.bg:SetVertexColor(unpack(DB.bg.color or {1, 1, 1, 0.2}))
 
-	-- Update HealthPrediction bar textures
+	-- Update HealthPrediction bar textures and colors
 	if frame.HealthPrediction then
 		if frame.HealthPrediction.myBar then
 			frame.HealthPrediction.myBar:SetStatusBarTexture(UF:FindStatusBarTexture(DB.shieldTexture or DB.texture))
+			if DB.customColors and DB.customColors.useCustom then
+				frame.HealthPrediction.myBar:SetStatusBarColor(unpack(DB.customColors.shieldColor))
+			end
 		end
 		if frame.HealthPrediction.otherBar then
 			frame.HealthPrediction.otherBar:SetStatusBarTexture(UF:FindStatusBarTexture(DB.shieldTexture or DB.texture))
+			if DB.customColors and DB.customColors.useCustom then
+				frame.HealthPrediction.otherBar:SetStatusBarColor(unpack(DB.customColors.shieldColor))
+			end
 		end
 		if frame.HealthPrediction.absorbBar then
 			frame.HealthPrediction.absorbBar:SetStatusBarTexture(UF:FindStatusBarTexture(DB.absorbTexture or DB.texture))
+			if DB.customColors and DB.customColors.useCustom then
+				frame.HealthPrediction.absorbBar:SetStatusBarColor(unpack(DB.customColors.absorbColor))
+			end
 		end
 		if frame.HealthPrediction.healAbsorbBar then
 			frame.HealthPrediction.healAbsorbBar:SetStatusBarTexture(UF:FindStatusBarTexture(DB.absorbTexture or DB.texture))
+			if DB.customColors and DB.customColors.useCustom then
+				frame.HealthPrediction.healAbsorbBar:SetStatusBarColor(unpack(DB.customColors.healAbsorbColor))
+			end
 		end
 	end
 
@@ -273,6 +301,40 @@ local function Options(frameName, OptionSet)
 		}
 	}
 
+	-- Add additional shield/absorb color options to the BarColors group
+	if OptionSet.args.BarColors then
+		OptionSet.args.BarColors.args.shieldColor = {
+			name = L['Shield bar color'],
+			desc = L['Color for incoming heal and shield bars'],
+			type = 'color',
+			order = 3,
+			hasAlpha = true,
+			disabled = function()
+				return not UF.CurrentSettings[frameName].elements.Health.customColors.useCustom
+			end
+		}
+		OptionSet.args.BarColors.args.absorbColor = {
+			name = L['Absorb bar color'],
+			desc = L['Color for absorb bars'],
+			type = 'color',
+			order = 4,
+			hasAlpha = true,
+			disabled = function()
+				return not UF.CurrentSettings[frameName].elements.Health.customColors.useCustom
+			end
+		}
+		OptionSet.args.BarColors.args.healAbsorbColor = {
+			name = L['Heal absorb bar color'],
+			desc = L['Color for heal absorb bars'],
+			type = 'color',
+			order = 5,
+			hasAlpha = true,
+			disabled = function()
+				return not UF.CurrentSettings[frameName].elements.Health.customColors.useCustom
+			end
+		}
+	end
+
 	if not UF.Unit:isFriendly(frameName) then
 		OptionSet.args.general.args.DispelHighlight.hidden = true
 	end
@@ -298,6 +360,13 @@ local Settings = {
 	bg = {
 		enabled = true,
 		color = {1, 1, 1, 0.2}
+	},
+	customColors = {
+		useCustom = false,
+		barColor = {0, 1, 0, 1},
+		shieldColor = {0, 1, 0.5, 1},
+		absorbColor = {0, 0.5, 1, 1},
+		healAbsorbColor = {1, 0, 0.5, 1}
 	},
 	text = {
 		['1'] = {

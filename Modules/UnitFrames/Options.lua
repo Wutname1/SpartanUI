@@ -708,6 +708,52 @@ function Options:StatusBarDefaults(frameName, ElementOptSet, elementName)
 			}
 		}
 	}
+	ElementOptSet.args.BarColors = {
+		name = L['Bar Colors'],
+		type = 'group',
+		inline = true,
+		order = 25,
+		get = function(info)
+			local dbData = UF.CurrentSettings[frameName].elements[elementName].customColors[info[#info]]
+			if info.type == 'color' then
+				return unpack(dbData, 1, 4)
+			else
+				return dbData
+			end
+		end,
+		set = function(info, val, ...)
+			if info.type == 'color' then
+				--Update memory
+				UF.CurrentSettings[frameName].elements[elementName].customColors[info[#info]] = {val, ...}
+				--Update the DB
+				UF.DB.UserSettings[UF.DB.Style][frameName].elements[elementName].customColors[info[#info]] = {val, ...}
+			else
+				--Update memory
+				UF.CurrentSettings[frameName].elements[elementName].customColors[info[#info]] = val
+				--Update the DB
+				UF.DB.UserSettings[UF.DB.Style][frameName].elements[elementName].customColors[info[#info]] = val
+			end
+			--Update the screen
+			UF.Unit[frameName]:UpdateAll()
+		end,
+		args = {
+			useCustom = {
+				name = L['Use custom colors'],
+				desc = L['Override automatic coloring with custom colors'],
+				type = 'toggle',
+				order = 1
+			},
+			barColor = {
+				name = L['Bar color'],
+				type = 'color',
+				order = 2,
+				hasAlpha = true,
+				disabled = function()
+					return not UF.CurrentSettings[frameName].elements[elementName].customColors.useCustom
+				end
+			}
+		}
+	}
 end
 
 ---@param ElementOptSet AceConfig.OptionsTable
