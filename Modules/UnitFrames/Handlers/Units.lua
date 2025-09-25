@@ -69,10 +69,22 @@ end
 
 ---@param frame table
 function Unit:Update(frame)
-	if not FrameData[frame.unitOnCreate].updater then
+	if not frame.unitOnCreate then
+		SUI:Error('Frame missing unitOnCreate property', 'UnitFrames')
 		return
 	end
-	FrameData[frame.unitOnCreate].updater(frame)
+
+	local frameData = FrameData[frame.unitOnCreate]
+	if not frameData then
+		SUI:Error('No FrameData found for unit: ' .. tostring(frame.unitOnCreate), 'UnitFrames')
+		return
+	end
+
+	if not frameData.updater then
+		return
+	end
+
+	frameData.updater(frame)
 end
 
 ---@param frameName UnitFrameName

@@ -156,7 +156,9 @@ local function Update(frame, settings)
 
 	-- Set background color (class color or custom color)
 	if DB.bg.useClassColor then
-		local color = (_G.CUSTOM_CLASS_COLORS and _G.CUSTOM_CLASS_COLORS[select(2, UnitClass('player'))]) or _G.RAID_CLASS_COLORS[select(2, UnitClass('player'))]
+		local unit = frame.unit or frame.unitOnCreate or 'player'
+		local _, class = UnitClass(unit)
+		local color = (_G.CUSTOM_CLASS_COLORS and _G.CUSTOM_CLASS_COLORS[class]) or _G.RAID_CLASS_COLORS[class]
 		local alpha = DB.bg.classColorAlpha or 0.2
 		if color then
 			element.bg:SetVertexColor(color.r, color.g, color.b, alpha)
