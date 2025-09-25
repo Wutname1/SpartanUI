@@ -61,21 +61,32 @@ local function CreateUnitFrame(self, unit)
 			self:Disable()
 			-- Hide frame background if frame is disabled
 			if SUI.Handlers.BackgroundBorder then
-				SUI.Handlers.BackgroundBorder:SetVisible('UnitFrame_' .. self.unitOnCreate, false)
+				local frameName = self:GetName() or (self.unitOnCreate .. tostring(self))
+				local instanceID = 'UnitFrame_' .. frameName
+				SUI.Handlers.BackgroundBorder:SetVisible(instanceID, false)
 			end
 			return
 		end
 
 		-- Update frame background
 		if SUI.Handlers.BackgroundBorder and self.DB.frameBackground then
-			if not SUI.Handlers.BackgroundBorder.instances['UnitFrame_' .. self.unitOnCreate] then
+			-- For group frames, use the actual frame name to create individual backgrounds
+			local frameName = self:GetName() or (self.unitOnCreate .. tostring(self))
+			local instanceID = 'UnitFrame_' .. frameName
+
+			if not SUI.Handlers.BackgroundBorder.instances[instanceID] then
 				-- Create BackgroundBorder instance if it doesn't exist
-				SUI.Handlers.BackgroundBorder:SetupUnitFrame(self, self.unitOnCreate, self.DB.frameBackground)
+				-- Set displayLevel to -5 to ensure it's well behind the frame elements
+				local settings = SUI:CopyData(self.DB.frameBackground)
+				settings.displayLevel = -5
+				SUI.Handlers.BackgroundBorder:Create(self, instanceID, settings)
 			else
 				-- Update existing instance
-				SUI.Handlers.BackgroundBorder:Update('UnitFrame_' .. self.unitOnCreate, self.DB.frameBackground)
+				local settings = SUI:CopyData(self.DB.frameBackground)
+				settings.displayLevel = -5
+				SUI.Handlers.BackgroundBorder:Update(instanceID, settings)
 			end
-			SUI.Handlers.BackgroundBorder:SetVisible('UnitFrame_' .. self.unitOnCreate, true)
+			SUI.Handlers.BackgroundBorder:SetVisible(instanceID, true)
 		end
 
 		UF.Unit:Update(self)
