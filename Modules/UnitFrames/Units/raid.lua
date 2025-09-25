@@ -91,6 +91,25 @@ local function Builder(frame)
 	end
 end
 
+local function Update(frame)
+	-- Force header to update its configuration when settings change
+	if frame and frame.header then
+		-- Update the initialConfigFunction with new dimensions
+		local configFunc = ('self:SetWidth(%d) self:SetHeight(%d)'):format(UF.CurrentSettings.raid.width, UF:CalculateHeight('raid'))
+		frame.header:SetAttribute('initialConfigFunction', configFunc)
+
+		-- Update header attributes that affect layout and size
+		frame.header:SetAttribute('xoffset', UF.CurrentSettings.raid.xOffset)
+		frame.header:SetAttribute('yOffset', UF.CurrentSettings.raid.yOffset)
+		frame.header:SetAttribute('maxColumns', UF.CurrentSettings.raid.maxColumns)
+		frame.header:SetAttribute('unitsPerColumn', UF.CurrentSettings.raid.unitsPerColumn)
+		frame.header:SetAttribute('columnSpacing', UF.CurrentSettings.raid.columnSpacing)
+		frame.header:SetAttribute('groupBy', UF.CurrentSettings.raid.mode)
+		frame.header:SetAttribute('groupingOrder', groupingOrder())
+		frame.header:SetAttribute('showPlayer', UF.CurrentSettings.raid.showSelf)
+	end
+end
+
 local function Options(OptionSet)
 	UF.Options:AddGroupDisplay('raid', OptionSet)
 	UF.Options:AddGroupDisplay('raid', OptionSet)
@@ -256,4 +275,4 @@ local Settings = {
 	}
 }
 
-UF.Unit:Add('raid', Builder, Settings, Options, GroupBuilder)
+UF.Unit:Add('raid', Builder, Settings, Options, GroupBuilder, Update)

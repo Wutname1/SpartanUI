@@ -79,6 +79,23 @@ local function Builder(frame)
 	end
 end
 
+local function Update(frame)
+	-- Force header to update its configuration when settings change
+	if frame and frame.header then
+		-- Update the initialConfigFunction with new dimensions
+		local configFunc = ('self:SetWidth(%d) self:SetHeight(%d)'):format(UF.CurrentSettings.party.width, UF:CalculateHeight('party'))
+		frame.header:SetAttribute('initialConfigFunction', configFunc)
+
+		-- Update header attributes that affect layout and size
+		frame.header:SetAttribute('xoffset', UF.CurrentSettings.party.xOffset)
+		frame.header:SetAttribute('yOffset', UF.CurrentSettings.party.yOffset)
+		frame.header:SetAttribute('maxColumns', UF.CurrentSettings.party.maxColumns)
+		frame.header:SetAttribute('unitsPerColumn', UF.CurrentSettings.party.unitsPerColumn)
+		frame.header:SetAttribute('columnSpacing', UF.CurrentSettings.party.columnSpacing)
+		frame.header:SetAttribute('showPlayer', UF.CurrentSettings.party.showSelf)
+	end
+end
+
 local function Options(OptionSet)
 	UF.Options:AddGroupDisplay('party', OptionSet)
 	UF.Options:AddGroupLayout('party', OptionSet)
@@ -189,4 +206,4 @@ local Settings = {
 	}
 }
 
-UF.Unit:Add('party', Builder, Settings, Options, GroupBuilder)
+UF.Unit:Add('party', Builder, Settings, Options, GroupBuilder, Update)
