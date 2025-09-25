@@ -167,6 +167,16 @@ function UF:OnEnable()
 	-- Put frames into their inital position
 	UF:PositionFrame()
 
+	-- Update group frames to ensure proper sizing before mover creation
+	for unit, config in pairs(UF.Unit:GetBuiltFrameList()) do
+		if config.IsGroup then
+			local frame = UF.Unit:Get(unit)
+			if frame then
+				UF.Unit:Update(frame)
+			end
+		end
+	end
+
 	-- Create movers
 	for unit, config in pairs(UF.Unit:GetBuiltFrameList()) do
 		if not config.isChild then
