@@ -829,7 +829,6 @@ function module:BuildOptions()
 	OptSet.disabled = function()
 		return SUI:IsModuleDisabled(module)
 	end
-	OptSet.args.ShowFrame.hidden = true
 	OptSet.args.General.args.Display = {
 		name = L.Display,
 		type = 'group',
