@@ -1018,7 +1018,7 @@ function Options:AddDynamicText(frameName, OptionSet, element)
 						--Update the screen
 						local position = UF.CurrentSettings[frameName].elements[element].text[count].position
 						UF.Unit[frameName][element].TextElements[count]:ClearAllPoints()
-						UF.Unit[frameName][element].TextElements[count]:SetPoint(position.anchor, UF.Unit[frameName], position.anchor, position.x, position.y)
+						UF.Unit[frameName][element].TextElements[count]:SetPoint(position.anchor, UF.Unit[frameName][element], position.anchor, position.x, position.y)
 					end,
 					args = {
 						x = {
