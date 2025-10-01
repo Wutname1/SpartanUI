@@ -348,7 +348,22 @@ function Options:CreateFrameOptionSet(frameName, get, set)
 	return OptionSet
 end
 
+---@param frameName UnitFrameName
 ---@param OptionSet AceConfig.OptionsTable
+function Options:AddPreview(frameName, OptionSet)
+	OptionSet.args.General.args.PreviewButton = {
+		name = 'Show Visual Preview',
+		type = 'execute',
+		width = 'full',
+		order = 0.1,
+		func = function()
+			if UF.FramePreview then
+				UF.FramePreview:Show(frameName)
+			end
+		end,
+	}
+end
+
 function Options:AddGeneral(OptionSet)
 	OptionSet.args.General.args = {
 		General = {
@@ -1305,7 +1320,20 @@ function Options:Initialize()
 			UF.Unit[frameName]:UpdateAll()
 		end)
 		Options:AddGeneral(FrameOptSet)
+		Options:AddPreview(frameName, FrameOptSet)
 		Options:AddFrameBackground(frameName, FrameOptSet)
+
+		-- Hook the main set function to refresh preview
+		local originalSet = FrameOptSet.set
+		FrameOptSet.set = function(info, val)
+			originalSet(info, val)
+			-- Refresh preview if it's open
+			C_Timer.After(0.1, function()
+				if UF.FramePreview and UF.FramePreview.Refresh then
+					UF.FramePreview:Refresh()
+				end
+			end)
+		end
 
 		-- Add Element Options
 		local builtFrame = UF.Unit:Get(frameName)
