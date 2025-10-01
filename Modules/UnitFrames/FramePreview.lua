@@ -305,6 +305,24 @@ function FramePreview:Update(frameName)
 		end
 	end
 
+	-- Draw anchor lines showing element relationships
+	previewBorder.anchorLines = {}
+	for elementName, element in pairs(previewBorder.elements) do
+		local elementSettings = settings.elements[elementName]
+		if elementSettings and elementSettings.position and elementSettings.position.relativeTo and elementSettings.position.relativeTo ~= 'Frame' then
+			local relativeTo = previewBorder.elements[elementSettings.position.relativeTo]
+			if relativeTo then
+				-- Create line showing anchor relationship
+				local line = previewBorder:CreateLine()
+				line:SetColorTexture(0, 1, 1, 0.5)
+				line:SetThickness(2)
+				line:SetStartPoint('CENTER', element)
+				line:SetEndPoint('CENTER', relativeTo)
+				previewBorder.anchorLines[#previewBorder.anchorLines + 1] = line
+			end
+		end
+	end
+
 	-- Update info label
 	frame.title:SetText(string.format('Preview: %s', frameName))
 	frame.infoLabel:SetFormattedText('%dx%d (Scale: %.2f)', width, height, scale)
