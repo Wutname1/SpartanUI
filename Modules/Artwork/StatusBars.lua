@@ -364,7 +364,7 @@ function module:CreateBarManager()
 		-- Check if containers are enabled and hide disabled ones
 		for i, barContainer in ipairs(self.barContainers) do
 			local containerKey = i == 1 and 'Left' or 'Right'
-			if not DB.bars[containerKey].enabled then
+			if DB and DB.bars and not DB.bars[containerKey].enabled then
 				barContainer:SetShownBar(Enums.Bars.None)
 			end
 		end
