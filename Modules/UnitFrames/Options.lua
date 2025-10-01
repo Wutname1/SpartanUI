@@ -348,7 +348,80 @@ function Options:CreateFrameOptionSet(frameName, get, set)
 	return OptionSet
 end
 
+---@param frameName UnitFrameName
 ---@param OptionSet AceConfig.OptionsTable
+function Options:AddPreview(frameName, OptionSet)
+	OptionSet.args.General.args.Preview = {
+		name = L['Frame Preview'],
+		type = 'group',
+		order = 0.5,
+		inline = true,
+		args = {
+			info = {
+				name = function()
+					local settings = UF.CurrentSettings[frameName]
+					if not settings then return 'No settings available' end
+
+					local width = settings.width or 180
+					local scale = settings.scale or 1
+					local height = 0
+					local enabledElements = {}
+
+					if settings.elements then
+						if settings.elements.Health and settings.elements.Health.enabled then
+							height = height + (settings.elements.Health.height or 20)
+							enabledElements[#enabledElements + 1] = '|cff00FF00Health|r'
+						end
+						if settings.elements.Power and settings.elements.Power.enabled then
+							height = height + (settings.elements.Power.height or 15)
+							enabledElements[#enabledElements + 1] = '|cff0088FFPower|r'
+						end
+						if settings.elements.Portrait and settings.elements.Portrait.enabled then
+							enabledElements[#enabledElements + 1] = '|cffFFAA00Portrait|r'
+						end
+						if settings.elements.Castbar and settings.elements.Castbar.enabled then
+							enabledElements[#enabledElements + 1] = '|cffFF88FFCastbar|r'
+						end
+						if settings.elements.Buffs and settings.elements.Buffs.enabled then
+							enabledElements[#enabledElements + 1] = '|cff88FF00Buffs|r'
+						end
+						if settings.elements.Debuffs and settings.elements.Debuffs.enabled then
+							enabledElements[#enabledElements + 1] = '|cffFF0000Debuffs|r'
+						end
+					end
+
+					if height == 0 then height = 40 end
+
+					local elementsText = #enabledElements > 0 and table.concat(enabledElements, ', ') or '|cff888888None|r'
+
+					return string.format(
+						'|cffFFD700=== %s Frame ===|r\n\n' ..
+						'|cffAAAAFFDimensions:|r\n' ..
+						'  Width: |cff00FF00%d|r px  |  Height: |cff00FF00%d|r px  |  Scale: |cff00FF00%.2f|r\n' ..
+						'  |cffFFD700Effective Size: %d x %d|r\n\n' ..
+						'|cffAAAAFFActive Elements:|r\n' ..
+						'  %s',
+						frameName,
+						width, height, scale,
+						floor(width * scale), floor(height * scale),
+						elementsText
+					)
+				end,
+				type = 'description',
+				order = 1,
+				width = 'full',
+			},
+			tip = {
+				name = '|cff888888Preview updates automatically as you change settings.|r',
+				type = 'description',
+				order = 2,
+				width = 'full',
+				fontSize = 'small',
+			},
+		},
+	}
+end
+
 function Options:AddGeneral(OptionSet)
 	OptionSet.args.General.args = {
 		General = {
@@ -1305,6 +1378,7 @@ function Options:Initialize()
 			UF.Unit[frameName]:UpdateAll()
 		end)
 		Options:AddGeneral(FrameOptSet)
+		Options:AddPreview(frameName, FrameOptSet)
 		Options:AddFrameBackground(frameName, FrameOptSet)
 
 		-- Add Element Options
