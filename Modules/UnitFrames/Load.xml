@@ -42,6 +42,7 @@
 	</Button>
 
 	<Script file="Framework.lua"/>
+	<Script file="FramePreview.lua"/>
 
 	<Include file="widgets\widgets.xml"/>
 
