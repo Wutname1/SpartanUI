@@ -298,16 +298,6 @@ function Options:CreateFrameOptionSet(frameName, get, set)
 		get = get,
 		set = set,
 		args = {
-			ShowFrame = {
-				name = 'Show Frame',
-				type = 'execute',
-				order = 1,
-				width = 'full',
-				disabled = (frameName == 'raid' or frameName == 'boss' or frameName == 'arena'),
-				func = function()
-					UF.Unit:ToggleForceShow(frameName)
-				end,
-			},
 			General = {
 				name = L['General'],
 				desc = L['General display settings'],

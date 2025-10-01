@@ -53,7 +53,6 @@ local visibility = {
 ---@field UpdateAll function
 ---@field ElementUpdate function
 ---@field mover frame
----@field isForced boolean
 ---@field config SUI.UF.Unit.Settings
 ---@field frames? table<integer, SUI.UF.Unit.Frame>
 ---@field header? frame
