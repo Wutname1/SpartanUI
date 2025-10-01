@@ -529,6 +529,10 @@ function module:CreateQuestButton()
 	questButton.Count = count
 
 	questButton:Hide()
+
+	-- Set up secure visibility attribute driver
+	RegisterAttributeDriver(questButton, 'state-visibility', 'hide')
+
 	questButton:RegisterEvent('BAG_UPDATE_DELAYED')
 	questButton:RegisterEvent('BAG_UPDATE_COOLDOWN')
 
@@ -567,7 +571,12 @@ end
 function module:UpdateQuestButton()
 	if not module.DB.questButton.enabled then
 		if questButton then
-			questButton:Hide()
+			-- Use secure method to hide the button
+			if InCombatLockdown() then
+				questButton:SetAttribute('state-visibility', 'hide')
+			else
+				questButton:Hide()
+			end
 		end
 		return
 	end
@@ -591,11 +600,21 @@ function module:UpdateQuestButton()
 			SUI.Log('Quest button updated with item: ' .. itemLink, 'ObjectiveTracker', 'debug')
 		end
 
-		questButton:Show()
+		-- Use secure method to show the button
+		if InCombatLockdown() then
+			questButton:SetAttribute('state-visibility', 'show')
+		else
+			questButton:Show()
+		end
 		module:PositionQuestButton()
 	else
-		questButton:Hide()
-		questButton:SetAttribute('item', nil)
+		-- Use secure method to hide the button
+		if InCombatLockdown() then
+			questButton:SetAttribute('state-visibility', 'hide')
+		else
+			questButton:Hide()
+			questButton:SetAttribute('item', nil)
+		end
 	end
 end
 
