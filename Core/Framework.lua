@@ -85,8 +85,32 @@ SUI.AddLib('LibQTip', 'LibQTip-1.0')
 SUI.AddLib('LibEditMode', 'LibEditMode')
 SUI.AddLib('EditModeOverride', 'LibEditModeOverride-1.0')
 
+---Safely reload the UI with instance+combat check
+---@param showMessage? boolean Whether to show error message (default: true)
+---@return boolean success Whether reload was initiated or would be allowed
+function SUI:SafeReloadUI(showMessage)
+	if showMessage == nil then
+		showMessage = true
+	end
+
+	local inInstance = IsInInstance()
+	local inCombat = InCombatLockdown()
+
+	if inInstance and inCombat then
+		if showMessage then
+			SUI:Print('|cffff0000Cannot reload UI while in combat in an instance|r')
+		end
+		return false
+	end
+
+	ReloadUI()
+	return true
+end
+
 SLASH_RELOADUI1 = '/rl' -- new slash command for reloading UI
-SlashCmdList.RELOADUI = ReloadUI
+SlashCmdList.RELOADUI = function()
+	SUI:SafeReloadUI()
+end
 
 -- Add Statusbar textures
 SUI.Lib.LSM:Register('statusbar', 'Brushed aluminum', [[Interface\AddOns\SpartanUI\images\statusbars\BrushedAluminum]])
@@ -1033,7 +1057,7 @@ local function reloaduiWindow()
 		'OnClick',
 		function()
 			-- Perform the Page's Custom Next action
-			ReloadUI()
+			SUI:SafeReloadUI()
 		end
 	)
 

@@ -230,9 +230,12 @@ function module:updateOffset()
 		return
 	end
 
+	SUI.Log('updateOffset called - TopAuto: ' .. tostring(SUI.DB.Artwork.Offset.TopAuto) .. ', BottomAuto: ' .. tostring(SUI.DB.Artwork.Offset.BottomAuto), 'Artwork', 'debug')
+
 	local Top, Bottom = 0, 0
 	local Tfubar, TChocolateBar, Ttitan, TLibsDataBar = 0, 0, 0, 0
 	local Bfubar, BChocolateBar, Btitan, BLibsDataBar = 0, 0, 0, 0
+	local SUITopOffset, SUIBottomOffset = 0, 0
 
 	if SUI.DB.Artwork.Offset.TopAuto or SUI.DB.Artwork.Offset.BottomAuto then
 		-- FuBar Offset
@@ -277,12 +280,15 @@ function module:updateOffset()
 		end
 
 		-- LibsDataBar Detection
-		if _G.LibsDataBar_GetBarOffsets then
-			local ldbOffsets = _G.LibsDataBar_GetBarOffsets()
+		if LibsDataBar and LibsDataBar.API then
+			local ldbOffsets = LibsDataBar.API:GetBarOffsets()
 			if ldbOffsets then
 				TLibsDataBar = ldbOffsets.top or 0
 				BLibsDataBar = ldbOffsets.bottom or 0
+				SUI.Log('LibsDataBar offsets detected - top: ' .. TLibsDataBar .. ', bottom: ' .. BLibsDataBar, 'Artwork', 'debug')
 			end
+		else
+			SUI.Log('LibsDataBar.API not available', 'Artwork', 'debug')
 		end
 
 		-- Blizz Legion Order Hall
@@ -290,14 +296,16 @@ function module:updateOffset()
 			Top = Top + OrderHallCommandBar:GetHeight()
 		end
 
-		-- Update DB if set to auto
+		-- Calculate SUI's own offset (excluding LibsDataBar - we'll add that separately)
+		SUITopOffset = max(Top + Tfubar + Ttitan + TChocolateBar, 0)
+		SUIBottomOffset = max(Bottom + Bfubar + Btitan + BChocolateBar, 0)
+
+		-- Update DB if set to auto (total offset including LibsDataBar)
 		if SUI.DB.Artwork.Offset.TopAuto then
-			Top = max(Top + Tfubar + Ttitan + TChocolateBar + TLibsDataBar, 0)
-			SUI.DB.Artwork.Offset.Top = Top
+			SUI.DB.Artwork.Offset.Top = max(SUITopOffset + TLibsDataBar, 0)
 		end
 		if SUI.DB.Artwork.Offset.BottomAuto then
-			Bottom = max(Bottom + Bfubar + Btitan + BChocolateBar + BLibsDataBar, 0)
-			SUI.DB.Artwork.Offset.Bottom = Bottom
+			SUI.DB.Artwork.Offset.Bottom = max(SUIBottomOffset + BLibsDataBar, 0)
 		end
 	end
 
@@ -315,18 +323,9 @@ function module:updateOffset()
 		SpartanUI:SetPoint('BOTTOMLEFT', UIParent, 'BOTTOMLEFT', 0, SUI.DB.Artwork.Offset.Bottom)
 	end
 
-	-- Notify LibsDataBar API of offset changes if available
-	if _G.LibsDataBar_NotifyOffsetChange then
-		_G.LibsDataBar_NotifyOffsetChange(
-			'spartanui',
-			{
-				top = SUI.DB.Artwork.Offset.Top,
-				bottom = SUI.DB.Artwork.Offset.Bottom,
-				left = 0,
-				right = 0
-			}
-		)
-	end
+	-- LibsDataBar integration is ONE-WAY:
+	-- SUI reads LibsDataBar's bar offsets (done above) and adjusts artwork accordingly
+	-- LibsDataBar does NOT need to know about SUI - it positions itself based on config only
 end
 
 function module:updateHorizontalOffset()
