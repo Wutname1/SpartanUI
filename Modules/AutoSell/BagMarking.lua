@@ -11,7 +11,7 @@ local vendorOpen = false
 local markingTimer = nil -- Ace3 timer handle
 
 local function debugMsg(msg, level)
-	-- Use the BagMarking component of the AutoSell logger
+	-- Use the BagMarking component of the AutoSell
 	-- This creates the hierarchy: AutoSell -> BagMarking
 	SUI.ModuleLog(module, msg, 'BagMarking', level or 'debug')
 end

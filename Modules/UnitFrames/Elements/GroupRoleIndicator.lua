@@ -61,6 +61,29 @@ local function Options(unitName, OptionSet)
 	}
 end
 
+---@param previewFrame table
+---@param DB table
+---@param frameName string
+---@return number
+local function Preview(previewFrame, DB, frameName)
+	if not previewFrame.GroupRoleIndicator then
+		previewFrame.GroupRoleIndicator = previewFrame:CreateTexture(nil, 'BORDER')
+		previewFrame.GroupRoleIndicator:SetTexture('Interface\\AddOns\\SpartanUI\\images\\icon_role.tga')
+		previewFrame.GroupRoleIndicator.Sizeable = true
+	end
+
+	local element = previewFrame.GroupRoleIndicator
+	element:SetSize(DB.size, DB.size)
+	element:SetAlpha(DB.alpha or 0.75)
+	element:SetPoint(DB.position.anchor, previewFrame, DB.position.anchor, DB.position.x or 0, DB.position.y or 10)
+
+	-- Show as HEALER role (green cross) for preview
+	element:SetTexCoord(0.5, 1, 0, 1)
+	element:Show()
+
+	return 0
+end
+
 ---@type SUI.UF.Elements.Settings
 local Settings = {
 	enabled = true,
@@ -77,7 +100,8 @@ local Settings = {
 	config = {
 		type = 'Indicator',
 		DisplayName = 'Group Role'
-	}
+	},
+	showInPreview = false
 }
 
-UF.Elements:Register('GroupRoleIndicator', Build, nil, Options, Settings)
+UF.Elements:Register('GroupRoleIndicator', Build, nil, Options, Settings, Preview)

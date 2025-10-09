@@ -69,6 +69,94 @@ local function Update(frame, settings)
 	updateSettings(element)
 end
 
+---@param previewFrame table
+---@param DB table
+---@param frameName string
+---@return number
+local function Preview(previewFrame, DB, frameName)
+	if not previewFrame.Buffs then
+		local element = CreateFrame('Frame', frameName .. 'Buffs', previewFrame)
+		previewFrame.Buffs = element
+	end
+
+	local element = previewFrame.Buffs
+	element:Show()
+
+	-- Create sample buff icons
+	if not element.previewButtons then
+		element.previewButtons = {}
+		-- Sample buffs with real spell icons
+		local sampleBuffs = {
+			{icon = 136081, count = nil}, -- Rejuvenation
+			{icon = 135953, count = nil}, -- Renew
+			{icon = 136078, count = 3} -- Mark of the Wild with count
+		}
+
+		for i, buff in ipairs(sampleBuffs) do
+			local button = CreateFrame('Frame', nil, element)
+			button:SetSize(DB.size, DB.size)
+
+			button.icon = button:CreateTexture(nil, 'ARTWORK')
+			button.icon:SetAllPoints()
+			button.icon:SetTexture(buff.icon)
+
+			button.overlay = button:CreateTexture(nil, 'OVERLAY')
+			button.overlay:SetAllPoints()
+			button.overlay:SetTexture([[Interface\AddOns\SpartanUI\images\border]])
+
+			if buff.count then
+				button.count = button:CreateFontString(nil, 'OVERLAY')
+				SUI.Font:Format(button.count, 12, 'UnitFrames')
+				button.count:SetPoint('BOTTOMRIGHT', button, 'BOTTOMRIGHT', -1, 1)
+				button.count:SetText(buff.count)
+			end
+
+			element.previewButtons[i] = button
+		end
+	end
+
+	-- Position buff icons based on growth settings
+	for i, button in ipairs(element.previewButtons) do
+		button:SetSize(DB.size, DB.size)
+		button:ClearAllPoints()
+
+		if i == 1 then
+			button:SetPoint(DB.position.anchor, previewFrame, DB.position.relativePoint or DB.position.anchor, 0, 0)
+		else
+			local prevButton = element.previewButtons[i - 1]
+			local xOffset = 0
+			local yOffset = 0
+
+			if DB.growthx == 'RIGHT' then
+				xOffset = DB.spacing + DB.size
+			elseif DB.growthx == 'LEFT' then
+				xOffset = -(DB.spacing + DB.size)
+			end
+
+			if DB.growthy == 'DOWN' then
+				yOffset = -(DB.spacing + DB.size)
+			elseif DB.growthy == 'UP' then
+				yOffset = DB.spacing + DB.size
+			end
+
+			-- Handle rows
+			local row = math.floor((i - 1) / (DB.number / DB.rows))
+			local col = (i - 1) % (DB.number / DB.rows)
+
+			if col == 0 and i > 1 then
+				-- New row
+				button:SetPoint(DB.position.anchor, previewFrame, DB.position.relativePoint or DB.position.anchor, 0, yOffset * row)
+			else
+				button:SetPoint('LEFT', prevButton, 'RIGHT', DB.spacing, 0)
+			end
+		end
+
+		button:Show()
+	end
+
+	return (DB.size + DB.spacing) * DB.rows
+end
+
 ---@param unitName string
 ---@param OptionSet AceConfig.OptionsTable
 local function Options(unitName, OptionSet)
@@ -108,6 +196,7 @@ local Settings = {
 		},
 		isBossAura = true,
 		showPlayers = true
-	}
+	},
+	showInPreview = false
 }
-UF.Elements:Register('Buffs', Build, Update, Options, Settings)
+UF.Elements:Register('Buffs', Build, Update, Options, Settings, Preview)

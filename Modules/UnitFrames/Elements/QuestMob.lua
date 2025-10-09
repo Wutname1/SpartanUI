@@ -38,6 +38,30 @@ local function Options(unitName, OptionSet)
 	--local DB = UF.CurrentSettings[unitName].elements.QuestMob
 end
 
+---@param previewFrame table
+---@param DB table
+---@param frameName string
+---@return number
+local function Preview(previewFrame, DB, frameName)
+	if not previewFrame.QuestMob then
+		local element = CreateFrame('Frame', frameName .. 'QuestIcons', previewFrame)
+		element.Default = element:CreateTexture(nil, 'BORDER', nil, 1)
+		previewFrame.QuestMob = element
+	end
+
+	local element = previewFrame.QuestMob
+	element:SetSize(20, 20)
+	element:SetPoint(DB.position.anchor, previewFrame, DB.position.anchor, 0, 0)
+
+	-- Show quest bang icon
+	element.Default:SetAtlas('QuestNormal')
+	element.Default:SetAllPoints(element)
+	element.Default:Show()
+	element:Show()
+
+	return 0
+end
+
 ---@type SUI.UF.Elements.Settings
 local Settings = {
 	position = {
@@ -46,7 +70,8 @@ local Settings = {
 	config = {
 		DisplayName = 'Quest',
 		type = 'Indicator'
-	}
+	},
+	showInPreview = false
 }
 
-UF.Elements:Register('QuestMob', Build, nil, Options, Settings)
+UF.Elements:Register('QuestMob', Build, nil, Options, Settings, Preview)

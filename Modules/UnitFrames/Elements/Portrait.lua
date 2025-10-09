@@ -156,9 +156,40 @@ local function Options(frameName, OptionSet)
 	}
 end
 
+---@param previewFrame frame The preview frame to render into
+---@param DB table Element settings
+---@param frameName UnitFrameName The frame name being previewed
+local function Preview(previewFrame, DB, frameName)
+	-- For preview, only show 2D portrait to avoid complexity with 3D models
+	local portrait = previewFrame.Portrait2D or previewFrame:CreateTexture(nil, 'OVERLAY')
+	local size = previewFrame:GetHeight()
+	portrait:SetSize(size, size)
+	portrait:SetScale(DB.scale or 1)
+
+	-- Set player portrait texture
+	SetPortraitTexture(portrait, 'player')
+
+	-- Position based on settings
+	portrait:ClearAllPoints()
+	if DB.position == 'left' then
+		portrait:SetPoint('RIGHT', previewFrame, 'LEFT')
+	elseif DB.position == 'overlay' then
+		portrait:SetAllPoints(previewFrame)
+		portrait:SetAlpha(DB.alpha or 0.3)
+	else -- right
+		portrait:SetPoint('LEFT', previewFrame, 'RIGHT')
+	end
+
+	portrait:Show()
+	previewFrame.Portrait2D = portrait
+
+	return 0 -- Portrait doesn't contribute to height
+end
+
 ---@type SUI.UF.Elements.Settings
 local Settings = {
 	type = '3D',
+	showInPreview = true, -- Portrait is always visible when enabled
 	scaleWithFrame = true,
 	width = 50,
 	height = 100,
@@ -167,10 +198,12 @@ local Settings = {
 	xOffset = 0,
 	yOffset = 0,
 	position = 'left',
+	alpha = 0.3,
+	scale = 1,
 	config = {
 		NoBulkUpdate = true,
 		type = 'General'
 	}
 }
 
-UF.Elements:Register('Portrait', Build, Update, Options, Settings)
+UF.Elements:Register('Portrait', Build, Update, Options, Settings, Preview)

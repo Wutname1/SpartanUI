@@ -182,6 +182,49 @@ local sectiondefault = {
 	alpha = 1,
 	graphic = ''
 }
+---@param previewFrame table
+---@param DB table
+---@param frameName string
+---@return number
+local function Preview(previewFrame, DB, frameName)
+	if not previewFrame.SpartanArt then
+		local SpartanArt = CreateFrame('Frame', nil, previewFrame)
+		SpartanArt:SetFrameStrata('BACKGROUND')
+		SpartanArt:SetFrameLevel(2)
+		SpartanArt:SetAllPoints()
+		SpartanArt.top = SpartanArt:CreateTexture(nil, 'BORDER')
+		SpartanArt.bg = SpartanArt:CreateTexture(nil, 'BACKGROUND')
+		SpartanArt.bottom = SpartanArt:CreateTexture(nil, 'BORDER')
+		SpartanArt.full = SpartanArt:CreateTexture(nil, 'BACKGROUND')
+		previewFrame.SpartanArt = SpartanArt
+	end
+
+	local element = previewFrame.SpartanArt
+
+	-- Show art if enabled for any position
+	for pos, settings in pairs({full = DB.full, top = DB.top, bg = DB.bg, bottom = DB.bottom}) do
+		if settings and settings.enabled and settings.graphic ~= '' then
+			local style = UF.Style:Get(settings.graphic)
+			if style and style.artwork and style.artwork[pos] then
+				local artData = style.artwork[pos]
+				if type(artData.path) == 'function' then
+					element[pos]:SetTexture(artData.path(previewFrame, pos))
+				else
+					element[pos]:SetTexture(artData.path)
+				end
+				element[pos]:SetAlpha(settings.alpha or 1)
+				element[pos]:Show()
+			end
+		else
+			element[pos]:Hide()
+		end
+	end
+
+	element:Show()
+
+	return 0
+end
+
 ---@type SUI.UF.Elements.Settings
 local Settings = {
 	enabled = true,
@@ -192,7 +235,8 @@ local Settings = {
 	config = {
 		NoBulkUpdate = true,
 		DisplayName = 'SUI Artwork'
-	}
+	},
+	showInPreview = true
 }
 
-UF.Elements:Register('SpartanArt', Build, Update, Options, Settings)
+UF.Elements:Register('SpartanArt', Build, Update, Options, Settings, Preview)

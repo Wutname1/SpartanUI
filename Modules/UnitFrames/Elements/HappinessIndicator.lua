@@ -58,6 +58,28 @@ end
 local function Options(unitName, OptionSet)
 end
 
+---@param previewFrame table
+---@param DB table
+---@param frameName string
+---@return number
+local function Preview(previewFrame, DB, frameName)
+	if not previewFrame.HappinessIndicator then
+		previewFrame.HappinessIndicator = previewFrame:CreateTexture(nil, 'OVERLAY')
+		previewFrame.HappinessIndicator.Sizeable = true
+	end
+
+	local element = previewFrame.HappinessIndicator
+	element:SetSize(DB.size or 16, DB.size or 16)
+	element:SetPoint(DB.position.anchor, previewFrame, DB.position.anchor, DB.position.x or -10, DB.position.y or -10)
+
+	-- Show happy pet face
+	element:SetTexture([[Interface\PetPaperDollFrame\UI-PetHappiness]])
+	element:SetTexCoord(0.375, 0.5625, 0, 0.359375)
+	element:Show()
+
+	return 0
+end
+
 ---@type SUI.UF.Elements.Settings
 local Settings = {
 	enabled = true,
@@ -69,7 +91,8 @@ local Settings = {
 	config = {
 		type = 'Indicator',
 		DisplayName = 'Happiness'
-	}
+	},
+	showInPreview = false
 }
 
-UF.Elements:Register('HappinessIndicator', Build, Update, Options, Settings)
+UF.Elements:Register('HappinessIndicator', Build, Update, Options, Settings, Preview)

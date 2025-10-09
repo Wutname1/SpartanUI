@@ -95,8 +95,9 @@ end
 ```
 
 **Key annotation patterns:**
+
 - `---@param name type` - Required parameter
-- `---@param name? type` - Optional parameter  
+- `---@param name? type` - Optional parameter
 - `---@return type` - Return value
 - `---@return type|nil` - Optional/nullable return
 - `---@class ClassName` - Class definition
@@ -123,7 +124,7 @@ Always document function inputs and outputs to improve code maintainability and 
 
 ### Logging and Debugging
 
-- **Use Logger System**: Always use `SUI.Handlers.Logger` for debugging and logging instead of `print()` statements
+- **Use Logger System**: Always use `LibAT.Logger` for debugging and logging instead of `print()` statements
 - **Logger Usage**: The logger system provides better control, filtering, and categorization of debug output
 - **Avoid Print Statements**: Direct `print()` calls should be avoided in favor of the structured logging system
 
@@ -149,6 +150,7 @@ Always document function inputs and outputs to improve code maintainability and 
 No automated test framework. Testing done manually in World of Warcraft client using `/rl` to reload changes.
 
 **Important Notes:**
+
 - `luac` command does not work in this environment for syntax checking
 - Use VS Code IDE integration for error detection via the Problems tab
 - Only focus on actual errors, not formatting issues (formatting is auto-handled on save)

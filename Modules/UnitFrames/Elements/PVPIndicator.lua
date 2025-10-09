@@ -142,6 +142,35 @@ local function Options(frameName, OptionSet)
 	end
 end
 
+---@param previewFrame table
+---@param DB table
+---@param frameName string
+---@return number
+local function Preview(previewFrame, DB, frameName)
+	if not previewFrame.PvPIndicator then
+		previewFrame.PvPIndicator = previewFrame:CreateTexture(nil, 'ARTWORK')
+		previewFrame.PvPIndicator.shadow = previewFrame:CreateTexture(nil, 'ARTWORK')
+	end
+
+	local element = previewFrame.PvPIndicator
+	element:SetSize(DB.size, DB.size)
+	element:SetPoint(DB.position.anchor, previewFrame, DB.position.anchor, DB.position.x or -10, DB.position.y or 0)
+
+	-- Show Alliance PvP icon as preview
+	element:SetTexture([[Interface\FriendsFrame\PlusManz-Alliance]])
+	element:Show()
+
+	if DB.Shadow and element.shadow then
+		element.shadow:SetSize(DB.size + 2, DB.size + 2)
+		element.shadow:SetPoint('CENTER', element, 'CENTER', 2, -2)
+		element.shadow:SetTexture([[Interface\FriendsFrame\PlusManz-Alliance]])
+		element.shadow:SetVertexColor(0, 0, 0, 0.7)
+		element.shadow:Show()
+	end
+
+	return 0
+end
+
 ---@type SUI.UF.Elements.Settings
 local Settings = {
 	Badge = false,
@@ -154,7 +183,8 @@ local Settings = {
 	config = {
 		DisplayName = 'PvP',
 		type = 'Indicator'
-	}
+	},
+	showInPreview = false
 }
 
-UF.Elements:Register('PvPIndicator', Build, Update, Options, Settings)
+UF.Elements:Register('PvPIndicator', Build, Update, Options, Settings, Preview)

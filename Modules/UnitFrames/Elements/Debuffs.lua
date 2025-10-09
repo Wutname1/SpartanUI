@@ -70,6 +70,88 @@ local function Update(frame, settings)
 	updateSettings(element)
 end
 
+---@param previewFrame table
+---@param DB table
+---@param frameName string
+---@return number
+local function Preview(previewFrame, DB, frameName)
+	if not previewFrame.Debuffs then
+		local element = CreateFrame('Frame', frameName .. 'Debuffs', previewFrame)
+		previewFrame.Debuffs = element
+	end
+
+	local element = previewFrame.Debuffs
+	element:Show()
+
+	-- Create sample debuff icons
+	if not element.previewButtons then
+		element.previewButtons = {}
+		-- Sample debuffs with real spell icons
+		local sampleDebuffs = {
+			{icon = 136139, type = 'Magic'}, -- Polymorph
+			{icon = 132152, type = 'Poison'}, -- Deadly Poison
+			{icon = 136093, type = 'Curse'} -- Curse of Agony
+		}
+
+		for i, debuff in ipairs(sampleDebuffs) do
+			local button = CreateFrame('Frame', nil, element)
+			button:SetSize(DB.size, DB.size)
+
+			button.icon = button:CreateTexture(nil, 'ARTWORK')
+			button.icon:SetAllPoints()
+			button.icon:SetTexture(debuff.icon)
+
+			button.overlay = button:CreateTexture(nil, 'OVERLAY')
+			button.overlay:SetAllPoints()
+			button.overlay:SetTexture([[Interface\AddOns\SpartanUI\images\border]])
+
+			if DB.showType then
+				-- Color border by debuff type
+				local color = DebuffTypeColor[debuff.type] or {r = 0.8, g = 0, b = 0}
+				button.overlay:SetVertexColor(color.r, color.g, color.b)
+			end
+
+			element.previewButtons[i] = button
+		end
+	end
+
+	-- Position debuff icons
+	for i, button in ipairs(element.previewButtons) do
+		button:SetSize(DB.size, DB.size)
+		button:ClearAllPoints()
+
+		if i == 1 then
+			button:SetPoint(DB.position.anchor, previewFrame, DB.position.relativePoint or DB.position.anchor, 0, 0)
+		else
+			local prevButton = element.previewButtons[i - 1]
+			local row = math.floor((i - 1) / (DB.number / DB.rows))
+			local col = (i - 1) % (DB.number / DB.rows)
+
+			if col == 0 and i > 1 then
+				-- New row
+				local yOffset = 0
+				if DB.growthy == 'UP' then
+					yOffset = (DB.spacing + DB.size) * row
+				else
+					yOffset = -(DB.spacing + DB.size) * row
+				end
+				button:SetPoint(DB.position.anchor, previewFrame, DB.position.relativePoint or DB.position.anchor, 0, yOffset)
+			else
+				local xOffset = DB.spacing
+				if DB.growthx == 'LEFT' then
+					button:SetPoint('RIGHT', prevButton, 'LEFT', -DB.spacing, 0)
+				else
+					button:SetPoint('LEFT', prevButton, 'RIGHT', DB.spacing, 0)
+				end
+			end
+		end
+
+		button:Show()
+	end
+
+	return (DB.size + DB.spacing) * DB.rows
+end
+
 ---@param unitName string
 ---@param OptionSet AceConfig.OptionsTable
 local function Options(unitName, OptionSet)
@@ -109,6 +191,7 @@ local Settings = {
 	},
 	config = {
 		type = 'Auras'
-	}
+	},
+	showInPreview = false
 }
-UF.Elements:Register('Debuffs', Build, Update, Options, Settings)
+UF.Elements:Register('Debuffs', Build, Update, Options, Settings, Preview)
