@@ -7,5 +7,4 @@ ignore:
 enable-nolib-creation: no
 
 move-folders:
-  Libs-AddonTools: Libs-DataBar-Bags
-  
+  SpartanUI/Libs-AddonTools: Libs-AddonTools
