@@ -195,7 +195,7 @@ function module:OnInitialize()
 						order = 0.5,
 						func = function()
 							SUI.SpartanUIDB:ResetProfile()
-							ReloadUI()
+							SUI:SafeReloadUI()
 						end
 					},
 					ResetDB = {
@@ -205,7 +205,7 @@ function module:OnInitialize()
 						order = 1,
 						func = function()
 							SUI.SpartanUIDB:ResetDB()
-							ReloadUI()
+							SUI:SafeReloadUI()
 						end
 					}
 				}

@@ -412,7 +412,7 @@ local function WelcomePage()
 					-- Copy profile
 					SUI.SpartanUIDB:CopyProfile(ProfileSelection)
 					-- Reload the UI
-					ReloadUI()
+					SUI:SafeReloadUI()
 				end
 			)
 			if #profiles == 0 then

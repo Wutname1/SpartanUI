@@ -1115,7 +1115,7 @@ StaticPopupDialogs['MiniMapNotice'] = {
 	OnCancel = function()
 		module.DB.ManualAllowUse = false
 		SUI:DisableModule(module)
-		ReloadUI()
+		SUI:SafeReloadUI()
 	end,
 	timeout = 0,
 	whileDead = true,
