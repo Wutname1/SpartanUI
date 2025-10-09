@@ -1,3 +1,8 @@
+-- Disable SpartanUI error handler if LibAT is available (use LibAT's error handler instead)
+if LibAT and LibAT.ErrorDisplay then
+	return
+end
+
 ---@class Lib.ErrorWindow
 local addon = select(2, ...)
 local addonName = select(1, ...)

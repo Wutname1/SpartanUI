@@ -29,6 +29,25 @@ local function Options(unitName, OptionSet)
 	--local DB = UF.CurrentSettings[unitName].elements.DispelHighlight
 end
 
+---@param previewFrame table
+---@param DB table
+---@param frameName string
+---@return number
+local function Preview(previewFrame, DB, frameName)
+	if not previewFrame.DispelHighlight then
+		previewFrame.DispelHighlight = previewFrame:CreateTexture(nil, 'OVERLAY')
+		previewFrame.DispelHighlight:SetTexture('Interface\\AddOns\\SpartanUI\\images\\statusbars\\Smoothv2')
+	end
+
+	local element = previewFrame.DispelHighlight
+	element:SetAllPoints(previewFrame)
+	-- Show a preview with magic debuff color
+	element:SetVertexColor(0.2, 0.6, 1, 0.4)
+	element:Show()
+
+	return 0
+end
+
 ---@type SUI.UF.Elements.Settings
 local Settings = {
 	enabled = true,
@@ -38,6 +57,7 @@ local Settings = {
 	config = {
 		type = 'Indicator',
 		DisplayName = 'Dispel Highlight'
-	}
+	},
+	showInPreview = false
 }
-UF.Elements:Register('DispelHighlight', Build, Update, Options, Settings)
+UF.Elements:Register('DispelHighlight', Build, Update, Options, Settings, Preview)

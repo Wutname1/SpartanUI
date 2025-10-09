@@ -27,6 +27,28 @@ local function Options(unitName, OptionSet)
 	--local DB = UF.CurrentSettings[unitName].elements.RareElite
 end
 
+---@param previewFrame table
+---@param DB table
+---@param frameName string
+---@return number
+local function Preview(previewFrame, DB, frameName)
+	if not previewFrame.RareElite then
+		if not previewFrame.SpartanArt then
+			previewFrame.SpartanArt = CreateFrame('Frame', nil, previewFrame)
+		end
+		previewFrame.RareElite = previewFrame.SpartanArt:CreateTexture(nil, 'BORDER')
+	end
+
+	local element = previewFrame.RareElite
+	element:SetTexture([[Interface\Addons\SpartanUI\Themes\Classic\Images\RareElite]])
+	element:SetAlpha(DB.alpha or 0.4)
+	element:SetPoint(DB.points['1'].anchor, previewFrame, DB.points['1'].anchor, DB.points['1'].x, DB.points['1'].y)
+	element:SetPoint(DB.points['2'].anchor, previewFrame, DB.points['2'].anchor, DB.points['2'].x, DB.points['2'].y)
+	element:Show()
+
+	return 0
+end
+
 ---@type SUI.UF.Elements.Settings
 local Settings = {
 	enabled = true,
@@ -48,7 +70,8 @@ local Settings = {
 	config = {
 		type = 'Indicator',
 		DisplayName = 'Rare/Elite'
-	}
+	},
+	showInPreview = false
 }
 
-UF.Elements:Register('RareElite', Build, Update, Options, Settings)
+UF.Elements:Register('RareElite', Build, Update, Options, Settings, Preview)

@@ -3,7 +3,6 @@
 ..\..\FrameXML\UI.xsd">
 	<!-- frameStrata Parameters:  BACKGROUND, LOW, MEDIUM, HIGH, DIALOG, FULLSCREEN, FULLSCREEN_DIALOG, TOOLTIP  -->
 	<!-- Layer level Parameters:  BACKGROUND, BORDER, ARTWORK, OVERLAY, HIGHLIGHT -->
-	<Script file="Handlers\Logger.lua" />
 	<Script file="Handlers\Events.lua" />
 	<Script file="Handlers\ChatCommands.lua" />
 	<Include file="Skins\loader.xml" />

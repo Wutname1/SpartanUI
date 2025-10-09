@@ -6,7 +6,8 @@ _G.SUI = SUI
 local type, pairs, unpack = type, pairs, unpack
 local _G = _G
 SUI.L = LibStub('AceLocale-3.0'):GetLocale('SpartanUI', true) ---@type SUIL
-SUI.AutoOpenErrors = true
+-- Only enable SUI error handler if LibAT is not available
+SUI.AutoOpenErrors = not (LibAT and LibAT.ErrorDisplay)
 SUI.Version = C_AddOns.GetAddOnMetadata('SpartanUI', 'Version') or 0
 SUI.BuildNum = C_AddOns.GetAddOnMetadata('SpartanUI', 'X-Build') or 0
 SUI.Bartender4Version = (C_AddOns.GetAddOnMetadata('Bartender4', 'Version') or 0)
@@ -1083,6 +1084,40 @@ function SUI:OnInitialize()
 			end,
 			'LE_SCRIPT_BINDING_TYPE_EXTRINSIC'
 		)
+	end
+
+	-- Initialize Logger
+	if LibAT and LibAT.Logger then
+		SUI.logger = LibAT.Logger.RegisterAddon('SpartanUI')
+		SUI.logger.info('SpartanUI ' .. SUI.Version .. ' initializing')
+
+		-- Compatibility wrapper functions for old logging API
+		---@param message string The message to log
+		---@param module string The module name
+		---@param level? LogLevel Log level - defaults to 'info'
+		function SUI.Log(message, module, level)
+			if SUI.logger then
+				-- Use LibAT.Log directly for hierarchical module names (contains dots)
+				-- This allows the logger to parse the hierarchy properly
+				LibAT.Log(message, 'SpartanUI.' .. module, level or 'info')
+			end
+		end
+
+		---@param moduleObj SUI.Module The SpartanUI module object
+		---@param message string The message to log
+		---@param component? string Optional component for logging
+		---@param level? LogLevel Log level - defaults to 'info'
+		function SUI.ModuleLog(moduleObj, message, component, level)
+			local moduleName = moduleObj.DisplayName or moduleObj:GetName()
+			if SUI.logger then
+				-- Build hierarchical name
+				local fullName = 'SpartanUI.' .. moduleName
+				if component then
+					fullName = fullName .. '.' .. component
+				end
+				LibAT.Log(message, fullName, level or 'info')
+			end
+		end
 	end
 
 	-- Add Profiles to Options

@@ -43,6 +43,58 @@ local function Update(frame)
 	end
 end
 
+---@param previewFrame table
+---@param DB table
+---@param frameName string
+---@return number
+local function Preview(previewFrame, DB, frameName)
+	if not previewFrame.ClassPower then
+		previewFrame.CPAnchor = previewFrame:CreateFontString(nil, 'BORDER')
+		previewFrame.CPAnchor:SetPoint('TOPLEFT', previewFrame, 'TOPLEFT', 40, -5)
+
+		local ClassPower = {}
+		for index = 1, 5 do
+			local Bar = CreateFrame('StatusBar', nil, previewFrame)
+			Bar:SetStatusBarTexture(UF:FindStatusBarTexture(DB.texture))
+			Bar:SetSize(DB.width, DB.height)
+
+			if index == 1 then
+				if DB.position.relativeTo == 'Frame' then
+					Bar:SetPoint(DB.position.anchor, previewFrame, DB.position.relativePoint or DB.position.anchor, DB.position.x or 0, DB.position.y or -5)
+				else
+					Bar:SetPoint(DB.position.anchor, previewFrame.CPAnchor, DB.position.relativePoint or DB.position.anchor, DB.position.x or 0, DB.position.y or -5)
+				end
+			else
+				Bar:SetPoint('LEFT', ClassPower[index - 1], 'RIGHT', DB.spacing or 3, 0)
+			end
+
+			ClassPower[index] = Bar
+		end
+
+		previewFrame.ClassPower = ClassPower
+	end
+
+	local element = previewFrame.ClassPower
+
+	-- Show 3 out of 5 class power points
+	for i = 1, #element do
+		element[i]:SetSize(DB.width, DB.height)
+		element[i]:SetStatusBarTexture(UF:FindStatusBarTexture(DB.texture))
+
+		if i <= 3 then
+			element[i]:SetStatusBarColor(1, 0.96, 0.41) -- Holy Power gold
+			element[i]:SetAlpha(1)
+		else
+			element[i]:SetStatusBarColor(0.5, 0.5, 0.5)
+			element[i]:SetAlpha(0.3)
+		end
+
+		element[i]:Show()
+	end
+
+	return DB.height
+end
+
 ---@param unitName string
 ---@param OptionSet AceConfig.OptionsTable
 local function Options(unitName, OptionSet)
@@ -170,7 +222,8 @@ local Settings = {
 		type = 'Indicator',
 		DisplayName = 'Class Power',
 		Description = 'Controls the display of Combo Points, Arcane Charges, Chi Orbs, Holy Power, and Soul Shards'
-	}
+	},
+	showInPreview = false
 }
 
-UF.Elements:Register('ClassPower', Build, Update, Options, Settings)
+UF.Elements:Register('ClassPower', Build, Update, Options, Settings, Preview)

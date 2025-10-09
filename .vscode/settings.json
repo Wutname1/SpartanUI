@@ -1188,7 +1188,8 @@
     "AuctionHouseFrameDisplayMode",
     "CreateScrollBoxListTreeListView",
     "ButtonFrameTemplate_HidePortrait",
-    "ButtonFrameTemplate_HideButtonBar"
+    "ButtonFrameTemplate_HideButtonBar",
+    "SetRaidTargetIconTexture"
   ],
   "Lua.workspace.ignoreDir": [".vscode", "libs/*"],
   "Lua.diagnostics.enable": true,
