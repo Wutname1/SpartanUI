@@ -5,3 +5,7 @@ ignore:
   - "*.Definition.lua"
 
 enable-nolib-creation: no
+
+move-folders:
+  Libs-AddonTools: Libs-DataBar-Bags
+  
