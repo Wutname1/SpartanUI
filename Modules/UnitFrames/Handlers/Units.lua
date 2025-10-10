@@ -112,6 +112,7 @@ function Unit:BuildGroup(groupName)
 	holder:SetSize(Unit:GroupSize(groupName))
 
 	holder.frames = {}
+	holder.unitOnCreate = groupName
 	holder.config = UF.Unit:GetConfig(groupName)
 
 	BuiltFrames[groupName] = holder
