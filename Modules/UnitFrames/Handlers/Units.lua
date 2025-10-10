@@ -70,7 +70,8 @@ end
 ---@param frame table
 function Unit:Update(frame)
 	if not frame.unitOnCreate then
-		SUI:Error('Frame missing unitOnCreate property', 'UnitFrames')
+		local frameName = frame:GetName() or 'Unknown'
+		SUI:Error('Frame missing unitOnCreate property. Frame name: ' .. frameName, 'UnitFrames')
 		return
 	end
 
