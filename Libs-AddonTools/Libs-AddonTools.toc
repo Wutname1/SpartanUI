@@ -1,4 +1,4 @@
-## Interface: 110200
+## Interface: 110205
 ## Title: Lib's - Addon Tools
 ## IconTexture: Interface/Addons/Libs-AddonTools/Logo-Icon
 ## Version: 1.0.0
