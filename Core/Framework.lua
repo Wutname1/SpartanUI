@@ -991,6 +991,11 @@ local DBdefault = {
 				Bottom = 0,
 				Top = 0
 			}
+		},
+		BlizzMoverStates = {
+			['**'] = {
+				enabled = true
+			}
 		}
 	}
 }

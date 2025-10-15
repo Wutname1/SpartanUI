@@ -692,4 +692,64 @@ function module:SetupOptions()
 	for i, v in pairs({'1', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'Stance', 'MenuBar'}) do
 		CreatOption(v)
 	end
+
+	-- BlizzMovers Options
+	ArtworkOpts.BlizzMovers = {
+		name = L['Blizzard UI Movers'],
+		type = 'group',
+		args = {
+			description = {
+				name = 'Enable or disable SpartanUI movers for Blizzard UI elements. When disabled, elements will return to their original positions.',
+				type = 'description',
+				order = 0
+			}
+		}
+	}
+
+	-- Define all movers with their display names
+	local blizzMovers = {
+		{key = 'FramerateFrame', name = 'Framerate Display', desc = 'Control the framerate (FPS) display position'},
+		{key = 'AlertFrame', name = 'Alert Frames', desc = 'Achievement alerts, loot alerts, and similar popups'},
+		{key = 'ExtraActionBar', name = 'Extra Action Button', desc = 'Special action button for quests and encounters'},
+		{key = 'ZoneAbility', name = 'Zone Ability Button', desc = 'Zone-specific ability button'},
+		{key = 'VehicleLeaveButton', name = 'Vehicle Leave Button', desc = 'Button to exit vehicles'},
+		{key = 'VehicleSeatIndicator', name = 'Vehicle Seat Indicator', desc = 'Shows vehicle passenger positions'},
+		{key = 'WidgetPowerBarContainer', name = 'Power Bars', desc = 'Alternative power bars and widget power bars'},
+		{key = 'TopCenterContainer', name = 'Top Center Widgets', desc = 'UI widgets that appear at the top center of the screen'},
+		{key = 'TalkingHead', name = 'Talking Head Frame', desc = 'NPC dialogue frames'}
+	}
+
+	for i, mover in ipairs(blizzMovers) do
+		ArtworkOpts.BlizzMovers.args[mover.key] = {
+			name = mover.name,
+			type = 'toggle',
+			order = i,
+			desc = mover.desc,
+			width = 'full',
+			get = function(info)
+				return SUI.DB.Artwork.BlizzMoverStates[mover.key].enabled
+			end,
+			set = function(info, val)
+				if InCombatLockdown() then
+					SUI:Print(ERR_NOT_IN_COMBAT)
+					return
+				end
+
+				SUI.DB.Artwork.BlizzMoverStates[mover.key].enabled = val
+
+				-- Call the appropriate enable/disable function
+				if val then
+					if module['EnableBlizzMover_' .. mover.key] then
+						module['EnableBlizzMover_' .. mover.key](module)
+					end
+				else
+					if module['DisableBlizzMover_' .. mover.key] then
+						module['DisableBlizzMover_' .. mover.key](module)
+					end
+				end
+
+				SUI:Print(string.format('%s mover %s', mover.name, val and 'enabled' or 'disabled'))
+			end
+		}
+	end
 end
