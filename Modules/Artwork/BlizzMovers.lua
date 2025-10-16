@@ -221,7 +221,7 @@ local function TalkingHead()
 			'OnEvent',
 			function(frame, event)
 				frame:UnregisterEvent(event)
-				TalkingHead_LoadUI()
+				C_AddOns.LoadAddOn('Blizzard_TalkingHeadUI')
 				SetupTalkingHead()
 			end
 		)
