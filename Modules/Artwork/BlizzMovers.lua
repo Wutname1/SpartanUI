@@ -196,7 +196,6 @@ local function TalkingHead()
 
 		--Prevent WoW from moving the frame around
 		frame.ignoreFramePositionManager = true
-		UIPARENT_MANAGED_FRAME_POSITIONS.TalkingHeadFrame = nil
 		THUIHolder:SetSize(frame:GetSize())
 		MoveIt:CreateMover(THUIHolder, 'THUIHolder', 'Talking Head Frame', nil, 'Blizzard UI')
 		frame:HookScript(
