@@ -23,7 +23,7 @@ local UFPositionDefaults = {
 	['partypet'] = 'BOTTOMRIGHT,frame,BOTTOMLEFT,-2,0',
 	['partytarget'] = 'LEFT,frame,RIGHT,2,0',
 	['raid'] = 'TOPLEFT,UIParent,TOPLEFT,20,-40',
-	['arena'] = 'RIGHT,UIParent,RIGHT,-366,191'
+	['arena'] = 'RIGHT,UIParent,RIGHT,-366,191',
 }
 UF.Artwork = {}
 UF.MountIds = {}
@@ -32,7 +32,7 @@ UF.MountIds = {}
 ---@param frame UnitId
 ---@param element string
 function UF:debug(msg, frame, element)
-	SUI.Log((frame and frame .. '-' or '') .. (element and element .. '-' or '') .. msg, 'UnitFrames')
+	SUI.Log((frame and frame .. '-' or '') .. (element and element .. '-' or '') .. msg, 'UnitFrames.Core')
 end
 ---Returns the path to the texture for the given LSM key, or the SUI default
 ---@param LSMKey string
@@ -51,11 +51,9 @@ function UF:IsFriendlyFrame(frameName)
 		'party',
 		'partypet',
 		'target',
-		'targettarget'
+		'targettarget',
 	}
-	if SUI:IsInTable(FriendlyFrame, frameName) or frameName:match('party') or frameName:match('raid') then
-		return true
-	end
+	if SUI:IsInTable(FriendlyFrame, frameName) or frameName:match('party') or frameName:match('raid') then return true end
 	return false
 end
 
@@ -64,16 +62,12 @@ function UF:PositionFrame(unit)
 	local positionData = UFPositionDefaults
 	-- If artwork is enabled load the art's position data if supplied
 	local posData = UF.Style:Get(SUI.DB.Artwork.Style).positions
-	if SUI:IsModuleEnabled('Artwork') and posData then
-		positionData = SUI:CopyData(posData, UFPositionDefaults)
-	end
+	if SUI:IsModuleEnabled('Artwork') and posData then positionData = SUI:CopyData(posData, UFPositionDefaults) end
 
 	if unit then
 		local UnitFrame = UF.Unit:Get(unit)
 		local point, anchor, secondaryPoint, x, y = strsplit(',', positionData[unit])
-		if not anchor then
-			return
-		end
+		if not anchor then return end
 
 		if UnitFrame.position then
 			UnitFrame:position(point, anchor, secondaryPoint, x, y, false, true)
@@ -86,9 +80,7 @@ function UF:PositionFrame(unit)
 			if not config.isChild then
 				local UnitFrame = UF.Unit:Get(frameName)
 				local point, anchor, secondaryPoint, x, y = strsplit(',', positionData[frameName])
-				if not anchor then
-					return
-				end
+				if not anchor then return end
 
 				if UnitFrame.position then
 					UnitFrame:position(point, anchor, secondaryPoint, x, y, false, true)
@@ -127,18 +119,16 @@ local function LoadDB()
 end
 
 function UF:OnInitialize()
-	if SUI:IsModuleDisabled('UnitFrames') then
-		return
-	end
+	if SUI:IsModuleDisabled('UnitFrames') then return end
 
 	-- Setup Database
 	local defaults = {
 		profile = {
 			Style = 'War',
 			UserSettings = {
-				['**'] = {['**'] = {['**'] = {['**'] = {['**'] = {['**'] = {}}}}}}
-			}
-		}
+				['**'] = { ['**'] = { ['**'] = { ['**'] = { ['**'] = { ['**'] = {} } } } } },
+			},
+		},
 	}
 	UF.Database = SUI.SpartanUIDB:RegisterNamespace('UnitFrames', defaults)
 	UF.DB = UF.Database.profile
@@ -154,9 +144,7 @@ function UF:OnInitialize()
 end
 
 function UF:OnEnable()
-	if SUI:IsModuleDisabled('UnitFrames') then
-		return
-	end
+	if SUI:IsModuleDisabled('UnitFrames') then return end
 
 	-- Spawn Frames
 	UF:SpawnFrames()
@@ -171,77 +159,61 @@ function UF:OnEnable()
 	for unit, config in pairs(UF.Unit:GetBuiltFrameList()) do
 		if config.IsGroup then
 			local frame = UF.Unit:Get(unit)
-			if frame then
-				UF.Unit:Update(frame)
-			end
+			if frame then UF.Unit:Update(frame) end
 		end
 	end
 
 	-- Create movers
 	for unit, config in pairs(UF.Unit:GetBuiltFrameList()) do
-		if not config.isChild then
-			MoveIt:CreateMover(UF.Unit:Get(unit), unit, nil, nil, 'Unit frames')
-		end
+		if not config.isChild then MoveIt:CreateMover(UF.Unit:Get(unit), unit, nil, nil, 'Unit frames') end
 	end
 
 	if EditModeManagerFrame then
 		local CheckedItems = {}
-		local frames = {['boss'] = 'Boss', ['raid'] = 'Raid', ['arena'] = 'Arena', ['party'] = 'Party'}
+		local frames = { ['boss'] = 'Boss', ['raid'] = 'Raid', ['arena'] = 'Arena', ['party'] = 'Party' }
 		for k, v in pairs(frames) do
-			EditModeManagerFrame.AccountSettings.SettingsContainer[v .. 'Frames'].Button:HookScript(
-				'OnClick',
-				function(...)
-					if EditModeManagerFrame.AccountSettings.SettingsContainer[v .. 'Frames']:IsControlChecked() then
-						CheckedItems[k] = v
-					else
-						CheckedItems[k] = nil
-					end
-
-					SUI.MoveIt:MoveIt(k)
+			EditModeManagerFrame.AccountSettings.SettingsContainer[v .. 'Frames'].Button:HookScript('OnClick', function(...)
+				if EditModeManagerFrame.AccountSettings.SettingsContainer[v .. 'Frames']:IsControlChecked() then
+					CheckedItems[k] = v
+				else
+					CheckedItems[k] = nil
 				end
-			)
+
+				SUI.MoveIt:MoveIt(k)
+			end)
 		end
 
-		EditModeManagerFrame:HookScript(
-			'OnHide',
-			function()
-				for k, v in pairs(CheckedItems) do
-					EditModeManagerFrame.AccountSettings.SettingsContainer[v .. 'Frames']:SetControlChecked(false)
-					SUI.MoveIt:MoveIt(k)
-				end
-				MoveIt.MoverWatcher:Hide()
-				MoveIt.MoveEnabled = false
+		EditModeManagerFrame:HookScript('OnHide', function()
+			for k, v in pairs(CheckedItems) do
+				EditModeManagerFrame.AccountSettings.SettingsContainer[v .. 'Frames']:SetControlChecked(false)
+				SUI.MoveIt:MoveIt(k)
 			end
-		)
+			MoveIt.MoverWatcher:Hide()
+			MoveIt.MoveEnabled = false
+		end)
 	end
 
-	SUI:AddChatCommand(
-		'BuffDebug',
-		function(args)
-			local unit, spellId = strsplit(' ', args)
+	SUI:AddChatCommand('BuffDebug', function(args)
+		local unit, spellId = strsplit(' ', args)
 
-			if not spellId then
-				print('Please specify a SpellID')
+		if not spellId then
+			print('Please specify a SpellID')
+			return
+		end
+
+		if not SUI.UF.MonitoredBuffs[unit] then SUI.UF.MonitoredBuffs[unit] = {} end
+
+		for i, v in ipairs(SUI.UF.MonitoredBuffs[unit]) do
+			if v == tonumber(spellId) then
+				print('Removed ' .. spellId .. ' from the list of monitored buffs')
+				table.remove(SUI.UF.MonitoredBuffs[unit], i)
 				return
 			end
+		end
 
-			if not SUI.UF.MonitoredBuffs[unit] then
-				SUI.UF.MonitoredBuffs[unit] = {}
-			end
-
-			for i, v in ipairs(SUI.UF.MonitoredBuffs[unit]) do
-				if v == tonumber(spellId) then
-					print('Removed ' .. spellId .. ' from the list of monitored buffs')
-					table.remove(SUI.UF.MonitoredBuffs[unit], i)
-					return
-				end
-			end
-
-			table.insert(SUI.UF.MonitoredBuffs[unit], tonumber(spellId))
-			print('Added ' .. spellId .. ' to the list of monitored buffs')
-		end,
-		'Add/Remove a spellID to the list of spells to debug'
-	)
+		table.insert(SUI.UF.MonitoredBuffs[unit], tonumber(spellId))
+		print('Added ' .. spellId .. ' to the list of monitored buffs')
+	end, 'Add/Remove a spellID to the list of spells to debug')
 end
 
 function UF:Update()
@@ -266,9 +238,7 @@ end
 
 ---@param scale integer
 function UF:ScaleFrames(scale)
-	if SUI:IsModuleDisabled('MoveIt') then
-		return
-	end
+	if SUI:IsModuleDisabled('MoveIt') then return end
 
 	for unitName, config in pairs(UF.Unit:GetBuiltFrameList()) do
 		if not config.isChild then
