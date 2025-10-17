@@ -21,7 +21,6 @@ local DefaultSettings = {
 	FrameStrata = nil,
 	FrameLevel = nil,
 	texture = 'SpartanUI Default',
-	showInPreview = false, -- Default: don't show in preview (conditional elements)
 	bg = {
 		enabled = false,
 		color = {0, 0, 0, 0.2}
@@ -92,16 +91,14 @@ Elements.FrameSettings = {}
 ---@param Update? function
 ---@param OptionsTable? function
 ---@param ElementSettings? SUI.UF.Elements.Settings
----@param Preview? function Preview method that returns a frame
-function Elements:Register(ElementName, Build, Update, OptionsTable, ElementSettings, Preview)
+function Elements:Register(ElementName, Build, Update, OptionsTable, ElementSettings)
 	SUI:CopyData(ElementSettings, DefaultSettings) ---@type SUI.UF.Elements.Settings
 
 	UF.Elements.List[ElementName] = {
 		Build = Build,
 		Update = Update,
 		OptionsTable = OptionsTable,
-		ElementSettings = ElementSettings,
-		Preview = Preview -- Preview rendering method
+		ElementSettings = ElementSettings
 	}
 
 	Elements.Types[ElementSettings.config.type or 'Other'][ElementName] = ElementName

@@ -58,16 +58,6 @@ local function Options(unitName, OptionSet)
 	}
 end
 
----@param previewFrame table
----@param DB table
----@param frameName string
----@return number
-local function Preview(previewFrame, DB, frameName)
-	-- Range doesn't have a visual element, it just affects alpha
-	-- No preview needed
-	return 0
-end
-
 ---@type SUI.UF.Elements.Settings
 local Settings = {
 	enabled = true,
@@ -75,8 +65,7 @@ local Settings = {
 	outsideAlpha = 0.3,
 	config = {
 		NoBulkUpdate = true
-	},
-	showInPreview = false
+	}
 }
 
-UF.Elements:Register('Range', Build, Update, Options, Settings, Preview)
+UF.Elements:Register('Range', Build, Update, Options, Settings)

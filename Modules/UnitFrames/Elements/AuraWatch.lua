@@ -151,56 +151,6 @@ local function Options(unitName, OptionSet, DB)
 	OptionSet.args.watched.args.create.disabled = true
 end
 
----@param previewFrame table
----@param DB table
----@param frameName string
----@return number
-local function Preview(previewFrame, DB, frameName)
-	if not previewFrame.AuraWatch then
-		previewFrame.AuraWatch = CreateFrame('Frame', '$parent_AuraWatch', previewFrame)
-	end
-
-	local element = previewFrame.AuraWatch
-	element:Show()
-
-	-- Create sample watch icons
-	if not element.previewIcons then
-		element.previewIcons = {}
-		-- Sample buff icons (Mark of the Wild, Arcane Intellect, Fortitude)
-		local sampleBuffs = {
-			{spellID = 1126, icon = 136078, point = 'BOTTOM'},
-			{spellID = 1459, icon = 135932, point = 'BOTTOMLEFT'},
-			{spellID = 21562, icon = 135940, point = 'BOTTOMRIGHT'}
-		}
-
-		for i, buff in ipairs(sampleBuffs) do
-			local button = CreateFrame('Frame', nil, element)
-			button:SetSize(DB.size, DB.size)
-
-			button.icon = button:CreateTexture(nil, 'ARTWORK')
-			button.icon:SetAllPoints()
-			button.icon:SetTexture(buff.icon)
-
-			button.overlay = button:CreateTexture(nil, 'OVERLAY')
-			button.overlay:SetAllPoints()
-			button.overlay:SetTexture([[Interface\AddOns\SpartanUI\images\border]])
-
-			button:SetPoint(buff.point, previewFrame, buff.point, 0, 0)
-			button:Show()
-
-			element.previewIcons[i] = button
-		end
-	end
-
-	-- Update icon positions and sizes
-	for i, button in ipairs(element.previewIcons) do
-		button:SetSize(DB.size, DB.size)
-		button:Show()
-	end
-
-	return 0
-end
-
 ---@class SUI.UF.Unit.Settings.AuraWatch.Watched
 ---@field anyUnit? boolean
 ---@field onlyShowMissing? boolean
@@ -224,8 +174,7 @@ local Settings = {
 	},
 	config = {
 		type = 'Auras'
-	},
-	showInPreview = false
+	}
 }
 
-UF.Elements:Register('AuraWatch', Build, Update, Options, Settings, Preview)
+UF.Elements:Register('AuraWatch', Build, Update, Options, Settings)

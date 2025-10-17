@@ -40,27 +40,6 @@ local function Options(unitName, OptionSet)
 	}
 end
 
----@param previewFrame table
----@param DB table
----@param frameName string
----@return number
-local function Preview(previewFrame, DB, frameName)
-	if not previewFrame.PvPRoleIndicator then
-		previewFrame.PvPRoleIndicator = previewFrame:CreateTexture(nil, 'BORDER')
-	end
-
-	local element = previewFrame.PvPRoleIndicator
-	element:SetSize(DB.size, DB.size)
-	element:SetAlpha(DB.alpha or 0.75)
-	element:SetPoint(DB.position.anchor, previewFrame, DB.position.anchor, DB.position.x or 0, DB.position.y or 40)
-
-	-- Show tank icon texture coords as preview
-	element:SetAtlas('nameplates-icon-role-tank')
-	element:Show()
-
-	return 0
-end
-
 ---@type SUI.UF.Elements.Settings
 local Settings = {
 	enabled = true,
@@ -75,8 +54,7 @@ local Settings = {
 	config = {
 		type = 'Indicator',
 		DisplayName = 'PVP Role Indicator'
-	},
-	showInPreview = false
+	}
 }
 
-UF.Elements:Register('PvPRoleIndicator', Build, nil, Options, Settings, Preview)
+UF.Elements:Register('PvPRoleIndicator', Build, nil, Options, Settings)

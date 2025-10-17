@@ -34,38 +34,10 @@ local function Update(frame, settings)
 	end
 end
 
----@param previewFrame table
----@param DB table
----@param frameName string
----@return number
-local function Preview(previewFrame, DB, frameName)
-	if not previewFrame.TargetIndicator then
-		local TargetIndicator = CreateFrame('Frame', 'BACKGROUND', previewFrame)
-		TargetIndicator.bg1 = TargetIndicator:CreateTexture(nil, 'BACKGROUND')
-		TargetIndicator.bg2 = TargetIndicator:CreateTexture(nil, 'BACKGROUND')
-		TargetIndicator.bg1:SetTexture('Interface\\AddOns\\SpartanUI\\Images\\nameplates\\DoubleArrow')
-		TargetIndicator.bg2:SetTexture('Interface\\AddOns\\SpartanUI\\Images\\nameplates\\DoubleArrow')
-		TargetIndicator.bg1:SetPoint('RIGHT', previewFrame, 'LEFT')
-		TargetIndicator.bg2:SetPoint('LEFT', previewFrame, 'RIGHT')
-		TargetIndicator.bg2:SetTexCoord(1, 0, 1, 0)
-		TargetIndicator.bg1:SetSize(10, previewFrame:GetHeight())
-		TargetIndicator.bg2:SetSize(10, previewFrame:GetHeight())
-		previewFrame.TargetIndicator = TargetIndicator
-	end
-
-	local element = previewFrame.TargetIndicator
-	-- Show target indicators
-	element.bg1:Show()
-	element.bg2:Show()
-
-	return 0
-end
-
 local Settings = {
 	config = {
 		NoBulkUpdate = false
-	},
-	showInPreview = false
+	}
 }
 
-UF.Elements:Register('TargetIndicator', Build, Update, nil, Settings, Preview)
+UF.Elements:Register('TargetIndicator', Build, Update, nil, Settings)

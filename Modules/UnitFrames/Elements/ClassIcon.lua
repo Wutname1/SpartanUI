@@ -46,35 +46,6 @@ local function Update(frame, settings)
 	end
 end
 
----@param previewFrame table
----@param DB table
----@param frameName string
----@return number
-local function Preview(previewFrame, DB, frameName)
-	if not previewFrame.ClassIcon then
-		previewFrame.ClassIcon = previewFrame:CreateTexture(nil, 'BORDER')
-		previewFrame.ClassIcon.shadow = previewFrame:CreateTexture(nil, 'BACKGROUND')
-		previewFrame.ClassIcon.shadow:SetPoint('TOPLEFT', previewFrame.ClassIcon, 'TOPLEFT', 2, -2)
-		previewFrame.ClassIcon.shadow:SetPoint('BOTTOMRIGHT', previewFrame.ClassIcon, 'BOTTOMRIGHT', 2, -2)
-		previewFrame.ClassIcon.shadow:SetVertexColor(0, 0, 0, 0.9)
-	end
-
-	local element = previewFrame.ClassIcon
-	element:SetSize(DB.size, DB.size)
-	element:SetPoint(DB.position.anchor, previewFrame, DB.position.anchor, DB.position.x, DB.position.y)
-
-	-- Show player's class icon or a default one
-	local _, class = UnitClass('player')
-	local path = 'Interface\\AddOns\\SpartanUI\\images\\flat_classicons\\' .. (class and string.lower(class) or 'warrior')
-	element:SetTexture(path)
-	element:Show()
-
-	element.shadow:SetTexture(path)
-	element.shadow:Show()
-
-	return 0
-end
-
 ---@param unitName string
 ---@param OptionSet AceConfig.OptionsTable
 local function Options(unitName, OptionSet)
@@ -130,11 +101,10 @@ local Settings = {
 	config = {
 		type = 'Indicator',
 		DisplayName = 'Class Icon'
-	},
-	showInPreview = true
+	}
 }
 
-UF.Elements:Register('ClassIcon', Build, Update, Options, Settings, Preview)
+UF.Elements:Register('ClassIcon', Build, Update, Options, Settings)
 
 do -- ClassIcon as an SUIUF module
 	local function Update(self, event, unit)

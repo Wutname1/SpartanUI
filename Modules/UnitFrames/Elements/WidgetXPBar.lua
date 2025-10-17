@@ -27,20 +27,10 @@ local function Options(unitName, OptionSet, DB)
 	--local DB = UF.CurrentSettings[unitName].elements.WidgetXPBar
 end
 
----@param previewFrame table
----@param DB table
----@param frameName string
----@return number
-local function Preview(previewFrame, DB, frameName)
-	-- WidgetXPBar doesn't have visual elements in preview
-	return 0
-end
-
 local Settings = {
 	config = {
 		NoBulkUpdate = false
-	},
-	showInPreview = false
+	}
 }
 
-UF.Elements:Register('WidgetXPBar', Build, Update, Options, Settings, Preview)
+UF.Elements:Register('WidgetXPBar', Build, Update, Options, Settings)

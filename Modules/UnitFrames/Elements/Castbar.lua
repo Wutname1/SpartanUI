@@ -201,78 +201,6 @@ local function Update(frame, settings)
 	end
 end
 
----@param previewFrame table
----@param DB table
----@param frameName string
----@return number
-local function Preview(previewFrame, DB, frameName)
-	if not previewFrame.Castbar then
-		local cast = CreateFrame('StatusBar', nil, previewFrame)
-		cast:SetStatusBarTexture(UF:FindStatusBarTexture(DB.texture))
-
-		local bg = cast:CreateTexture(nil, 'BACKGROUND')
-		bg:SetAllPoints(cast)
-		bg:SetTexture(UF:FindStatusBarTexture(DB.texture))
-		bg:SetVertexColor(unpack(DB.bg.color))
-		cast.bg = bg
-
-		local Text = cast:CreateFontString()
-		SUI.Font:Format(Text, DB.text['1'].size, 'UnitFrames')
-		cast.Text = Text
-
-		local Time = cast:CreateFontString(nil, 'OVERLAY')
-		SUI.Font:Format(Time, DB.text['2'].size, 'UnitFrames')
-		cast.Time = Time
-
-		local Icon = cast:CreateTexture(nil, 'OVERLAY')
-		cast.Icon = Icon
-
-		previewFrame.Castbar = cast
-	end
-
-	local element = previewFrame.Castbar
-	element:SetSize(DB.width or previewFrame:GetWidth(), DB.height or 20)
-	element:ClearAllPoints()
-	element:SetPoint('TOPLEFT', previewFrame, 'TOPLEFT', 0, DB.offset or 0)
-	element:SetPoint('TOPRIGHT', previewFrame, 'TOPRIGHT', 0, DB.offset or 0)
-
-	element:SetStatusBarTexture(UF:FindStatusBarTexture(DB.texture))
-	element:SetStatusBarColor(1, 0.7, 0)
-	element:SetMinMaxValues(0, 100)
-	element:SetValue(60)
-
-	-- Show spell name and time
-	if DB.text['1'].enabled then
-		element.Text:SetText('Fireball')
-		element.Text:SetPoint(DB.text['1'].position.anchor, element, DB.text['1'].position.anchor, DB.text['1'].position.x, DB.text['1'].position.y)
-		element.Text:Show()
-	else
-		element.Text:Hide()
-	end
-
-	if DB.text['2'].enabled then
-		element.Time:SetText('2.1')
-		element.Time:SetPoint(DB.text['2'].position.anchor, element, DB.text['2'].position.anchor, DB.text['2'].position.x, DB.text['2'].position.y)
-		element.Time:Show()
-	else
-		element.Time:Hide()
-	end
-
-	-- Show spell icon
-	if DB.Icon.enabled then
-		element.Icon:SetTexture(135812) -- Fireball icon
-		element.Icon:SetSize(DB.Icon.size, DB.Icon.size)
-		element.Icon:SetPoint(DB.Icon.position.anchor, element, DB.Icon.position.anchor, DB.Icon.position.x, DB.Icon.position.y)
-		element.Icon:Show()
-	else
-		element.Icon:Hide()
-	end
-
-	element:Show()
-
-	return DB.height or 20
-end
-
 ---@param frameName string
 ---@param OptionSet AceConfig.OptionsTable
 local function Options(frameName, OptionSet)
@@ -445,7 +373,6 @@ local Settings = {
 	},
 	config = {
 		type = 'StatusBar'
-	},
-	showInPreview = true
+	}
 }
-UF.Elements:Register('Castbar', Build, Update, Options, Settings, Preview)
+UF.Elements:Register('Castbar', Build, Update, Options, Settings)

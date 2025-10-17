@@ -124,97 +124,9 @@ local function Options(frameName, OptionSet)
 	UF.Options:AddDynamicText(frameName, OptionSet, 'Power')
 end
 
----@param previewFrame frame The preview frame to render into
----@param DB table Element settings
----@param frameName UnitFrameName The frame name being previewed
-local function Preview(previewFrame, DB, frameName)
-	-- Create power bar preview
-	local power = previewFrame.Power or CreateFrame('StatusBar', nil, previewFrame)
-	power:SetFrameStrata(DB.FrameStrata or 'BACKGROUND')
-	power:SetFrameLevel(DB.FrameLevel or 2)
-	power:SetStatusBarTexture(UF:FindStatusBarTexture(DB.texture))
-	power:SetHeight(DB.height)
-
-	-- Set preview value to 60% power
-	power:SetMinMaxValues(0, 100)
-	power:SetValue(60)
-
-	-- Apply coloring based on settings
-	if DB.customColors and DB.customColors.useCustom then
-		power:SetStatusBarColor(unpack(DB.customColors.barColor))
-	else
-		-- Use player's power type color (mana = blue, rage = red, etc.)
-		local _, powerType = UnitPowerType('player')
-		local powerColor = PowerBarColor[powerType] or {r = 0, g = 0, b = 1}
-		power:SetStatusBarColor(powerColor.r, powerColor.g, powerColor.b)
-	end
-
-	-- Create background
-	if not power.bg then
-		local bg = power:CreateTexture(nil, 'BACKGROUND')
-		bg:SetAllPoints(power)
-		bg:SetTexture(UF:FindStatusBarTexture(DB.texture))
-		power.bg = bg
-	end
-
-	-- Set background color
-	if DB.bg.useClassColor then
-		local _, class = UnitClass('player')
-		local color = (_G.CUSTOM_CLASS_COLORS and _G.CUSTOM_CLASS_COLORS[class]) or _G.RAID_CLASS_COLORS[class]
-		local alpha = DB.bg.classColorAlpha or 0.2
-		if color then
-			power.bg:SetVertexColor(color.r, color.g, color.b, alpha)
-		else
-			power.bg:SetVertexColor(1, 1, 1, alpha)
-		end
-	else
-		power.bg:SetVertexColor(unpack(DB.bg.color or {1, 1, 1, 0.2}))
-	end
-
-	-- Position the power bar below health
-	power:ClearAllPoints()
-	if previewFrame.Health then
-		power:SetPoint('TOPLEFT', previewFrame.Health, 'BOTTOMLEFT', 0, DB.offset or -1)
-		power:SetPoint('TOPRIGHT', previewFrame.Health, 'BOTTOMRIGHT', 0, DB.offset or -1)
-	else
-		power:SetPoint('TOPLEFT', previewFrame, 'TOPLEFT', 0, DB.offset or 0)
-		power:SetPoint('TOPRIGHT', previewFrame, 'TOPRIGHT', 0, DB.offset or 0)
-	end
-
-	-- Add text elements
-	for i, textConfig in pairs(DB.text) do
-		if textConfig.enabled then
-			local textElement = power['text' .. i] or power:CreateFontString(nil, 'OVERLAY')
-			SUI.Font:Format(textElement, textConfig.size or 5, 'UnitFrames')
-			textElement:SetJustifyH(textConfig.SetJustifyH)
-			textElement:SetJustifyV(textConfig.SetJustifyV)
-			textElement:ClearAllPoints()
-			textElement:SetPoint(textConfig.position.anchor, power, textConfig.position.anchor, textConfig.position.x, textConfig.position.y)
-
-			-- Show preview text instead of live tags
-			if textConfig.text:find('perpp') then
-				textElement:SetText('60%')
-			elseif textConfig.text:find('Power') then
-				textElement:SetText('12000 / 20000')
-			else
-				textElement:SetText('Power')
-			end
-
-			textElement:Show()
-			power['text' .. i] = textElement
-		end
-	end
-
-	power:Show()
-	previewFrame.Power = power
-
-	return power:GetHeight()
-end
-
 ---@type SUI.UF.Elements.Settings
 local Settings = {
 	enabled = true,
-	showInPreview = true, -- Power is always visible
 	height = 10,
 	width = false,
 	FrameStrata = 'BACKGROUND',
@@ -265,4 +177,4 @@ local Settings = {
 	}
 }
 
-UF.Elements:Register('Power', Build, Update, Options, Settings, Preview)
+UF.Elements:Register('Power', Build, Update, Options, Settings)

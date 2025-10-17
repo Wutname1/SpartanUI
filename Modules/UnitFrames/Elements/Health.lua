@@ -356,100 +356,9 @@ local function Options(frameName, OptionSet)
 	UF.Options:AddDynamicText(frameName, OptionSet, 'Health')
 end
 
----@param previewFrame frame The preview frame to render into
----@param DB table Element settings
----@param frameName UnitFrameName The frame name being previewed
-local function Preview(previewFrame, DB, frameName)
-	-- Create health bar preview
-	local health = previewFrame.Health or CreateFrame('StatusBar', nil, previewFrame)
-	health:SetFrameStrata(DB.FrameStrata or 'BACKGROUND')
-	health:SetFrameLevel(DB.FrameLevel or 2)
-	health:SetStatusBarTexture(UF:FindStatusBarTexture(DB.texture))
-	health:SetSize(DB.width or previewFrame:GetWidth(), DB.height or 20)
-
-	-- Set preview value to 75% health
-	health:SetMinMaxValues(0, 100)
-	health:SetValue(75)
-
-	-- Apply coloring based on settings
-	if DB.customColors and DB.customColors.useCustom then
-		health:SetStatusBarColor(unpack(DB.customColors.barColor))
-	elseif DB.colorClass then
-		-- Use player's class color
-		local _, class = UnitClass('player')
-		local color = (_G.CUSTOM_CLASS_COLORS and _G.CUSTOM_CLASS_COLORS[class]) or _G.RAID_CLASS_COLORS[class]
-		if color then
-			health:SetStatusBarColor(color.r, color.g, color.b)
-		end
-	elseif DB.colorSmooth then
-		-- Show smooth gradient at 75% (yellow-green)
-		health:SetStatusBarColor(0.75, 1, 0)
-	else
-		-- Default green
-		health:SetStatusBarColor(0, 1, 0)
-	end
-
-	-- Create background
-	if not health.bg then
-		local bg = health:CreateTexture(nil, 'BACKGROUND')
-		bg:SetAllPoints(health)
-		bg:SetTexture(UF:FindStatusBarTexture(DB.texture))
-		health.bg = bg
-	end
-
-	-- Set background color
-	if DB.bg.useClassColor then
-		local _, class = UnitClass('player')
-		local color = (_G.CUSTOM_CLASS_COLORS and _G.CUSTOM_CLASS_COLORS[class]) or _G.RAID_CLASS_COLORS[class]
-		local alpha = DB.bg.classColorAlpha or 0.2
-		if color then
-			health.bg:SetVertexColor(color.r, color.g, color.b, alpha)
-		else
-			health.bg:SetVertexColor(1, 1, 1, alpha)
-		end
-	else
-		health.bg:SetVertexColor(unpack(DB.bg.color or {1, 1, 1, 0.2}))
-	end
-
-	-- Position the health bar
-	health:ClearAllPoints()
-	health:SetPoint('TOPLEFT', previewFrame, 'TOPLEFT', 0, DB.offset or -1)
-	health:SetPoint('TOPRIGHT', previewFrame, 'TOPRIGHT', 0, DB.offset or -1)
-
-	-- Add text elements
-	for i, textConfig in pairs(DB.text) do
-		if textConfig.enabled then
-			local textElement = health['text' .. i] or health:CreateFontString(nil, 'OVERLAY')
-			SUI.Font:Format(textElement, textConfig.size or 5, 'UnitFrames')
-			textElement:SetJustifyH(textConfig.SetJustifyH)
-			textElement:SetJustifyV(textConfig.SetJustifyV)
-			textElement:ClearAllPoints()
-			textElement:SetPoint(textConfig.position.anchor, health, textConfig.position.anchor, textConfig.position.x, textConfig.position.y)
-
-			-- Show preview text instead of live tags
-			if textConfig.text:find('perhp') then
-				textElement:SetText('75%')
-			elseif textConfig.text:find('Health') then
-				textElement:SetText('15000 / 20000')
-			else
-				textElement:SetText('Health')
-			end
-
-			textElement:Show()
-			health['text' .. i] = textElement
-		end
-	end
-
-	health:Show()
-	previewFrame.Health = health
-
-	return health:GetHeight()
-end
-
 ---@type SUI.UF.Elements.Settings
 local Settings = {
 	enabled = true,
-	showInPreview = true, -- Health is always visible
 	height = 40,
 	width = false,
 	FrameLevel = 4,
@@ -502,4 +411,4 @@ local Settings = {
 	}
 }
 
-UF.Elements:Register('Health', Build, Update, Options, Settings, Preview)
+UF.Elements:Register('Health', Build, Update, Options, Settings)

@@ -42,9 +42,6 @@
 	</Button>
 
 	<Script file="Framework.lua"/>
-	<Script file="PreviewRenderer.lua"/>
-	<Script file="PreviewWidget.lua"/>
-	<Script file="PreviewInjector.lua"/>
 
 	<Script file="Handlers\Style.lua"/>
 	<Script file="Handlers\Auras.lua"/>

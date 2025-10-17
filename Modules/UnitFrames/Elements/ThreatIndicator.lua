@@ -30,33 +30,12 @@ local function Build(frame, DB)
 	frame.ThreatIndicator = ThreatIndicator
 end
 
----@param previewFrame table
----@param DB table
----@param frameName string
----@return number
-local function Preview(previewFrame, DB, frameName)
-	if not previewFrame.ThreatIndicator then
-		previewFrame.ThreatIndicator = previewFrame:CreateTexture(nil, 'BACKGROUND')
-		previewFrame.ThreatIndicator:SetTexture('Interface\\AddOns\\SpartanUI\\images\\HighlightBar')
-		previewFrame.ThreatIndicator:SetPoint('TOPLEFT', previewFrame, 'TOPLEFT', -3, 3)
-		previewFrame.ThreatIndicator:SetPoint('BOTTOMRIGHT', previewFrame, 'BOTTOMRIGHT', 3, -3)
-	end
-
-	local element = previewFrame.ThreatIndicator
-	-- Show with high threat color (red)
-	element:SetVertexColor(1, 0, 0, 0.7)
-	element:Show()
-
-	return 0
-end
-
 ---@type SUI.UF.Elements.Settings
 local Settings = {
 	config = {
 		type = 'Indicator',
 		DisplayName = 'Threat'
-	},
-	showInPreview = false
+	}
 }
 
-UF.Elements:Register('ThreatIndicator', Build, nil, nil, Settings, Preview)
+UF.Elements:Register('ThreatIndicator', Build, nil, nil, Settings)

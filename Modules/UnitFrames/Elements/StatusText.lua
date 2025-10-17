@@ -22,29 +22,6 @@ local function Options(frameName, OptionSet)
 	UF.Options:TextBasicDisplay(frameName, OptionSet)
 end
 
----@param previewFrame table
----@param DB table
----@param frameName string
----@return number
-local function Preview(previewFrame, DB, frameName)
-	if not previewFrame.StatusText then
-		previewFrame.StatusText = previewFrame:CreateFontString(nil, 'OVERLAY')
-		SUI.Font:Format(previewFrame.StatusText, DB.textSize, 'UnitFrames')
-	end
-
-	local element = previewFrame.StatusText
-	element:SetSize(DB.width or 70, DB.height or 25)
-	element:SetPoint(DB.position.anchor, previewFrame, DB.position.anchor, DB.position.x or 0, DB.position.y or 0)
-	element:SetJustifyH(DB.SetJustifyH)
-	element:SetJustifyV(DB.SetJustifyV)
-
-	-- Show sample status text
-	element:SetText('AFK')
-	element:Show()
-
-	return 0
-end
-
 ---@type SUI.UF.Elements.Settings
 local Settings = {
 	textSize = 22,
@@ -61,8 +38,7 @@ local Settings = {
 	config = {
 		type = 'Indicator',
 		DisplayName = 'Status Text'
-	},
-	showInPreview = false
+	}
 }
 
-UF.Elements:Register('StatusText', Build, Update, Options, Settings, Preview)
+UF.Elements:Register('StatusText', Build, Update, Options, Settings)

@@ -271,89 +271,6 @@ local function Update(frame, settings)
 	element.barSpacing = DB.barSpacing or 2
 end
 
----@param previewFrame table
----@param DB table
----@param frameName string
----@return number
-local function Preview(previewFrame, DB, frameName)
-	if not previewFrame.AuraBars then
-		local element = CreateFrame('Frame', '$parent_AuraBars', previewFrame)
-		element.spellTimeFont = SUI.Font:GetFont('Player')
-		element.spellNameFont = SUI.Font:GetFont('Player')
-		previewFrame.AuraBars = element
-	end
-
-	local element = previewFrame.AuraBars
-	element:SetSize((DB.width or previewFrame:GetWidth()) - DB.size, DB.size * 3)
-	element:Show()
-
-	-- Create sample bars if they don't exist
-	if not element.previewBars then
-		element.previewBars = {}
-		for i = 1, 3 do
-			local bar = CreateFrame('StatusBar', nil, element)
-			bar:SetStatusBarTexture(UF:FindStatusBarTexture(DB.texture))
-			bar:SetSize((DB.width or previewFrame:GetWidth()) - DB.size, DB.size)
-
-			bar.bg = bar:CreateTexture(nil, 'BORDER')
-			bar.bg:SetAllPoints(bar)
-			bar.bg:SetTexture(UF:FindStatusBarTexture(DB.texture))
-			bar.bg:SetVertexColor(0, 0, 0, 0.4)
-
-			bar.icon = bar:CreateTexture(nil, 'ARTWORK')
-			bar.icon:SetSize(DB.size, DB.size)
-			bar.icon:SetPoint('RIGHT', bar, 'LEFT', -2, 0)
-
-			bar.name = bar:CreateFontString(nil, 'OVERLAY')
-			SUI.Font:Format(bar.name, DB.spellNameSize or 10, 'UnitFrames')
-			bar.name:SetPoint('LEFT', bar, 'LEFT', 2, 0)
-
-			bar.time = bar:CreateFontString(nil, 'OVERLAY')
-			SUI.Font:Format(bar.time, DB.spellTimeSize or 10, 'UnitFrames')
-			bar.time:SetPoint('RIGHT', bar, 'RIGHT', -2, 0)
-
-			element.previewBars[i] = bar
-		end
-	end
-
-	-- Sample auras with real spell icons
-	local sampleAuras = {
-		{name = 'Rejuvenation', icon = 136081, color = {0.8, 0.4, 0.8}, time = '12s'},
-		{name = 'Renew', icon = 135953, color = {1, 1, 0.5}, time = '8s'},
-		{name = 'Riptide', icon = 252995, color = {0.3, 0.5, 1}, time = '15s'}
-	}
-
-	-- Position and configure preview bars
-	for i, bar in ipairs(element.previewBars) do
-		local aura = sampleAuras[i]
-		bar:SetStatusBarTexture(UF:FindStatusBarTexture(DB.texture))
-		bar:SetStatusBarColor(unpack(aura.color))
-		bar:SetMinMaxValues(0, 100)
-		bar:SetValue(75)
-		bar.icon:SetTexture(aura.icon)
-		bar.name:SetText(aura.name)
-		bar.time:SetText(aura.time)
-
-		if i == 1 then
-			if DB.growth == 'UP' then
-				bar:SetPoint('BOTTOMLEFT', element, 'BOTTOMLEFT', DB.size, 0)
-			else
-				bar:SetPoint('TOPLEFT', element, 'TOPLEFT', DB.size, 0)
-			end
-		else
-			if DB.growth == 'UP' then
-				bar:SetPoint('BOTTOMLEFT', element.previewBars[i - 1], 'TOPLEFT', 0, DB.barSpacing or 2)
-			else
-				bar:SetPoint('TOPLEFT', element.previewBars[i - 1], 'BOTTOMLEFT', 0, -(DB.barSpacing or 2))
-			end
-		end
-
-		bar:Show()
-	end
-
-	return (DB.size + (DB.barSpacing or 2)) * 3
-end
-
 ---@param unitName string
 ---@param OptionSet AceConfig.OptionsTable
 local function Options(unitName, OptionSet)
@@ -653,8 +570,7 @@ local Settings = {
 	config = {
 		type = 'Auras',
 		DisplayName = 'Aura Bars'
-	},
-	showInPreview = false
+	}
 }
 
-UF.Elements:Register('AuraBars', Build, Update, Options, Settings, Preview)
+UF.Elements:Register('AuraBars', Build, Update, Options, Settings)
