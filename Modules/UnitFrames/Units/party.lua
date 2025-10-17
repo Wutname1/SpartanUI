@@ -92,7 +92,7 @@ local function Update(frame)
 		frame.header:SetAttribute('maxColumns', UF.CurrentSettings.party.maxColumns)
 		frame.header:SetAttribute('unitsPerColumn', UF.CurrentSettings.party.unitsPerColumn)
 		frame.header:SetAttribute('columnSpacing', UF.CurrentSettings.party.columnSpacing)
-		frame.header:SetAttribute('showPlayer', UF.CurrentSettings.party.showSelf)
+		frame.header:SetAttribute('showPlayer', UF.CurrentSettings.party.showPlayer)
 	end
 end
 

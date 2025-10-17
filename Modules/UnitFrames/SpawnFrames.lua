@@ -18,6 +18,8 @@ function UF:CalculateHeight(frameName)
 end
 
 local function CreateUnitFrame(self, unit)
+	UF:debug('CreateUnitFrame called for: ' .. tostring(self:GetName()) .. ', unit: ' .. tostring(unit))
+
 	if unit ~= 'raid' and unit ~= 'party' then
 		if SUI_FramesAnchor:GetParent() == UIParent then
 			self:SetParent(UIParent)
@@ -336,7 +338,11 @@ function UF:SpawnFrames()
 		end
 	end
 
+	local pendingHeaderUpdates = {}
+
 	local function GroupWatcher(event)
+		UF:debug('GroupWatcher triggered: ' .. tostring(event) .. ', InCombat=' .. tostring(InCombatLockdown()))
+
 		if not InCombatLockdown() then
 			-- Update 1 second after login
 			if event == 'PLAYER_ENTERING_WORLD' or event == 'GROUP_JOINED' then
@@ -344,7 +350,64 @@ function UF:SpawnFrames()
 				return
 			end
 
+			-- Log group status
+			UF:debug('Group status - InRaid: ' .. tostring(IsInRaid()) .. ', InGroup: ' .. tostring(IsInGroup()) .. ', NumGroupMembers: ' .. GetNumGroupMembers())
+
 			UF:UpdateGroupFrames(event)
+
+			-- Check how many buttons exist and which are initialized
+			for frameName, _ in pairs(UF.Unit:GetFrameList(true)) do
+				local groupFrame = UF.Unit:Get(frameName)
+				if groupFrame and groupFrame.header then
+					local buttonCount = 0
+					local initializedCount = 0
+					local uninitializedButtons = {}
+
+					-- Count buttons
+					local i = 1
+					while true do
+						local button = groupFrame.header:GetAttribute('child' .. i)
+						if not button then break end
+
+						buttonCount = buttonCount + 1
+						if button.elementList then
+							initializedCount = initializedCount + 1
+						else
+							table.insert(uninitializedButtons, i)
+						end
+						i = i + 1
+					end
+
+					UF:debug(string.format('%s: %d buttons, %d initialized, %d uninitialized',
+						frameName, buttonCount, initializedCount, buttonCount - initializedCount))
+
+					if #uninitializedButtons > 0 then
+						UF:debug(frameName .. ' uninitialized button numbers: ' .. table.concat(uninitializedButtons, ', '))
+					end
+				end
+			end
+
+			-- Process any pending header updates that were deferred during combat
+			if next(pendingHeaderUpdates) then
+				UF:debug('Processing pending header updates')
+				for frameName, _ in pairs(pendingHeaderUpdates) do
+					local groupFrame = UF.Unit:Get(frameName)
+					if groupFrame and groupFrame.header then
+						-- Force the header to reconfigure by toggling an attribute
+						-- This will cause the secure header to re-run initialConfigFunction on all buttons
+						local currentMode = groupFrame.header:GetAttribute('groupBy')
+						groupFrame.header:SetAttribute('groupBy', currentMode)
+						UF:debug('Forced header reconfigure for: ' .. frameName)
+					end
+				end
+				wipe(pendingHeaderUpdates)
+			end
+		else
+			-- During combat, mark headers as needing update
+			UF:debug('In combat - deferring header updates')
+			for frameName, _ in pairs(UF.Unit:GetFrameList(true)) do
+				pendingHeaderUpdates[frameName] = true
+			end
 		end
 	end
 	UF:RegisterEvent('GROUP_ROSTER_UPDATE', GroupWatcher)

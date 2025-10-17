@@ -49,7 +49,7 @@ local function GroupBuilder(holder)
 		'showParty',
 		false,
 		'showPlayer',
-		UF.CurrentSettings.raid.showSelf,
+		UF.CurrentSettings.raid.showPlayer,
 		'showSolo',
 		true,
 		'xoffset',
@@ -106,7 +106,7 @@ local function Update(frame)
 		frame.header:SetAttribute('columnSpacing', UF.CurrentSettings.raid.columnSpacing)
 		frame.header:SetAttribute('groupBy', UF.CurrentSettings.raid.mode)
 		frame.header:SetAttribute('groupingOrder', groupingOrder())
-		frame.header:SetAttribute('showPlayer', UF.CurrentSettings.raid.showSelf)
+		frame.header:SetAttribute('showPlayer', UF.CurrentSettings.raid.showPlayer)
 	end
 end
 
