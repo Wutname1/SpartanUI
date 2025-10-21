@@ -144,24 +144,34 @@ end
 ---@param frameName UnitFrameName
 ---@param frame table
 function Unit:BuildFrame(frameName, frame)
+	local actualFrameName = frame:GetName() or 'Unknown'
+	UF:debug('Unit:BuildFrame ENTRY - UnitName: ' .. frameName .. ', Frame: ' .. actualFrameName)
+
 	if not FrameData[frameName] then
+		UF:debug('Unit:BuildFrame - ERROR: No FrameData found for: ' .. frameName)
 		return
 	end
 
+	UF:debug('Unit:BuildFrame - Calling builder function for: ' .. frameName)
 	FrameData[frameName].builder(frame)
 	frame.config = UF.Unit:GetConfig(frameName)
 
 	if Unit:GetConfig(frameName).config.IsGroup then
+		UF:debug('Unit:BuildFrame - This is a group frame: ' .. frameName)
 		if not BuiltFrames[frameName] then
+			UF:debug('Unit:BuildFrame - ERROR: No BuiltFrames entry for group: ' .. frameName)
 			return
 		end
 
 		table.insert(BuiltFrames[frameName].frames, frame)
+		UF:debug('Unit:BuildFrame - Added frame to group, total frames: ' .. #BuiltFrames[frameName].frames)
 	else
 		BuiltFrames[frameName] = frame
+		UF:debug('Unit:BuildFrame - Registered as single frame: ' .. frameName)
 	end
 
 	Unit.UnitsBuilt[frameName] = frame.config.config
+	UF:debug('Unit:BuildFrame EXIT - Frame built: ' .. actualFrameName)
 end
 
 ---Gets a table of all the frames that are currently built and their default settings

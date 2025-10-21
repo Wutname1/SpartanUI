@@ -108,19 +108,32 @@ end
 ---@param ElementName SUI.UF.Elements.list
 ---@param DB? SUI.UF.Elements.Settings
 function Elements:Build(frame, ElementName, DB)
+	local frameName = frame:GetName() or 'Unknown'
+	local unitName = frame.unitOnCreate or 'Unknown'
+
 	if UF.Elements.List[ElementName] then
+		UF:debug('Elements:Build ENTRY - Element: ' .. ElementName .. ', Frame: ' .. frameName .. ', Unit: ' .. unitName)
+
 		if not frame.elementList then
 			frame.elementList = {}
+			UF:debug('Elements:Build - Created new elementList for: ' .. frameName)
 		end
 
 		frame.elementList[ElementName] = UF.Elements.List[ElementName].ElementSettings.config.DisplayName or ElementName
+		UF:debug('Elements:Build - Added to elementList: ' .. ElementName .. ' for frame: ' .. frameName)
+
 		if frame.unitOnCreate then
 			if _G['SUI_UF_' .. frame.unitOnCreate .. '_Holder'] then
 				_G['SUI_UF_' .. frame.unitOnCreate .. '_Holder'].elementList = frame.elementList
+				UF:debug('Elements:Build - Synced elementList to holder for: ' .. frame.unitOnCreate)
 			end
 		end
 
+		UF:debug('Elements:Build - Calling Build function for element: ' .. ElementName)
 		UF.Elements.List[ElementName].Build(frame, DB or {})
+		UF:debug('Elements:Build EXIT - Element build complete: ' .. ElementName .. ' for frame: ' .. frameName)
+	else
+		UF:debug('Elements:Build - WARNING: Element not found in registry: ' .. tostring(ElementName))
 	end
 end
 

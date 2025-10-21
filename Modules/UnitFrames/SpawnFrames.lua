@@ -18,30 +18,39 @@ function UF:CalculateHeight(frameName)
 end
 
 local function CreateUnitFrame(self, unit)
-	UF:debug('CreateUnitFrame called for: ' .. tostring(self:GetName()) .. ', unit: ' .. tostring(unit))
+	local frameName = self:GetName() or 'Unknown'
+	UF:debug('CreateUnitFrame ENTRY - Frame: ' .. frameName .. ', Unit: ' .. tostring(unit))
 
 	if unit ~= 'raid' and unit ~= 'party' then
 		if SUI_FramesAnchor:GetParent() == UIParent then
 			self:SetParent(UIParent)
+			UF:debug('CreateUnitFrame - Set parent to UIParent for: ' .. frameName)
 		else
 			self:SetParent(SUI_FramesAnchor)
+			UF:debug('CreateUnitFrame - Set parent to SUI_FramesAnchor for: ' .. frameName)
 		end
 	end
 	if string.match(unit, 'boss') then
+		UF:debug('CreateUnitFrame - Boss unit detected, normalizing to "boss": ' .. frameName)
 		unit = 'boss'
 	elseif string.match(unit, 'arena') then
+		UF:debug('CreateUnitFrame - Arena unit detected, normalizing to "arena": ' .. frameName)
 		unit = 'arena'
 	end
 	self.DB = UF.CurrentSettings[unit]
+	UF:debug('CreateUnitFrame - DB loaded for unit: ' .. unit .. ', enabled: ' .. tostring(self.DB and self.DB.enabled))
+
 	if self.isChild then
 		self.childType = 'pet'
 		if self == _G[self:GetName() .. 'Target'] then
 			self.childType = 'target'
 		end
+		UF:debug('CreateUnitFrame - Child frame detected, type: ' .. self.childType)
 	end
 
 	self.unitOnCreate = unit
 	self.elementList = {}
+	UF:debug('CreateUnitFrame - unitOnCreate set to: ' .. unit .. ' for frame: ' .. frameName)
 
 	-- Build a function that updates the size of the frame and sizes of elements
 	local function UpdateSize()
@@ -216,13 +225,22 @@ local function CreateUnitFrame(self, unit)
 	local elementDB = self.DB.elements
 	self.elementDB = elementDB
 
+	UF:debug('CreateUnitFrame - About to call BuildFrame for: ' .. frameName .. ', unit: ' .. unit)
 	UF.Unit:BuildFrame(unit, self)
+	UF:debug('CreateUnitFrame - BuildFrame completed for: ' .. frameName)
 
+	UF:debug('CreateUnitFrame - Starting element updates for: ' .. frameName .. ', elementList size: ' .. #self.elementList)
+	local elementCount = 0
 	for elementName, _ in pairs(self.elementList) do
+		elementCount = elementCount + 1
 		if elementDB[elementName] then
+			UF:debug('CreateUnitFrame - Updating element: ' .. elementName .. ' for frame: ' .. frameName)
 			ElementUpdate(self, elementName)
+		else
+			UF:debug('CreateUnitFrame - WARNING: No DB entry for element: ' .. elementName .. ' in frame: ' .. frameName)
 		end
 	end
+	UF:debug('CreateUnitFrame - Completed ' .. elementCount .. ' element updates for: ' .. frameName)
 
 	-- Setup the frame's Right click menu.
 	self:RegisterForClicks('AnyDown')
@@ -234,11 +252,14 @@ local function CreateUnitFrame(self, unit)
 	self:SetScript('OnEnter', UnitFrame_OnEnter)
 	self:SetScript('OnLeave', UnitFrame_OnLeave)
 	self.IsBuilt = true
+	UF:debug('CreateUnitFrame - Frame marked as built: ' .. frameName)
 
 	if not self.DB.enabled then
+		UF:debug('CreateUnitFrame - Frame disabled, calling Disable(): ' .. frameName)
 		self:Disable()
 	end
 
+	UF:debug('CreateUnitFrame EXIT - Frame: ' .. frameName .. ' creation complete')
 	return self
 end
 
@@ -363,6 +384,8 @@ function UF:SpawnFrames()
 					local initializedCount = 0
 					local uninitializedButtons = {}
 
+					UF:debug('GroupWatcher - Inspecting ' .. frameName .. ' header for button status')
+
 					-- Count buttons
 					local i = 1
 					while true do
@@ -370,19 +393,34 @@ function UF:SpawnFrames()
 						if not button then break end
 
 						buttonCount = buttonCount + 1
+						local buttonName = button:GetName() or ('UnknownButton' .. i)
+
 						if button.elementList then
 							initializedCount = initializedCount + 1
+							-- Count how many elements are in the elementList
+							local elementCount = 0
+							for _ in pairs(button.elementList) do
+								elementCount = elementCount + 1
+							end
+							UF:debug('GroupWatcher - Button #' .. i .. ' (' .. buttonName .. '): INITIALIZED with ' .. elementCount .. ' elements')
 						else
 							table.insert(uninitializedButtons, i)
+							UF:debug('GroupWatcher - Button #' .. i .. ' (' .. buttonName .. '): NOT INITIALIZED - missing elementList!')
+
+							-- Check if frame has any child elements at all
+							local hasHealth = button.Health and true or false
+							local hasPower = button.Power and true or false
+							local hasName = button.Name and true or false
+							UF:debug('GroupWatcher - Button #' .. i .. ' element check: Health=' .. tostring(hasHealth) .. ', Power=' .. tostring(hasPower) .. ', Name=' .. tostring(hasName))
 						end
 						i = i + 1
 					end
 
-					UF:debug(string.format('%s: %d buttons, %d initialized, %d uninitialized',
+					UF:debug(string.format('GroupWatcher - %s SUMMARY: %d buttons total, %d initialized, %d uninitialized',
 						frameName, buttonCount, initializedCount, buttonCount - initializedCount))
 
 					if #uninitializedButtons > 0 then
-						UF:debug(frameName .. ' uninitialized button numbers: ' .. table.concat(uninitializedButtons, ', '))
+						UF:debug('GroupWatcher - ' .. frameName .. ' UNINITIALIZED button numbers: ' .. table.concat(uninitializedButtons, ', '))
 					end
 				end
 			end
