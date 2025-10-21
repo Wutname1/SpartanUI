@@ -85,12 +85,16 @@ local function GroupBuilder(holder)
 	UF:debug('Raid GroupBuilder - Header spawned, setting up attributes')
 	holder.header:SetPoint('TOPLEFT', holder, 'TOPLEFT')
 
-	holder.header:SetAttribute('startingIndex', -10)
+	-- Force creation of all 40 possible raid frames upfront
+	-- startingIndex < 0 means "create this many frames immediately"
+	-- Setting to -40 creates frames 1-40 which covers the full raid
+	-- This ensures all frames go through proper oUF initialization
+	holder.header:SetAttribute('startingIndex', -40)
 	holder.header:Show()
 	holder.header.initialized = true
 	holder.header:SetAttribute('startingIndex', nil)
 
-	UF:debug('Raid GroupBuilder EXIT - Header initialization complete')
+	UF:debug('Raid GroupBuilder EXIT - Header initialization complete, created 40 frames')
 end
 
 local function Builder(frame)

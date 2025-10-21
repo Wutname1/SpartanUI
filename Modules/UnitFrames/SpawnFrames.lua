@@ -420,44 +420,8 @@ function UF:SpawnFrames()
 						frameName, buttonCount, initializedCount, buttonCount - initializedCount))
 
 					if #uninitializedButtons > 0 then
-						UF:debug('GroupWatcher - ' .. frameName .. ' UNINITIALIZED button numbers: ' .. table.concat(uninitializedButtons, ', '))
-
-						-- BUGFIX: Manually style uninitialized buttons through oUF's styleFunction
-						-- When the raid grows beyond initial size, oUF creates new buttons but doesn't style them
-						-- We need to call the header's styleFunction to initialize these buttons properly
-						UF:debug('GroupWatcher - Manually styling ' .. #uninitializedButtons .. ' uninitialized buttons for ' .. frameName)
-
-						if groupFrame.header and groupFrame.header.styleFunction then
-							for _, buttonIndex in ipairs(uninitializedButtons) do
-								local button = groupFrame.header:GetAttribute('child' .. buttonIndex)
-								if button then
-									local buttonName = button:GetName() or ('UnknownButton' .. buttonIndex)
-									UF:debug('GroupWatcher - Styling button #' .. buttonIndex .. ' (' .. buttonName .. ') via header.styleFunction')
-
-									-- Call oUF's styleFunction which will run walkObject -> initObject -> CreateUnitFrame
-									-- This is the proper way to initialize buttons that were created by the secure header
-									groupFrame.header.styleFunction(groupFrame.header, buttonName)
-									UF:debug('GroupWatcher - Button #' .. buttonIndex .. ' styled successfully')
-								end
-							end
-
-							-- Schedule a recheck to verify initialization after a short delay
-							UF:ScheduleTimer(function()
-								UF:debug('GroupWatcher - Delayed recheck of ' .. frameName .. ' initialization')
-								local stillUninitialized = 0
-								for _, btnIdx in ipairs(uninitializedButtons) do
-									local btn = groupFrame.header:GetAttribute('child' .. btnIdx)
-									if btn and not btn.elementList then
-										stillUninitialized = stillUninitialized + 1
-									end
-								end
-								if stillUninitialized > 0 then
-									UF:debug('GroupWatcher - WARNING: ' .. stillUninitialized .. ' buttons still uninitialized after styling!')
-								else
-									UF:debug('GroupWatcher - SUCCESS: All buttons initialized after styling')
-								end
-							end, 0.5)
-						end
+						UF:debug('GroupWatcher - WARNING: ' .. frameName .. ' has ' .. #uninitializedButtons .. ' UNINITIALIZED buttons: ' .. table.concat(uninitializedButtons, ', '))
+						UF:debug('GroupWatcher - This should not happen with startingIndex=-40. Possible oUF initialization issue.')
 					end
 				end
 			end
