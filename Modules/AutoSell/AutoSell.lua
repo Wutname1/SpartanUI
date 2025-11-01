@@ -219,8 +219,10 @@ function module:IsSellable(item, ilink, bag, slot)
 		return false
 	end
 	local name, _, quality, _, _, itemType, itemSubType, _, equipSlot, _, vendorPrice, _, _, _, expacID, _, isCraftingReagent = C_Item.GetItemInfo(ilink)
-	if vendorPrice == 0 or name == nil then
-		debugMsg('IsSellable: no vendor price or name for item ' .. tostring(item), 'debug')
+	-- Ensure vendorPrice exists and is greater than 0 to prevent selling items with no sale value
+	-- (e.g., Legion Remix weapons, items that can't be sold)
+	if not vendorPrice or vendorPrice == 0 or name == nil then
+		debugMsg('IsSellable: no vendor price or name for item ' .. tostring(item) .. ' (vendorPrice: ' .. tostring(vendorPrice) .. ')', 'debug')
 		return false
 	end
 
@@ -679,8 +681,8 @@ function module:DebugItemSellability(link)
 	print('|cffFFFF00--- Sell Decision Process ------|r')
 
 	-- Basic checks
-	if vendorPrice == 0 then
-		print('|cffFF0000BLOCKED:|r No vendor value')
+	if not vendorPrice or vendorPrice == 0 then
+		print('|cffFF0000BLOCKED:|r No vendor value (vendorPrice: ' .. tostring(vendorPrice) .. ')')
 		return
 	end
 
