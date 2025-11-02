@@ -4,6 +4,17 @@
 ## Version: 1.0.0
 ## Author: wutname1
 ## SavedVariables: LibsAddonToolsDB, LibATErrorDisplayDB
+## Category: Libraries
+## Category-deDE: Bibliotheken
+## Category-esES: Bibliotecas
+## Category-esMX: Bibliotecas
+## Category-frFR: Bibliothèques
+## Category-itIT: Librerie
+## Category-koKR:
+## Category-ptBR: Bibliotecas
+## Category-ruRU: Библиотеки
+## Category-zhCN: 函数库
+## Category-zhTW: 函式庫
 
 #Load bug system FIRST
 libs\bug-grabber\load.xml
@@ -32,4 +43,4 @@ Core\UI\NavigationTree.lua
 
 # Systems
 Systems\Logger\Logger.lua
-Systems\ProfileManager\Profiles.lua
+# Systems\ProfileManager\Profiles.lua

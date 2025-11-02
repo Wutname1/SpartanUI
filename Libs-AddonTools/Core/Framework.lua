@@ -27,17 +27,13 @@ LibAT.Systems = {}
 ---@param showMessage? boolean Whether to show error message (default: true)
 ---@return boolean success Whether reload was initiated or would be allowed
 function LibAT:SafeReloadUI(showMessage)
-	if showMessage == nil then
-		showMessage = true
-	end
+	if showMessage == nil then showMessage = true end
 
 	local inInstance = IsInInstance()
 	local inCombat = InCombatLockdown()
 
 	if inInstance and inCombat then
-		if showMessage then
-			self:Print('|cffff0000Cannot reload UI while in combat in an instance|r')
-		end
+		if showMessage then self:Print('|cffff0000Cannot reload UI while in combat in an instance|r') end
 		return false
 	end
 
@@ -49,7 +45,7 @@ end
 LibAT.Options = {
 	optionsTable = {},
 	registry = nil,
-	dialog = nil
+	dialog = nil,
 }
 
 ---Initialize the Options system with AceConfig
@@ -81,37 +77,32 @@ function LibAT.Options:AddOptions(options, name, parent)
 
 		-- Try to add to Blizzard options
 		-- If parent is specified but doesn't exist, add without parent
-		local success, err =
-			pcall(
-			function()
-				if parent then
-					-- First ensure parent exists by trying to create it
-					if not self.optionsTable[parent] then
-						-- Create a dummy parent category
-						local parentOptions = {
-							type = 'group',
-							name = parent,
-							args = {}
-						}
-						self.registry:RegisterOptionsTable(parent, parentOptions)
-						self.dialog:AddToBlizOptions(parent, parent)
-						self.optionsTable[parent] = parentOptions
-					end
-					self.dialog:AddToBlizOptions(name, name, parent)
-				else
-					self.dialog:AddToBlizOptions(name, name)
+		local success, err = pcall(function()
+			if parent then
+				-- First ensure parent exists by trying to create it
+				if not self.optionsTable[parent] then
+					-- Create a dummy parent category
+					local parentOptions = {
+						type = 'group',
+						name = parent,
+						args = {},
+					}
+					self.registry:RegisterOptionsTable(parent, parentOptions)
+					self.dialog:AddToBlizOptions(parent, parent)
+					self.optionsTable[parent] = parentOptions
 				end
+				self.dialog:AddToBlizOptions(name, name, parent)
+			else
+				self.dialog:AddToBlizOptions(name, name)
 			end
-		)
+		end)
 
 		if not success then
 			-- Fallback: add without parent if there was an error
 			LibAT:Print('Warning: Could not add options with parent "' .. tostring(parent) .. '", adding as standalone. Error: ' .. tostring(err))
-			pcall(
-				function()
-					self.dialog:AddToBlizOptions(name, name)
-				end
-			)
+			pcall(function()
+				self.dialog:AddToBlizOptions(name, name)
+			end)
 		end
 	end
 end
@@ -141,7 +132,6 @@ function LibAT:RegisterSystem(name, system)
 		return
 	end
 	self.Systems[name] = system
-	self:Print(string.format('Registered system: %s', name))
 end
 
 ---Initialize the LibAT framework
@@ -153,14 +143,14 @@ function LibAT:OnInitialize()
 				autoPopup = false,
 				chatframe = true,
 				fontSize = 12,
-				minimapIcon = {hide = false, minimapPos = 97.66349921766368},
-				ignoredErrors = {} -- Store signatures of errors to ignore
+				minimapIcon = { hide = false, minimapPos = 97.66349921766368 },
+				ignoredErrors = {}, -- Store signatures of errors to ignore
 			},
 			profileManager = {
 				lastExportFormat = 'text',
-				defaultProfileName = 'LibAT Import'
-			}
-		}
+				defaultProfileName = 'LibAT Import',
+			},
+		},
 	}
 
 	self.Database = LibStub('AceDB-3.0'):New('LibsAddonToolsDB', defaults, 'Default')
@@ -168,13 +158,12 @@ function LibAT:OnInitialize()
 end
 
 ---Enable the LibAT framework
-function LibAT:OnEnable()
-end
+function LibAT:OnEnable() end
 
 ---Handle slash commands
 SLASH_LIBAT1 = '/libat'
 SlashCmdList['LIBAT'] = function(msg)
-	local args = {strsplit(' ', msg)}
+	local args = { strsplit(' ', msg) }
 	local command = args[1] and args[1]:lower() or ''
 
 	if command == 'errors' or command == 'error' then

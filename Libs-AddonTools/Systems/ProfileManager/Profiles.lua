@@ -1,8 +1,6 @@
 ---@class LibAT.ProfileManager
 local LibAT = _G.LibAT
-if not LibAT then
-	return
-end
+if not LibAT then return end
 
 local ProfileManager = {}
 LibAT.ProfileManager = ProfileManager
@@ -12,7 +10,7 @@ local UI = LibAT.UI
 
 -- Core functionality
 local window
-local namespaceblacklist = {'LibDualSpec-1.0'}
+local namespaceblacklist = { 'LibDualSpec-1.0' }
 
 ---@class RegisteredAddon
 ---@field id string Unique identifier for this addon
@@ -31,15 +29,9 @@ local nextAddonId = 1
 ---@return string addonId The unique ID assigned to this addon (use for ShowExport/ShowImport)
 function ProfileManager:RegisterAddon(config)
 	-- Validate required fields
-	if not config or type(config) ~= 'table' then
-		error('ProfileManager:RegisterAddon - config must be a table')
-	end
-	if not config.name or type(config.name) ~= 'string' then
-		error('ProfileManager:RegisterAddon - config.name is required and must be a string')
-	end
-	if not config.db or type(config.db) ~= 'table' then
-		error('ProfileManager:RegisterAddon - config.db is required and must be a table (AceDB object)')
-	end
+	if not config or type(config) ~= 'table' then error('ProfileManager:RegisterAddon - config must be a table') end
+	if not config.name or type(config.name) ~= 'string' then error('ProfileManager:RegisterAddon - config.name is required and must be a string') end
+	if not config.db or type(config.db) ~= 'table' then error('ProfileManager:RegisterAddon - config.db is required and must be a table (AceDB object)') end
 
 	-- Generate or use provided ID
 	local addonId = config.id
@@ -61,15 +53,11 @@ function ProfileManager:RegisterAddon(config)
 		db = config.db,
 		namespaces = config.namespaces,
 		icon = config.icon,
-		metadata = config.metadata or {}
+		metadata = config.metadata or {},
 	}
 
 	-- Rebuild navigation tree if window exists
-	if window and window.NavTree then
-		BuildNavigationTree()
-	end
-
-	LibAT:Print('Registered addon "' .. config.name .. '" with ProfileManager (ID: ' .. addonId .. ')')
+	if window and window.NavTree then BuildNavigationTree() end
 	return addonId
 end
 
@@ -85,11 +73,7 @@ function ProfileManager:UnregisterAddon(addonId)
 	registeredAddons[addonId] = nil
 
 	-- Rebuild navigation tree if window exists
-	if window and window.NavTree then
-		BuildNavigationTree()
-	end
-
-	LibAT:Print('Unregistered addon "' .. addonName .. '" from ProfileManager')
+	if window and window.NavTree then BuildNavigationTree() end
 end
 
 ---Get all registered addons
@@ -103,13 +87,11 @@ end
 ---@param namespace string|nil Optional specific namespace to export
 function ProfileManager:ShowExport(addonId, namespace)
 	if not registeredAddons[addonId] then
-		LibAT:Print('|cffff0000Error:|r Addon with ID "' .. addonId .. '" is not registered')
+		-- LibAT:Print('|cffff0000Error:|r Addon with ID "' .. addonId .. '" is not registered')
 		return
 	end
 
-	if not window then
-		CreateWindow()
-	end
+	if not window then CreateWindow() end
 
 	-- Set mode and active addon
 	window.mode = 'export'
@@ -118,9 +100,7 @@ function ProfileManager:ShowExport(addonId, namespace)
 
 	-- Build navigation key
 	local navKey = 'Addons.' .. addonId .. '.Export'
-	if namespace then
-		navKey = navKey .. '.' .. namespace
-	end
+	if namespace then navKey = navKey .. '.' .. namespace end
 
 	-- Update navigation tree
 	if window.NavTree then
@@ -136,13 +116,11 @@ end
 ---@param namespace string|nil Optional specific namespace to import
 function ProfileManager:ShowImport(addonId, namespace)
 	if not registeredAddons[addonId] then
-		LibAT:Print('|cffff0000Error:|r Addon with ID "' .. addonId .. '" is not registered')
+		-- LibAT:Print('|cffff0000Error:|r Addon with ID "' .. addonId .. '" is not registered')
 		return
 	end
 
-	if not window then
-		CreateWindow()
-	end
+	if not window then CreateWindow() end
 
 	-- Set mode and active addon
 	window.mode = 'import'
@@ -151,9 +129,7 @@ function ProfileManager:ShowImport(addonId, namespace)
 
 	-- Build navigation key
 	local navKey = 'Addons.' .. addonId .. '.Import'
-	if namespace then
-		navKey = navKey .. '.' .. namespace
-	end
+	if namespace then navKey = navKey .. '.' .. namespace end
 
 	-- Update navigation tree
 	if window.NavTree then
@@ -174,12 +150,9 @@ local function BuildAddonCategories()
 	for id in pairs(registeredAddons) do
 		table.insert(sortedIds, id)
 	end
-	table.sort(
-		sortedIds,
-		function(a, b)
-			return registeredAddons[a].displayName < registeredAddons[b].displayName
-		end
-	)
+	table.sort(sortedIds, function(a, b)
+		return registeredAddons[a].displayName < registeredAddons[b].displayName
+	end)
 
 	-- Build category for each registered addon
 	for _, addonId in ipairs(sortedIds) do
@@ -201,7 +174,7 @@ local function BuildAddonCategories()
 				key = categoryKey .. '.Import',
 				expanded = false,
 				subCategories = {},
-				sortedKeys = {}
+				sortedKeys = {},
 			}
 
 			-- Add "ALL" option
@@ -213,7 +186,7 @@ local function BuildAddonCategories()
 					window.activeAddonId = addonId
 					window.activeNamespace = nil
 					UpdateWindowForMode()
-				end
+				end,
 			}
 			table.insert(subCategories['Import'].sortedKeys, 'ALL')
 
@@ -227,7 +200,7 @@ local function BuildAddonCategories()
 						window.activeAddonId = addonId
 						window.activeNamespace = ns
 						UpdateWindowForMode()
-					end
+					end,
 				}
 				table.insert(subCategories['Import'].sortedKeys, ns)
 			end
@@ -241,7 +214,7 @@ local function BuildAddonCategories()
 					window.activeAddonId = addonId
 					window.activeNamespace = nil
 					UpdateWindowForMode()
-				end
+				end,
 			}
 		end
 		table.insert(sortedKeys, 'Import')
@@ -253,7 +226,7 @@ local function BuildAddonCategories()
 				key = categoryKey .. '.Export',
 				expanded = false,
 				subCategories = {},
-				sortedKeys = {}
+				sortedKeys = {},
 			}
 
 			-- Add "ALL" option
@@ -265,7 +238,7 @@ local function BuildAddonCategories()
 					window.activeAddonId = addonId
 					window.activeNamespace = nil
 					UpdateWindowForMode()
-				end
+				end,
 			}
 			table.insert(subCategories['Export'].sortedKeys, 'ALL')
 
@@ -279,7 +252,7 @@ local function BuildAddonCategories()
 						window.activeAddonId = addonId
 						window.activeNamespace = ns
 						UpdateWindowForMode()
-					end
+					end,
 				}
 				table.insert(subCategories['Export'].sortedKeys, ns)
 			end
@@ -293,7 +266,7 @@ local function BuildAddonCategories()
 					window.activeAddonId = addonId
 					window.activeNamespace = nil
 					UpdateWindowForMode()
-				end
+				end,
 			}
 		end
 		table.insert(sortedKeys, 'Export')
@@ -305,7 +278,7 @@ local function BuildAddonCategories()
 			expanded = false,
 			icon = addon.icon,
 			subCategories = subCategories,
-			sortedKeys = sortedKeys
+			sortedKeys = sortedKeys,
 		}
 	end
 
@@ -314,9 +287,7 @@ end
 
 ---Rebuild the entire navigation tree with current registered addons
 local function BuildNavigationTree()
-	if not window or not window.NavTree then
-		return
-	end
+	if not window or not window.NavTree then return end
 
 	-- Build addon categories
 	local addonCategories = BuildAddonCategories()
@@ -334,18 +305,18 @@ local function BuildNavigationTree()
 				name = 'Options',
 				key = 'Settings.Options',
 				onSelect = function()
-					LibAT:Print('Profile options coming in Phase 2')
-				end
+					-- LibAT:Print('Profile options coming in Phase 2')
+				end,
 			},
 			['Namespaces'] = {
 				name = 'Namespace Filter',
 				key = 'Settings.Namespaces',
 				onSelect = function()
-					LibAT:Print('Namespace filtering coming in Phase 2')
-				end
-			}
+					-- LibAT:Print('Namespace filtering coming in Phase 2')
+				end,
+			},
 		},
-		sortedKeys = {'Options', 'Namespaces'}
+		sortedKeys = { 'Options', 'Namespaces' },
 	}
 
 	-- Update navigation tree
@@ -354,9 +325,7 @@ local function BuildNavigationTree()
 end
 
 local function UpdateWindowForMode()
-	if not window then
-		return
-	end
+	if not window then return end
 
 	-- Clear text box
 	window.EditBox:SetText('')
@@ -403,16 +372,13 @@ end
 
 local function CreateWindow()
 	-- Create base window using LibAT.UI
-	window =
-		UI.CreateWindow(
-		{
-			name = 'LibAT_ProfileWindow',
-			title = '|cffffffffLib|cffe21f1fAT|r Profile Manager',
-			width = 800,
-			height = 538,
-			portrait = 'Interface\\AddOns\\Libs-AddonTools\\Logo-Icon'
-		}
-	)
+	window = UI.CreateWindow({
+		name = 'LibAT_ProfileWindow',
+		title = '|cffffffffLib|cffe21f1fAT|r Profile Manager',
+		width = 800,
+		height = 538,
+		portrait = 'Interface\\AddOns\\Libs-AddonTools\\Logo-Icon',
+	})
 	window.mode = 'import'
 	window.activeAddonId = nil -- Currently selected addon ID
 	window.activeNamespace = nil -- Currently selected namespace (nil = all)
@@ -427,13 +393,10 @@ local function CreateWindow()
 	-- Add switch mode button
 	window.SwitchModeButton = UI.CreateButton(window.ControlFrame, 100, 22, 'Switch Mode')
 	window.SwitchModeButton:SetPoint('RIGHT', window.ControlFrame, 'RIGHT', -10, 0)
-	window.SwitchModeButton:SetScript(
-		'OnClick',
-		function()
-			window.mode = window.mode == 'import' and 'export' or 'import'
-			UpdateWindowForMode()
-		end
-	)
+	window.SwitchModeButton:SetScript('OnClick', function()
+		window.mode = window.mode == 'import' and 'export' or 'import'
+		UpdateWindowForMode()
+	end)
 
 	-- Create main content area
 	window.MainContent = UI.CreateContentFrame(window, window.ControlFrame)
@@ -442,14 +405,11 @@ local function CreateWindow()
 	window.LeftPanel = UI.CreateLeftPanel(window.MainContent)
 
 	-- Initialize navigation tree with registered addons
-	window.NavTree =
-		UI.CreateNavigationTree(
-		{
-			parent = window.LeftPanel,
-			categories = {},
-			activeKey = nil
-		}
-	)
+	window.NavTree = UI.CreateNavigationTree({
+		parent = window.LeftPanel,
+		categories = {},
+		activeKey = nil,
+	})
 
 	-- Build initial navigation tree
 	BuildNavigationTree()
@@ -470,71 +430,55 @@ local function CreateWindow()
 	window.EditBox:SetWidth(window.TextPanel:GetWidth() - 20)
 
 	-- Create action buttons
-	local actionButtons =
-		UI.CreateActionButtons(
-		window,
+	local actionButtons = UI.CreateActionButtons(window, {
 		{
-			{
-				text = 'Clear',
-				width = 70,
-				onClick = function()
-					window.EditBox:SetText('')
-				end
-			},
-			{
-				text = 'Close',
-				width = 70,
-				onClick = function()
-					window:Hide()
-				end
-			}
-		}
-	)
+			text = 'Clear',
+			width = 70,
+			onClick = function()
+				window.EditBox:SetText('')
+			end,
+		},
+		{
+			text = 'Close',
+			width = 70,
+			onClick = function()
+				window:Hide()
+			end,
+		},
+	})
 
 	-- Import button (shown in import mode)
 	window.ImportButton = UI.CreateButton(window, 100, 22, 'Import')
 	window.ImportButton:SetPoint('RIGHT', actionButtons[1], 'LEFT', -5, 0)
-	window.ImportButton:SetScript(
-		'OnClick',
-		function()
-			ProfileManager:DoImport()
-		end
-	)
+	window.ImportButton:SetScript('OnClick', function()
+		ProfileManager:DoImport()
+	end)
 
 	-- Export button (shown in export mode)
 	window.ExportButton = UI.CreateButton(window, 100, 22, 'Export')
 	window.ExportButton:SetPoint('RIGHT', actionButtons[1], 'LEFT', -5, 0)
-	window.ExportButton:SetScript(
-		'OnClick',
-		function()
-			ProfileManager:DoExport()
-		end
-	)
+	window.ExportButton:SetScript('OnClick', function()
+		ProfileManager:DoExport()
+	end)
 
 	-- Hide window initially
 	window:Hide()
 end
 
 function ProfileManager:ImportUI()
-	if not window then
-		CreateWindow()
-	end
+	if not window then CreateWindow() end
 	window.mode = 'import'
 	UpdateWindowForMode()
 end
 
 function ProfileManager:ExportUI()
-	if not window then
-		CreateWindow()
-	end
+	if not window then CreateWindow() end
 	window.mode = 'export'
 	UpdateWindowForMode()
 end
 
 function ProfileManager:ToggleWindow()
-	if not window then
-		CreateWindow()
-	end
+	if not window then CreateWindow() end
 	if window:IsVisible() then
 		window:Hide()
 	else
@@ -544,13 +488,11 @@ end
 
 -- Export function - Works with registered addons
 function ProfileManager:DoExport()
-	if not window then
-		return
-	end
+	if not window then return end
 
 	-- Check if an addon is selected
 	if not window.activeAddonId or not registeredAddons[window.activeAddonId] then
-		LibAT:Print('|cffff0000Error:|r No addon selected for export')
+		-- LibAT:Print('|cffff0000Error:|r No addon selected for export')
 		return
 	end
 
@@ -559,7 +501,7 @@ function ProfileManager:DoExport()
 
 	-- Validate AceDB structure
 	if not db or not db.sv then
-		LibAT:Print('|cffff0000Error:|r Invalid AceDB object for ' .. addon.displayName)
+		-- LibAT:Print('|cffff0000Error:|r Invalid AceDB object for ' .. addon.displayName)
 		return
 	end
 
@@ -569,7 +511,7 @@ function ProfileManager:DoExport()
 		timestamp = date('%Y-%m-%d %H:%M:%S'),
 		addon = addon.displayName,
 		addonId = addon.id,
-		data = {}
+		data = {},
 	}
 
 	-- Export based on namespace selection
@@ -579,32 +521,26 @@ function ProfileManager:DoExport()
 			exportData.data[window.activeNamespace] = db.sv.namespaces[window.activeNamespace]
 			exportData.namespace = window.activeNamespace
 		else
-			LibAT:Print('|cffff0000Error:|r Namespace "' .. window.activeNamespace .. '" not found')
+			-- LibAT:Print('|cffff0000Error:|r Namespace "' .. window.activeNamespace .. '" not found')
 			return
 		end
 	else
 		-- Export all namespaces (excluding blacklist)
 		if db.sv.namespaces then
 			for namespace, data in pairs(db.sv.namespaces) do
-				if not tContains(namespaceblacklist, namespace) then
-					exportData.data[namespace] = data
-				end
+				if not tContains(namespaceblacklist, namespace) then exportData.data[namespace] = data end
 			end
 		end
 
 		-- Also export profile data if available
-		if db.sv.profiles then
-			exportData.profiles = db.sv.profiles
-		end
+		if db.sv.profiles then exportData.profiles = db.sv.profiles end
 	end
 
 	-- Serialize to string
 	local exportString = '-- ' .. addon.displayName .. ' Profile Export\n'
 	exportString = exportString .. '-- Generated: ' .. exportData.timestamp .. '\n'
 	exportString = exportString .. '-- Version: ' .. exportData.version .. '\n'
-	if window.activeNamespace then
-		exportString = exportString .. '-- Namespace: ' .. window.activeNamespace .. '\n'
-	end
+	if window.activeNamespace then exportString = exportString .. '-- Namespace: ' .. window.activeNamespace .. '\n' end
 	exportString = exportString .. '\n'
 
 	local function serializeTable(tbl, indent)
@@ -628,32 +564,28 @@ function ProfileManager:DoExport()
 	window.EditBox:SetText(exportString)
 	window.EditBox:SetCursorPosition(0)
 	window.EditBox:HighlightText(0)
-
-	LibAT:Print('|cff00ff00Profile exported successfully!|r Select all (Ctrl+A) and copy (Ctrl+C).')
 end
 
 -- Import function - Works with registered addons
 function ProfileManager:DoImport()
-	if not window then
-		return
-	end
+	if not window then return end
 
 	-- Check if an addon is selected
 	if not window.activeAddonId or not registeredAddons[window.activeAddonId] then
-		LibAT:Print('|cffff0000Error:|r No addon selected for import')
+		-- LibAT:Print('|cffff0000Error:|r No addon selected for import')
 		return
 	end
 
 	local importText = window.EditBox:GetText()
 	if not importText or importText == '' then
-		LibAT:Print('|cffff0000Please paste profile data into the text box first.|r')
+		-- LibAT:Print('|cffff0000Please paste profile data into the text box first.|r')
 		return
 	end
 
 	-- Try to parse the import data
 	local success, importData = pcall(loadstring(importText))
 	if not success or type(importData) ~= 'table' then
-		LibAT:Print('|cffff0000Invalid profile data. Please check the format.|r')
+		-- LibAT:Print('|cffff0000Invalid profile data. Please check the format.|r')
 		return
 	end
 
@@ -662,14 +594,14 @@ function ProfileManager:DoImport()
 
 	-- Validate AceDB structure
 	if not db or not db.sv then
-		LibAT:Print('|cffff0000Error:|r Invalid AceDB object for ' .. addon.displayName)
+		-- LibAT:Print('|cffff0000Error:|r Invalid AceDB object for ' .. addon.displayName)
 		return
 	end
 
 	-- Validate addon ID matches (optional safety check)
 	if importData.addonId and importData.addonId ~= addon.id then
-		LibAT:Print('|cffff9900Warning:|r Import data is for addon "' .. (importData.addon or 'Unknown') .. '" but you selected "' .. addon.displayName .. '"')
-		LibAT:Print('Continuing with import anyway...')
+		-- LibAT:Print('|cffff9900Warning:|r Import data is for addon "' .. (importData.addon or 'Unknown') .. '" but you selected "' .. addon.displayName .. '"')
+		-- LibAT:Print('Continuing with import anyway...')
 	end
 
 	-- Apply import data
@@ -679,25 +611,21 @@ function ProfileManager:DoImport()
 		-- Import single namespace
 		if importData.namespace and importData.namespace == window.activeNamespace then
 			if importData.data[window.activeNamespace] then
-				if not db.sv.namespaces then
-					db.sv.namespaces = {}
-				end
+				if not db.sv.namespaces then db.sv.namespaces = {} end
 				db.sv.namespaces[window.activeNamespace] = importData.data[window.activeNamespace]
 				importCount = 1
 			else
-				LibAT:Print('|cffff0000Error:|r Import data does not contain namespace "' .. window.activeNamespace .. '"')
+				-- LibAT:Print('|cffff0000Error:|r Import data does not contain namespace "' .. window.activeNamespace .. '"')
 				return
 			end
 		else
-			LibAT:Print('|cffff0000Error:|r Import data namespace mismatch')
+			-- LibAT:Print('|cffff0000Error:|r Import data namespace mismatch')
 			return
 		end
 	else
 		-- Import all namespaces
 		if importData.data then
-			if not db.sv.namespaces then
-				db.sv.namespaces = {}
-			end
+			if not db.sv.namespaces then db.sv.namespaces = {} end
 			for namespace, data in pairs(importData.data) do
 				if not tContains(namespaceblacklist, namespace) then
 					db.sv.namespaces[namespace] = data
@@ -707,16 +635,14 @@ function ProfileManager:DoImport()
 		end
 
 		-- Import profiles if available
-		if importData.profiles then
-			db.sv.profiles = importData.profiles
-		end
+		if importData.profiles then db.sv.profiles = importData.profiles end
 	end
 
 	if importCount > 0 then
-		LibAT:Print('|cff00ff00Profile imported successfully!|r Imported ' .. importCount .. ' namespace(s) for ' .. addon.displayName)
-		LibAT:Print('|cffff9900Please /reload to apply changes.|r')
+		-- LibAT:Print('|cff00ff00Profile imported successfully!|r Imported ' .. importCount .. ' namespace(s) for ' .. addon.displayName)
+		-- LibAT:Print('|cffff9900Please /reload to apply changes.|r')
 	else
-		LibAT:Print('|cffff0000No data was imported.|r')
+		-- LibAT:Print('|cffff0000No data was imported.|r')
 	end
 end
 
@@ -726,16 +652,12 @@ function ProfileManager:Initialize()
 	LibAT:RegisterSystem('ProfileManager', self)
 
 	-- Auto-register LibAT itself if database is available
-	if LibAT.Database then
-		ProfileManager:RegisterAddon(
-			{
-				id = 'libat',
-				name = 'LibAT Core',
-				db = LibAT.Database,
-				icon = 'Interface\\AddOns\\Libs-AddonTools\\Logo-Icon'
-			}
-		)
-	end
+	if LibAT.Database then ProfileManager:RegisterAddon({
+		id = 'libat',
+		name = 'LibAT Core',
+		db = LibAT.Database,
+		icon = 'Interface\\AddOns\\Libs-AddonTools\\Logo-Icon',
+	}) end
 
 	-- Create slash commands
 	SLASH_LIBATPROFILES1 = '/libatprofiles'
@@ -750,9 +672,6 @@ function ProfileManager:Initialize()
 			ProfileManager:ToggleWindow()
 		end
 	end
-
-	LibAT:Print('Profile Manager initialized - Use /profiles to open')
-	LibAT:Print('Addons can register with: LibAT.ProfileManager:RegisterAddon({name = "MyAddon", db = MyAddonDB})')
 end
 
 -- Auto-initialize when loaded

@@ -27,15 +27,18 @@ For optimal IntelliSense support, include these type definitions in your addon:
 ---| "error"    # Error conditions
 ---| "critical" # Critical system failures
 
----Logger function returned by RegisterAddon
----@alias SimpleLogger fun(message: string, level?: LogLevel): nil
-
----Logger table returned by RegisterAddonCategory
----@alias ComplexLoggers table<string, SimpleLogger>
+---Logger object with convenience methods
+---@class LoggerObject
+---@field log fun(message: string, level?: LogLevel): nil
+---@field debug fun(message: string): nil
+---@field info fun(message: string): nil
+---@field warning fun(message: string): nil
+---@field error fun(message: string): nil
+---@field critical fun(message: string): nil
+---@field Categories table<string, LoggerObject>
 
 ---@class LibAT.Logger
----@field RegisterAddon fun(addonName: string): SimpleLogger
----@field RegisterAddonCategory fun(addonName: string, subcategories: string[]): ComplexLoggers
+---@field RegisterAddon fun(addonName: string, categories?: string[]): LoggerObject
 ```
 
 ## Registration API
@@ -52,7 +55,7 @@ Registers your addon for logging under the "External Addons" category.
 
 ```lua
 ---@param addonName string Name of your addon
----@return SimpleLogger logger Logger function that accepts (message, level?)
+---@return LoggerObject logger Logger object with methods: log, debug, info, warning, error, critical
 function LibAT.Logger.RegisterAddon(addonName)
 ```
 
@@ -62,59 +65,66 @@ function LibAT.Logger.RegisterAddon(addonName)
 
 **Returns:**
 
-- `SimpleLogger`: Logger function that accepts `(message: string, level?: LogLevel)`
+- `LoggerObject`: Logger object with the following methods:
+  - `log(message, level?)` - Generic log function with optional level
+  - `debug(message)` - Log at debug level
+  - `info(message)` - Log at info level
+  - `warning(message)` - Log at warning level
+  - `error(message)` - Log at error level
+  - `critical(message)` - Log at critical level
 
 **Example:**
 
 ```lua
 -- Registration (do this once during addon initialization)
-local logger = LibAT.Logger:RegisterAddon("LibsTotemBar")
+local logger = LibAT.Logger.RegisterAddon("LibsTotemBar")
 
 -- Usage throughout your addon
-logger("Totem bar initialized")
-logger("Totem spell detected", "info")
-logger("Failed to create totem button", "error")
+logger.info("Totem bar initialized")
+logger.log("Totem spell detected", "info")  -- Alternative syntax
+logger.debug("Debug information here")
+logger.error("Failed to create totem button")
 ```
 
 ### Advanced Addon Registration
 
 For complex addons that need multiple logging categories, use the advanced registration method:
 
-#### `LibAT.Logger.RegisterAddonCategory(addonName, subcategories)`
+#### `LibAT.Logger.RegisterAddon(addonName, categories)`
 
-Creates a custom expandable category for your addon with subcategories.
+Creates a custom expandable category for your addon with subcategories. This is the same function as simple registration, but with optional categories parameter.
 
 **Type Signature:**
 
 ```lua
 ---@param addonName string Name of your addon (becomes the category name)
----@param subcategories string[] Array of subcategory names
----@return ComplexLoggers loggers Table of logger functions keyed by subcategory name
-function LibAT.Logger.RegisterAddonCategory(addonName, subcategories)
+---@param categories string[] Array of category names
+---@return LoggerObject logger Logger object with Categories table
+function LibAT.Logger.RegisterAddon(addonName, categories)
 ```
 
 **Parameters:**
 
 - `addonName` (string): Name of your addon (becomes the category name)
-- `subcategories` (string[]): Array of subcategory names
+- `categories` (string[]): Array of category names
 
 **Returns:**
 
-- `ComplexLoggers`: Table of logger functions keyed by subcategory name
+- `LoggerObject`: Logger object with `.Categories` table containing LoggerObjects for each category
 
 **Example:**
 
 ```lua
 -- Registration (do this once during addon initialization)
-local loggers = LibAT.Logger.RegisterAddonCategory("LibsDataBar", {
+local logger = LibAT.Logger.RegisterAddon("LibsDataBar", {
     "core", "modules", "display", "plugins"
 })
 
 -- Usage throughout your addon
-loggers.core("DataBar system initialized")
-loggers.modules("Loading module: " .. moduleName)
-loggers.display("Updating display layout")
-loggers.plugins("Plugin registered: " .. pluginName, "debug")
+logger.Categories.core.info("DataBar system initialized")
+logger.Categories.modules.debug("Loading module: " .. moduleName)
+logger.Categories.display.info("Updating display layout")
+logger.Categories.plugins.debug("Plugin registered: " .. pluginName)
 ```
 
 ## Hierarchical Logging Patterns
