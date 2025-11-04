@@ -389,7 +389,7 @@ function module:CreateBarManager()
 		local enabledContainers = {}
 		for i, barContainer in ipairs(self.barContainers) do
 			local containerKey = i == 1 and 'Left' or 'Right'
-			if DB.bars[containerKey].enabled then
+			if containerKey ~= nil and DB.bars[containerKey] ~= nil and DB.bars[containerKey].enabled then
 				table.insert(enabledContainers, {container = barContainer, index = i})
 			end
 		end
