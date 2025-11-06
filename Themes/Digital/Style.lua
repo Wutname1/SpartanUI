@@ -16,21 +16,23 @@ function module:OnInitialize()
 		['BT4BarBagBar'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,661,174',
 	}
 
-	---@type SUI.Style.Settings.UnitFrames
-	local ufsettings = {
-		artwork = {
-			bg = {
-				path = 'Interface\\AddOns\\SpartanUI\\Themes\\Digital\\Images\\BarBG',
-				TexCoord = { 0.0234375, 0.9765625, 0.265625, 0.7734375 },
-				PVPAlpha = 0.4,
+	if SUI.UF then
+		---@type SUI.Style.Settings.UnitFrames
+		local ufsettings = {
+			artwork = {
+				bg = {
+					path = 'Interface\\AddOns\\SpartanUI\\Themes\\Digital\\Images\\BarBG',
+					TexCoord = { 0.0234375, 0.9765625, 0.265625, 0.7734375 },
+					PVPAlpha = 0.4,
+				},
 			},
-		},
-		displayName = 'Digital',
-		setup = {
-			image = 'Interface\\AddOns\\SpartanUI\\images\\setup\\Style_Frames_Digital',
-		},
-	}
-	SUI.UF.Style:Register('Digital', ufsettings)
+			displayName = 'Digital',
+			setup = {
+				image = 'Interface\\AddOns\\SpartanUI\\images\\setup\\Style_Frames_Digital',
+			},
+		}
+		SUI.UF.Style:Register('Digital', ufsettings)
+	end
 
 	---@type SUI.Style.Settings.Minimap
 	local minimapSettings = {

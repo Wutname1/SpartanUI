@@ -666,71 +666,73 @@ function module:OnInitialize()
 		['BT4BarMicroMenu'] = SUI.IsRetail and 0.7 or 0.6,
 	}
 
-	local UF = SUI.UF
-	---@type SUI.Style.Settings.UnitFrames
-	local ufsettings = {
-		artwork = {
-			full = {
-				perUnit = true,
-				UnitFrameCallback = UnitFrameCallback,
-				player = {
-					path = 'Interface\\AddOns\\SpartanUI\\Themes\\Classic\\Images\\base_plate1',
-					height = 80,
-					widthScale = 2.2,
-					TexCoord = { 0.19140625, 0.810546875, 0.1796875, 0.8203125 },
-					position = {
-						anchor = 'CENTER',
-						x = 34,
-						y = 7,
+	if SUI.UF then
+		local UF = SUI.UF
+		---@type SUI.Style.Settings.UnitFrames
+		local ufsettings = {
+			artwork = {
+				full = {
+					perUnit = true,
+					UnitFrameCallback = UnitFrameCallback,
+					player = {
+						path = 'Interface\\AddOns\\SpartanUI\\Themes\\Classic\\Images\\base_plate1',
+						height = 80,
+						widthScale = 2.2,
+						TexCoord = { 0.19140625, 0.810546875, 0.1796875, 0.8203125 },
+						position = {
+							anchor = 'CENTER',
+							x = 34,
+							y = 7,
+						},
 					},
-				},
-				target = {
-					path = 'Interface\\AddOns\\SpartanUI\\Themes\\Classic\\Images\\base_plate1',
-					height = 80,
-					widthScale = 2.2,
-					TexCoord = { 0.810546875, 0.19140625, 0.1796875, 0.8203125 },
-					position = {
-						anchor = 'CENTER',
-						x = -34,
-						y = 7,
+					target = {
+						path = 'Interface\\AddOns\\SpartanUI\\Themes\\Classic\\Images\\base_plate1',
+						height = 80,
+						widthScale = 2.2,
+						TexCoord = { 0.810546875, 0.19140625, 0.1796875, 0.8203125 },
+						position = {
+							anchor = 'CENTER',
+							x = -34,
+							y = 7,
+						},
 					},
-				},
-				pet = {
-					path = 'Interface\\AddOns\\SpartanUI\\Themes\\Classic\\Images\\base_2_dual',
-					height = 53,
-					widthScale = 1.6,
-					TexCoord = { 0.9453125, 0.25, 0, 0.78125 },
-					position = {
-						anchor = 'BOTTOMRIGHT',
-						x = 10,
-						y = -1,
+					pet = {
+						path = 'Interface\\AddOns\\SpartanUI\\Themes\\Classic\\Images\\base_2_dual',
+						height = 53,
+						widthScale = 1.6,
+						TexCoord = { 0.9453125, 0.25, 0, 0.78125 },
+						position = {
+							anchor = 'BOTTOMRIGHT',
+							x = 10,
+							y = -1,
+						},
 					},
-				},
-				targettarget = {
-					path = 'Interface\\AddOns\\SpartanUI\\Themes\\Classic\\Images\\base_2_dual',
-					height = 53,
-					widthScale = 1.6,
-					TexCoord = { 0.25, 0.9453125, 0, 0.78125 },
-					position = {
-						anchor = 'BOTTOMLEFT',
-						x = -10,
-						y = -1,
+					targettarget = {
+						path = 'Interface\\AddOns\\SpartanUI\\Themes\\Classic\\Images\\base_2_dual',
+						height = 53,
+						widthScale = 1.6,
+						TexCoord = { 0.25, 0.9453125, 0, 0.78125 },
+						position = {
+							anchor = 'BOTTOMLEFT',
+							x = -10,
+							y = -1,
+						},
 					},
 				},
 			},
-		},
-		positions = {
-			['player'] = 'BOTTOMRIGHT,SUI_BottomAnchor,BOTTOM,-182,160',
-			['pet'] = 'BOTTOMRIGHT,SUI_UF_player,BOTTOMLEFT,-50,-4',
-			['target'] = 'BOTTOMLEFT,SUI_BottomAnchor,BOTTOM,182,160',
-			['targettarget'] = 'BOTTOMLEFT,SUI_UF_target,BOTTOMRIGHT,50,-5',
-		},
-		displayName = 'Classic',
-		setup = {
-			image = 'Interface\\AddOns\\SpartanUI\\images\\setup\\Style_Frames_Classic',
-		},
-	}
-	UF.Style:Register('Classic', ufsettings)
+			positions = {
+				['player'] = 'BOTTOMRIGHT,SUI_BottomAnchor,BOTTOM,-182,160',
+				['pet'] = 'BOTTOMRIGHT,SUI_UF_player,BOTTOMLEFT,-50,-4',
+				['target'] = 'BOTTOMLEFT,SUI_BottomAnchor,BOTTOM,182,160',
+				['targettarget'] = 'BOTTOMLEFT,SUI_UF_target,BOTTOMRIGHT,50,-5',
+			},
+			displayName = 'Classic',
+			setup = {
+				image = 'Interface\\AddOns\\SpartanUI\\images\\setup\\Style_Frames_Classic',
+			},
+		}
+		UF.Style:Register('Classic', ufsettings)
+	end
 
 	---@type SUI.Style.Settings.Minimap
 	local minimapSettings = {
@@ -760,16 +762,18 @@ function module:OnInitialize()
 	}
 	statusBarModule:RegisterStyle('Classic', StatusBarsSettings)
 
-	local function StyleChange()
-		for unit, frame in pairs(SkinnedFrames) do
-			if UF.DB.Style ~= 'Classic' then
-				frame.Art_Classic:Hide()
-			elseif UF.DB.Style == 'Classic' and not frame.Art_Classic:IsVisible() then
-				frame.Art_Classic:Show()
+	if SUI.UF then
+		local function StyleChange()
+			for unit, frame in pairs(SkinnedFrames) do
+				if SUI.UF.DB.Style ~= 'Classic' then
+					frame.Art_Classic:Hide()
+				elseif SUI.UF.DB.Style == 'Classic' and not frame.Art_Classic:IsVisible() then
+					frame.Art_Classic:Show()
+				end
 			end
 		end
+		SUI.Event:RegisterEvent('UNITFRAME_STYLE_CHANGED', StyleChange)
 	end
-	SUI.Event:RegisterEvent('UNITFRAME_STYLE_CHANGED', StyleChange)
 end
 
 function module:OnEnable()

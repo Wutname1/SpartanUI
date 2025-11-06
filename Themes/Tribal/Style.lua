@@ -22,36 +22,38 @@ function module:OnInitialize()
 	}
 
 	-- Unitframes Settings
-	---@type SUI.Style.Settings.UnitFrames
-	local ufsettings = {
-		artwork = {
-			top = {
-				path = 'Interface\\AddOns\\SpartanUI\\Themes\\Tribal\\Images\\UnitFrames',
-				TexCoord = { 0.25390625, 0.580078125, 0.583984375, 0.712890625 },
-				heightScale = 0.38,
-				widthScale = 0.6,
-				yScale = -0.072,
+	if SUI.UF then
+		---@type SUI.Style.Settings.UnitFrames
+		local ufsettings = {
+			artwork = {
+				top = {
+					path = 'Interface\\AddOns\\SpartanUI\\Themes\\Tribal\\Images\\UnitFrames',
+					TexCoord = { 0.25390625, 0.580078125, 0.583984375, 0.712890625 },
+					heightScale = 0.38,
+					widthScale = 0.6,
+					yScale = -0.072,
+				},
+				bg = {
+					path = 'Interface\\AddOns\\SpartanUI\\Themes\\Tribal\\Images\\UnitFrames',
+					TexCoord = { 0.126953125, 0.734375, 0.171875, 0.291015625 },
+				},
+				bottom = {
+					path = 'Interface\\AddOns\\SpartanUI\\Themes\\Tribal\\Images\\UnitFrames',
+					TexCoord = { 0.869140625, 1, 0.3203125, 0.359375 },
+					heightScale = 0.15,
+					widthScale = 0.25,
+				},
 			},
-			bg = {
-				path = 'Interface\\AddOns\\SpartanUI\\Themes\\Tribal\\Images\\UnitFrames',
-				TexCoord = { 0.126953125, 0.734375, 0.171875, 0.291015625 },
+			positions = {
+				['player'] = 'BOTTOMRIGHT,SUI_BottomAnchor,BOTTOM,-45,250',
 			},
-			bottom = {
-				path = 'Interface\\AddOns\\SpartanUI\\Themes\\Tribal\\Images\\UnitFrames',
-				TexCoord = { 0.869140625, 1, 0.3203125, 0.359375 },
-				heightScale = 0.15,
-				widthScale = 0.25,
+			displayName = 'Tribal',
+			setup = {
+				image = 'Interface\\AddOns\\SpartanUI\\images\\setup\\Style_Frames_Tribal',
 			},
-		},
-		positions = {
-			['player'] = 'BOTTOMRIGHT,SUI_BottomAnchor,BOTTOM,-45,250',
-		},
-		displayName = 'Tribal',
-		setup = {
-			image = 'Interface\\AddOns\\SpartanUI\\images\\setup\\Style_Frames_Tribal',
-		},
-	}
-	SUI.UF.Style:Register('Tribal', ufsettings)
+		}
+		SUI.UF.Style:Register('Tribal', ufsettings)
+	end
 
 	---@type SUI.Style.Settings.Minimap
 	local minimapSettings = {

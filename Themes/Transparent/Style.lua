@@ -101,30 +101,32 @@ function module:OnInitialize()
 	SUI:GetModule('Minimap'):Register('Transparent', minimapSettings)
 
 	-- Unitframes Settings
-	---@type SUI.Style.Settings.UnitFrames
-	local ufsettings = {
-		artwork = {
-			top = {
-				path = 'Interface\\AddOns\\SpartanUI\\Themes\\Transparent\\Images\\base_plate1',
-				TexCoord = { 0.03125, 0.458984375, 0, 0.2109375 },
+	if SUI.UF then
+		---@type SUI.Style.Settings.UnitFrames
+		local ufsettings = {
+			artwork = {
+				top = {
+					path = 'Interface\\AddOns\\SpartanUI\\Themes\\Transparent\\Images\\base_plate1',
+					TexCoord = { 0.03125, 0.458984375, 0, 0.2109375 },
+				},
+				bg = {
+					path = 'Interface\\AddOns\\SpartanUI\\Themes\\Transparent\\Images\\base_plate1',
+					TexCoord = { 0, 0.458984375, 0.74609375, 1 },
+				},
 			},
-			bg = {
-				path = 'Interface\\AddOns\\SpartanUI\\Themes\\Transparent\\Images\\base_plate1',
-				TexCoord = { 0, 0.458984375, 0.74609375, 1 },
+			positions = {
+				['player'] = 'BOTTOMRIGHT,UIParent,BOTTOM,-123,138',
+				['pet'] = 'BOTTOMRIGHT,SUI_UF_player,BOTTOMLEFT,20,0',
+				['target'] = 'LEFT,SUI_UF_player,RIGHT,244,0',
+				['targettarget'] = 'BOTTOMLEFT,SUI_UF_target,BOTTOMRIGHT,50,0',
 			},
-		},
-		positions = {
-			['player'] = 'BOTTOMRIGHT,UIParent,BOTTOM,-123,138',
-			['pet'] = 'BOTTOMRIGHT,SUI_UF_player,BOTTOMLEFT,20,0',
-			['target'] = 'LEFT,SUI_UF_player,RIGHT,244,0',
-			['targettarget'] = 'BOTTOMLEFT,SUI_UF_target,BOTTOMRIGHT,50,0',
-		},
-		displayName = 'Transparent',
-		setup = {
-			image = 'Interface\\AddOns\\SpartanUI\\images\\setup\\Style_Frames_Transparent',
-		},
-	}
-	SUI.UF.Style:Register('Transparent', ufsettings)
+			displayName = 'Transparent',
+			setup = {
+				image = 'Interface\\AddOns\\SpartanUI\\images\\setup\\Style_Frames_Transparent',
+			},
+		}
+		SUI.UF.Style:Register('Transparent', ufsettings)
+	end
 
 	local statusBarModule = SUI:GetModule('Artwork.StatusBars') ---@type SUI.Module.Artwork.StatusBars
 	---@type SUI.Style.Settings.StatusBars.Storage

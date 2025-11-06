@@ -51,35 +51,37 @@ function module:OnInitialize()
 	}
 
 	-- Unitframes
-	---@type SUI.Style.Settings.UnitFrames
-	local ufsettings = {
-		artwork = {
-			top = {
-				path = 'Interface\\AddOns\\SpartanUI\\Themes\\Fel\\Images\\UnitFrames',
-				TexCoord = { 0.1796875, 0.736328125, 0, 0.099609375 },
-				heightScale = 0.25,
-				yScale = -0.05,
-				alpha = 0.8,
+	if SUI.UF then
+		---@type SUI.Style.Settings.UnitFrames
+		local ufsettings = {
+			artwork = {
+				top = {
+					path = 'Interface\\AddOns\\SpartanUI\\Themes\\Fel\\Images\\UnitFrames',
+					TexCoord = { 0.1796875, 0.736328125, 0, 0.099609375 },
+					heightScale = 0.25,
+					yScale = -0.05,
+					alpha = 0.8,
+				},
+				bg = {
+					path = 'Interface\\AddOns\\SpartanUI\\Themes\\Fel\\Images\\UnitFrames',
+					TexCoord = { 0.02, 0.385, 0.45, 0.575 },
+					PVPAlpha = 0.4,
+				},
+				bottom = {
+					path = 'Interface\\AddOns\\SpartanUI\\Themes\\Fel\\Images\\UnitFrames',
+					heightScale = 0.115,
+					yScale = 0.0158,
+					TexCoord = { 0.1796875, 0.736328125, 0.197265625, 0.244140625 },
+					PVPAlpha = 0.8,
+				},
 			},
-			bg = {
-				path = 'Interface\\AddOns\\SpartanUI\\Themes\\Fel\\Images\\UnitFrames',
-				TexCoord = { 0.02, 0.385, 0.45, 0.575 },
-				PVPAlpha = 0.4,
+			displayName = 'Fel',
+			setup = {
+				image = 'Interface\\AddOns\\SpartanUI\\images\\setup\\Style_Frames_Fel',
 			},
-			bottom = {
-				path = 'Interface\\AddOns\\SpartanUI\\Themes\\Fel\\Images\\UnitFrames',
-				heightScale = 0.115,
-				yScale = 0.0158,
-				TexCoord = { 0.1796875, 0.736328125, 0.197265625, 0.244140625 },
-				PVPAlpha = 0.8,
-			},
-		},
-		displayName = 'Fel',
-		setup = {
-			image = 'Interface\\AddOns\\SpartanUI\\images\\setup\\Style_Frames_Fel',
-		},
-	}
-	SUI.UF.Style:Register('Fel', ufsettings)
+		}
+		SUI.UF.Style:Register('Fel', ufsettings)
+	end
 
 	---@type SUI.Style.Settings.Minimap
 	local minimapSettings = {

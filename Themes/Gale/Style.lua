@@ -62,12 +62,14 @@ function module:OnInitialize()
 	SUI.Minimap:Register('Gale', minimapSettings)
 
 	-- Register UnitFrame style for Gale
-	SUI.UF.Style:Register('Gale', {
-		displayName = 'Gale',
-		setup = {
-			image = 'Interface\\AddOns\\SpartanUI\\images\\setup\\Style_Frames_Gale',
-		},
-	})
+	if SUI.UF then
+		SUI.UF.Style:Register('Gale', {
+			displayName = 'Gale',
+			setup = {
+				image = 'Interface\\AddOns\\SpartanUI\\images\\setup\\Style_Frames_Gale',
+			},
+		})
+	end
 end
 
 function module:OnEnable()
