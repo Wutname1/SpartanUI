@@ -51,9 +51,8 @@ libs\LibQTip-1.0\lib.xml
 
 # Unit Frame libraries
 libs\LibDispel\LibDispel.lua
-libs\oUF\oUF.xml
-libs\oUF_Plugins\Loader.xml
-
+# libs\oUF\oUF.xml
+# libs\oUF_Plugins\Loader.xml
 
 # Now load SpartanUI
 core\Framework.lua
