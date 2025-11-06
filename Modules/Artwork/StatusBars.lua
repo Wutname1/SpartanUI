@@ -389,7 +389,7 @@ function module:CreateBarManager()
 		local enabledContainers = {}
 		for i, barContainer in ipairs(self.barContainers) do
 			local containerKey = i == 1 and 'Left' or 'Right'
-			if containerKey ~= nil and DB.bars[containerKey] ~= nil and DB.bars[containerKey].enabled then
+			if DB  and DB.bars and containerKey ~= nil and DB.bars[containerKey] ~= nil and DB.bars[containerKey].enabled then
 				table.insert(enabledContainers, {container = barContainer, index = i})
 			end
 		end
@@ -406,7 +406,7 @@ function module:CreateBarManager()
 			local newBarIndex = Enums.Bars.None
 
 			-- Only assign bars to enabled containers
-			if DB.bars[containerKey].enabled then
+			if DB and DB.bars and DB.bars[containerKey].enabled then
 				local enabledIndex = 0
 				for j = 1, i do
 					local checkKey = j == 1 and 'Left' or 'Right'
