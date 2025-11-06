@@ -407,6 +407,12 @@ local NameplateCallback = function(self, event, unit)
 		return
 	end
 
+	-- Verify this is an oUF frame before calling oUF methods
+	-- This prevents errors when other nameplate addons (Plater, KuiNameplates, etc.) are active
+	if not self.UpdateAllElements or not self.EnableElement or not self.DisableElement then
+		return
+	end
+
 	self.ShowWidgetOnly = UnitNameplateShowsWidgetsOnly(unit)
 
 	local elementDB = module.DB.elements
@@ -771,6 +777,17 @@ function module:OnEnable()
 	module:BuildOptions()
 	if SUI:IsModuleDisabled('Nameplates') then
 		return
+	end
+
+	-- Check if other nameplate addons are active and skip initialization
+	local otherNameplateAddons = {'Plater', 'KuiNameplates', 'ThreatPlates', 'TidyPlates', 'NeatPlates'}
+	for _, addonName in ipairs(otherNameplateAddons) do
+		if C_AddOns.IsAddOnLoaded(addonName) then
+			if SUI.logger then
+				SUI.logger.info('Nameplate addon "' .. addonName .. '" detected - SpartanUI Nameplates disabled')
+			end
+			return
+		end
 	end
 
 	if not oUF_NamePlateDriver then
