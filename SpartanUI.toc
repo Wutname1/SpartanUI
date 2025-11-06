@@ -9,7 +9,6 @@
 ## X-WoWI-ID: 18206
 ## X-Wago-ID: vEGPqeN1
 ## X-Github: https://github.com/Wutname1/SpartanUI
-## X-oUF: SUIUF
 ## OptionalDeps: Bartender4, Libs-AddonTools
 ## SavedVariables: SpartanUIDB, SUIErrorHandler
 ## SavedVariablesPerCharacter: SpartanUICharDB
@@ -58,4 +57,5 @@ libs\LibDispel\LibDispel.lua
 core\Framework.lua
 modules\LoadAll.xml
 core\Framework.xml
+# core\oUF.lua
 Themes\Themes.xml
