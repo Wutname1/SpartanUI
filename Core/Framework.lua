@@ -1094,7 +1094,7 @@ function SUI:OnInitialize()
 			if SUI.logger then
 				-- Use LibAT.Log directly for hierarchical module names (contains dots)
 				-- This allows the logger to parse the hierarchy properly
-				-- LibAT.Log(message, 'SpartanUI.' .. module, level or 'info')
+				LibAT.Log(message, 'SpartanUI.' .. module, level or 'info')
 			end
 		end
 
