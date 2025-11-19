@@ -16,6 +16,7 @@ function module:OnInitialize()
 		persist = true,
 		chatOutput = true,
 		global = true,
+		stopAll = false,
 		history = {},
 		whitelist = {},
 		pageSize = 20,
@@ -342,6 +343,13 @@ function module:BuildOptions()
 			order = 1,
 			width = 'full'
 		},
+		stopAll = {
+			name = L['Stop ALL voice lines'],
+			desc = L['Immediately close all talking head voice lines, ignoring blacklist/whitelist settings'],
+			type = 'toggle',
+			order = 1.5,
+			width = 'full'
+		},
 		chatOutput = {
 			name = L['Display heard voice lines in the chat.'],
 			type = 'toggle',
@@ -452,6 +460,16 @@ function module:TALKINGHEAD_REQUESTED()
 
 	local _, _, vo, _, _, _, name, text = C_TalkingHead.GetCurrentLineInfo()
 	if not vo then
+		return
+	end
+
+	-- If stopAll is enabled, immediately close all voice lines
+	if module.DB.stopAll then
+		if module.DB.chatOutput and name and text then
+			SUI:Print(name)
+			print(text)
+		end
+		TalkingHeadFrame:CloseImmediately()
 		return
 	end
 
