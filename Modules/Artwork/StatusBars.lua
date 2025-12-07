@@ -232,54 +232,57 @@ function module:GetHonorTooltipText()
 	end
 end
 
-function module:GetHouseFavorTooltipText()
+function module:GetHouseFavorTooltipText(bar)
+	-- Check if C_Housing API is available
+	if not C_Housing then return end
+
 	-- Get the tracked house GUID
-	local trackedHouseGUID = C_Housing and C_Housing.GetTrackedHouseGuid()
+	local trackedHouseGUID = C_Housing.GetTrackedHouseGuid()
 	if not trackedHouseGUID then return end
 
-	-- Get current house level and favor data
-	local houseLevelFavor = C_Housing.GetCurrentHouseLevelFavor(trackedHouseGUID)
-	if not houseLevelFavor then return end
+	-- Try to get house level from the bar's stored data first
+	local houseLevel, houseFavor, houseFavorNeeded
 
-	local currentFavor = houseLevelFavor.houseFavor or 0
-	local houseLevel = houseLevelFavor.houseLevel or 1
-	local maxHouseLevel = C_Housing.GetMaxHouseLevel()
+	if bar and bar.houseLevelFavor then
+		-- Use data stored on the bar (similar to Blizzard's implementation)
+		houseLevel = bar.houseLevelFavor.houseLevel or 1
+		local currentFavor = bar.houseLevelFavor.houseFavor or 0
+		local minBarFavor = C_Housing.GetHouseLevelFavorForLevel(houseLevel) or 0
+		local maxBarFavor = C_Housing.GetHouseLevelFavorForLevel(houseLevel + 1) or 1
+		houseFavor = currentFavor - minBarFavor
+		houseFavorNeeded = maxBarFavor - minBarFavor
+	else
+		-- Fallback: try to get from bar values directly
+		if bar and bar.StatusBar then
+			local current = bar.StatusBar:GetValue()
+			local min, max = bar.StatusBar:GetMinMaxValues()
+			houseLevel = bar.level or 1
+			houseFavor = current - min
+			houseFavorNeeded = max - min
+		else
+			return
+		end
+	end
 
-	-- Get favor thresholds for current and next level
-	local minBarFavor = C_Housing.GetHouseLevelFavorForLevel(houseLevel) or 0
-	local maxBarFavor = C_Housing.GetHouseLevelFavorForLevel(houseLevel + 1) or 1
+	if not houseLevel or not houseFavorNeeded then
+		return
+	end
 
-	-- Calculate current progress
-	local currentProgress = currentFavor - minBarFavor
-	local totalNeeded = maxBarFavor - minBarFavor
+	-- Use Blizzard's tooltip format
+	if HOUSING_DASHBOARD_HOUSE_LEVEL then
+		GameTooltip_AddNormalLine(GameTooltip, string.format(HOUSING_DASHBOARD_HOUSE_LEVEL, houseLevel))
+	else
+		GameTooltip_AddNormalLine(GameTooltip, string.format('House Level %d', houseLevel))
+	end
 
-	GameTooltip:AddLine(HOUSING_DASHBOARD_NEIGHBORHOOD_FAVOR_LABEL or 'Neighborhood Favor')
-	GameTooltip:AddLine(' ')
+	if HOUSING_DASHBOARD_NEIGHBORHOOD_FAVOR then
+		GameTooltip_AddHighlightLine(GameTooltip, string.format(HOUSING_DASHBOARD_NEIGHBORHOOD_FAVOR, houseFavor, houseFavorNeeded))
+	else
+		GameTooltip_AddHighlightLine(GameTooltip, string.format('%d / %d', houseFavor, houseFavorNeeded))
+	end
 
-	-- Current house level
-	GameTooltip:AddDoubleLine(
-		HOUSE_LEVEL_LABEL and HOUSE_LEVEL_LABEL:format(houseLevel) or string.format('House Level %d', houseLevel),
-		houseLevel >= maxHouseLevel and MAX_LEVEL or '',
-		NORMAL_FONT_COLOR.r,
-		NORMAL_FONT_COLOR.g,
-		NORMAL_FONT_COLOR.b,
-		HIGHLIGHT_FONT_COLOR.r,
-		HIGHLIGHT_FONT_COLOR.g,
-		HIGHLIGHT_FONT_COLOR.b
-	)
-
-	-- Show progress if not at max level
-	if houseLevel < maxHouseLevel then
-		GameTooltip:AddDoubleLine(
-			L['Favor'] or 'Favor',
-			string.format('%s / %s (%d%%)', SUI.Font:FormatNumber(currentProgress), SUI.Font:FormatNumber(totalNeeded), (currentProgress / totalNeeded) * 100),
-			1,
-			1,
-			1,
-			1,
-			1,
-			1
-		)
+	if HOUSING_DASHBOARD_NEIGHBORHOOD_FAVOR_TOOLTIP then
+		GameTooltip_AddHighlightLine(GameTooltip, HOUSING_DASHBOARD_NEIGHBORHOOD_FAVOR_TOOLTIP)
 	end
 end
 
@@ -554,6 +557,20 @@ function module:SetupBarContainerPosition(barContainer, barStyle, index)
 end
 
 function module:HandleBarOnEnter(bar, containerKey)
+	-- Update HouseFavor text if needed
+	if bar.barIndex == Enums.Bars.HouseFavor then
+		-- Get current bar values
+		local current = bar.StatusBar:GetValue()
+		local min, max = bar.StatusBar:GetMinMaxValues()
+		if max > min then
+			local currentProgress = current - min
+			local totalLevelXP = max - min
+			local houseLevel = bar.level or (bar.houseLevelFavor and bar.houseLevelFavor.houseLevel) or 1
+			-- Format: Level # X/Y
+			bar.OverlayFrame.Text:SetFormattedText('Level %d %d/%d', houseLevel, currentProgress, totalLevelXP)
+		end
+	end
+
 	-- Show text if configured for mouseover
 	if DB.bars[containerKey].text == Enums.TextDisplayMode.OnMouseOver then bar.OverlayFrame.Text:Show() end
 
@@ -568,7 +585,7 @@ function module:HandleBarOnEnter(bar, containerKey)
 		elseif bar.barIndex == Enums.Bars.Honor then
 			module:GetHonorTooltipText()
 		elseif bar.barIndex == Enums.Bars.HouseFavor then
-			module:GetHouseFavorTooltipText()
+			module:GetHouseFavorTooltipText(bar)
 		end
 		GameTooltip:Show()
 	end
@@ -625,6 +642,9 @@ function module:SetupBar(bar, barContainer, width, height, index)
 	bar:SetPoint('BOTTOM', barContainer, 'BOTTOM', 0, 0)
 	bar:SetUsingParentLevel(false)
 	bar:SetFrameLevel(barContainer:GetFrameLevel() - 5)
+
+	-- Ensure mouse events work
+	bar:EnableMouse(true)
 
 	self:SetupBarText(bar, barContainer.settings, index)
 
