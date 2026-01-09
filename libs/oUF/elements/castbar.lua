@@ -25,6 +25,7 @@ A default texture will be applied to the StatusBar and Texture widgets if they d
 .timeToHold      - Indicates for how many seconds the castbar should be visible after a _FAILED or _INTERRUPTED
                    event. Defaults to 0 (number)
 .hideTradeSkills - Makes the element ignore casts related to crafting professions (boolean)
+.smoothing       - Which status bar smoothing method to use, defaults to `Enum.StatusBarInterpolation.Immediate` (number)
 
 ## Attributes
 
@@ -496,6 +497,7 @@ local function onUpdate(self, elapsed)
 			end
 		end
 
+		-- ISSUE: we have no way to get this information any more, Blizzard is aware
 		-- --[[ Callback: Castbar:PostUpdateStage(stage)
 		-- Called after the current stage changes.
 
