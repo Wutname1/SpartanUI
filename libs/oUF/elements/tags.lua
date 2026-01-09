@@ -124,9 +124,6 @@ local _ENV = {
 		return string.format('|cff%02x%02x%02x', r * 255, g * 255, b * 255)
 	end,
 }
-_ENV.ColorGradient = function(...)
-	return _ENV._FRAME:ColorGradient(...)
-end
 
 local _PROXY = setmetatable(_ENV, {__index = _G})
 
@@ -206,15 +203,6 @@ local tagStrings = {
 		end
 	end]],
 
-	['deficit:name'] = [[function(u)
-		local missinghp = _TAGS['missinghp'](u)
-		if(missinghp) then
-			return '-' .. missinghp
-		else
-			return _TAGS['name'](u)
-		end
-	end]],
-
 	['difficulty'] = [[function(u)
 		if UnitCanAttack('player', u) then
 			local l = UnitEffectiveLevel(u)
@@ -275,17 +263,11 @@ local tagStrings = {
 	end]],
 
 	['missinghp'] = [[function(u)
-		local current = UnitHealthMax(u) - UnitHealth(u)
-		if(current > 0) then
-			return current
-		end
+		return C_StringUtil.TruncateWhenZero(UnitHealthMissing(u))
 	end]],
 
 	['missingpp'] = [[function(u)
-		local current = UnitPowerMax(u) - UnitPower(u)
-		if(current > 0) then
-			return current
-		end
+		return C_StringUtil.TruncateWhenZero(UnitPowerMissing(u))
 	end]],
 
 	['name'] = [[function(u, r)
@@ -299,21 +281,11 @@ local tagStrings = {
 	end]],
 
 	['perhp'] = [[function(u)
-		local m = UnitHealthMax(u)
-		if(m == 0) then
-			return 0
-		else
-			return math.floor(UnitHealth(u) / m * 100 + .5)
-		end
+		return string.format('%d', UnitHealthPercent(u, true, CurveConstants.ScaleTo100))
 	end]],
 
 	['perpp'] = [[function(u)
-		local m = UnitPowerMax(u)
-		if(m == 0) then
-			return 0
-		else
-			return math.floor(UnitPower(u) / m * 100 + .5)
-		end
+		return string.format('%d', UnitPowerPercent(u, true, CurveConstants.ScaleTo100))
 	end]],
 
 	['plus'] = [[function(u)
@@ -544,7 +516,6 @@ local tagEvents = {
 	['curmana']             = 'UNIT_POWER_UPDATE UNIT_MAXPOWER',
 	['curpp']               = 'UNIT_POWER_UPDATE UNIT_MAXPOWER',
 	['dead']                = 'UNIT_HEALTH',
-	['deficit:name']        = 'UNIT_HEALTH UNIT_MAXHEALTH UNIT_NAME_UPDATE',
 	['difficulty']          = 'UNIT_FACTION',
 	['faction']             = 'NEUTRAL_FACTION_SELECT_RESULT',
 	['group']               = 'GROUP_ROSTER_UPDATE',
@@ -736,8 +707,8 @@ local function getTagFunc(tagstr)
 								str = tag(unit, realUnit)
 							end
 
-							if(str and str ~= '') then
-								return prefix .. str .. suffix
+							if(str and (issecretvalue(str) or str ~= '')) then
+								return C_StringUtil.WrapString(str, prefix, suffix)
 							end
 						end
 					else
@@ -749,7 +720,7 @@ local function getTagFunc(tagstr)
 								str = tag(unit, realUnit)
 							end
 
-							if(str and str ~= '') then
+							if(str and (issecretvalue(str) or str ~= '')) then
 								return str
 							end
 						end
