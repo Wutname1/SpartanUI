@@ -1,4 +1,4 @@
-## Interface: 110000, 110002
+## Interface: 110207, 120000, 120001
 ## Author: p3lim
 ## Version: @project-version@
 ## Title: Lib: EditMode
@@ -15,4 +15,4 @@
 
 embed.xml
 
-#tests\xp.lua
+#tests\button.lua

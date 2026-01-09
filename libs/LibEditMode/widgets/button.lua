@@ -1,12 +1,31 @@
-local MINOR = 8
+local MINOR = 12
 local lib, minor = LibStub('LibEditMode')
 if minor > MINOR then
 	return
 end
 
+local function showTooltip(self)
+	if self.setting and self.setting.desc then
+		SettingsTooltip:SetOwner(self, 'ANCHOR_NONE')
+		SettingsTooltip:SetPoint('BOTTOMRIGHT', self, 'TOPLEFT')
+		SettingsTooltip:SetText(self.setting.name, 1, 1, 1)
+		SettingsTooltip:AddLine(self.setting.desc)
+		SettingsTooltip:Show()
+	end
+end
+
+local buttonMixin = {}
+function buttonMixin:Setup(data)
+	-- unsure if this has any effect
+	self.setting = data
+end
+
 lib.internal:CreatePool('button', function()
-	return CreateFrame('Button', nil, UIParent, 'EditModeSystemSettingsDialogExtraButtonTemplate')
-end, function(_, frame)
-	frame:Hide()
-	frame.layoutIndex = nil
+	local button = CreateFrame('Button', nil, UIParent, 'EditModeSystemSettingsDialogExtraButtonTemplate')
+	button:SetScript('OnLeave', DefaultTooltipMixin.OnLeave)
+	button:SetScript('OnEnter', showTooltip)
+	return Mixin(button, buttonMixin)
+end, function(_, button)
+	button:Hide()
+	button.layoutIndex = nil
 end)
