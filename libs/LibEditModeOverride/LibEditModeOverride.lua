@@ -1,6 +1,6 @@
 -- Copyright 2022-2023 plusmouse. Licensed under terms found in LICENSE file.
 
-local lib = LibStub:NewLibrary("LibEditModeOverride-1.0", 9)
+local lib = LibStub:NewLibrary("LibEditModeOverride-1.0", 10)
 
 if not lib then return end
 
@@ -11,6 +11,7 @@ local pointGetter = CreateFrame("Frame", nil, UIParent)
 local FRAME_ERROR = "This frame isn't used by edit mode"
 local LOAD_ERROR = "You need to call LibEditModeOverride:LoadLayouts first"
 local EDIT_ERROR = "Active layout is not editable"
+local READY_ERROR = "You need to wait for EDIT_MODE_LAYOUTS_UPDATED"
 
 local layoutInfo
 local reconciledLayouts = false
@@ -106,8 +107,13 @@ function lib:SetFrameSetting(frame, setting, value)
       max = 1
     elseif restrictions.type == Enum.EditModeSettingDisplayType.Slider then
       if restrictions.stepSize then
-        min = 0
-        max = restrictions.maxValue - restrictions.minValue
+        if frame:GetName():match("CooldownViewer") then
+          min = restrictions.minValue
+          max = restrictions.maxValue
+        else
+          min = 0
+          max = restrictions.maxValue - restrictions.minValue
+        end
       else
         min = restrictions.minValue
         max = restrictions.maxValue
@@ -158,7 +164,12 @@ function lib:AreLayoutsLoaded()
   return layoutInfo ~= nil
 end
 
+function lib:IsReady()
+  return EditModeManagerFrame.accountSettings ~= nil
+end
+
 function lib:LoadLayouts()
+  assert(lib:IsReady(), READY_ERROR)
   layoutInfo = C_EditMode.GetLayouts()
 
   if not reconciledLayouts then
@@ -188,6 +199,7 @@ end
 
 function lib:ApplyChanges()
   assert(not InCombatLockdown(), "Cannot move frames in combat")
+  assert(lib:IsReady(), READY_ERROR)
   lib:SaveOnly()
 
   if not issecurevariable(DropDownList1, "numButtons") then
