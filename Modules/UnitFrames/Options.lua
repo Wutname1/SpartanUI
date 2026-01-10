@@ -24,11 +24,13 @@ local function SUIHealth(optTable)
 		displayDead = false,
 		hideDead = false,
 		hideZero = false,
-		hideMax = false,
+		hideMax = false, -- WoW 12.0: Deprecated - cannot compare secrets
 		short = false,
 		percentage = false,
 		dynamic = false,
 		formatted = true,
+		plain = false,
+		comma = false,
 		current = true,
 		max = false,
 		missing = false,
@@ -118,7 +120,7 @@ local function SUIHealth(optTable)
 		},
 		tagTextMode = {
 			name = 'How to show selected text',
-			desc = '- Formatted will add commas to the value\n- Short will round the number to the thousands or millions\n- Dynamic will change based on the total health pool\n- Percentage will show the percentage of health remaining and includes a % sign',
+			desc = 'WoW 12.0 Formatting Options:\n- Plain: Raw value (e.g., "12345")\n- Comma: Comma-separated (e.g., "12,345")\n- Formatted: Same as Comma (legacy name)\n- Short: Abbreviated with K/M/B (e.g., "12K")\n- Dynamic: Same as Short (legacy name)\n- Percentage: Show as percentage (e.g., "75%")',
 			type = 'select',
 			style = 'radio',
 			order = 5,
@@ -130,14 +132,18 @@ local function SUIHealth(optTable)
 				options.short = false
 				options.percentage = false
 				options.formatted = false
+				options.plain = false
+				options.comma = false
 
 				tagTextMode = value
 				options[value] = true
 			end,
 			values = {
-				['formatted'] = 'Formatted',
-				['short'] = 'Short',
-				['dynamic'] = 'Dynamic',
+				['plain'] = 'Plain (unformatted)',
+				['comma'] = 'Comma-separated',
+				['formatted'] = 'Formatted (legacy)',
+				['short'] = 'Short (K/M/B)',
+				['dynamic'] = 'Dynamic (legacy)',
 				['percentage'] = 'Percentage',
 			},
 		},
@@ -167,8 +173,9 @@ local function SUIHealth(optTable)
 				},
 				hideMax = {
 					type = 'toggle',
-					name = 'Hide Max',
-					desc = 'Show nothing when the unit is at full health',
+					name = 'Hide Max (DEPRECATED)',
+					desc = 'WoW 12.0: This option no longer works due to Secret Values system preventing comparison of secret health values. Option kept for backwards compatibility but has no effect.',
+					disabled = true,
 					order = 3,
 				},
 				hideZero = {

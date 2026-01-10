@@ -69,9 +69,7 @@ local Settings = {
 			},
 			text = {
 				['1'] = {
-					-- WoW 12.0: Replaced SUIHealth with oUF built-in tags
-					-- Original: '[SUIHealth(dynamic,displayDead)] [($>SUIHealth<$)(percentage,hideDead,hideMax)]'
-					text = '[dead][curhp] [($>perhp<$)%]'
+					text = '[SUIHealth(dynamic,displayDead)] [($>SUIHealth<$)(percentage,hideDead)]'
 				}
 			}
 		},

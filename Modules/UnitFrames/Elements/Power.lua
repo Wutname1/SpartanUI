@@ -143,9 +143,7 @@ local Settings = {
 	text = {
 		['1'] = {
 			enabled = false,
-			-- WoW 12.0: Replaced SUIPower with oUF built-in tags
-			-- Original: '[SUIPower(hideDead)][ / $>SUIPower(max,hideDead,hideZero,hideMax)]'
-			text = '[curpp][ / $>maxpp]',
+			text = '[SUIPower(hideDead)][ / $>SUIPower(max,hideDead,hideZero)]',
 			size = 10,
 			SetJustifyH = 'CENTER',
 			SetJustifyV = 'MIDDLE',
