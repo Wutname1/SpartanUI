@@ -606,7 +606,9 @@ function module:OnInitialize()
 					['1'] = {
 						enabled = true,
 						size = 5,
-						text = '[SUIHealth(percentage,hideMax)]',
+						-- WoW 12.0: Replaced SUIHealth with oUF built-in tags
+						-- Original: '[SUIHealth(percentage,hideMax)]'
+						text = '[perhp]%',
 						position = {
 							anchor = 'RIGHT',
 							x = -2,

@@ -218,6 +218,23 @@ if SUI.IsRetail then
 	end
 end
 
+--[[ WoW 12.0 INCOMPATIBLE: Custom health/power tags commented out due to Secret Values system
+     The calculateResult function performs arithmetic operations on UnitHealth/UnitPower values
+     which return SECRET values in 12.0. Tainted code cannot do math on secrets.
+
+     BREAKING CHANGES:
+     - Line 248: num = maxVal - currentVal  (subtraction on secrets)
+     - Line 258: math.floor(currentVal / maxVal * 100 + 0.5)  (division/multiplication on secrets)
+     - Lines 260-262: dynamicCalc/shortCalc perform division on secrets
+
+     MIGRATION: Use oUF built-in tags instead:
+     - [SUIHealth] → [curhp], [maxhp], [missinghp], [perhp]
+     - [SUIPower] → [curpp], [maxpp], [missingpp], [perpp]
+
+     See: https://warcraft.wiki.gg/wiki/Patch_12.0.0/API_changes#Secret_values
+--]]
+
+--[[
 local function dynamicCalc(num)
 	if num >= 1000000000 then
 		return SUI:round(num / 1000000000, 1) .. 'B'
@@ -345,6 +362,7 @@ do -- LEGACY Mana Formatting Tags
 		end
 	end
 end
+--]]
 
 do --Color name by Class
 	local function hex(r, g, b)

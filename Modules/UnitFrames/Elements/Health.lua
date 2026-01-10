@@ -387,7 +387,9 @@ local Settings = {
 	text = {
 		['1'] = {
 			enabled = true,
-			text = '[SUIHealth(dynamic,displayDead)][ / $>SUIHealth(max,dynamic,hideDead,hideMax)]',
+			-- WoW 12.0: Replaced SUIHealth with oUF built-in tags ([curhp] shows current, [maxhp] shows max)
+			-- Original: '[SUIHealth(dynamic,displayDead)][ / $>SUIHealth(max,dynamic,hideDead,hideMax)]'
+			text = '[dead][curhp][ / $>maxhp]',
 			position = {
 				anchor = 'CENTER',
 				x = 0,

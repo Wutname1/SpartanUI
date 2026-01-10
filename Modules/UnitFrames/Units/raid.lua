@@ -235,7 +235,9 @@ local Settings = {
 			height = 30,
 			text = {
 				['1'] = {
-					text = '[SUIHealth(missing,displayDead,hideMax)] [($>SUIHealth<$)(percentage,hideDead,hideMax)]'
+					-- WoW 12.0: Replaced SUIHealth with oUF built-in tags
+					-- Original: '[SUIHealth(missing,displayDead,hideMax)] [($>SUIHealth<$)(percentage,hideDead,hideMax)]'
+					text = '[dead][missinghp] [($>perhp<$)%]'
 				}
 			}
 		},
