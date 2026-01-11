@@ -68,7 +68,6 @@ SUI.AddLib('AceDBO', 'AceDBOptions-3.0')
 SUI.AddLib('AceGUI', 'AceGUI-3.0')
 SUI.AddLib('Compress', 'LibCompress')
 SUI.AddLib('Base64', 'LibBase64-1.0-SUI')
-SUI.AddLib('StdUi', 'StdUi')
 SUI.AddLib('LSM', 'LibSharedMedia-3.0')
 SUI.AddLib('LEM', 'LibEditMode')
 SUI.AddLib('LibQTip', 'LibQTip-1.0')
@@ -115,9 +114,6 @@ SUI.Lib.LSM:Register('statusbar', 'Blank', [[Interface\AddOns\SpartanUI\images\b
 SUI.Lib.LSM:Register('background', 'Smoke', [[Interface\AddOns\SpartanUI\images\backgrounds\smoke]])
 SUI.Lib.LSM:Register('background', 'Dragonflight', [[Interface\AddOns\SpartanUI\images\backgrounds\Dragonflight]])
 SUI.Lib.LSM:Register('background', 'None', [[Interface\AddOns\SpartanUI\images\blank]])
-
---init StdUI Instance for the whole addon
-SUI.StdUi = SUI.Lib.StdUi:NewInstance() ---@type StdUi
 
 ---------------  Options Init ---------------
 ---@type AceConfig.OptionsTable
@@ -1011,37 +1007,40 @@ if SUI.DB.DisabledComponents then
 end
 
 local function reloaduiWindow()
-	local StdUi = SUI.StdUi
-	local popup = StdUi:Window(nil, 400, 140)
+	local UI = LibAT.UI
+	local popup = UI.CreateWindow({
+		name = 'SUI_ReloadUI',
+		title = '',
+		width = 400,
+		height = 140,
+		hidePortrait = true,
+	})
 	popup:SetPoint('TOP', UIParent, 'TOP', 0, -20)
 	popup:SetFrameStrata('DIALOG')
+
+	-- SUI Logo
+	local logo = popup:CreateTexture(nil, 'ARTWORK')
+	logo:SetTexture('Interface\\AddOns\\SpartanUI\\images\\setup\\SUISetup')
+	logo:SetSize(156, 45)
+	logo:SetTexCoord(0, 0.611328125, 0, 0.6640625)
+	logo:SetPoint('TOP', popup, 'TOP', 0, -35)
+	logo:SetAlpha(0.8)
+
+	-- Message
+	local message = UI.CreateLabel(popup, 'A reload of your UI is required.', 'GameFontNormalLarge')
+	message:SetPoint('TOP', popup, 'TOP', 0, -85)
+
+	-- Buttons
+	UI.CreateActionButtons(popup, {
+		{ text = 'CLOSE', width = 80, onClick = function()
+			popup:Hide()
+		end },
+		{ text = 'RELOAD UI', width = 180, onClick = function()
+			SUI:SafeReloadUI()
+		end },
+	}, 5, 4, -3)
+
 	popup:Hide()
-
-	popup.Title = StdUi:Texture(popup, 156, 45, 'Interface\\AddOns\\SpartanUI\\images\\setup\\SUISetup')
-	popup.Title:SetTexCoord(0, 0.611328125, 0, 0.6640625)
-	StdUi:GlueTop(popup.Title, popup)
-	popup.Title:SetAlpha(0.8)
-
-	-- Create Popup Items
-	popup.ReloadMsg = StdUi:Label(popup, 'A reload of your UI is required.', 20)
-	popup.btnClose = StdUi:HighlightButton(popup, 50, 20, 'CLOSE')
-	popup.btnReload = StdUi:Button(popup, 180, 20, 'RELOAD UI')
-
-	-- Position
-	StdUi:GlueTop(popup.ReloadMsg, popup, 0, -50)
-	popup.btnReload:SetPoint('BOTTOM', popup, 'BOTTOM', 0, 4)
-	popup.btnClose:SetPoint('BOTTOMRIGHT', popup, 'BOTTOMRIGHT', -4, 4)
-
-	-- Actions
-	popup.btnClose:SetScript('OnClick', function()
-		-- Perform the Page's Custom Next action
-		popup:Hide()
-	end)
-	popup.btnReload:SetScript('OnClick', function()
-		-- Perform the Page's Custom Next action
-		SUI:SafeReloadUI()
-	end)
-
 	SUI.reloaduiWindow = popup
 end
 
