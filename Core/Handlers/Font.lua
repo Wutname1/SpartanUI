@@ -230,19 +230,23 @@ local function FontSetupWizard()
 				SUI_Win.FontFace.dropdown:SetValue(font)
 			end
 
-			local StdUi = SUI.StdUi
+			local UI = LibAT.UI
 			--Create buttons and position horizontally on the bottom of the window in 2 rows 5 in each row
 			SUI_Win.FontFace.FontBtns = {}
 			for k, v in ipairs({'Cognosis', 'NotoSans Bold', 'Roboto Medium', 'Roboto Bold', 'Myriad', 'Arial Narrow', 'Friz Quadrata TT', '2002'}) do
 				--Create Buttons
-				local button = StdUi:Button(SUI_Win.FontFace, 120, 20, v)
+				local button = UI.CreateButton(SUI_Win.FontFace, 120, 20, v)
 				button:SetScript(
 					'OnClick',
 					function()
 						SetFont(v)
 					end
 				)
-				button.text:SetFont(SUI.Lib.LSM:Fetch('font', v), 12)
+				-- Set button font to preview the actual font
+				local buttonText = button:GetFontString()
+				if buttonText then
+					buttonText:SetFont(SUI.Lib.LSM:Fetch('font', v), 12)
+				end
 				--Position Buttons
 				if k <= 5 then
 					button:SetPoint('TOPLEFT', SUI_Win.FontFace, 'BOTTOMLEFT', 5 + (k - 1) * 130, 120)

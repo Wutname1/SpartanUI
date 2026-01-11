@@ -40,7 +40,6 @@ SUI.Version = ''
 ---@field AceGUI AceGUI-3.0
 ---@field Compress LibCompress
 ---@field LibBase64 LibBase64-1.0
----@field StdUi StdUi
 ---@field LSM LibSharedMedia-3.0
 ---@field LEM LibEditMode
 ---@field LibQTip LibQTip-1.0
@@ -1032,12 +1031,20 @@ local function reloaduiWindow()
 
 	-- Buttons
 	UI.CreateActionButtons(popup, {
-		{ text = 'CLOSE', width = 80, onClick = function()
-			popup:Hide()
-		end },
-		{ text = 'RELOAD UI', width = 180, onClick = function()
-			SUI:SafeReloadUI()
-		end },
+		{
+			text = 'CLOSE',
+			width = 80,
+			onClick = function()
+				popup:Hide()
+			end,
+		},
+		{
+			text = 'RELOAD UI',
+			width = 180,
+			onClick = function()
+				SUI:SafeReloadUI()
+			end,
+		},
 	}, 5, 4, -3)
 
 	popup:Hide()
