@@ -1,5 +1,4 @@
 local SUI, L, Lib = SUI, SUI.L, SUI.Lib
-local StdUi = SUI.StdUi
 ---@class SUI.Handler.Profiles : SUI.Module
 local module = SUI:NewModule('Handler.Profiles')
 ----------------------------------------------------------------------------------------------------
@@ -24,32 +23,51 @@ local function ResetWindow()
 end
 
 local function CreateWindow()
-	window = StdUi:Window(nil, 650, 500)
-	window.StdUi = StdUi
+	local UI = LibAT.UI
+	window = UI.CreateWindow({
+		name = 'SUI_ProfileManager',
+		title = '',
+		width = 650,
+		height = 500,
+		hidePortrait = true,
+	})
 	window.mode = 'init'
 	window:SetPoint('CENTER', 0, 0)
 	window:SetFrameStrata('DIALOG')
 	window:SetFrameLevel(10)
-	window.Title = StdUi:Texture(window, 156, 45, 'Interface\\AddOns\\SpartanUI\\images\\setup\\SUISetup')
-	window.Title:SetTexCoord(0, 0.611328125, 0, 0.6640625)
-	window.Title:SetPoint('TOP')
-	window.Title:SetAlpha(0.8)
 
-	window.Desc1 = StdUi:Label(window, '', 13, nil, window:GetWidth())
-	window.Desc1:SetPoint('TOP', window.Title, 'BOTTOM', 0, -5)
-	window.Desc1:SetTextColor(1, 1, 1, 0.8)
-	window.Desc1:SetWidth(window:GetWidth() - 40)
-	window.Desc1:SetJustifyH('CENTER')
-	window.Desc1:SetText('')
+	-- SUI Logo
+	local logo = window:CreateTexture(nil, 'ARTWORK')
+	logo:SetTexture('Interface\\AddOns\\SpartanUI\\images\\setup\\SUISetup')
+	logo:SetSize(156, 45)
+	logo:SetTexCoord(0, 0.611328125, 0, 0.6640625)
+	logo:SetPoint('TOP', window, 'TOP', 0, -35)
+	logo:SetAlpha(0.8)
 
-	window.textBox = StdUi:MultiLineBox(window, window:GetWidth() - 10, 350, '')
-	window.textBox:SetPoint('TOP', window.Desc1, 'BOTTOM', 0, -5)
+	-- Description label
+	local desc1 = UI.CreateLabel(window, '', 'GameFontHighlight')
+	desc1:SetPoint('TOP', logo, 'BOTTOM', 0, -5)
+	desc1:SetTextColor(1, 1, 1, 0.8)
+	desc1:SetWidth(610)
+	desc1:SetJustifyH('CENTER')
+	desc1:SetText('')
+	window.Desc1 = desc1
+
+	-- Large multiline text box for import/export
+	window.textBox = UI.CreateMultiLineBox(window, 640, 350, '')
+	window.textBox:SetPoint('TOP', desc1, 'BOTTOM', 0, -5)
 	window.textBox:SetPoint('BOTTOM', window, 'BOTTOM', 0, 5)
 
 	-- Setup the Options Pane
-	local OptWidth = 194 -- Will be created 4 larger than this value
+	local OptWidth = 194
 
-	local optionPane = StdUi:Window(nil, OptWidth + 4, window:GetHeight())
+	local optionPane = UI.CreateWindow({
+		name = 'SUI_ProfileManager_Options',
+		title = '',
+		width = OptWidth + 4,
+		height = 500,
+		hidePortrait = true,
+	})
 	optionPane:SetPoint('LEFT', window, 'RIGHT', 1, 0)
 	optionPane:SetFrameStrata('DIALOG')
 	window:HookScript(
@@ -60,15 +78,18 @@ local function CreateWindow()
 	)
 	optionPane.closeBtn:Hide()
 
-	optionPane.Title = StdUi:Label(optionPane, '', 13, nil, OptWidth)
-	optionPane.Title:SetTextColor(1, 1, 1, 0.8)
-	optionPane.Title:SetJustifyH('CENTER')
-	optionPane.Title:SetText('Import settings')
-	optionPane.Title:SetPoint('TOP', 0, -2)
+	-- Title label
+	local optTitle = UI.CreateLabel(optionPane, 'Import settings', 'GameFontHighlight')
+	optTitle:SetTextColor(1, 1, 1, 0.8)
+	optTitle:SetWidth(OptWidth)
+	optTitle:SetJustifyH('CENTER')
+	optTitle:SetPoint('TOP', optionPane, 'TOP', 0, -35)
+	optionPane.Title = optTitle
 
-	optionPane.SwitchMode = StdUi:Button(optionPane, OptWidth, 20, 'SWITCH MODE')
-	optionPane.SwitchMode:SetPoint('BOTTOM', optionPane, 0, 24)
-	optionPane.SwitchMode:SetScript(
+	-- Switch Mode button at bottom
+	local switchBtn = UI.CreateButton(optionPane, OptWidth, 20, 'SWITCH MODE')
+	switchBtn:SetPoint('BOTTOM', optionPane, 'BOTTOM', 0, 24)
+	switchBtn:SetScript(
 		'OnClick',
 		function()
 			if window.mode == 'import' then
@@ -80,28 +101,33 @@ local function CreateWindow()
 			ResetWindow()
 		end
 	)
+	optionPane.SwitchMode = switchBtn
 
 	--------------------------------
 	-------- EXPORT STUFF ----------
 	local exportOpt = CreateFrame('Frame', nil)
 	exportOpt:SetParent(optionPane)
-	exportOpt:SetPoint('TOPLEFT', optionPane, 3, -25)
-	exportOpt:SetPoint('BOTTOMRIGHT', -3, 3)
+	exportOpt:SetPoint('TOPLEFT', optionPane, 3, -60)
+	exportOpt:SetPoint('BOTTOMRIGHT', -3, 48)
 
-	exportOpt.formatExportText = StdUi:Radio(exportOpt, 'Text', 'exportFormat', OptWidth, 20)
-	exportOpt.formatExportText:SetValue('text')
-	exportOpt.formatExportText:SetPoint('TOP')
+	-- Radio buttons for export format
+	local formatText = UI.CreateRadio(exportOpt, 'Text', 'exportFormat', OptWidth, 20)
+	formatText:SetValue('text')
+	formatText:SetPoint('TOP', exportOpt, 'TOP', 0, 0)
+	exportOpt.formatExportText = formatText
 
-	exportOpt.formatExportTable = StdUi:Radio(exportOpt, 'Table', 'exportFormat', OptWidth, 20)
-	exportOpt.formatExportTable:SetValue('luaTable')
-	exportOpt.formatExportTable:SetPoint('TOP', exportOpt.formatExportText, 'BOTTOM', 0, -2)
+	local formatTable = UI.CreateRadio(exportOpt, 'Table', 'exportFormat', OptWidth, 20)
+	formatTable:SetValue('luaTable')
+	formatTable:SetPoint('TOP', formatText, 'BOTTOM', 0, -2)
+	exportOpt.formatExportTable = formatTable
 
-	StdUi:SetRadioGroupValue('exportFormat', 'text')
+	UI.SetRadioGroupValue('exportFormat', 'text')
 
-	exportOpt.AllNamespaces = StdUi:Checkbox(exportOpt, 'All', OptWidth, 20)
-	exportOpt.AllNamespaces:SetPoint('TOP', exportOpt.formatExportTable, 'BOTTOM', 0, -20)
-	exportOpt.AllNamespaces:SetChecked(true)
-	exportOpt.AllNamespaces:HookScript(
+	-- "All" checkbox for namespace selection
+	local allCheck = UI.CreateCheckbox(exportOpt, 'All')
+	allCheck:SetPoint('TOP', formatTable, 'BOTTOM', 0, -20)
+	allCheck:SetChecked(true)
+	allCheck:HookScript(
 		'OnClick',
 		function(self)
 			for _, v in ipairs(exportOpt.items) do
@@ -109,10 +135,20 @@ local function CreateWindow()
 			end
 		end
 	)
+	exportOpt.AllNamespaces = allCheck
 
-	local NamespaceListings = StdUi:FauxScrollFrame(exportOpt, OptWidth, 300, 15, 20)
-	NamespaceListings:SetPoint('TOP', exportOpt.AllNamespaces, 'BOTTOM', 0, -2)
+	-- Scrollable namespace checkbox list
+	local scrollFrame = UI.CreateScrollFrame(exportOpt)
+	scrollFrame:SetPoint('TOP', allCheck, 'BOTTOM', 0, -2)
+	scrollFrame:SetPoint('LEFT', exportOpt, 'LEFT', 0, 0)
+	scrollFrame:SetPoint('RIGHT', exportOpt, 'RIGHT', 0, 0)
+	scrollFrame:SetPoint('BOTTOM', exportOpt, 'BOTTOM', 0, 30)
 
+	local scrollChild = CreateFrame('Frame', nil, scrollFrame)
+	scrollFrame:SetScrollChild(scrollChild)
+	scrollChild:SetSize(OptWidth, 1)
+
+	-- Create namespace list
 	exportOpt.items = {}
 	local list = {}
 	table.insert(list, {text = 'Core', value = 'core'})
@@ -127,30 +163,39 @@ local function CreateWindow()
 		end
 	end
 
-	local function update(_, checkbox, data)
-		checkbox:SetText(data.text)
-		checkbox:SetValue(data.value)
+	-- Create checkboxes dynamically
+	local yOffset = 0
+	for _, data in ipairs(list) do
+		local checkbox = UI.CreateCheckbox(scrollChild, data.text)
+		checkbox:SetPoint('TOPLEFT', scrollChild, 'TOPLEFT', 0, yOffset)
 		checkbox:SetChecked(true)
-		StdUi:SetObjSize(checkbox, 60, 20)
-		checkbox:SetPoint('RIGHT')
-		checkbox:SetPoint('LEFT')
+		checkbox.value = data.value
+
+		-- Add GetValue method for compatibility
+		function checkbox:GetValue()
+			return self.value
+		end
+
 		checkbox:HookScript(
 			'OnClick',
 			function(self)
 				if not self:GetChecked() then
-					exportOpt.AllNamespaces:SetChecked(false)
+					allCheck:SetChecked(false)
 				end
 			end
 		)
-		return checkbox
+
+		table.insert(exportOpt.items, checkbox)
+		yOffset = yOffset - 22
 	end
+	scrollChild:SetHeight(math.abs(yOffset))
 
-	StdUi:ObjectList(NamespaceListings.scrollChild, exportOpt.items, 'Checkbox', update, list, 1, 0, 0)
-	exportOpt.NamespaceListings = NamespaceListings
+	exportOpt.NamespaceListings = scrollFrame
 
-	exportOpt.Export = StdUi:Button(exportOpt, OptWidth, 20, 'EXPORT')
-	exportOpt.Export:SetPoint('BOTTOM')
-	exportOpt.Export:SetScript(
+	-- Export button
+	local exportBtn = UI.CreateButton(exportOpt, OptWidth, 20, 'EXPORT')
+	exportBtn:SetPoint('BOTTOM', exportOpt, 'BOTTOM', 0, 0)
+	exportBtn:SetScript(
 		'OnClick',
 		function()
 			local ExportScopes = {}
@@ -160,7 +205,7 @@ local function CreateWindow()
 				end
 			end
 
-			local profileExport = module:ExportProfile(StdUi:GetRadioGroupValue('exportFormat'), ExportScopes)
+			local profileExport = module:ExportProfile(UI.GetRadioGroupValue('exportFormat'), ExportScopes)
 
 			if not profileExport then
 				window.Desc1:SetText('Error exporting profile!')
@@ -168,50 +213,58 @@ local function CreateWindow()
 				window.Desc1:SetText('Exported!')
 
 				window.textBox:SetValue(profileExport)
-				window.textBox.editBox:HighlightText()
-				window.textBox.editBox:SetFocus()
+				window.textBox:HighlightText()
+				window.textBox:SetFocus()
 			end
 		end
 	)
+	exportOpt.Export = exportBtn
 
 	--------------------------------
 	-------- IMPORT STUFF ----------
 	local importOpt = CreateFrame('Frame', nil)
 	importOpt:SetParent(optionPane)
-	importOpt:SetPoint('TOPLEFT', optionPane, 3, -25)
-	importOpt:SetPoint('BOTTOMRIGHT', -3, 3)
+	importOpt:SetPoint('TOPLEFT', optionPane, 3, -60)
+	importOpt:SetPoint('BOTTOMRIGHT', -3, 48)
 
-	importOpt.CurrentProfile = StdUi:Radio(importOpt, 'Use current profile', 'importTo', OptWidth, 20)
-	importOpt.CurrentProfile:SetValue('current')
-	importOpt.CurrentProfile:SetPoint('TOP')
+	-- Radio buttons for import target
+	local currentProfile = UI.CreateRadio(importOpt, 'Use current profile', 'importTo', OptWidth, 20)
+	currentProfile:SetValue('current')
+	currentProfile:SetPoint('TOP', importOpt, 'TOP', 0, 0)
+	importOpt.CurrentProfile = currentProfile
 
-	importOpt.NewProfile = StdUi:Radio(importOpt, 'New Profile', 'importTo', OptWidth, 20)
-	importOpt.NewProfile:SetValue('new')
-	importOpt.NewProfile:SetPoint('TOP', importOpt.CurrentProfile, 'BOTTOM', 0, -2)
+	local newProfile = UI.CreateRadio(importOpt, 'New Profile', 'importTo', OptWidth, 20)
+	newProfile:SetValue('new')
+	newProfile:SetPoint('TOP', currentProfile, 'BOTTOM', 0, -2)
+	importOpt.NewProfile = newProfile
 
-	importOpt.NewProfileName = StdUi:SimpleEditBox(importOpt, OptWidth, 20, '')
-	importOpt.NewProfileName:SetPoint('TOP', importOpt.NewProfile, 'BOTTOM', 0, -2)
+	-- New profile name edit box
+	local profileNameBox = UI.CreateEditBox(importOpt, OptWidth, 20)
+	profileNameBox:SetPoint('TOP', newProfile, 'BOTTOM', 0, -2)
+	importOpt.NewProfileName = profileNameBox
 
-	StdUi:OnRadioGroupValueChanged(
+	-- Radio group change handler
+	UI.OnRadioGroupValueChanged(
 		'importTo',
 		function(v)
-			importOpt.NewProfileName:SetText('')
+			profileNameBox:SetText('')
 			if v == 'new' then
-				importOpt.NewProfileName:Enable()
+				profileNameBox:Enable()
 			else
-				importOpt.NewProfileName:Disable()
+				profileNameBox:Disable()
 			end
 		end
 	)
-	StdUi:SetRadioGroupValue('importTo', 'current')
+	UI.SetRadioGroupValue('importTo', 'current')
 
-	importOpt.Import = StdUi:Button(importOpt, OptWidth, 20, 'IMPORT')
-	importOpt.Import:SetPoint('BOTTOM')
-	importOpt.Import:SetScript(
+	-- Import button
+	local importBtn = UI.CreateButton(importOpt, OptWidth, 20, 'IMPORT')
+	importBtn:SetPoint('BOTTOM', importOpt, 'BOTTOM', 0, 0)
+	importBtn:SetScript(
 		'OnClick',
 		function()
-			if StdUi:GetRadioGroupValue('importTo') == 'new' then
-				local profileName = importOpt.NewProfileName:GetText()
+			if UI.GetRadioGroupValue('importTo') == 'new' then
+				local profileName = profileNameBox:GetText()
 				if profileName == '' then
 					window.Desc1:SetText('Please enter a new profile name')
 					return
@@ -228,6 +281,7 @@ local function CreateWindow()
 			end
 		end
 	)
+	importOpt.Import = importBtn
 
 	optionPane.exportOpt = exportOpt
 	optionPane.importOpt = importOpt
