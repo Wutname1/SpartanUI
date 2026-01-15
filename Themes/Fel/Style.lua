@@ -85,7 +85,7 @@ function module:OnInitialize()
 		position = 'CENTER,SUI_Art_Fel_Left,RIGHT,0,0',
 		engulfed = true,
 	}
-	SUI:GetModule('Module_Minimap'):Register('Fel', minimapSettings)
+	SUI:GetModule('Minimap'):Register('Fel', minimapSettings)
 
 	module:CreateArtwork()
 	Options()
@@ -183,5 +183,5 @@ function module:MiniMap()
 	else
 		SUI.DB.Styles.Fel.Minimap.BG = SUI:MergeData(SUI.DB.Styles.Fel.Minimap.BG or {}, calmed, true)
 	end
-	SUI:GetModule('Module_Minimap'):update(true)
+	SUI:GetModule('Minimap'):update(true)
 end

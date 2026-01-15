@@ -98,7 +98,7 @@ function module:OnInitialize()
 		},
 		position = 'CENTER,SUI_Art_Arcane_Left,RIGHT,0,20',
 	}
-	SUI:GetModule('Module_Minimap'):Register('Arcane', minimapSettings)
+	SUI:GetModule('Minimap'):Register('Arcane', minimapSettings)
 
 	---@type SUI.UF.Style.Settings
 	local BlueUFSettings = {

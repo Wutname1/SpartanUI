@@ -407,7 +407,8 @@
     "WeeklyRewardsFrame",
     "UIParentLoadAddOn",
     "OverrideActionBar",
-    "MACROS"
+    "MACROS",
+    "LibAT"
   ],
   "Lua.workspace.ignoreDir": [".vscode", "libs/*"],
   "Lua.diagnostics.enable": true,

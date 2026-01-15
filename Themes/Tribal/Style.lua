@@ -61,7 +61,7 @@ function module:OnInitialize()
 		},
 		position = 'CENTER,SUI_Art_Tribal_Left,RIGHT,0,20',
 	}
-	SUI:GetModule('Module_Minimap'):Register('Tribal', minimapSettings)
+	SUI:GetModule('Minimap'):Register('Tribal', minimapSettings)
 
 	module:CreateArtwork()
 end

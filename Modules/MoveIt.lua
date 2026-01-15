@@ -669,6 +669,240 @@ function MoveIt:CreateMover(parent, name, DisplayName, postdrag, groupName)
 	AddToOptions(name, DisplayName, (groupName or 'General'), f)
 end
 
+function MoveIt:RegisterExternalMover(mover, name)
+	if not mover or not name then return end
+
+	if not MoverList[name] then
+		MoverList[name] = mover
+		mover.name = name
+
+		return true
+	end
+	return false
+end
+
+function MoveIt:CreateCustomMover(displayName, defaultPosition, config)
+	-- Generate a unique name based on the display name
+	local name = 'SUI_CustomMover_' .. displayName:gsub('%s+', '')
+
+	-- Default configuration options
+	local cfg = {
+		width = 180,
+		height = 180,
+		colors = {
+			bg = { 0.2, 0.0, 0.0, 0.85 }, -- Reddish background to distinguish from regular movers
+			active = { 0.3, 0.1, 0.1, 0.7 },
+			border = { 0.5, 0.0, 0.0, 1 },
+			text = { 1, 1, 1, 1 },
+		},
+		onPositionChanged = nil, -- Callback function
+		savePosition = nil, -- Function to handle position saving
+		onHide = nil, -- Function called when mover is hidden
+	}
+
+	-- Override defaults with any provided config
+	if config then
+		for k, v in pairs(config) do
+			cfg[k] = v
+		end
+	end
+
+	-- Create the mover frame
+	local mover = CreateFrame('Button', name, UIParent, BackdropTemplateMixin and 'BackdropTemplate')
+	mover:SetClampedToScreen(true)
+	mover:RegisterForDrag('LeftButton', 'RightButton')
+	mover:EnableMouseWheel(true)
+	mover:SetMovable(true)
+	mover:SetSize(cfg.width, cfg.height)
+
+	mover:SetBackdrop({
+		bgFile = 'Interface\\AddOns\\SpartanUI\\images\\blank.tga',
+		edgeFile = 'Interface\\AddOns\\SpartanUI\\images\\blank.tga',
+		edgeSize = 1,
+	})
+	mover:SetBackdropColor(unpack(cfg.colors.bg))
+	mover:SetBackdropBorderColor(unpack(cfg.colors.border))
+
+	mover:Hide()
+	mover.defaultPoint = defaultPosition
+	mover.displayName = displayName
+	mover.savedPosition = nil
+
+	mover:SetFrameLevel(100)
+	mover:SetFrameStrata('DIALOG')
+
+	-- Create text elements
+	local nameText = mover:CreateFontString(nil, 'OVERLAY')
+	SUI.Font:Format(nameText, 12, 'Mover')
+	nameText:SetJustifyH('CENTER')
+	nameText:SetPoint('CENTER')
+	nameText:SetText(displayName)
+	nameText:SetTextColor(unpack(cfg.colors.text))
+	mover:SetFontString(nameText)
+	mover.DisplayName = nameText
+
+	local helpText = mover:CreateFontString(nil, 'OVERLAY')
+	SUI.Font:Format(helpText, 8, 'Mover')
+	helpText:SetJustifyH('CENTER')
+	helpText:SetPoint('BOTTOM', nameText, 'TOP', 0, 2)
+	helpText:SetText(L['Drag to set position'])
+	helpText:SetTextColor(unpack(cfg.colors.text))
+	mover.HelpText = helpText
+
+	-- Create coordinate display frame
+	local coordFrame = CreateFrame('Frame', name .. '_CoordFrame', mover, BackdropTemplateMixin and 'BackdropTemplate')
+	coordFrame:SetSize(150, 40)
+	coordFrame:SetPoint('TOP', mover.DisplayName, 'BOTTOM', 0, -5)
+	coordFrame:SetBackdrop({
+		bgFile = 'Interface\\DialogFrame\\UI-DialogBox-Background',
+		edgeFile = 'Interface\\DialogFrame\\UI-DialogBox-Border',
+		edgeSize = 16,
+		insets = { left = 4, right = 4, top = 4, bottom = 4 },
+	})
+	coordFrame:SetBackdropColor(0, 0, 0, 0.9)
+	coordFrame:SetFrameLevel(mover:GetFrameLevel() + 1)
+
+	local coordText = coordFrame:CreateFontString(nil, 'OVERLAY')
+	SUI.Font:Format(coordText, 10, 'Mover')
+	coordText:SetJustifyH('CENTER')
+	coordText:SetPoint('CENTER')
+	coordText:SetTextColor(1, 1, 1, 1)
+	coordFrame.Text = coordText
+	coordFrame:Hide()
+	mover.coordFrame = coordFrame
+
+	-- Set initial position from saved settings
+	local point, anchor, secondaryPoint, x, y = strsplit(',', defaultPosition)
+	mover:ClearAllPoints()
+	mover:SetPoint(point, _G[anchor], secondaryPoint, x, y)
+
+	-- Script handlers for dragging
+	local isDragging = false
+
+	mover:SetScript('OnDragStart', function(self)
+		if InCombatLockdown() then
+			SUI:Print(ERR_NOT_IN_COMBAT)
+			return
+		end
+
+		self:StartMoving()
+		coordFrame:Show()
+		isDragging = true
+	end)
+
+	mover:SetScript('OnDragStop', function(self)
+		if InCombatLockdown() then
+			SUI:Print(ERR_NOT_IN_COMBAT)
+			return
+		end
+
+		isDragging = false
+		self:StopMovingOrSizing()
+
+		-- Save the position
+		local point, anchor, secondaryPoint, x, y = self:GetPoint()
+		if not anchor then anchor = UIParent end
+
+		local anchorName = anchor:GetName() or 'UIParent'
+		self.savedPosition = format('%s,%s,%s,%d,%d', point, anchorName, secondaryPoint, Round(x), Round(y))
+
+		-- Call custom save function if provided
+		if cfg.savePosition then cfg.savePosition(self.savedPosition) end
+
+		-- Callback for position change
+		if cfg.onPositionChanged then cfg.onPositionChanged(self) end
+
+		coordFrame:Hide()
+		self:SetUserPlaced(false)
+	end)
+
+	mover:SetScript('OnEnter', function(self)
+		if isDragging then return end
+		self:SetBackdropColor(unpack(cfg.colors.active))
+	end)
+
+	mover:SetScript('OnLeave', function(self)
+		if isDragging then return end
+		self:SetBackdropColor(unpack(cfg.colors.bg))
+	end)
+
+	mover:SetScript('OnMouseDown', function(self, button)
+		if InCombatLockdown() then
+			SUI:Print(ERR_NOT_IN_COMBAT)
+			return
+		elseif IsAltKeyDown() then
+			self:Hide()
+			if cfg.onHide then cfg.onHide() end
+			return
+		end
+
+		if button == 'RightButton' then
+			-- Reset to default position
+			local point, anchor, secondaryPoint, x, y = strsplit(',', self.defaultPoint)
+			self:ClearAllPoints()
+			self:SetPoint(point, _G[anchor], secondaryPoint, x, y)
+
+			self.savedPosition = nil
+
+			if cfg.savePosition then cfg.savePosition(self.defaultPoint) end
+
+			SUI:Print(L['Position reset to default'])
+		end
+	end)
+
+	mover:SetScript('OnMouseWheel', function(self, delta)
+		if IsShiftKeyDown() then
+			-- Vertical nudge
+			local point, anchor, secondaryPoint, x, y = self:GetPoint()
+			if not anchor then anchor = UIParent end
+
+			y = y + delta
+
+			self:ClearAllPoints()
+			self:SetPoint(point, anchor, secondaryPoint, x, y)
+		else
+			-- Horizontal nudge
+			local point, anchor, secondaryPoint, x, y = self:GetPoint()
+			if not anchor then anchor = UIParent end
+
+			x = x + delta
+
+			self:ClearAllPoints()
+			self:SetPoint(point, anchor, secondaryPoint, x, y)
+		end
+	end)
+
+	-- Update coordinate text when the frame moves
+	mover:SetScript('OnUpdate', function(self)
+		if isDragging then
+			local scale = self:GetEffectiveScale()
+			local x, y = self:GetCenter()
+			x = x * scale
+			y = y * scale
+
+			coordFrame.Text:SetText(format('X: %d, Y: %d', Round(x), Round(y)))
+		end
+	end)
+
+	-- Add Escape key handling
+	mover:SetScript('OnKeyDown', function(self, key)
+		if key == 'ESCAPE' then
+			self:Hide()
+			if cfg.onHide then cfg.onHide() end
+			return
+		end
+	end)
+	mover:EnableKeyboard(true)
+
+	-- Register with UISpecialFrames for Escape handling
+	tinsert(UISpecialFrames, name)
+
+	-- Register with MoveIt system
+	MoverList[name] = mover
+
+	return mover
+end
+
 function MoveIt:OnInitialize()
 	---@class MoveItDB
 	local defaults = {

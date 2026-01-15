@@ -43,7 +43,7 @@ function module:OnInitialize()
 		},
 		position = 'CENTER,SUI_Art_Digital,CENTER,0,54',
 	}
-	SUI:GetModule('Module_Minimap'):Register('Digital', minimapSettings)
+	SUI:GetModule('Minimap'):Register('Digital', minimapSettings)
 
 	module:CreateArtwork()
 end

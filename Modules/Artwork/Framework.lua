@@ -158,7 +158,7 @@ function module:SetActiveStyle(style)
 		SUI:GetModule('Handler_BarSystems').Refresh()
 
 		--Update minimap
-		SUI:GetModule('Module_Minimap'):update(true)
+		SUI:GetModule('Minimap'):update(true)
 	end
 
 	-- Update style settings shortcut
@@ -182,7 +182,7 @@ function module:UpdateScale()
 	if SUI:IsModuleEnabled('UnitFrames') then SUI.UF:ScaleFrames(SUI.DB.scale) end
 
 	-- Call Minimap scale update
-	local minimap = SUI:GetModule('Module_Minimap')
+	local minimap = SUI:GetModule('Minimap')
 	if minimap.Settings and minimap.Settings.scaleWithArt then minimap:UpdateScale() end
 
 	-- Update Bar scales
@@ -299,7 +299,7 @@ end
 
 local function VehicleUI()
 	if SUI.DB.Artwork.VehicleUI then
-		local minimapModule = SUI:GetModule('Module_Minimap')
+		local minimapModule = SUI:GetModule('Minimap')
 		petbattle:HookScript('OnHide', function()
 			SUI_Art_War:Hide()
 			if SUI:IsModuleEnabled('Minimap') and (minimapModule.DB.AutoDetectAllowUse or minimapModule.DB.ManualAllowUse) then Minimap:Hide() end

@@ -9,6 +9,8 @@ local SessionID = nil -- Current session ID available in the sack
 local currentErrorObject = nil
 local BugGrabber = BugGrabber
 
+if LibAT then return end
+
 -----------------------------------------------------------------------
 -- Utility
 --

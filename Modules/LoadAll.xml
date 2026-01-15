@@ -5,7 +5,9 @@
 	<Script file="AutoTurnIn.lua" />
 	<Script file="AutoSell.lua" />
 	<Script file="Buffs.lua" />
-	<Script file="Minimap.lua" />
+	<!-- <Script file="Minimap.lua" /> -->
+	<Script file="Minimap\Minimap.lua" />
+	<Script file="Minimap\Options.lua" />
 	<Script file="Objectives.lua" />
 	<Script file="Tooltips.lua" />
 	<Script file="MailOpenAll.lua" />

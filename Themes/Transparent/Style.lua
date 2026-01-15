@@ -102,7 +102,7 @@ function module:OnInitialize()
 			position = 'BOTTOM,Minimap,BOTTOM,0,2',
 		},
 	}
-	SUI:GetModule('Module_Minimap'):Register('Transparent', minimapSettings)
+	SUI:GetModule('Minimap'):Register('Transparent', minimapSettings)
 
 	-- Unitframes Settings
 	local UF = SUI:GetModule('Module_UnitFrames')

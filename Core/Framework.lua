@@ -1199,8 +1199,40 @@ function SUI:OnInitialize()
 	SUI.DBG = SUI.SpartanUIDB.global
 	SUI.DB = SUI.SpartanUIDB.profile
 
-	SUI.AutoOpenErrors = (SUI.DBG.ErrorHandler.AutoOpenErrors or false)
-	if _G.SUIErrorDisplay then
+	-- Initialize Logger
+	if LibAT and LibAT.Logger then
+		SUI.logger = LibAT.Logger.RegisterAddon('SpartanUI')
+		SUI.logger.info('SpartanUI ' .. SUI.Version .. ' initializing')
+
+		-- Compatibility wrapper functions for old logging API
+		---@param message string The message to log
+		---@param module string The module name
+		---@param level? LogLevel Log level - defaults to 'info'
+		function SUI.Log(message, module, level)
+			if SUI.logger then
+				-- Use LibAT.Log directly for hierarchical module names (contains dots)
+				-- This allows the logger to parse the hierarchy properly
+				LibAT.Log(message, 'SpartanUI.' .. module, level or 'info')
+			end
+		end
+
+		---@param moduleObj SUI.Module The SpartanUI module object
+		---@param message string The message to log
+		---@param component? string Optional component for logging
+		---@param level? LogLevel Log level - defaults to 'info'
+		function SUI.ModuleLog(moduleObj, message, component, level)
+			local moduleName = moduleObj.DisplayName or moduleObj:GetName()
+			if SUI.logger then
+				-- Build hierarchical name
+				local fullName = 'SpartanUI.' .. moduleName
+				if component then fullName = fullName .. '.' .. component end
+				LibAT.Log(message, fullName, level or 'info')
+			end
+		end
+	end
+
+	SUI.AutoOpenErrors = (not LibAT and not LibAT.ErrorDisplay and SUI.DBG.ErrorHandler.AutoOpenErrors or false)
+	if _G.SUIErrorDisplay and not LibAT then
 		_G.SUIErrorDisplay:UpdateDisplay()
 		_G.SUIErrorDisplay:updatemapIcon()
 	end
@@ -1287,7 +1319,7 @@ function SUI:OnInitialize()
 	SUI:AddChatCommand('resetdb', resetdb, 'Reset SpartanUI settings')
 	SUI:AddChatCommand('resetbartender', resetbartender, 'Reset all bartender4 settings')
 	SUI:AddChatCommand('resetfulldb', resetfulldb, 'Reset bartender4 & SpartanUI settings (This is similar to deleting your WTF folder but will only effect this character)')
-	if _G.SUIErrorDisplay then
+	if _G.SUIErrorDisplay and not LibAT then
 		local function ErrHandler(arg)
 			if arg == 'reset' then
 				_G.SUIErrorDisplay:Reset()
@@ -1823,26 +1855,26 @@ function SUI:OnEnable()
 	end)
 
 	--Add to Menu Frame
-	local SUIMenuButton = CreateFrame('Button', 'GameMenuButtonSUI', GameMenuFrame, 'GameMenuButtonTemplate')
-	SUIMenuButton:SetScript('OnClick', function()
-		SUI:GetModule('Handler_Options'):ToggleOptions()
-		if not InCombatLockdown() then HideUIPanel(GameMenuFrame) end
-	end)
-	SUIMenuButton:SetPoint('TOP', GameMenuButtonAddons, 'BOTTOM', 0, -1)
-	GameMenuFrame.SUI = SUIMenuButton
-	hooksecurefunc('GameMenuFrame_UpdateVisibleButtons', function()
-		GameMenuFrame:SetHeight(GameMenuFrame:GetHeight() + (GameMenuButtonSUI:GetHeight() * 1.8))
+	-- local SUIMenuButton = CreateFrame('Button', 'GameMenuButtonSUI', GameMenuFrame, 'GameMenuButtonTemplate')
+	-- SUIMenuButton:SetScript('OnClick', function()
+	-- 	SUI:GetModule('Handler_Options'):ToggleOptions()
+	-- 	if not InCombatLockdown() then HideUIPanel(GameMenuFrame) end
+	-- end)
+	-- SUIMenuButton:SetPoint('TOP', GameMenuButtonAddons, 'BOTTOM', 0, -1)
+	-- GameMenuFrame.SUI = SUIMenuButton
+	-- hooksecurefunc('GameMenuFrame_UpdateVisibleButtons', function()
+	-- 	GameMenuFrame:SetHeight(GameMenuFrame:GetHeight() + (GameMenuButtonSUI:GetHeight() * 1.8))
 
-		GameMenuButtonSUI:SetFormattedText('|cffffffffSpartan|cffe21f1fUI|r')
+	-- 	GameMenuButtonSUI:SetFormattedText('|cffffffffSpartan|cffe21f1fUI|r')
 
-		local _, relTo, _, _, offY = GameMenuButtonLogout:GetPoint()
-		if relTo ~= GameMenuButtonSUI then
-			GameMenuButtonSUI:ClearAllPoints()
-			GameMenuButtonSUI:SetPoint('TOPLEFT', relTo, 'BOTTOMLEFT', 0, -2)
-			GameMenuButtonLogout:ClearAllPoints()
-			GameMenuButtonLogout:SetPoint('TOPLEFT', GameMenuButtonSUI, 'BOTTOMLEFT', 0, offY)
-		end
-	end)
+	-- 	local _, relTo, _, _, offY = GameMenuButtonLogout:GetPoint()
+	-- 	if relTo ~= GameMenuButtonSUI then
+	-- 		GameMenuButtonSUI:ClearAllPoints()
+	-- 		GameMenuButtonSUI:SetPoint('TOPLEFT', relTo, 'BOTTOMLEFT', 0, -2)
+	-- 		GameMenuButtonLogout:ClearAllPoints()
+	-- 		GameMenuButtonLogout:SetPoint('TOPLEFT', GameMenuButtonSUI, 'BOTTOMLEFT', 0, offY)
+	-- 	end
+	-- end)
 end
 
 -- For Setting a unifid skin across all registered Skinable modules

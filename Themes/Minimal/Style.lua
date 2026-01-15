@@ -53,7 +53,7 @@ function module:OnInitialize()
 		position = 'TOPRIGHT,SUI_Art_Minimal_Base3,TOPRIGHT,-10,-10',
 		shape = 'square',
 	}
-	SUI:GetModule('Module_Minimap'):Register('Minimal', minimapSettings)
+	SUI:GetModule('Minimap'):Register('Minimal', minimapSettings)
 
 	UF.Style:Register('Minimal', {})
 end

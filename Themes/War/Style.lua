@@ -67,17 +67,19 @@ function module:OnInitialize()
 		end
 	end
 
-	local minimapSettings = {
-		size = { 160, 160 },
-		BG = {
-			texture = 'Interface\\AddOns\\SpartanUI\\Themes\\War\\Images\\minimap',
-		},
-		coords = {
-			position = 'TOP,MinimapZoneText,BOTTOM,0,-4',
-		},
-		position = SUI.IsRetail and 'BOTTOM,SUI_Art_War_Left,BOTTOMRIGHT,0,-10' or 'CENTER,SUI_Art_War_Left,RIGHT,-10,20',
-	}
-	SUI:GetModule('Module_Minimap'):Register('War', minimapSettings)
+	if SUI.Minimap then
+		---@type SUI.Style.Settings.Minimap
+		local minimapSettings = {
+			size = { 180, 180 },
+			position = 'BOTTOM,SUI_Art_War_Left,BOTTOMRIGHT,11,-10',
+			elements = {
+				background = {
+					texture = 'Interface\\AddOns\\SpartanUI\\Themes\\War\\Images\\minimap',
+				},
+			},
+		}
+		SUI.Minimap:Register('War', minimapSettings)
+	end
 
 	---@type SUI.UF.Style.Settings
 	local ufsettings = {
