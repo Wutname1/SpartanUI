@@ -1,9 +1,9 @@
-name: Classic - CI/CD
+name: TBC - CI/CD
 
 on:
   push:
     tags: ["**"]
-    branches: ["Classic"]
+    branches: ["TBC"]
 
 jobs:
   release:
