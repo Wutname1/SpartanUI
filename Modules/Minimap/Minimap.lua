@@ -349,6 +349,8 @@ function module:ModifyMinimapLayout()
 
 		-- Hide compass texture
 		if MinimapCompassTexture then MinimapCompassTexture:Hide() end
+
+		if MinimapCluster.BorderTop then MinimapCluster.BorderTop:Hide() end
 	end
 
 	-- Setup rotation if needed
