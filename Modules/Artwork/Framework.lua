@@ -158,7 +158,7 @@ function module:SetActiveStyle(style)
 		SUI:GetModule('Handler_BarSystems').Refresh()
 
 		--Update minimap
-		SUI:GetModule('Minimap'):update(true)
+		SUI:GetModule('Minimap'):Update(true)
 	end
 
 	-- Update style settings shortcut
