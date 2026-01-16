@@ -71,7 +71,7 @@ function module:OnInitialize()
 		---@type SUI.Style.Settings.Minimap
 		local minimapSettings = {
 			size = { 180, 180 },
-			position = 'BOTTOM,SUI_Art_War_Left,BOTTOMRIGHT,11,-10',
+			position = 'CENTER,SUI_Art_War_Left,RIGHT,-10,0',
 			elements = {
 				background = {
 					texture = 'Interface\\AddOns\\SpartanUI\\Themes\\War\\Images\\minimap',

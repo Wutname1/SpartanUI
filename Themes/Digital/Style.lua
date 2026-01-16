@@ -31,19 +31,24 @@ function module:OnInitialize()
 	}
 	UF.Style:Register('Digital', ufsettings)
 
-	local minimapSettings = {
-		size = { 156, 156 },
-		BG = {
-			texture = 'Interface\\AddOns\\SpartanUI\\Themes\\Digital\\Images\\Minimap',
-			position = { 'TOPLEFT,Minimap,TOPLEFT,-38,41', 'BOTTOMRIGHT,Minimap,BOTTOMRIGHT,47,-44' },
-		},
-		coords = {
-			position = 'TOP,MinimapZoneText,BOTTOM,0,-4',
-			scale = 1.2,
-		},
-		position = 'CENTER,SUI_Art_Digital,CENTER,0,54',
-	}
-	SUI:GetModule('Minimap'):Register('Digital', minimapSettings)
+	if SUI.Minimap then
+		---@type SUI.Style.Settings.Minimap
+		local minimapSettings = {
+			size = { 140, 140 },
+			position = 'CENTER,SUI_Art_Digital_Left,RIGHT,0,10',
+			elements = {
+				background = {
+					texture = 'Interface\\AddOns\\SpartanUI\\Themes\\Digital\\Images\\Minimap',
+					position = { 'TOPLEFT,Minimap,TOPLEFT,-38,41', 'BOTTOMRIGHT,Minimap,BOTTOMRIGHT,47,-44' },
+				},
+				coords = {
+					position = 'TOP,MinimapZoneText,BOTTOM,0,-4',
+					scale = 1.2,
+				},
+			},
+		}
+		SUI.Minimap:Register('Digital', minimapSettings)
+	end
 
 	module:CreateArtwork()
 end

@@ -71,21 +71,26 @@ function module:OnInitialize()
 	}
 	UF.Style:Register('Fel', ufsettings)
 
-	local minimapSettings = {
-		size = { 156, 156 },
-		BG = {
-			texture = 'Interface\\AddOns\\SpartanUI\\Themes\\Fel\\Images\\Minimap-Engulfed',
-			size = { 220, 220 },
-			position = 'CENTER,Minimap,CENTER,5,23',
-		},
-		coords = {
-			position = 'TOP,MinimapZoneText,BOTTOM,0,-4',
-			scale = 1.2,
-		},
-		position = 'CENTER,SUI_Art_Fel_Left,RIGHT,0,0',
-		engulfed = true,
-	}
-	SUI:GetModule('Minimap'):Register('Fel', minimapSettings)
+	if SUI.Minimap then
+		---@type SUI.Style.Settings.Minimap
+		local minimapSettings = {
+			size = { 140, 140 },
+			position = 'CENTER,SUI_Art_Fel_Left,RIGHT,0,15',
+			engulfed = true,
+			elements = {
+				background = {
+					texture = 'Interface\\AddOns\\SpartanUI\\Themes\\Fel\\Images\\Minimap-Engulfed',
+					size = { 220, 220 },
+					position = 'CENTER,Minimap,CENTER,5,23',
+				},
+				coords = {
+					position = 'TOP,MinimapZoneText,BOTTOM,0,-4',
+					scale = 1.2,
+				},
+			},
+		}
+		SUI.Minimap:Register('Fel', minimapSettings)
+	end
 
 	module:CreateArtwork()
 	Options()

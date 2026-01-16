@@ -51,17 +51,22 @@ function module:OnInitialize()
 	}
 	UF.Style:Register('Tribal', ufsettings)
 
-	local minimapSettings = {
-		size = { 156, 156 },
-		BG = {
-			texture = 'Interface\\AddOns\\SpartanUI\\Themes\\Tribal\\Images\\minimap',
-		},
-		coords = {
-			position = 'TOP,MinimapZoneText,BOTTOM,0,-4',
-		},
-		position = 'CENTER,SUI_Art_Tribal_Left,RIGHT,0,20',
-	}
-	SUI:GetModule('Minimap'):Register('Tribal', minimapSettings)
+	if SUI.Minimap then
+		---@type SUI.Style.Settings.Minimap
+		local minimapSettings = {
+			size = { 140, 140 },
+			position = 'CENTER,SUI_Art_Tribal_Left,RIGHT,0,15',
+			elements = {
+				background = {
+					texture = 'Interface\\AddOns\\SpartanUI\\Themes\\Tribal\\Images\\minimap',
+				},
+				coords = {
+					position = 'TOP,MinimapZoneText,BOTTOM,0,-4',
+				},
+			},
+		}
+		SUI.Minimap:Register('Tribal', minimapSettings)
+	end
 
 	module:CreateArtwork()
 end

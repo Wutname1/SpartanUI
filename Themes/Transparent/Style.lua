@@ -89,20 +89,25 @@ function module:OnInitialize()
 		['BT4BarMicroMenu'] = SUI.IsRetail and nil or 0.65,
 	}
 
-	local minimapSettings = {
-		shape = 'square',
-		size = { 135, 135 },
-		position = SUI.IsRetail and 'CENTER,SUI_Art_Transparent,CENTER,0,-5' or 'BOTTOM,SUI_Art_Transparent,BOTTOM,-10,5',
-		ZoneText = {
-			size = { 130, 12 },
-			position = 'BOTTOM,Minimap,TOP,0,2',
-		},
-		coords = {
-			size = { 80, 12 },
-			position = 'BOTTOM,Minimap,BOTTOM,0,2',
-		},
-	}
-	SUI:GetModule('Minimap'):Register('Transparent', minimapSettings)
+	if SUI.Minimap then
+		---@type SUI.Style.Settings.Minimap
+		local minimapSettings = {
+			shape = 'square',
+			size = { 135, 135 },
+			position = SUI.IsRetail and 'CENTER,SUI_Art_Transparent,CENTER,0,-5' or 'BOTTOM,SUI_Art_Transparent,BOTTOM,-10,5',
+			elements = {
+				ZoneText = {
+					size = { 130, 12 },
+					position = 'BOTTOM,Minimap,TOP,0,2',
+				},
+				coords = {
+					size = { 80, 12 },
+					position = 'BOTTOM,Minimap,BOTTOM,0,2',
+				},
+			},
+		}
+		SUI.Minimap:Register('Transparent', minimapSettings)
+	end
 
 	-- Unitframes Settings
 	local UF = SUI:GetModule('Module_UnitFrames')

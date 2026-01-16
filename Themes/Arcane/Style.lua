@@ -88,17 +88,22 @@ function module:OnInitialize()
 	}
 	UF.Style:Register('ArcaneRed', RedUFSettings)
 
-	local minimapSettings = {
-		size = { 156, 156 },
-		BG = {
-			texture = 'Interface\\AddOns\\SpartanUI\\Themes\\Arcane\\Images\\minimap',
-		},
-		coords = {
-			position = 'TOP,MinimapZoneText,BOTTOM,0,-4',
-		},
-		position = 'CENTER,SUI_Art_Arcane_Left,RIGHT,0,20',
-	}
-	SUI:GetModule('Minimap'):Register('Arcane', minimapSettings)
+	if SUI.Minimap then
+		---@type SUI.Style.Settings.Minimap
+		local minimapSettings = {
+			size = { 156, 156 },
+			position = 'CENTER,SUI_Art_Arcane_Left,RIGHT,0,20',
+			elements = {
+				background = {
+					texture = 'Interface\\AddOns\\SpartanUI\\Themes\\Arcane\\Images\\minimap',
+				},
+				coords = {
+					position = 'TOP,MinimapZoneText,BOTTOM,0,-4',
+				},
+			},
+		}
+		SUI.Minimap:Register('Arcane', minimapSettings)
+	end
 
 	---@type SUI.UF.Style.Settings
 	local BlueUFSettings = {

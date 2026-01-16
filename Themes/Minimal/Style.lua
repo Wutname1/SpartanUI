@@ -47,13 +47,16 @@ function module:OnInitialize()
 		['BT4BarMicroMenu'] = 0.6,
 	}
 
-	local minimapSettings = {
-		UnderVehicleUI = false,
-		scaleWithArt = false,
-		position = 'TOPRIGHT,SUI_Art_Minimal_Base3,TOPRIGHT,-10,-10',
-		shape = 'square',
-	}
-	SUI:GetModule('Minimap'):Register('Minimal', minimapSettings)
+	if SUI.Minimap then
+		---@type SUI.Style.Settings.Minimap
+		local minimapSettings = {
+			UnderVehicleUI = false,
+			scaleWithArt = false,
+			position = 'TOPRIGHT,SUI_Art_Minimal_Base3,TOPRIGHT,-10,-10',
+			shape = 'square',
+		}
+		SUI.Minimap:Register('Minimal', minimapSettings)
+	end
 
 	UF.Style:Register('Minimal', {})
 end
