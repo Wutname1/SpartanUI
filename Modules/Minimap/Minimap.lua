@@ -46,17 +46,18 @@ local BaseSettingsClassic = {
 		enabled = true,
 		scale = 1,
 		size = { 80, 12 },
-		position = 'TOP,MinimapZoneText,BOTTOM,0,-4',
+		position = 'TOP,Minimap,BOTTOM,0,-20',
 		color = { 1, 1, 1, 1 },
 		format = '%.1f, %.1f',
 	},
 	zoomButtons = {
-		enabled = true,
+		enabled = false,
 		scale = 1,
 	},
 	clock = {
-		enabled = true,
-		scale = 1,
+		enabled = false,
+		scale = 0.7,
+		position = 'TOP,Minimap,BOTTOM,0,-36',
 		format = '%I:%M %p',
 		color = { 1, 1, 1, 1 },
 	},
@@ -651,7 +652,7 @@ function module:SetupClock()
 		return
 	end
 
-	if SUI.IsRetail then
+	if not GameTimeFrame then
 		-- Retail: TimeManagerClockButton
 		if not TimeManagerClockButton then C_AddOns.LoadAddOn('Blizzard_TimeManager') end
 		if TimeManagerClockButton then
