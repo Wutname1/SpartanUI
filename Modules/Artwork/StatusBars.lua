@@ -114,14 +114,14 @@ function module:GetExperienceTooltipText()
 	local questLogXP = GetQuestLogRewardXP()
 
 	GameTooltip:AddDoubleLine(L['Experience'], string.format('(Level %d)', level))
-	GameTooltip:AddDoubleLine(L['Remaining:'], string.format('%s (%.2f%%)', SUI.Font:FormatNumber(maxXP - currentXP), ((maxXP - currentXP) / maxXP) * 100), 1, 1, 1)
+	GameTooltip:AddDoubleLine(L['Remaining:'], string.format('%s (%.2f%%)', BreakUpLargeNumbers(maxXP - currentXP), ((maxXP - currentXP) / maxXP) * 100), 1, 1, 1)
 
 	if currentXP then
 		GameTooltip:AddLine(' ')
-		GameTooltip:AddDoubleLine(L['XP'], string.format('%s / %s (%.2f%%)', SUI.Font:FormatNumber(currentXP), SUI.Font:FormatNumber(maxXP), (currentXP / maxXP) * 100), 1, 1, 1)
+		GameTooltip:AddDoubleLine(L['XP'], string.format('%s / %s (%.2f%%)', BreakUpLargeNumbers(currentXP), BreakUpLargeNumbers(maxXP), (currentXP / maxXP) * 100), 1, 1, 1)
 	end
-	if questLogXP > 0 then GameTooltip:AddDoubleLine(L['Quest Log XP:'], string.format('Quest Log XP: %s (%.2f%%)', SUI.Font:FormatNumber(questLogXP), (questLogXP / maxXP) * 100), 1, 1, 1) end
-	if restedXP > 0 then GameTooltip:AddDoubleLine(L['Rested:'], string.format('Rested: +%s (%.2f%%)', SUI.Font:FormatNumber(restedXP), (restedXP / maxXP) * 100), 1, 1, 1) end
+	if questLogXP > 0 then GameTooltip:AddDoubleLine(L['Quest Log XP:'], string.format('Quest Log XP: %s (%.2f%%)', BreakUpLargeNumbers(questLogXP), (questLogXP / maxXP) * 100), 1, 1, 1) end
+	if restedXP > 0 then GameTooltip:AddDoubleLine(L['Rested:'], string.format('Rested: +%s (%.2f%%)', BreakUpLargeNumbers(restedXP), (restedXP / maxXP) * 100), 1, 1, 1) end
 end
 
 function module:GetReputationTooltipText()
@@ -187,7 +187,7 @@ function module:GetHonorTooltipText()
 	-- Current Honor Level
 	GameTooltip:AddDoubleLine(
 		HONOR_LEVEL_LABEL:format(honorLevel),
-		string.format('%s / %s (%d%%)', SUI.Font:FormatNumber(currentHonor), SUI.Font:FormatNumber(maxHonor), ((currentHonor / maxHonor) * 100)),
+		string.format('%s / %s (%d%%)', BreakUpLargeNumbers(currentHonor), BreakUpLargeNumbers(maxHonor), ((currentHonor / maxHonor) * 100)),
 		NORMAL_FONT_COLOR.r,
 		NORMAL_FONT_COLOR.g,
 		NORMAL_FONT_COLOR.b,
