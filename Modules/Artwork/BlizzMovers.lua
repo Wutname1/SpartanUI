@@ -312,12 +312,14 @@ local function AbilityBars()
 
 	-- Create movers
 	if extraActionEnabled then
+		if not module.BlizzMoverCache['ExtraActionBar'] then module.BlizzMoverCache['ExtraActionBar'] = {} end
 		MoveIt:CreateMover(ExtraActionBarHolder, 'ExtraActionBar', 'Extra action button', nil, 'Blizzard UI')
 		ExtraActionBarHolder:EnableMouse(false)
 		module.BlizzMoverCache['ExtraActionBar'].holder = ExtraActionBarHolder
 	end
 
 	if zoneAbilityEnabled then
+		if not module.BlizzMoverCache['ZoneAbility'] then module.BlizzMoverCache['ZoneAbility'] = {} end
 		MoveIt:CreateMover(ZoneAbilityHolder, 'ZoneAbility', 'Zone ability button', nil, 'Blizzard UI')
 		ZoneAbilityHolder:EnableMouse(false)
 		module.BlizzMoverCache['ZoneAbility'].holder = ZoneAbilityHolder
@@ -563,6 +565,7 @@ local function WidgetPowerBarContainer()
 	MoveIt:CreateMover(holder, moverName, 'Power bar', nil, 'Blizzard UI')
 
 	-- Store holder reference
+	if not module.BlizzMoverCache[moverName] then module.BlizzMoverCache[moverName] = {} end
 	module.BlizzMoverCache[moverName].holder = holder
 end
 
@@ -596,8 +599,10 @@ local function TopCenterContainer()
 	AttachToHolder(frame, holder)
 	hooksecurefunc(frame, 'SetPoint', ResetPosition)
 	MoveIt:CreateMover(holder, moverName, 'Top center container', nil, 'Blizzard UI')
-	for _, widget in pairs(frame.widgetFrames) do
-		SUI.Skins.SkinWidgets(widget)
+	if frame.widgetFrames then
+		for _, widget in pairs(frame.widgetFrames) do
+			SUI.Skins.SkinWidgets(widget)
+		end
 	end
 	module:RegisterEvent('PLAYER_ENTERING_WORLD')
 	module:RegisterEvent('UPDATE_ALL_UI_WIDGETS')
@@ -620,8 +625,11 @@ function module:UPDATE_UI_WIDGET()
 	module:UPDATE_ALL_UI_WIDGETS()
 end
 function module:UPDATE_ALL_UI_WIDGETS()
-	for _, widget in pairs(_G['UIWidgetTopCenterContainerFrame'].widgetFrames) do
-		SUI.Skins.SkinWidgets(widget)
+	local frame = _G['UIWidgetTopCenterContainerFrame']
+	if frame and frame.widgetFrames then
+		for _, widget in pairs(frame.widgetFrames) do
+			SUI.Skins.SkinWidgets(widget)
+		end
 	end
 end
 

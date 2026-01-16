@@ -1126,6 +1126,17 @@ local DBdefault = {
 				collapsed = false,
 			},
 		},
+		BlizzMoverStates = {
+			TalkingHead = { enabled = true },
+			ExtraActionBar = { enabled = true },
+			ZoneAbility = { enabled = true },
+			FramerateFrame = { enabled = true },
+			AlertFrame = { enabled = true },
+			VehicleLeaveButton = { enabled = true },
+			VehicleSeatIndicator = { enabled = true },
+			WidgetPowerBarContainer = { enabled = true },
+			TopCenterContainer = { enabled = true },
+		},
 	},
 }
 SUI.DBdefault = DBdefault
