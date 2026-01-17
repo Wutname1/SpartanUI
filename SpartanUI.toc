@@ -1,4 +1,10 @@
 ## Interface: 120000
+## Interface-Classic: 11506
+## Interface-BCC: 20505
+## Interface-Wrath: 30403
+## Interface-Cata: 40401
+## Interface-MoP: 50503
+
 ## Title: Spartan|cffe21f1fUI
 ## Notes: User Interface combining elegant artwork with well designed features.
 ## Version: @project-version@
@@ -24,39 +30,84 @@
 ## Category-zhCN: 用户界面
 ## Category-zhTW: 使用者介面
 
-# General Libraries
-libs\TaintLess\TaintLess.xml
+# ============================================
+# GENERAL LIBRARIES - SHARED (all versions)
+# ============================================
 libs\Ace3\Ace3.xml
 libs\StdUi\StdUi.xml
 libs\LibDataBroker\LibDataBroker-1.1.lua
 libs\LibDBIcon-1.0\lib.xml
-libs\LibEditMode\embed.xml
-libs\LibEditModeOverride\LibEditModeOverride.xml
 
-# Localization
-lang\localization.xml
+# ============================================
+# LIBRARIES - RETAIL ONLY
+# ============================================
+libs\TaintLess\TaintLess.xml [AllowLoadGameType mainline]
+libs\LibEditMode\embed.xml [AllowLoadGameType mainline]
+libs\LibEditModeOverride\LibEditModeOverride.xml [AllowLoadGameType mainline]
+libs\LibDualSpec-1.0\LibDualSpec-1.0.lua [AllowLoadGameType mainline]
+libs\LibQTip-1.0\lib.xml [AllowLoadGameType mainline]
 
-#Setup SUI error catcher
+# ============================================
+# ERROR HANDLING
+# ============================================
 libs\bug-grabber\load.xml
-Core\Handlers\Bugs\loader.xml
+Core\Handlers\Bugs\loader.xml [AllowLoadGameType mainline]
+Core\Handlers\BugWindow.lua [AllowLoadGameType vanilla, bcc, wrath, cata, mists]
 
-# General Libraries Continued
+# ============================================
+# GENERAL LIBRARIES CONTINUED - SHARED
+# ============================================
 libs\LibCompress\lib.xml
 libs\LibBase64-1.0\lib.xml
-libs\LibDualSpec-1.0\LibDualSpec-1.0.lua
 libs\HereBeDragons\HereBeDragons-2.0.lua
 libs\LibSharedMedia-3.0\lib.xml
 libs\AceGUI-3.0-SharedMediaWidgets\widget.xml
-libs\LibQTip-1.0\lib.xml
 
-# Unit Frame libraries
+# ============================================
+# LIBRARIES - CLASSIC ONLY
+# ============================================
+libs\LibHealComm-4.0\LibHealComm-4.0.lua [AllowLoadGameType vanilla, bcc, wrath, cata, mists]
+libs\LibClassicDurations\LibClassicDurations.xml [AllowLoadGameType vanilla, bcc]
+libs\LibClassicCasterino\LibClassicCasterino.lua [AllowLoadGameType vanilla, bcc]
+
+# ============================================
+# UNIT FRAME LIBRARIES
+# ============================================
 libs\LibDispel\LibDispel.lua
-libs\oUF\oUF.xml
+
+# oUF - Retail (upstream, do not modify)
+libs\oUF\oUF.xml [AllowLoadGameType mainline]
+
+# oUF - Classic (custom fork for classic variants)
+libs\oUF\oUF_Classic.xml [AllowLoadGameType vanilla, bcc]
+libs\oUF\oUF_Wrath.xml [AllowLoadGameType wrath, cata, mists]
+
+# oUF Plugins
 libs\oUF_Plugins\Loader.xml
 
-# Now load SpartanUI
-core\Framework.lua
-modules\LoadAll.xml
-core\Framework.xml
-core\oUF.lua
+# ============================================
+# LOCALIZATION
+# ============================================
+lang\localization.xml
+
+# ============================================
+# CORE FRAMEWORK
+# ============================================
+Core\Framework.lua
+Core\BlizzAPI.lua
+
+# ============================================
+# MODULES
+# ============================================
+Modules\LoadAll.xml
+
+# ============================================
+# CORE FRAMEWORK POST-MODULES
+# ============================================
+Core\Framework.xml
+Core\oUF.lua [AllowLoadGameType mainline]
+
+# ============================================
+# THEMES
+# ============================================
 Themes\Themes.xml
