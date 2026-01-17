@@ -79,8 +79,8 @@ libs\LibDispel\LibDispel.lua
 libs\oUF\oUF.xml [AllowLoadGameType mainline]
 
 # oUF - Classic (custom fork for classic variants)
-libs\oUF\oUF_Classic.xml [AllowLoadGameType vanilla, bcc]
-libs\oUF\oUF_Wrath.xml [AllowLoadGameType wrath, cata, mists]
+libs\oUF_Classic\oUF_Classic.xml [AllowLoadGameType vanilla, bcc]
+libs\oUF_Classic\oUF_Wrath.xml [AllowLoadGameType wrath, cata, mists]
 
 # oUF Plugins
 libs\oUF_Plugins\Loader.xml
