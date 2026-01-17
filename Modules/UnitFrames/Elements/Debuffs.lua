@@ -105,6 +105,7 @@ local Settings = {
 			maxTime = 180,
 			minTime = 1
 		},
+		isHarmful = true,
 		isBossAura = true
 	},
 	config = {
