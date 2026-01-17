@@ -15,12 +15,17 @@ SUI.IsRetail = (WOW_PROJECT_ID == WOW_PROJECT_MAINLINE) ---@type boolean
 SUI.IsClassic = (WOW_PROJECT_ID == WOW_PROJECT_CLASSIC) ---@type boolean
 SUI.IsTBC = (WOW_PROJECT_ID == WOW_PROJECT_BURNING_CRUSADE_CLASSIC) ---@type boolean
 SUI.IsWrath = (WOW_PROJECT_ID == WOW_PROJECT_WRATH_CLASSIC) ---@type boolean
+SUI.IsCata = (WOW_PROJECT_ID == WOW_PROJECT_CATACLYSM_CLASSIC) ---@type boolean
 SUI.IsMOP = (WOW_PROJECT_ID == WOW_PROJECT_MISTS_CLASSIC) ---@type boolean
+-- Helper flags for version grouping
+SUI.IsAnyClassic = not SUI.IsRetail ---@type boolean
+SUI.IsModernClassic = (SUI.IsCata or SUI.IsMOP) ---@type boolean -- Has more retail-like APIs
 SUI.GitHash = '@project-abbreviated-hash@' -- The ZIP packager will replace this with the Git hash.
 SUI.wowVersion = 'Retail'
 if SUI.IsClassic then SUI.wowVersion = 'Classic' end
 if SUI.IsTBC then SUI.wowVersion = 'TBC' end
 if SUI.IsWrath then SUI.wowVersion = 'Wrath' end
+if SUI.IsCata then SUI.wowVersion = 'Cata' end
 if SUI.IsMOP then SUI.wowVersion = 'MOP' end
 --@alpha@
 SUI.releaseType = 'ALPHA ' .. SUI.BuildNum
@@ -68,10 +73,13 @@ SUI.AddLib('AceGUI', 'AceGUI-3.0')
 SUI.AddLib('Compress', 'LibCompress')
 SUI.AddLib('Base64', 'LibBase64-1.0-SUI')
 SUI.AddLib('LSM', 'LibSharedMedia-3.0')
-SUI.AddLib('LEM', 'LibEditMode')
-SUI.AddLib('LibQTip', 'LibQTip-1.0')
-SUI.AddLib('LibEditMode', 'LibEditMode')
-SUI.AddLib('EditModeOverride', 'LibEditModeOverride-1.0')
+-- Retail-only libraries (loaded conditionally via TOC)
+if SUI.IsRetail then
+	SUI.AddLib('LEM', 'LibEditMode', true)
+	SUI.AddLib('LibQTip', 'LibQTip-1.0', true)
+	SUI.AddLib('LibEditMode', 'LibEditMode', true)
+	SUI.AddLib('EditModeOverride', 'LibEditModeOverride-1.0', true)
+end
 
 ---Safely reload the UI with instance+combat check
 ---@param showMessage? boolean Whether to show error message (default: true)
