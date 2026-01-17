@@ -3,6 +3,9 @@ local module = SUI:NewModule('TauntWatcher') ---@type SUI.Module
 module.Displayname = L['Taunt watcher']
 module.description = 'Notify you or your party when others taunt'
 ----------------------------------------------------------------------------------------------------
+-- Helper for spell links (retail vs classic API)
+local GetSpellLinkCompat = C_Spell and GetSpellLinkCompat or GetSpellLink
+
 local TauntsList = {
 	--Warrior
 	355, --Taunt
@@ -27,7 +30,7 @@ local function printFormattedString(who, target, sid, failed)
 	local msg = module.DB.text
 	local ChatChannel = module.DB.announceLocation
 
-	msg = msg:gsub('%%what', target):gsub('%%who', who):gsub('%%spell', C_Spell.GetSpellLink(sid))
+	msg = msg:gsub('%%what', target):gsub('%%who', who):gsub('%%spell', GetSpellLinkCompat(sid))
 	if failed then
 		msg = msg .. ' and it failed horribly.'
 	end

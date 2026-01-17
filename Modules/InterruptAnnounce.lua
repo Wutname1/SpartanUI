@@ -4,37 +4,41 @@ module.Displayname = L['Interrupt announcer']
 ----------------------------------------------------------------------------------------------------
 local lastTime, lastSpellID = nil, nil
 
+-- Helpers for API compatibility (retail vs classic)
+local GetSpellLinkCompat = C_Spell and C_Spell.GetSpellLink or GetSpellLink
+local SendChatMessageCompat = C_ChatInfo and SendChatMessageCompat or SendChatMessage
+
 local function printFormattedString(t, sid, spell, ss, ssid, inputstring)
 	local msg = inputstring or module.DB.text
 	local DBChannel = module.DB.announceLocation or 'SELF'
-	local spelllink = C_Spell.GetSpellLink(sid)
+	local spelllink = GetSpellLinkCompat(sid)
 
-	msg = msg:gsub('%%t', t):gsub('%%cl', CombatLog_String_SchoolString(ss)):gsub('%%spell', spelllink):gsub('%%sl', spelllink):gsub('%%myspell', C_Spell.GetSpellLink(ssid))
+	msg = msg:gsub('%%t', t):gsub('%%cl', CombatLog_String_SchoolString(ss)):gsub('%%spell', spelllink):gsub('%%sl', spelllink):gsub('%%myspell', GetSpellLinkCompat(ssid))
 	if DBChannel ~= 'SELF' then
 		if DBChannel == 'SMART' then
 			if IsInGroup(2) then
-				C_ChatInfo.SendChatMessage(msg, 'INSTANCE_CHAT')
+				SendChatMessageCompat(msg, 'INSTANCE_CHAT')
 				return
 			elseif IsInRaid() then
-				C_ChatInfo.SendChatMessage(msg, 'RAID')
+				SendChatMessageCompat(msg, 'RAID')
 				return
 			elseif IsInGroup(1) then
-				C_ChatInfo.SendChatMessage(msg, 'PARTY')
+				SendChatMessageCompat(msg, 'PARTY')
 				return
 			end
 		else
 			if DBChannel == 'RAID' or DBChannel == 'INSTANCE_CHAT' then
 				if IsInGroup(2) then
 					-- We are in a raid with instance chat
-					C_ChatInfo.SendChatMessage(msg, 'INSTANCE_CHAT')
+					SendChatMessageCompat(msg, 'INSTANCE_CHAT')
 					return
 				elseif IsInRaid() then
 					-- We are in a manual Raid
-					C_ChatInfo.SendChatMessage(msg, 'RAID')
+					SendChatMessageCompat(msg, 'RAID')
 					return
 				end
 			elseif DBChannel == 'PARTY' and IsInGroup(1) then
-				C_ChatInfo.SendChatMessage(msg, 'PARTY')
+				SendChatMessageCompat(msg, 'PARTY')
 				return
 			end
 		end
