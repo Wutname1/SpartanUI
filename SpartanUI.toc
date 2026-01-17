@@ -9,6 +9,7 @@
 ## X-WoWI-ID: 18206
 ## X-Wago-ID: vEGPqeN1
 ## X-Github: https://github.com/Wutname1/SpartanUI
+## X-oUF: SUIUF
 ## OptionalDeps: Bartender4, Libs-AddonTools
 ## SavedVariables: SpartanUIDB, SUIErrorHandler
 ## SavedVariablesPerCharacter: SpartanUICharDB
@@ -50,12 +51,12 @@ libs\LibQTip-1.0\lib.xml
 
 # Unit Frame libraries
 libs\LibDispel\LibDispel.lua
-# libs\oUF\oUF.xml
-# libs\oUF_Plugins\Loader.xml
+libs\oUF\oUF.xml
+libs\oUF_Plugins\Loader.xml
 
 # Now load SpartanUI
 core\Framework.lua
 modules\LoadAll.xml
 core\Framework.xml
-# core\oUF.lua
+core\oUF.lua
 Themes\Themes.xml
