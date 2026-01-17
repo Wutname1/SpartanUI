@@ -1,6 +1,10 @@
 ---@class SUI
 local SUI = SUI
 local L = SUI.L
+
+-- Retail-only module
+if not SUI.IsRetail then return end
+
 local module = SUI:NewModule('ExpandedExpansionButton') ---@class SUI.Module.ExpandedExpansionButton : SUI.Module
 module.DisplayName = 'Expanded Expansion Button'
 module.description = 'Provides enhanced right-click menu for expansion features'
