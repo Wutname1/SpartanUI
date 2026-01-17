@@ -415,7 +415,8 @@
     "UNKNOWN",
     "StatusTrackingManagerMixin",
     "STANDING",
-    "GameTooltip_Hide"
+    "GameTooltip_Hide",
+    "UISpecialFrames"
   ],
   "Lua.workspace.ignoreDir": [".vscode", "libs/*"],
   "Lua.diagnostics.enable": true,

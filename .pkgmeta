@@ -1,8 +1,10 @@
 package-as: SpartanUI
 
-ignore:
-    README.md
-    .travis.yml
-    *.Definition.lua
+externals:
+  Libs-AddonTools: https://github.com/Wutname1/Libs-AddonTools.git
+
+ignore: README.md
+  .travis.yml
+  *.Definition.lua
 
 enable-nolib-creation: no

@@ -1,5 +1,5 @@
 local SUI, L, print = SUI, SUI.L, SUI.print
-local module = SUI:NewModule('Module_TauntWatcher') ---@type SUI.Module
+local module = SUI:NewModule('Module_TauntWatcher') ---@class SUI.Module.TauntWatcher : SUI.Module
 module.Displayname = L['Taunt watcher']
 module.description = 'Notify you or your party when others taunt'
 ----------------------------------------------------------------------------------------------------
@@ -54,7 +54,7 @@ local function printFormattedString(who, target, sid, failed)
 			if ChatChannel == 'INSTANCE_CHAT' and not IsInGroup(2) then ChatChannel = 'SAY' end
 		end
 
-		SendChatMessage(msg, ChatChannel)
+		C_ChatInfo.SendChatMessage(msg, ChatChannel)
 	end
 end
 

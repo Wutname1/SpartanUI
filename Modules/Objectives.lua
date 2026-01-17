@@ -1,5 +1,5 @@
 local _G, SUI, L = _G, SUI, SUI.L
-local module = SUI:NewModule('ObjectiveTracker') ---@type SUI.Module.ObjectiveTracker
+local module = SUI:NewModule('ObjectiveTracker') ---@class SUI.Module.ObjectiveTracker : SUI.Module
 module.DisplayName = 'Objective Tracker'
 module.description = 'Enhanced objective tracker with advanced customization options and rules builder'
 
