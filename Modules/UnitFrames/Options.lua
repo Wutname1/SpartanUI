@@ -1,6 +1,19 @@
 local _G, SUI, L = _G, SUI, SUI.L
 local UF = SUI.UF ---@class SUI.UF
 ----------------------------------------------------------------------------------------------------
+-- Helper for spell info (retail vs classic API)
+local function GetSpellInfoCompat(spellInput)
+	if C_Spell and GetSpellInfoCompat then
+		return GetSpellInfoCompat(spellInput)
+	else
+		local name, _, icon, _, _, _, spellId = GetSpellInfo(spellInput)
+		if name then
+			return { name = name, iconID = icon, spellID = spellId }
+		end
+		return nil
+	end
+end
+
 local anchorPoints = {
 	['TOPLEFT'] = 'TOP LEFT',
 	['TOP'] = 'TOP',
@@ -1437,7 +1450,7 @@ function Options:Initialize()
 						local id = tonumber(string.match(info[#info], '(%d+)'))
 						local name = 'unknown'
 						if id then
-							local spellInfo = C_Spell.GetSpellInfo(id)
+							local spellInfo = GetSpellInfoCompat(id)
 							if spellInfo then name = string.format('|T%s:14:14:0:0|t %s (#%i)', spellInfo.iconID or 'Interface\\Icons\\Inv_misc_questionmark', spellInfo.name or L['Unknown'], id) end
 						end
 						return name
@@ -1480,10 +1493,10 @@ function Options:Initialize()
 						if input:find('|Hspell:%d+') then
 							spellId = tonumber(input:match('|Hspell:(%d+)'))
 						elseif input:find('%[(.-)%]') then
-							local spellInfo = C_Spell.GetSpellInfo(input:match('%[(.-)%]'))
+							local spellInfo = GetSpellInfoCompat(input:match('%[(.-)%]'))
 							spellId = spellInfo and spellInfo.spellID
 						else
-							local spellInfo = C_Spell.GetSpellInfo(input)
+							local spellInfo = GetSpellInfoCompat(input)
 							spellId = spellInfo and spellInfo.spellID
 						end
 						if not spellId then

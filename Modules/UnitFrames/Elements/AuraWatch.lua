@@ -1,5 +1,28 @@
 local UF = SUI.UF
 
+-- Helper for spell info (retail vs classic API)
+local function GetSpellInfoCompat(spellInput)
+	if C_Spell and GetSpellInfoCompat then
+		return GetSpellInfoCompat(spellInput)
+	else
+		local name, _, icon, _, _, _, spellId = GetSpellInfo(spellInput)
+		if name then
+			return { name = name, iconID = icon, spellID = spellId }
+		end
+		return nil
+	end
+end
+
+-- Helper for spellbook check (retail vs classic API)
+local function IsSpellInSpellBookCompat(spellID)
+	if C_SpellBook and IsSpellInSpellBookCompat then
+		return IsSpellInSpellBookCompat(spellID)
+	elseif IsSpellKnown then
+		return IsSpellKnown(spellID)
+	end
+	return false
+end
+
 ---@param frame table
 ---@param DB table
 local function Build(frame, DB)
@@ -9,7 +32,7 @@ local function Build(frame, DB)
 			return
 		end
 		local settings = button.setting
-		local SpellKnown = C_SpellBook.IsSpellInSpellBook(button.spellID)
+		local SpellKnown = IsSpellInSpellBookCompat(button.spellID)
 		if settings.onlyIfCastable and not SpellKnown then
 			button:Hide()
 		end
@@ -56,7 +79,7 @@ local function Options(unitName, OptionSet, DB)
 			local id = tonumber(string.match(info[#info], '(%d+)'))
 			local name = 'unknown'
 			if id then
-				local spellInfo = C_Spell.GetSpellInfo(id)
+				local spellInfo = GetSpellInfoCompat(id)
 				if spellInfo then
 					name = string.format('|T%s:14:14:0:0|t %s (#%i)', spellInfo.iconID or 'Interface\\Icons\\Inv_misc_questionmark', spellInfo.name or SUI.L['Unknown'], id)
 				end
@@ -102,10 +125,10 @@ local function Options(unitName, OptionSet, DB)
 			if input:find('|Hspell:%d+') then
 				spellId = tonumber(input:match('|Hspell:(%d+)'))
 			elseif input:find('%[(.-)%]') then
-				local spellInfo = C_Spell.GetSpellInfo(input:match('%[(.-)%]'))
+				local spellInfo = GetSpellInfoCompat(input:match('%[(.-)%]'))
 				spellId = spellInfo and spellInfo.spellID
 			else
-				local spellInfo = C_Spell.GetSpellInfo(input)
+				local spellInfo = GetSpellInfoCompat(input)
 				spellId = spellInfo and spellInfo.spellID
 			end
 			if not spellId then
