@@ -287,18 +287,18 @@ local TooltipSetItem = function(tooltip, tooltipData)
 	local itemLink = nil
 	if tooltip.GetItem then
 		itemLink = select(2, tooltip:GetItem())
-	elseif tooltipData.guid then
+	elseif tooltipData and tooltipData.guid and C_Item and C_Item.GetItemLinkByGUID then
 		itemLink = C_Item.GetItemLinkByGUID(tooltipData.guid)
 	else
 		return
 	end
 
 	if itemLink then
-		local quality = select(3, C_Item.GetItemInfo(itemLink))
+		local quality = C_Item and C_Item.GetItemInfo and select(3, C_Item.GetItemInfo(itemLink)) or select(3, GetItemInfo(itemLink))
 		local style = {
 			bgFile = 'Interface/Tooltips/UI-Tooltip-Background'
 		}
-		if C_AzeriteEmpoweredItem.IsAzeriteEmpoweredItemByID(itemLink) or C_AzeriteItem.IsAzeriteItemByID(itemLink) then
+		if C_AzeriteEmpoweredItem and C_AzeriteItem and (C_AzeriteEmpoweredItem.IsAzeriteEmpoweredItemByID(itemLink) or C_AzeriteItem.IsAzeriteItemByID(itemLink)) then
 			style = {
 				bgFile = 'Interface/Tooltips/UI-Tooltip-Background-Azerite',
 				overlayAtlasTop = 'AzeriteTooltip-Topper',
@@ -313,7 +313,7 @@ local TooltipSetItem = function(tooltip, tooltipData)
 		GameTooltip:SetBackdropColor(unpack(module.DB.Color))
 
 		if quality and tooltip.SetBorderColor then
-			local r, g, b = C_Item.GetItemQualityColor(quality)
+			local r, g, b = C_Item and C_Item.GetItemQualityColor and C_Item.GetItemQualityColor(quality) or GetItemQualityColor(quality)
 			r, g, b = (r * 0.5), (g * 0.5), (b * 0.5)
 			tooltip:SetBorderColor(r, g, b)
 		end
