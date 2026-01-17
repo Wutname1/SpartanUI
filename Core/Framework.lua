@@ -1,3 +1,9 @@
+-- API compatibility helpers (must be defined before use)
+local GetAddOnMetadataCompat = C_AddOns and C_AddOns.GetAddOnMetadata or GetAddOnMetadata
+local GetAddOnEnableStateCompat = C_AddOns and C_AddOns.GetAddOnEnableState or GetAddOnEnableState
+local IsAddOnLoadedCompat = C_AddOns and C_AddOns.IsAddOnLoaded or IsAddOnLoaded
+local LoadAddOnCompat = C_AddOns and C_AddOns.LoadAddOn or LoadAddOn
+
 ---@class SUI : AceAddon, AceEvent-3.0, AceConsole-3.0, AceSerializer-3.0
 ---@field MoveIt MoveIt
 local SUI = LibStub('AceAddon-3.0'):NewAddon('SpartanUI', 'AceEvent-3.0', 'AceConsole-3.0', 'AceSerializer-3.0')
@@ -8,9 +14,9 @@ local _G = _G
 SUI.L = LibStub('AceLocale-3.0'):GetLocale('SpartanUI', true) ---@type SUIL
 -- Only enable SUI error handler if LibAT is not available
 SUI.AutoOpenErrors = not (LibAT and LibAT.ErrorDisplay)
-SUI.Version = C_AddOns.GetAddOnMetadata('SpartanUI', 'Version') or 0
-SUI.BuildNum = C_AddOns.GetAddOnMetadata('SpartanUI', 'X-Build') or 0
-SUI.Bartender4Version = (C_AddOns.GetAddOnMetadata('Bartender4', 'Version') or 0)
+SUI.Version = GetAddOnMetadataCompat('SpartanUI', 'Version') or 0
+SUI.BuildNum = GetAddOnMetadataCompat('SpartanUI', 'X-Build') or 0
+SUI.Bartender4Version = (GetAddOnMetadataCompat('Bartender4', 'Version') or 0)
 SUI.IsRetail = (WOW_PROJECT_ID == WOW_PROJECT_MAINLINE) ---@type boolean
 SUI.IsClassic = (WOW_PROJECT_ID == WOW_PROJECT_CLASSIC) ---@type boolean
 SUI.IsTBC = (WOW_PROJECT_ID == WOW_PROJECT_BURNING_CRUSADE_CLASSIC) ---@type boolean
@@ -1174,7 +1180,7 @@ function SUI:OnInitialize()
 	end
 
 	local function Version()
-		SUI:Print(SUI.L['Version'] .. ' ' .. C_AddOns.GetAddOnMetadata('SpartanUI', 'Version'))
+		SUI:Print(SUI.L['Version'] .. ' ' .. GetAddOnMetadataCompat('SpartanUI', 'Version'))
 		SUI:Print(string.format('%s build %s', SUI.wowVersion, SUI.BuildNum))
 		if SUI.Bartender4Version ~= 0 then SUI:Print(SUI.L['Bartender4 version'] .. ' ' .. SUI.Bartender4Version) end
 	end
@@ -1598,11 +1604,24 @@ end
 ---------------  Misc Backend  ---------------
 
 function SUI:IsAddonEnabled(addon)
-	return C_AddOns.GetAddOnEnableState(addon, UnitName('player')) == 2
+	return GetAddOnEnableStateCompat(addon, UnitName('player')) == 2
 end
 
 function SUI:IsAddonDisabled(addon)
 	return not self:IsAddonEnabled(addon)
+end
+
+-- API compatibility helpers for modules to use
+function SUI:IsAddOnLoaded(addon)
+	return IsAddOnLoadedCompat(addon)
+end
+
+function SUI:LoadAddOn(addon)
+	return LoadAddOnCompat(addon)
+end
+
+function SUI:GetAddOnMetadata(addon, field)
+	return GetAddOnMetadataCompat(addon, field)
 end
 
 function SUI:GetAceAddon(addon)
@@ -1614,7 +1633,7 @@ function SUI:GetiLVL(itemLink)
 
 	local scanningTooltip = CreateFrame('GameTooltip', 'AutoTurnInTooltip', nil, 'GameTooltipTemplate')
 	local itemLevelPattern = ITEM_LEVEL:gsub('%%d', '(%%d+)')
-	local itemQuality = select(3, C_Item.GetItemInfo(itemLink))
+	local itemQuality = C_Item and C_Item.GetItemInfo and select(3, C_Item.GetItemInfo(itemLink)) or select(3, GetItemInfo(itemLink))
 
 	-- if a heirloom return a huge number so we dont replace it.
 	if itemQuality == 7 then return math.huge end
