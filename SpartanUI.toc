@@ -1,9 +1,4 @@
-## Interface: 120000
-## Interface-Classic: 11506
-## Interface-BCC: 20505
-## Interface-Wrath: 30403
-## Interface-Cata: 40401
-## Interface-MoP: 50503
+## Interface: 120000, 50503, 38000, 11508, 20505
 
 ## Title: Spartan|cffe21f1fUI
 ## Notes: User Interface combining elegant artwork with well designed features.
@@ -52,7 +47,7 @@ libs\LibQTip-1.0\lib.xml [AllowLoadGameType mainline]
 # ============================================
 libs\bug-grabber\load.xml
 Core\Handlers\Bugs\loader.xml [AllowLoadGameType mainline]
-Core\Handlers\BugWindow.lua [AllowLoadGameType vanilla, bcc, wrath, cata, mists]
+Core\Handlers\BugWindow.lua [AllowLoadGameType vanilla, tbc, wrath, cata, mists]
 
 # ============================================
 # GENERAL LIBRARIES CONTINUED - SHARED
@@ -66,9 +61,9 @@ libs\AceGUI-3.0-SharedMediaWidgets\widget.xml
 # ============================================
 # LIBRARIES - CLASSIC ONLY
 # ============================================
-libs\LibHealComm-4.0\LibHealComm-4.0.lua [AllowLoadGameType vanilla, bcc, wrath, cata, mists]
-libs\LibClassicDurations\LibClassicDurations.xml [AllowLoadGameType vanilla, bcc]
-libs\LibClassicCasterino\LibClassicCasterino.lua [AllowLoadGameType vanilla, bcc]
+libs\LibHealComm-4.0\LibHealComm-4.0.lua [AllowLoadGameType vanilla, tbc, wrath, cata, mists]
+libs\LibClassicDurations\LibClassicDurations.xml [AllowLoadGameType vanilla, tbc]
+libs\LibClassicCasterino\LibClassicCasterino.lua [AllowLoadGameType vanilla, tbc]
 
 # ============================================
 # UNIT FRAME LIBRARIES
@@ -79,7 +74,7 @@ libs\LibDispel\LibDispel.lua
 libs\oUF\oUF.xml [AllowLoadGameType mainline]
 
 # oUF - Classic (custom fork for classic variants)
-libs\oUF_Classic\oUF_Classic.xml [AllowLoadGameType vanilla, bcc]
+libs\oUF_Classic\oUF_Classic.xml [AllowLoadGameType vanilla, tbc]
 libs\oUF_Classic\oUF_Wrath.xml [AllowLoadGameType wrath, cata, mists]
 
 # oUF Plugins
