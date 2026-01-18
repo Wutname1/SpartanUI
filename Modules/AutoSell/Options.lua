@@ -513,6 +513,12 @@ function module:CreateMiniVendorPanels()
 	local IsCollapsed = true
 	local LibAT = LibStub('Libs-AddonTools-1.0', true)
 
+	-- LibAT is required for vendor panels
+	if not LibAT or not LibAT.UI then
+		SUI:Print('AutoSell vendor panels require Libs-AddonTools')
+		return
+	end
+
 	-- Store panel references so we can hide them on disable
 	if not module.VendorPanels then
 		module.VendorPanels = {}

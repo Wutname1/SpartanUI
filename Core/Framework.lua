@@ -1039,7 +1039,7 @@ local function reloaduiWindow()
 		UI.CreateWindow(
 		{
 			name = 'SUI_ReloadUI',
-			title = '',
+			title = 'SpartanUI',
 			width = 400,
 			height = 140,
 			hidePortrait = true
