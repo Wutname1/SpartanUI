@@ -6,5 +6,8 @@ ignore:
 
 enable-nolib-creation: no
 
+externals:
+  Libs-AddonTools: https://github.com/Wutname1/Libs-AddonTools.git
+
 move-folders:
   SpartanUI/Libs-AddonTools: Libs-AddonTools
