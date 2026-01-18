@@ -30,9 +30,10 @@ The addon uses a modular architecture where each feature is a separate module:
 
 ### Libraries
 
-- **libs/**: Third-party libraries including Ace3, oUF (unit frames), StdUi, LibSharedMedia
+- **libs/**: Third-party libraries including Ace3, oUF (unit frames), LibSharedMedia
 - Uses LibStub for library management
 - Extensive use of Ace3 framework for addon structure
+- **LibAT.UI**: UI widget system provided by Libs-AddonTools for creating windows, buttons, checkboxes, etc.
 
 ## Key Commands
 
@@ -142,8 +143,26 @@ Always document function inputs and outputs to improve code maintainability and 
 
 ### Dependencies
 
-- **Required**: Bartender4 (action bar addon)
+- **Required**: Bartender4 (action bar addon), Libs-AddonTools (UI system and utilities)
 - **Optional**: Various other addons for enhanced functionality
+
+### WoW API Documentation Resources
+
+When working with WoW addon development, use these authoritative resources:
+
+- **TOC Format Variables**: https://warcraft.wiki.gg/wiki/TOC_format
+  - Reference when modifying .toc files for available variables
+- **Latest Interface Versions**: https://warcraft.wiki.gg/wiki/Template:API_LatestInterface
+  - Quick lookup for current patch interface version numbers
+- **WoW UI Source Code Export**: `C:\Users\jerem\Syncthing\WOWUICode\wow-ui-source`
+  - Local copy of raw Blizzard UI source code (current live version)
+- **Midnight Alpha/Beta**: `C:\Users\jerem\Syncthing\WOWUICode\wow-ui-source-Beta`
+  - Next expansion UI source code
+- **API Reference**: https://warcraft.wiki.gg
+  - Most up-to-date resource for all WoW API lookups
+  - Prefer this over the local code export for API documentation
+
+Always use warcraft.wiki.gg as the primary reference for API lookups and documentation.
 
 ### Testing
 

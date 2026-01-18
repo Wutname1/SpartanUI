@@ -11,7 +11,7 @@
 ## X-Wago-ID: vEGPqeN1
 ## X-Github: https://github.com/Wutname1/SpartanUI
 ## X-oUF: SUIUF
-## OptionalDeps: Bartender4, Libs-AddonTools
+## RequiredDeps: Bartender4, Libs-AddonTools
 ## SavedVariables: SpartanUIDB, SUIErrorHandler
 ## SavedVariablesPerCharacter: SpartanUICharDB
 ## X-BugGrabber-Display: SUIErrorDisplay
@@ -29,7 +29,6 @@
 # GENERAL LIBRARIES - SHARED (all versions)
 # ============================================
 libs\Ace3\Ace3.xml
-libs\StdUi\StdUi.xml
 libs\LibDataBroker\LibDataBroker-1.1.lua
 libs\LibDBIcon-1.0\lib.xml
 
@@ -90,6 +89,7 @@ lang\localization.xml
 # ============================================
 Core\Framework.lua
 Core\BlizzAPI.lua
+Core\UI\Helpers.lua
 
 # ============================================
 # MODULES

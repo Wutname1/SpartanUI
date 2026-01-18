@@ -1,4 +1,3 @@
-local StdUi = LibStub('StdUi'):NewInstance()
 local IconName = 'SUIErrorIcon'
 local addon = {}
 local window
@@ -215,33 +214,75 @@ hooksecurefunc(addon, 'UpdateDisplay', function()
 end)
 
 local createBugWindow = function()
-	-- Create window
-	window = StdUi:Window(nil, 510, 400)
+	-- Create window using native frame (StdUi:Window replacement)
+	window = CreateFrame('Frame', 'SUIBugWindow', UIParent, 'BasicFrameTemplateWithInset')
+	window:SetSize(510, 400)
 	window:SetPoint('CENTER', 0, 0)
 	window:SetFrameStrata('DIALOG')
+	window:EnableMouse(true)
+	window:SetMovable(true)
+	window:RegisterForDrag('LeftButton')
+	window:SetScript('OnDragStart', window.StartMoving)
+	window:SetScript('OnDragStop', window.StopMovingOrSizing)
 
-	window.Title = StdUi:Texture(window, 156, 45, 'Interface\\AddOns\\SpartanUI\\images\\setup\\SUISetup')
+	-- Title texture
+	window.Title = window:CreateTexture(nil, 'ARTWORK')
+	window.Title:SetSize(156, 45)
+	window.Title:SetTexture('Interface\\AddOns\\SpartanUI\\images\\setup\\SUISetup')
 	window.Title:SetTexCoord(0, 0.611328125, 0, 0.6640625)
 	window.Title:SetPoint('TOP')
 	window.Title:SetAlpha(0.8)
 
-	-- Create window Items
-	window.editBox = StdUi:MultiLineBox(window, 480, 320, '')
+	-- Create multiline editbox using ScrollFrame
+	local scrollFrame = CreateFrame('ScrollFrame', nil, window, 'InputScrollFrameTemplate')
+	scrollFrame:SetSize(480, 320)
+	window.editBox = scrollFrame
+	window.editBox.EditBox = scrollFrame.EditBox
+	window.editBox.EditBox:SetMultiLine(true)
+	window.editBox.EditBox:SetAutoFocus(false)
+	window.editBox.EditBox:SetMaxLetters(0)
+	window.editBox.EditBox:SetFontObject('ChatFontNormal')
+	window.editBox.EditBox:SetText('')
+	window.editBox.SetText = function(self, text) self.EditBox:SetText(text) end
+	window.editBox.GetText = function(self) return self.EditBox:GetText() end
 
-	window.SubTitle = StdUi:Label(window, 'Error handler ' .. (C_AddOns.GetAddOnMetadata('SpartanUI', 'Version') or ''), 10, nil, nil, 15)
+	-- Subtitle label
+	window.SubTitle = window:CreateFontString(nil, 'ARTWORK', 'GameFontNormalSmall')
+	window.SubTitle:SetText('Error handler ' .. (C_AddOns.GetAddOnMetadata('SpartanUI', 'Version') or ''))
 	window.SubTitle:SetPoint('BOTTOM', window.Title, 'BOTTOMRIGHT', 0, -1)
 
-	window.sessionLabel = StdUi:Label(window, '', 10, nil, 180, 20)
+	-- Session label
+	window.sessionLabel = window:CreateFontString(nil, 'ARTWORK', 'GameFontNormalSmall')
+	window.sessionLabel:SetSize(180, 20)
+	window.sessionLabel:SetText('')
 
-	window.countLabel = StdUi:Label(window, '', 12, nil, 80, 20)
+	-- Count label
+	window.countLabel = window:CreateFontString(nil, 'ARTWORK', 'GameFontNormal')
+	window.countLabel:SetSize(80, 20)
+	window.countLabel:SetText('')
 	window.countLabel:SetJustifyH('CENTER')
 
-	window.nextButton = StdUi:Button(window, 20, 20, '>')
-	window.prevButton = StdUi:Button(window, 20, 20, '<')
+	-- Navigation buttons
+	window.nextButton = CreateFrame('Button', nil, window, 'UIPanelButtonTemplate')
+	window.nextButton:SetSize(20, 20)
+	window.nextButton:SetText('>')
 
-	window.btnClose = StdUi:Button(window, 120, 20, 'CLOSE')
-	window.AutoOpen = StdUi:Checkbox(window, 'Auto open on error', 200, 20)
+	window.prevButton = CreateFrame('Button', nil, window, 'UIPanelButtonTemplate')
+	window.prevButton:SetSize(20, 20)
+	window.prevButton:SetText('<')
+
+	-- Close button
+	window.btnClose = CreateFrame('Button', nil, window, 'UIPanelButtonTemplate')
+	window.btnClose:SetSize(120, 20)
+	window.btnClose:SetText('CLOSE')
+
+	-- Auto open checkbox
+	window.AutoOpen = CreateFrame('CheckButton', nil, window, 'InterfaceOptionsCheckButtonTemplate')
+	window.AutoOpen.Text:SetText('Auto open on error')
+	window.AutoOpen:SetSize(200, 20)
 	if SUI.AutoOpenErrors then window.AutoOpen:SetChecked(true) end
+	-- Add GetValue method for compatibility
+	window.AutoOpen.GetValue = function(self) return self:GetChecked() end
 
 	-- Position
 	window.editBox:SetPoint('TOP', window, 'TOP', 0, -50)

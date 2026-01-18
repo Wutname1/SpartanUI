@@ -1,5 +1,5 @@
 --Cache global variables and Lua functions
-local _G, SUI, Lib, StdUi = _G, SUI, SUI.Lib, SUI.StdUi
+local _G, SUI, Lib = _G, SUI, SUI.Lib
 
 local RegisterAsContainer
 local RemoveTextures = SUI.Skins.RemoveTextures
@@ -156,7 +156,19 @@ local function SkinAce3()
 			local frame = widget.frame
 
 			if not frame.AppBar then
-				local AppBar = StdUi:Panel(frame, frame:GetWidth(), 22)
+				-- Create panel using native frame (StdUi:Panel replacement)
+				local AppBar = CreateFrame('Frame', nil, frame, 'BackdropTemplate')
+				AppBar:SetSize(frame:GetWidth(), 22)
+				AppBar:SetBackdrop({
+					bgFile = 'Interface\\Tooltips\\UI-Tooltip-Background',
+					edgeFile = 'Interface\\Tooltips\\UI-Tooltip-Border',
+					tile = true,
+					tileSize = 16,
+					edgeSize = 16,
+					insets = { left = 4, right = 4, top = 4, bottom = 4 },
+				})
+				AppBar:SetBackdropColor(0.1, 0.1, 0.1, 0.9)
+				AppBar:SetBackdropBorderColor(0.4, 0.4, 0.4, 1)
 				AppBar:SetFrameLevel(500)
 				AppBar:SetPoint('TOPRIGHT', 0, 0)
 				AppBar:SetPoint('TOPLEFT', 0, 0)
