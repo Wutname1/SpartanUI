@@ -1,5 +1,9 @@
 ---@class SUI
 local SUI = SUI
+
+-- Retail-only module (requires C_LFGList API)
+if not SUI.IsRetail then return end
+
 local module = SUI:NewModule('ImprovedLFG')
 module.DisplayName = 'Improved LFG'
 ------------------------------------------

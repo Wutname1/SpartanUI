@@ -173,32 +173,20 @@ function LibAT.UI.CreateIconButton(parent, normalAtlas, highlightAtlas, pushedAt
 	button.PushedTexture:SetAlpha(0)
 
 	-- Set up hover and click effects
-	button:SetScript(
-		'OnEnter',
-		function(self)
-			self.HighlightTexture:SetAlpha(1)
-		end
-	)
-	button:SetScript(
-		'OnLeave',
-		function(self)
-			self.HighlightTexture:SetAlpha(0)
-		end
-	)
-	button:SetScript(
-		'OnMouseDown',
-		function(self)
-			self.PushedTexture:SetAlpha(1)
-			self.NormalTexture:SetAlpha(0)
-		end
-	)
-	button:SetScript(
-		'OnMouseUp',
-		function(self)
-			self.PushedTexture:SetAlpha(0)
-			self.NormalTexture:SetAlpha(1)
-		end
-	)
+	button:SetScript('OnEnter', function(self)
+		self.HighlightTexture:SetAlpha(1)
+	end)
+	button:SetScript('OnLeave', function(self)
+		self.HighlightTexture:SetAlpha(0)
+	end)
+	button:SetScript('OnMouseDown', function(self)
+		self.PushedTexture:SetAlpha(1)
+		self.NormalTexture:SetAlpha(0)
+	end)
+	button:SetScript('OnMouseUp', function(self)
+		self.PushedTexture:SetAlpha(0)
+		self.NormalTexture:SetAlpha(1)
+	end)
 
 	return button
 end
@@ -232,9 +220,7 @@ function LibAT.UI.CreateEditBox(parent, width, height, multiline)
 	editBox:SetAutoFocus(false)
 	editBox:SetFontObject('GameFontHighlight')
 
-	if multiline then
-		editBox:SetMultiLine(true)
-	end
+	if multiline then editBox:SetMultiLine(true) end
 
 	return editBox
 end
@@ -326,18 +312,12 @@ function LibAT.UI.CreateScrollableTextDisplay(parent)
 	editBox:SetAutoFocus(false)
 	editBox:EnableMouse(true)
 	editBox:SetTextColor(1, 1, 1)
-	editBox:SetScript(
-		'OnTextChanged',
-		function(self)
-			ScrollingEdit_OnTextChanged(self, self:GetParent())
-		end
-	)
-	editBox:SetScript(
-		'OnCursorChanged',
-		function(self, x, y, w, h)
-			ScrollingEdit_OnCursorChanged(self, x, y - 10, w, h)
-		end
-	)
+	editBox:SetScript('OnTextChanged', function(self)
+		ScrollingEdit_OnTextChanged(self, self:GetParent())
+	end)
+	editBox:SetScript('OnCursorChanged', function(self, x, y, w, h)
+		ScrollingEdit_OnCursorChanged(self, x, y - 10, w, h)
+	end)
 
 	scrollFrame:SetScrollChild(editBox)
 
@@ -369,6 +349,42 @@ function LibAT.UI.CreateHeader(parent, text)
 	header:SetText(text)
 	header:SetTextColor(1, 0.82, 0) -- Gold color
 	return header
+end
+
+----------------------------------------------------------------------------------------------------
+-- Progress Bar Components
+----------------------------------------------------------------------------------------------------
+
+---Create a progress bar (StatusBar)
+---@param parent Frame Parent frame
+---@param width number Progress bar width
+---@param height number Progress bar height
+---@return StatusBar progressBar Progress bar frame
+function LibAT.UI.CreateProgressBar(parent, width, height)
+	local progressBar = CreateFrame('StatusBar', nil, parent)
+	progressBar:SetSize(width, height)
+	progressBar:SetStatusBarTexture('Interface\\TargetingFrame\\UI-StatusBar')
+	progressBar:SetStatusBarColor(0.1, 0.6, 1.0) -- Blue color
+	progressBar:SetMinMaxValues(0, 100)
+	progressBar:SetValue(0)
+
+	-- Add a background
+	local bg = progressBar:CreateTexture(nil, 'BACKGROUND')
+	bg:SetAllPoints(progressBar)
+	bg:SetColorTexture(0.1, 0.1, 0.1, 0.5)
+	progressBar.bg = bg
+
+	-- Add a border
+	local border = CreateFrame('Frame', nil, progressBar, 'BackdropTemplate')
+	border:SetAllPoints(progressBar)
+	border:SetBackdrop({
+		edgeFile = 'Interface\\Buttons\\WHITE8X8',
+		edgeSize = 1,
+	})
+	border:SetBackdropBorderColor(0.3, 0.3, 0.3, 1)
+	progressBar.border = border
+
+	return progressBar
 end
 
 return UI

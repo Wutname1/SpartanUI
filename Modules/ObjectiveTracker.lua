@@ -1,4 +1,8 @@
 local _G, SUI, L = _G, SUI, SUI.L
+
+-- Retail-only module (classic uses different quest tracking)
+if not SUI.IsRetail then return end
+
 local module = SUI:NewModule('ObjectiveTracker') ---@type SUI.Module.ObjectiveTracker
 module.DisplayName = 'Objective Tracker'
 module.description = 'Enhanced objective tracker with advanced customization options and rules builder'

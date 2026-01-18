@@ -1,6 +1,20 @@
 local UF = SUI.UF
 local L = SUI.L
 
+-- Helper for spell info (retail vs classic API)
+-- Retail returns a table, classic returns multiple values
+local function GetSpellInfoCompat(spellInput)
+	if C_Spell and GetSpellInfoCompat then
+		return GetSpellInfoCompat(spellInput)
+	else
+		local name, _, icon, _, _, _, spellId = GetSpellInfo(spellInput)
+		if name then
+			return { name = name, iconID = icon, spellID = spellId }
+		end
+		return nil
+	end
+end
+
 -- Healing over Time spell lists for easy healer filtering
 local HealingSpells = {
 	-- Druid HoTs
@@ -383,10 +397,10 @@ local function Options(unitName, OptionSet)
 			if input:find('|Hspell:%d+') then
 				spellId = tonumber(input:match('|Hspell:(%d+)'))
 			elseif input:find('%[(.-)%]') then
-				local spellInfo = C_Spell.GetSpellInfo(input:match('%[(.-)%]'))
+				local spellInfo = GetSpellInfoCompat(input:match('%[(.-)%]'))
 				spellId = spellInfo and spellInfo.spellID
 			else
-				local spellInfo = C_Spell.GetSpellInfo(input)
+				local spellInfo = GetSpellInfoCompat(input)
 				spellId = spellInfo and spellInfo.spellID
 			end
 			if not spellId then

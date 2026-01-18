@@ -994,7 +994,7 @@ function module:BuildOptions()
 
 			if type(entry) == 'number' then
 				-- If the entry is a number, assume it's a quest ID
-				local title = C_QuestLog.GetTitleForQuestID(entry)
+				local title = C_QuestLog.GetTitleForQuestID and C_QuestLog.GetTitleForQuestID(entry)
 				if title then
 					label = 'ID: ' .. entry .. ' (' .. title .. ')'
 				else

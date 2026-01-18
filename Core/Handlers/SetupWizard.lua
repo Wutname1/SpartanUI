@@ -236,7 +236,7 @@ function module:SetupWizard(RequiredPagesOnly)
 	local UI = LibAT.UI
 	module.window = UI.CreateWindow({
 		name = 'SUI_SetupWizard',
-		title = '',
+		title = 'Setup Wizard',
 		width = 650,
 		height = 500,
 		hidePortrait = true,

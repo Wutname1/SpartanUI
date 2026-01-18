@@ -36,6 +36,19 @@ local function Update(self, event)
 	* self - the PvPRoleIndicator element
 	--]]
 	if element.PreUpdate then element:PreUpdate() end
+
+	-- Safety check: Ensure we have required API and data
+	if not C_PvP or not C_PvP.GetScoreInfoByPlayerGuid then
+		element:Hide()
+		return
+	end
+
+	-- Need valid unit GUID
+	if not self.unitGUID or self.unitGUID == '' then
+		element:Hide()
+		return
+	end
+
 	local info = C_PvP.GetScoreInfoByPlayerGuid(self.unitGUID)
 	if not info then
 		element:Hide()

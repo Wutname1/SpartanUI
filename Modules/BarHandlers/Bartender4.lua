@@ -506,7 +506,7 @@ local function OnEnable()
 			'OnEvent',
 			function()
 				if cnt <= 10 then
-					SUI.StdUi:Dialog(L['Warning'], L['Bartender4 not detected! Please download and install Bartender4.'] .. ' Warning ' .. cnt .. ' of 10')
+					SUI.UI.Dialog(L['Warning'], L['Bartender4 not detected! Please download and install Bartender4.'] .. ' Warning ' .. cnt .. ' of 10')
 				else
 					SUI.DB.BT4Warned = true
 				end

@@ -1,7 +1,6 @@
 ---@class SUI
 local SUI = SUI
 local L = SUI.L
-local StdUi = SUI.StdUi
 ---@class SUI.Module.Chatbox : SUI.Module, AceHook-3.0
 local module = SUI:NewModule('Chatbox', 'AceHook-3.0')
 module.description = 'Lightweight quality of life chat improvements'

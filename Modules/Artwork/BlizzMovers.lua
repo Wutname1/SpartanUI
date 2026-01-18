@@ -33,8 +33,12 @@ local function ResetParent(frame, parent)
 			return
 		end
 
-		ZoneAbilityFrame:SetParent(BossButtonHolder)
-		ExtraActionBarFrame:SetParent(BossButtonHolder)
+		if ZoneAbilityFrame then
+			ZoneAbilityFrame:SetParent(BossButtonHolder)
+		end
+		if ExtraActionBarFrame then
+			ExtraActionBarFrame:SetParent(BossButtonHolder)
+		end
 	end
 end
 
@@ -52,10 +56,14 @@ function ExtraAB.Reparent()
 	local ExtraActionBarFrame = _G['ExtraActionBarFrame']
 	local ZoneAbilityFrame = _G['ZoneAbilityFrame']
 
-	ZoneAbilityFrame:SetParent(ExtraAB.ZoneAbilityHolder)
-	ExtraActionBarFrame:SetParent(ExtraAB.ExtraActionBarHolder)
-	ExtraActionBarFrame:ClearAllPoints()
-	ExtraActionBarFrame:SetPoint('CENTER', ExtraAB.ExtraActionBarHolder, 'CENTER')
+	if ZoneAbilityFrame and ExtraAB.ZoneAbilityHolder then
+		ZoneAbilityFrame:SetParent(ExtraAB.ZoneAbilityHolder)
+	end
+	if ExtraActionBarFrame and ExtraAB.ExtraActionBarHolder then
+		ExtraActionBarFrame:SetParent(ExtraAB.ExtraActionBarHolder)
+		ExtraActionBarFrame:ClearAllPoints()
+		ExtraActionBarFrame:SetPoint('CENTER', ExtraAB.ExtraActionBarHolder, 'CENTER')
+	end
 end
 
 ---Cache the original position of a frame before moving it
