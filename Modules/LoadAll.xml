@@ -35,6 +35,6 @@
 	<Script file="Artwork\Options.lua" />
 
 	<!-- Load UnitFrames -->
-	<!-- <Include file="UnitFrames\Load.xml"/> -->
+	<Include file="UnitFrames\Load.xml"/>
 	<!-- <Script file="Nameplates.lua" /> -->
 </Ui>

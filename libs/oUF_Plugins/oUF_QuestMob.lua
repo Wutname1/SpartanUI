@@ -98,7 +98,15 @@ local function GetQuests(unitID)
 				local type, index, texture, _
 				if activeID then
 					index = questIcons.indexByID[activeID]
-					_, texture = GetQuestLogSpecialItemInfo(index)
+					-- Handle API differences between retail and classic
+					if C_QuestLog and C_QuestLog.GetQuestAdditionalHighlights then
+						local highlights = C_QuestLog.GetQuestAdditionalHighlights(activeID)
+						if highlights and highlights[1] then
+							texture = highlights[1].atlasName or highlights[1].texture
+						end
+					elseif GetQuestLogSpecialItemInfo then
+						_, texture = GetQuestLogSpecialItemInfo(index)
+					end
 				end
 
 				if texture then

@@ -50,7 +50,7 @@
 
 	<Include file="Elements\_LoadAll.xml"/>
 
-	<Script file="Units\arena.lua"/>
+	<!-- <Script file="Units\arena.lua"/> DISABLED: Not functioning properly -->
 	<Script file="Units\boss.lua"/>
 	<!-- <Script file="Units\bosstarget.lua"/> -->
 	<Script file="Units\focus.lua"/>

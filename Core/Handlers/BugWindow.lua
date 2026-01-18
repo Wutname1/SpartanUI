@@ -144,7 +144,7 @@ local function updateDisplay(forceRefresh)
 	end
 
 	SessionID = BugGrabber:GetSessionId()
-	currentErrorList = addon:GetErrors(SessionID)
+	currentErrorList = addon:GetErrors(SessionID) or {}
 
 	local size = #currentErrorList
 	local ErrObj = nil
