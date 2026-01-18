@@ -95,6 +95,8 @@ Core\UI\Helpers.lua
 # ============================================
 # MODULES
 # ============================================
+Modules\InterruptAnnounce.lua [AllowLoadGameType vanilla, tbc, wrath, cata, mists]
+Modules\TauntWatcher.lua [AllowLoadGameType vanilla, tbc, wrath, cata, mists]
 Modules\LoadAll.xml
 
 # ============================================

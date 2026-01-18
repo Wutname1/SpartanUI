@@ -13,8 +13,6 @@
 	<Script file="CombatLog.lua" />
 	<Script file="ImprovedCharacterScreen.lua" />
 	<!-- <Script file="ImprovedLFG.lua" /> -->
-	<Script file="InterruptAnnounce.lua" />
-	<Script file="TauntWatcher.lua" />
 	<Script file="Chatbox.lua" />
 	<Script file="AFKEffects.lua" />
 	<Script file="StopTalking.lua" />
