@@ -7,7 +7,7 @@ function SUI:WhatsNew()
 	local UI = LibAT.UI
 	module.window = UI.CreateWindow({
 		name = 'SUI_WhatsNew',
-		title = '',
+		title = "What's New",
 		width = 650,
 		height = 500,
 		hidePortrait = true,

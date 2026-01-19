@@ -359,7 +359,7 @@ local function AbilityBars()
 		module.BlizzMoverCache['ExtraActionBar'].holder = ExtraActionBarHolder
 	end
 
-	if zoneAbilityEnabled then
+	if zoneAbilityEnabled and ZoneAbilityFrame then
 		MoveIt:CreateMover(ZoneAbilityHolder, 'ZoneAbility', 'Zone ability button', nil, 'Blizzard UI')
 		ZoneAbilityHolder:EnableMouse(false)
 		module.BlizzMoverCache['ZoneAbility'].holder = ZoneAbilityHolder
@@ -686,8 +686,11 @@ local function TopCenterContainer()
 	AttachToHolder(frame, holder)
 	hooksecurefunc(frame, 'SetPoint', ResetPosition)
 	MoveIt:CreateMover(holder, moverName, 'Top center container', nil, 'Blizzard UI')
-	for _, widget in pairs(frame.widgetFrames) do
-		SUI.Skins.SkinWidgets(widget)
+	-- widgetFrames only exists in retail
+	if frame.widgetFrames then
+		for _, widget in pairs(frame.widgetFrames) do
+			SUI.Skins.SkinWidgets(widget)
+		end
 	end
 	module:RegisterEvent('PLAYER_ENTERING_WORLD')
 	module:RegisterEvent('UPDATE_ALL_UI_WIDGETS')

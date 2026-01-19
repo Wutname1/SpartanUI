@@ -514,7 +514,10 @@ function module:CreateBarContainer(barManager, key, index)
 end
 
 function module:SetupBarContainerVisuals(barContainer, barStyle)
-	barContainer.BarFrameTexture:Hide()
+	-- Hide BarFrameTexture if it exists (retail only)
+	if barContainer.BarFrameTexture then
+		barContainer.BarFrameTexture:Hide()
+	end
 	-- Create background
 	barContainer.bg = barContainer:CreateTexture(nil, 'BACKGROUND')
 	barContainer.bg:SetTexture(barStyle.bgTexture or '')

@@ -104,6 +104,7 @@ Modules\LoadAll.xml
 # ============================================
 Core\Framework.xml
 Core\oUF.lua [AllowLoadGameType mainline]
+Core\oUF_Classic.lua [AllowLoadGameType vanilla, tbc, wrath, cata, mists]
 
 # ============================================
 # THEMES

@@ -179,6 +179,26 @@ local function updateAura(element, unit, index, offset, filter, isDebuff, visibl
 
 	if not name then return end
 
+	-- Create data table to match retail oUF AuraData structure
+	local data = {
+		name = name,
+		icon = icon,
+		count = count,
+		debuffType = debuffType,
+		duration = duration,
+		expirationTime = expiration,
+		sourceUnit = source,
+		isStealable = isStealable,
+		nameplateShowPersonal = nameplateShowPersonal,
+		spellId = spellID,
+		canApplyAura = canApplyAura,
+		isBossAura = isBossDebuff,
+		isFromPlayerOrPlayerPet = castByPlayer,
+		nameplateShowAll = nameplateShowAll,
+		timeMod = modRate,
+		points = {effect1, effect2, effect3},
+	}
+
 	local position = visible + offset + 1
 	local button = element[position]
 	if(not button) then
@@ -267,21 +287,17 @@ local function updateAura(element, unit, index, offset, filter, isDebuff, visibl
 		button:SetID(index)
 		button:Show()
 
-		--[[ Callback: Auras:PostUpdateButton(unit, button, index, position)
+		--[[ Callback: Auras:PostUpdateButton(button, unit, data, position)
 		Called after the aura button has been updated.
 
-		* self        - the widget holding the aura buttons
-		* unit        - the unit on which the aura is cast (string)
-		* button      - the updated aura button (Button)
-		* index       - the index of the aura (number)
-		* position    - the actual position of the aura button (number)
-		* duration    - the aura duration in seconds (number?)
-		* expiration  - the point in time when the aura will expire. Comparable to GetTime() (number)
-		* debuffType  - the debuff type of the aura (string?)['Curse', 'Disease', 'Magic', 'Poison']
-		* isStealable - whether the aura can be stolen or purged (boolean)
+		* self     - the widget holding the aura buttons
+		* button   - the updated aura button (Button)
+		* unit     - the unit for which the update has been triggered (string)
+		* data     - the aura data table containing aura information (table)
+		* position - the actual position of the aura button (number)
 		--]]
 		if(element.PostUpdateButton) then
-			element:PostUpdateButton(unit, button, index, position, duration, expiration, debuffType, isStealable)
+			element:PostUpdateButton(button, unit, data, position)
 		end
 
 		return VISIBLE
@@ -292,7 +308,7 @@ local function updateAura(element, unit, index, offset, filter, isDebuff, visibl
 		button:Hide()
 
 		if element.PostUpdateButton then
-			element:PostUpdateButton(unit, button, index, position, duration, expiration, debuffType, isStealable)
+			element:PostUpdateButton(button, unit, data, position)
 		end
 
 		return CREATED

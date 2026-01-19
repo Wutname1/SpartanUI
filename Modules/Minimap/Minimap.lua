@@ -204,9 +204,13 @@ function module:ModifyMinimapLayout()
 	module:UpdateMinimapSize()
 	module:UpdateMinimapShape()
 
-	-- Modify basic Minimap properties
-	Minimap:SetArchBlobRingScalar(0)
-	Minimap:SetQuestBlobRingScalar(0)
+	-- Modify basic Minimap properties (retail only)
+	if Minimap.SetArchBlobRingScalar then
+		Minimap:SetArchBlobRingScalar(0)
+	end
+	if Minimap.SetQuestBlobRingScalar then
+		Minimap:SetQuestBlobRingScalar(0)
+	end
 
 	-- Modify MinimapCluster
 	MinimapCluster:EnableMouse(false)
@@ -218,13 +222,20 @@ function module:ModifyMinimapLayout()
 
 	MinimapCompassTexture:Hide()
 
-	MinimapCluster.BorderTop:ClearAllPoints()
-	MinimapCluster.BorderTop:SetPoint('TOP', Minimap, 'BOTTOM', 0, -5)
-	MinimapCluster.BorderTop:SetAlpha(0.8)
+	-- BorderTop and ZoneTextButton positioning (retail only)
+	if MinimapCluster.BorderTop then
+		MinimapCluster.BorderTop:ClearAllPoints()
+		MinimapCluster.BorderTop:SetPoint('TOP', Minimap, 'BOTTOM', 0, -5)
+		MinimapCluster.BorderTop:SetAlpha(0.8)
+	end
 
-	MinimapCluster.ZoneTextButton:ClearAllPoints()
-	MinimapCluster.ZoneTextButton:SetPoint('TOPLEFT', MinimapCluster.BorderTop, 'TOPLEFT', 4, -4)
-	MinimapCluster.ZoneTextButton:SetPoint('TOPRIGHT', MinimapCluster.BorderTop, 'TOPRIGHT', -15, -4)
+	if MinimapCluster.ZoneTextButton then
+		MinimapCluster.ZoneTextButton:ClearAllPoints()
+		if MinimapCluster.BorderTop then
+			MinimapCluster.ZoneTextButton:SetPoint('TOPLEFT', MinimapCluster.BorderTop, 'TOPLEFT', 4, -4)
+			MinimapCluster.ZoneTextButton:SetPoint('TOPRIGHT', MinimapCluster.BorderTop, 'TOPRIGHT', -15, -4)
+		end
+	end
 
 	-- Setup rotation if needed
 	if MinimapCluster.SetRotateMinimap then
