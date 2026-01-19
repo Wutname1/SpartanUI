@@ -269,8 +269,13 @@ function MenuSkin:GetTargetOffsets(target)
 end
 
 function MenuSkin:SkinGameMenu()
-	GameMenuFrame.Border:SetShown(false)
-	GameMenuFrame.Header:SetShown(false)
+	-- Border and Header don't exist in Classic
+	if GameMenuFrame.Border then
+		GameMenuFrame.Border:SetShown(false)
+	end
+	if GameMenuFrame.Header then
+		GameMenuFrame.Header:SetShown(false)
+	end
 end
 
 ---------------------------------------------------------------

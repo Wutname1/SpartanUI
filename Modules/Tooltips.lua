@@ -571,11 +571,20 @@ function module:OnEnable()
 	)
 
 	GameTooltip:HookScript('OnTooltipCleared', TipCleared)
-	TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Item, TooltipSetItem)
-	TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Unit, TooltipSetUnit)
-	TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Spell, TooltipSetSpell)
-	TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Mount, TooltipSetGeneric)
-	TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Quest, TooltipSetGeneric)
+
+	-- TooltipDataProcessor is Retail-only (10.0.2+), use old-style hooks for Classic
+	if TooltipDataProcessor then
+		TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Item, TooltipSetItem)
+		TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Unit, TooltipSetUnit)
+		TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Spell, TooltipSetSpell)
+		TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Mount, TooltipSetGeneric)
+		TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Quest, TooltipSetGeneric)
+	else
+		-- Classic compatibility: use old-style tooltip hooks
+		GameTooltip:HookScript('OnTooltipSetItem', TooltipSetItem)
+		GameTooltip:HookScript('OnTooltipSetUnit', TooltipSetUnit)
+		GameTooltip:HookScript('OnTooltipSetSpell', TooltipSetSpell)
+	end
 end
 
 function module:BuildOptions()

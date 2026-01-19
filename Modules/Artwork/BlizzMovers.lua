@@ -215,7 +215,11 @@ local function TalkingHead()
 		)
 
 		-- Store holder reference
-		module.BlizzMoverCache[moverName].holder = THUIHolder
+		if module.BlizzMoverCache[moverName] then
+			if module.BlizzMoverCache[moverName] then
+				module.BlizzMoverCache[moverName].holder = THUIHolder
+			end
+		end
 	end
 
 	if C_AddOns.IsAddOnLoaded('Blizzard_TalkingHeadUI') then
@@ -356,13 +360,21 @@ local function AbilityBars()
 	if extraActionEnabled then
 		MoveIt:CreateMover(ExtraActionBarHolder, 'ExtraActionBar', 'Extra action button', nil, 'Blizzard UI')
 		ExtraActionBarHolder:EnableMouse(false)
-		module.BlizzMoverCache['ExtraActionBar'].holder = ExtraActionBarHolder
+		if module.BlizzMoverCache['ExtraActionBar'] then
+			if module.BlizzMoverCache['ExtraActionBar'] then
+				module.BlizzMoverCache['ExtraActionBar'].holder = ExtraActionBarHolder
+			end
+		end
 	end
 
 	if zoneAbilityEnabled and ZoneAbilityFrame then
 		MoveIt:CreateMover(ZoneAbilityHolder, 'ZoneAbility', 'Zone ability button', nil, 'Blizzard UI')
 		ZoneAbilityHolder:EnableMouse(false)
-		module.BlizzMoverCache['ZoneAbility'].holder = ZoneAbilityHolder
+		if module.BlizzMoverCache['ZoneAbility'] then
+			if module.BlizzMoverCache['ZoneAbility'] then
+				module.BlizzMoverCache['ZoneAbility'].holder = ZoneAbilityHolder
+			end
+		end
 	end
 
 	-- Update the layout when new frames are added
@@ -442,7 +454,9 @@ local function FramerateFrame()
 	MoveIt:CreateMover(holder, moverName, 'Framerate frame', nil, 'Blizzard UI')
 
 	-- Store holder reference
-	module.BlizzMoverCache[moverName].holder = holder
+	if module.BlizzMoverCache[moverName] then
+		module.BlizzMoverCache[moverName].holder = holder
+	end
 end
 
 ---Disable the FramerateFrame mover
@@ -495,7 +509,9 @@ local function AlertFrame()
 	MoveIt:CreateMover(holder, 'AlertHolder', 'Alert frame anchor', nil, 'Blizzard UI')
 
 	-- Store holder reference
-	module.BlizzMoverCache[moverName].holder = holder
+	if module.BlizzMoverCache[moverName] then
+		module.BlizzMoverCache[moverName].holder = holder
+	end
 end
 
 ---Disable the AlertFrame mover
@@ -548,7 +564,9 @@ local function VehicleLeaveButton()
 		)
 
 		-- Store holder reference
-		module.BlizzMoverCache[moverName].holder = VehicleBtnHolder
+		if module.BlizzMoverCache[moverName] then
+			module.BlizzMoverCache[moverName].holder = VehicleBtnHolder
+		end
 	end
 
 	-- Delay this so unit frames have been generated
@@ -601,7 +619,9 @@ local function VehicleSeatIndicator()
 	SeatIndicator:SetPoint('TOPLEFT', VehicleSeatHolder)
 
 	-- Store holder reference
-	module.BlizzMoverCache[moverName].holder = VehicleSeatHolder
+	if module.BlizzMoverCache[moverName] then
+		module.BlizzMoverCache[moverName].holder = VehicleSeatHolder
+	end
 end
 
 ---Disable the VehicleSeatIndicator mover
@@ -651,7 +671,11 @@ local function WidgetPowerBarContainer()
 	MoveIt:CreateMover(holder, moverName, 'Power bar', nil, 'Blizzard UI')
 
 	-- Store holder reference
-	module.BlizzMoverCache[moverName].holder = holder
+	if module.BlizzMoverCache[moverName] then
+		if module.BlizzMoverCache[moverName] then
+			module.BlizzMoverCache[moverName].holder = holder
+		end
+	end
 end
 
 ---Disable the WidgetPowerBarContainer mover
@@ -696,7 +720,9 @@ local function TopCenterContainer()
 	module:RegisterEvent('UPDATE_ALL_UI_WIDGETS')
 
 	-- Store holder reference
-	module.BlizzMoverCache[moverName].holder = holder
+	if module.BlizzMoverCache[moverName] then
+		module.BlizzMoverCache[moverName].holder = holder
+	end
 end
 
 ---Disable the TopCenterContainer mover

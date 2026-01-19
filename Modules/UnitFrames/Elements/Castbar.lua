@@ -178,25 +178,36 @@ local function Update(frame, settings)
 	element.Icon:SetSize(DB.Icon.size, DB.Icon.size)
 
 	if frame.unitOnCreate == 'player' then
-		if EditModeManagerFrame then
+		-- EditModeManagerFrame.AccountSettings is Retail-only (10.0+)
+		if EditModeManagerFrame and EditModeManagerFrame.AccountSettings then
 			function EditModeManagerFrame.AccountSettings.SettingsContainer.CastBar:ShouldEnable()
 				return false
 			end
 		end
 		for _, k in ipairs({'PlayerCastingBarFrame', 'PetCastingBarFrame'}) do
 			local castFrame = _G[k]
-			castFrame.showCastbar = false
-			castFrame:SetUnit(nil)
-			castFrame:UnregisterAllEvents()
-			castFrame:Hide()
-			castFrame:HookScript(
-				'OnShow',
-				function(self)
-					self:Hide()
-					self.showCastbar = false
-					self:SetUnit(nil)
-				end
-			)
+			-- Classic uses different frame names (CastingBarFrame, not PlayerCastingBarFrame)
+			if castFrame then
+				castFrame.showCastbar = false
+				castFrame:SetUnit(nil)
+				castFrame:UnregisterAllEvents()
+				castFrame:Hide()
+				castFrame:HookScript(
+					'OnShow',
+					function(self)
+						self:Hide()
+						self.showCastbar = false
+						self:SetUnit(nil)
+					end
+				)
+			end
+		end
+
+		-- Classic-specific castbar frames
+		if CastingBarFrame then
+			CastingBarFrame:UnregisterAllEvents()
+			CastingBarFrame:Hide()
+			CastingBarFrame:HookScript('OnShow', function(self) self:Hide() end)
 		end
 	end
 end
