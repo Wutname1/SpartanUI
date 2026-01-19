@@ -85,12 +85,15 @@ SUI.AddLib('AceGUI', 'AceGUI-3.0')
 SUI.AddLib('Compress', 'LibCompress')
 SUI.AddLib('Base64', 'LibBase64-1.0-SUI')
 SUI.AddLib('LSM', 'LibSharedMedia-3.0')
--- Retail-only libraries (loaded conditionally via TOC)
-if SUI.IsRetail then
+-- Retail and TBC libraries (loaded conditionally via TOC)
+if SUI.IsRetail or SUI.IsTBC then
 	SUI.AddLib('LEM', 'LibEditMode', true)
-	SUI.AddLib('LibQTip', 'LibQTip-1.0', true)
 	SUI.AddLib('LibEditMode', 'LibEditMode', true)
 	SUI.AddLib('EditModeOverride', 'LibEditModeOverride-1.0', true)
+end
+-- Retail-only libraries (loaded conditionally via TOC)
+if SUI.IsRetail then
+	SUI.AddLib('LibQTip', 'LibQTip-1.0', true)
 end
 
 ---Safely reload the UI with instance+combat check

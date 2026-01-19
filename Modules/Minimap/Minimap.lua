@@ -1002,13 +1002,19 @@ local VehicleMover
 -- Initialize the vehicle mover
 function module:InitializeVehicleMover()
 	-- Create the vehicle mover with our new reusable function
+	-- Calculate height with Classic compatibility
+	local borderHeight = 0
+	if MinimapCluster.BorderTop then
+		borderHeight = MinimapCluster.BorderTop:GetHeight()
+	end
+
 	VehicleMover =
 		SUI.MoveIt:CreateCustomMover(
 		'Vehicle Minimap Position',
 		module.Settings.vehiclePosition,
 		{
 			width = Minimap:GetWidth(),
-			height = (Minimap:GetHeight() + MinimapCluster.BorderTop:GetHeight() + 15),
+			height = (Minimap:GetHeight() + borderHeight + 15),
 			savePosition = function(position)
 				module.Settings.vehiclePosition = position
 

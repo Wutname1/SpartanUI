@@ -189,7 +189,10 @@ local function Update(frame, settings)
 			-- Classic uses different frame names (CastingBarFrame, not PlayerCastingBarFrame)
 			if castFrame then
 				castFrame.showCastbar = false
-				castFrame:SetUnit(nil)
+				-- SetUnit doesn't exist in Classic
+				if castFrame.SetUnit then
+					castFrame:SetUnit(nil)
+				end
 				castFrame:UnregisterAllEvents()
 				castFrame:Hide()
 				castFrame:HookScript(
@@ -197,7 +200,9 @@ local function Update(frame, settings)
 					function(self)
 						self:Hide()
 						self.showCastbar = false
-						self:SetUnit(nil)
+						if self.SetUnit then
+							self:SetUnit(nil)
+						end
 					end
 				)
 			end

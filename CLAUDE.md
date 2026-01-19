@@ -154,10 +154,10 @@ When working with WoW addon development, use these authoritative resources:
   - Reference when modifying .toc files for available variables
 - **Latest Interface Versions**: https://warcraft.wiki.gg/wiki/Template:API_LatestInterface
   - Quick lookup for current patch interface version numbers
-- **WoW UI Source Code Export**: `C:\Users\jerem\Syncthing\WOWUICode\wow-ui-source`
-  - Local copy of raw Blizzard UI source code (current live version)
-- **Midnight Alpha/Beta**: `C:\Users\jerem\Syncthing\WOWUICode\wow-ui-source-Beta`
-  - Next expansion UI source code
+- **WoW UI Source Code Repository**: `C:\code\WOWUICode`
+  - Contains branches for each game version (Retail, Classic, TBC, Wrath, Cata, Mists, etc.)
+  - Extracted Blizzard UI source code from all supported WoW versions
+  - Use `git checkout <branch>` to switch between versions
 - **API Reference**: https://warcraft.wiki.gg
   - Most up-to-date resource for all WoW API lookups
   - Prefer this over the local code export for API documentation
