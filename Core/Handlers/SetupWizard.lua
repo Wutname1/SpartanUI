@@ -234,13 +234,16 @@ end
 
 function module:SetupWizard(RequiredPagesOnly)
 	local UI = LibAT.UI
-	module.window = UI.CreateWindow({
-		name = 'SUI_SetupWizard',
-		title = 'Setup Wizard',
-		width = 650,
-		height = 500,
-		hidePortrait = true,
-	})
+	module.window =
+		UI.CreateWindow(
+		{
+			name = 'SUI_SetupWizard',
+			title = 'Setup Wizard',
+			width = 650,
+			height = 500,
+			hidePortrait = true
+		}
+	)
 	module.window:SetPoint('CENTER', 0, 0)
 	module.window:SetFrameStrata('DIALOG')
 
@@ -288,10 +291,19 @@ function module:SetupWizard(RequiredPagesOnly)
 		module.window.ProgressBar = progressBar
 
 		-- Create buttons above progress bar
-		local buttons = UI.CreateActionButtons(module.window, {
-			{ text = 'SKIP', width = 150, onClick = function() end }, -- Set script below
-			{ text = 'CONTINUE', width = 150, onClick = function() end }, -- Set script below
-		}, 5, 28, -2)
+		local buttons =
+			UI.CreateActionButtons(
+			module.window,
+			{
+				{text = 'SKIP', width = 150, onClick = function()
+					end}, -- Set script below
+				{text = 'CONTINUE', width = 150, onClick = function()
+					end} -- Set script below
+			},
+			5,
+			28,
+			-2
+		)
 
 		-- Store button references
 		module.window.Skip = buttons[1]
@@ -309,10 +321,16 @@ function module:SetupWizard(RequiredPagesOnly)
 		module.window.content:SetPoint('BOTTOMRIGHT', module.window.Next, 'TOPRIGHT', 0, 2)
 	else
 		-- Create buttons at bottom (no progress bar)
-		local buttons = UI.CreateActionButtons(module.window, {
-			{ text = 'SKIP', width = 150, onClick = function() end }, -- Set script below
-			{ text = 'CONTINUE', width = 150, onClick = function() end }, -- Set script below
-		})
+		local buttons =
+			UI.CreateActionButtons(
+			module.window,
+			{
+				{text = 'SKIP', width = 150, onClick = function()
+					end}, -- Set script below
+				{text = 'CONTINUE', width = 150, onClick = function()
+					end} -- Set script below
+			}
+		)
 
 		-- Store button references
 		module.window.Skip = buttons[1]
@@ -440,7 +458,7 @@ local function WelcomePage()
 			IntroPage.Helm:SetAlpha(0.6)
 
 			if not SUI:IsAddonEnabled('Bartender4') then
-				module.window.BT4Warning = UI.CreateLabel(UIParent, L['Bartender4 not detected! Please download and install Bartender4.'], 'GameFontNormalLarge')
+				module.window.BT4Warning = UI.CreateLabel(module.window, L['Bartender4 not detected! Please download and install Bartender4.'], 'GameFontNormalLarge')
 				module.window.BT4Warning:SetTextColor(1, 0.18, 0.18, 1)
 				module.window.BT4Warning:SetWidth(650)
 				module.window.BT4Warning:SetJustifyH('CENTER')
@@ -456,14 +474,23 @@ local function WelcomePage()
 			IntroPage.ProfileCopyLabel:SetPoint('TOP', IntroPage.Helm, 'BOTTOM', 0, -15)
 
 			IntroPage.ProfileList = UI.CreateDropdown(IntroPage, '', 200, 20)
-			IntroPage.ProfileList:SetupMenu(function(dropdown, rootDescription)
-				for _, profile in ipairs(profiles) do
-					rootDescription:CreateButton(profile.text, function()
-						dropdown:SetSelectionText(function() return profile.text end)
-						dropdown.selectedValue = profile.value
-					end)
+			IntroPage.ProfileList:SetupMenu(
+				function(dropdown, rootDescription)
+					for _, profile in ipairs(profiles) do
+						rootDescription:CreateButton(
+							profile.text,
+							function()
+								dropdown:SetSelectionText(
+									function()
+										return profile.text
+									end
+								)
+								dropdown.selectedValue = profile.value
+							end
+						)
+					end
 				end
-			end)
+			)
 			IntroPage.ProfileList:SetPoint('TOP', IntroPage.ProfileCopyLabel, 'BOTTOM', 0, -10)
 			IntroPage.ProfileList:SetPoint('CENTER', IntroPage, 'CENTER', -33, 0)
 
