@@ -573,21 +573,34 @@ function module:FirstLaunch()
 				ATI.options.AutoGossipSafeMode = UI.CreateCheckbox(ATI, L['Auto gossip safe mode'], 220, 20)
 				ATI.options.autoequip = UI.CreateCheckbox(ATI, L['Auto equip upgrade quest rewards'] .. ' - ' .. L['Based on iLVL'], 400, 20)
 
-				-- Positioning
-				ATI.options.AcceptGeneralQuests:SetPoint('TOP', SUI_Win, 'TOP', -80, -30)
-				ATI.options.AutoGossip:SetPoint('TOP', ATI.options.AcceptGeneralQuests, 'BOTTOM', 0, -5)
-				ATI.options.AutoGossipSafeMode:SetPoint('TOPLEFT', ATI.options.AutoGossip, 'BOTTOMLEFT', 0, -5)
-				ATI.options.autoequip:SetPoint('TOPLEFT', ATI.options.AutoGossipSafeMode, 'BOTTOMLEFT', 0, -5)
-
 				-- Retail only options
 				if SUI.IsRetail then
 					ATI.options.lootreward = UI.CreateCheckbox(ATI, L['Auto select quest reward'], 220, 20)
-					ATI.options.lootreward:SetPoint('TOP', ATI.options.TurnInEnabled, 'BOTTOM', 0, -5)
 					ATI.options.DoCampainQuests = UI.CreateCheckbox(ATI, L['Accept/Complete Campaign Quests'], 220, 20)
-					ATI.options.DoCampainQuests:SetPoint('TOPLEFT', ATI.options.lootreward, 'BOTTOMLEFT', 0, -5)
 				end
 
-				ATI.options.TurnInEnabled:SetPoint('LEFT', ATI.options.AcceptGeneralQuests, 'RIGHT', 5, 0)
+				-- Positioning - 2 column layout with proper spacing
+				local col1X, col2X = -150, 50  -- X positions for each column
+				local startY = -20  -- Starting Y position
+				local rowHeight = 25  -- Height per row including spacing
+
+				-- Column 1 (left)
+				ATI.options.AcceptGeneralQuests:SetPoint('TOPLEFT', SUI_Win, 'TOP', col1X, startY)
+				ATI.options.AutoGossip:SetPoint('TOPLEFT', SUI_Win, 'TOP', col1X, startY - rowHeight)
+				ATI.options.AutoGossipSafeMode:SetPoint('TOPLEFT', SUI_Win, 'TOP', col1X, startY - (rowHeight * 2))
+
+				-- Column 2 (right)
+				ATI.options.TurnInEnabled:SetPoint('TOPLEFT', SUI_Win, 'TOP', col2X, startY)
+
+				if SUI.IsRetail then
+					ATI.options.lootreward:SetPoint('TOPLEFT', SUI_Win, 'TOP', col2X, startY - rowHeight)
+					ATI.options.DoCampainQuests:SetPoint('TOPLEFT', SUI_Win, 'TOP', col2X, startY - (rowHeight * 2))
+					-- Auto equip spans both columns at bottom
+					ATI.options.autoequip:SetPoint('TOPLEFT', SUI_Win, 'TOP', col1X, startY - (rowHeight * 3))
+				else
+					-- Auto equip at bottom for non-retail
+					ATI.options.autoequip:SetPoint('TOPLEFT', SUI_Win, 'TOP', col1X, startY - (rowHeight * 3))
+				end
 
 				-- Defaults
 				for key, object in pairs(ATI.options) do

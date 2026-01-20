@@ -138,20 +138,24 @@ local function CreateSetupPage()
 				end
 			end
 
-			-- Position checkboxes in 2-column layout
-			if #itemsMatrix > 0 then
-				itemsMatrix[1]:SetPoint('TOP', SUI_Win.ModSelection, 'TOP', -60, 0)
-			end
+			-- Position checkboxes in 2-column layout with proper spacing
+			local col1X, col2X = -150, 50  -- X positions for each column
+			local startY = -10  -- Starting Y position
+			local ySpacing = 3  -- Vertical spacing between rows
 
-			local left, leftIndex = false, 1
-			for i = 2, #itemsMatrix do
-				if left then
-					itemsMatrix[i]:SetPoint('TOP', itemsMatrix[leftIndex], 'BOTTOM', 0, -3)
-					leftIndex = i
-					left = false
-				else
-					itemsMatrix[i]:SetPoint('LEFT', itemsMatrix[leftIndex], 'RIGHT', 3, 0)
-					left = true
+			for i = 1, #itemsMatrix do
+				local row = math.floor((i - 1) / 2)  -- Calculate row (0-indexed)
+				local col = (i - 1) % 2  -- Calculate column (0 = left, 1 = right)
+
+				local xPos = (col == 0) and col1X or col2X
+				local yPos = startY - (row * (20 + ySpacing))  -- 20px height + spacing
+
+				itemsMatrix[i]:SetPoint('TOPLEFT', SUI_Win.ModSelection, 'TOP', xPos, yPos)
+
+				-- Set max width on checkbox label to prevent overflow
+				if itemsMatrix[i].text then
+					itemsMatrix[i].text:SetWidth(180)
+					itemsMatrix[i].text:SetWordWrap(false)
 				end
 			end
 

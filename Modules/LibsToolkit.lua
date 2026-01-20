@@ -52,7 +52,7 @@ local function SetupTweaks()
 				Nameplate:HookScript(
 					'OnClick',
 					function()
-						if Nameplate:GetValue() or false then
+						if Nameplate:GetChecked() or false then
 							SetCVar('nameplateShowSelf', 0)
 						else
 							SetCVar('nameplateShowSelf', 1)
@@ -62,7 +62,7 @@ local function SetupTweaks()
 				AutoLoot:HookScript(
 					'OnClick',
 					function()
-						if AutoLoot:GetValue() or false then
+						if AutoLoot:GetChecked() or false then
 							SetCVar('autoLootDefault', 1)
 						else
 							SetCVar('autoLootDefault', 0)
@@ -72,7 +72,7 @@ local function SetupTweaks()
 				ShowNameplates:HookScript(
 					'OnClick',
 					function()
-						if ShowNameplates:GetValue() or false then
+						if ShowNameplates:GetChecked() or false then
 							SetCVar('nameplateShowAll', 1)
 						else
 							SetCVar('nameplateShowAll', 0)
@@ -166,7 +166,7 @@ local function SetupTweaks()
 		Next = function()
 			if SUI:IsModuleEnabled('LibsToolkit') then
 				local LibsToolkit = SUI.Setup.window.content.LibsToolkit
-				if LibsToolkit.DisableTutorials:GetValue() or false then
+				if LibsToolkit.DisableTutorials:GetChecked() or false then
 					local bitfieldListing = {
 						LE_FRAME_TUTORIAL_ACCCOUNT_RAF_INTRO,
 						LE_FRAME_TUTORIAL_ACCCOUNT_CLUB_FINDER_NEW_FEATURE,

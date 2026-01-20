@@ -317,10 +317,17 @@ function module:FirstLaunch()
 				cLog.options.announce = LibAT.UI.CreateCheckbox(cLog, L['Announce logging in chat'])
 				cLog.modEnabled = LibAT.UI.CreateCheckbox(cLog, L['Module enabled'])
 
-				-- Positioning
-				SUI.UI.GlueTop(cLog.modEnabled, SUI_Win, 0, -10)
-				SUI.UI.GlueBelow(cLog.options.alwayson, cLog.modEnabled, -100, -5)
-				SUI.UI.GlueRight(cLog.options.announce, cLog.options.alwayson, 5, 0)
+				-- Positioning - 2 column layout with proper spacing
+				local col1X, col2X, col3X = -200, -20, 160  -- X positions for columns
+				local startY = -10  -- Starting Y position
+				local rowHeight = 25  -- Height per row
+
+				-- Module enabled at top
+				cLog.modEnabled:SetPoint('TOPLEFT', SUI_Win, 'TOP', -60, startY)
+
+				-- Always on and announce in 2 columns
+				cLog.options.alwayson:SetPoint('TOPLEFT', SUI_Win, 'TOP', col1X, startY - rowHeight)
+				cLog.options.announce:SetPoint('TOPLEFT', SUI_Win, 'TOP', col2X, startY - rowHeight)
 
 				if SUI.IsRetail then
 					cLog.options.raidmythic = LibAT.UI.CreateCheckbox(cLog, L['Mythic'])
@@ -338,22 +345,22 @@ function module:FirstLaunch()
 					cLog.lblRaid = LibAT.UI.CreateLabel(cLog, L['Raid settings'])
 					cLog.lblDungeon = LibAT.UI.CreateLabel(cLog, L['Dungeon settings'])
 
-					-- Raid Settings
-					SUI.UI.GlueTop(cLog.lblRaid, cLog.modEnabled, -150, -80)
-					SUI.UI.GlueBelow(cLog.options.raidmythic, cLog.lblRaid, 0, -5)
-					SUI.UI.GlueRight(cLog.options.raidheroic, cLog.options.raidmythic, 5, 0)
-					SUI.UI.GlueRight(cLog.options.raidnormal, cLog.options.raidheroic, 5, 0)
+					-- Raid Settings label and checkboxes in 3 columns
+					cLog.lblRaid:SetPoint('TOPLEFT', SUI_Win, 'TOP', col1X, startY - (rowHeight * 2.5))
+					cLog.options.raidmythic:SetPoint('TOPLEFT', SUI_Win, 'TOP', col1X, startY - (rowHeight * 3.5))
+					cLog.options.raidheroic:SetPoint('TOPLEFT', SUI_Win, 'TOP', col2X, startY - (rowHeight * 3.5))
+					cLog.options.raidnormal:SetPoint('TOPLEFT', SUI_Win, 'TOP', col3X, startY - (rowHeight * 3.5))
 
-					SUI.UI.GlueBelow(cLog.options.raidlfr, cLog.options.raidmythic, 0, -5)
-					SUI.UI.GlueRight(cLog.options.raidlegacy, cLog.options.raidlfr, 5, 0)
+					cLog.options.raidlfr:SetPoint('TOPLEFT', SUI_Win, 'TOP', col1X, startY - (rowHeight * 4.5))
+					cLog.options.raidlegacy:SetPoint('TOPLEFT', SUI_Win, 'TOP', col2X, startY - (rowHeight * 4.5))
 
-					--Dungeon Settings
-					SUI.UI.GlueBelow(cLog.lblDungeon, cLog.options.raidlfr, 0, -20)
-					SUI.UI.GlueBelow(cLog.options.mythicplus, cLog.lblDungeon, 0, -5)
-					SUI.UI.GlueRight(cLog.options.mythicdungeon, cLog.options.mythicplus, 5, 0)
-					SUI.UI.GlueRight(cLog.options.heroicdungeon, cLog.options.mythicdungeon, 5, 0)
+					-- Dungeon Settings label and checkboxes in 3 columns
+					cLog.lblDungeon:SetPoint('TOPLEFT', SUI_Win, 'TOP', col1X, startY - (rowHeight * 6))
+					cLog.options.mythicplus:SetPoint('TOPLEFT', SUI_Win, 'TOP', col1X, startY - (rowHeight * 7))
+					cLog.options.mythicdungeon:SetPoint('TOPLEFT', SUI_Win, 'TOP', col2X, startY - (rowHeight * 7))
+					cLog.options.heroicdungeon:SetPoint('TOPLEFT', SUI_Win, 'TOP', col3X, startY - (rowHeight * 7))
 
-					SUI.UI.GlueBelow(cLog.options.normaldungeon, cLog.options.mythicplus, 0, -5)
+					cLog.options.normaldungeon:SetPoint('TOPLEFT', SUI_Win, 'TOP', col1X, startY - (rowHeight * 8))
 				end
 
 				-- Defaults
