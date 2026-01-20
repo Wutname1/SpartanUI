@@ -10,7 +10,8 @@ local function SetupTweaks()
 		return
 	end
 
-	local LibAT = LibStub('Libs-AddonTools-1.0', true)
+	-- Access LibAT from global namespace (not LibStub)
+	local LibAT = _G.LibAT
 
 	local LibsToolkit = {
 		ID = 'LibsToolkit',

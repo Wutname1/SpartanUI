@@ -6,6 +6,15 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 SpartanUI is a comprehensive World of Warcraft addon that provides a complete user interface overhaul. It moves interface elements to the bottom of the screen to free up screen real estate and includes modular components for various gameplay features.
 
+## CRITICAL: Active Development Directory
+
+**IMPORTANT**: All development work is done in the `C:\code\SpartanUI` directory ONLY.
+
+- **DO NOT** edit files in `SpartanUI-*` directories (SpartanUI-Classic-Stable, SpartanUI-MOP-Stable, SpartanUI-TBC-Stable, etc.) unless explicitly directed by the user
+- The `SpartanUI-*` directories are version-specific stable branches maintained separately
+- When fixing bugs or making changes, always work in `C:\code\SpartanUI` unless told otherwise
+- Error paths showing `Interface/AddOns/SpartanUI/` refer to the main `C:\code\SpartanUI` directory
+
 ## Core Architecture
 
 ### Main Framework

@@ -8,7 +8,8 @@ local MAX_BAG_SLOTS = 12 -- Maximum number of bag slots to scan (0-12 covers all
 local buildItemList, buildCharacterList, OptionTable
 
 local function SetupPage()
-	local LibAT = LibStub('Libs-AddonTools-1.0', true)
+	-- Access LibAT from global namespace (not LibStub)
+	local LibAT = _G.LibAT
 
 	---@type SUI.SetupWizard.PageData
 	local PageData = {
@@ -511,7 +512,8 @@ end
 function module:CreateMiniVendorPanels()
 	-- Create quick access panel for vendor windows
 	local IsCollapsed = true
-	local LibAT = LibStub('Libs-AddonTools-1.0', true)
+	-- Access LibAT from global namespace (not LibStub)
+	local LibAT = _G.LibAT
 
 	-- LibAT is required for vendor panels
 	if not LibAT or not LibAT.UI then

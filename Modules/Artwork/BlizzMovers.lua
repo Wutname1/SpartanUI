@@ -739,8 +739,11 @@ function module:UPDATE_UI_WIDGET()
 	module:UPDATE_ALL_UI_WIDGETS()
 end
 function module:UPDATE_ALL_UI_WIDGETS()
-	for _, widget in pairs(_G['UIWidgetTopCenterContainerFrame'].widgetFrames) do
-		SUI.Skins.SkinWidgets(widget)
+	local widgetContainer = _G['UIWidgetTopCenterContainerFrame']
+	if widgetContainer and widgetContainer.widgetFrames then
+		for _, widget in pairs(widgetContainer.widgetFrames) do
+			SUI.Skins.SkinWidgets(widget)
+		end
 	end
 end
 

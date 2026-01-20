@@ -81,6 +81,7 @@ local COMBATLOG_OBJECT_AFFILIATION_MINE = COMBATLOG_OBJECT_AFFILIATION_MINE
 local build = floor(select(4,GetBuildInfo())/10000)
 local isTBC = build == 2
 local isWrath = build == 3
+local isMOP = build >= 5
 
 local spellRankTableData = {
 	[1] = { 774, 8936, 5185, 740, 635, 19750, 139, 2060, 596, 2061, 2054, 2050, 1064, 331, 8004, 136, 755, 689, 746, 33763, 32546, 37563, 48438, 61295, 51945, 50464, 47757 },
@@ -2223,6 +2224,11 @@ end
 
 -- Cache player talent data for spells we need
 function HealComm:CHARACTER_POINTS_CHANGED()
+	-- MOP+ uses a different talent system without talent trees
+	if isMOP then
+		return
+	end
+
 	for tabIndex=1, GetNumTalentTabs() do
 		for i=1, GetNumTalents(tabIndex) do
 			local name, _, _, _, spent = GetTalentInfo(tabIndex, i)
@@ -2234,8 +2240,8 @@ function HealComm:CHARACTER_POINTS_CHANGED()
 	end
 end
 
--- Save the currently equipped range weapon
-local RANGED_SLOT = GetInventorySlotInfo("RangedSlot")
+-- Save the currently equipped range weapon (MOP+ removed the RangedSlot)
+local RANGED_SLOT = not isMOP and GetInventorySlotInfo("RangedSlot") or nil
 function HealComm:PLAYER_EQUIPMENT_CHANGED()
 	-- Caches set bonus info, as you can't reequip set bonus gear in combat no sense in checking it
 	if( not InCombatLockdown() ) then
@@ -2249,9 +2255,11 @@ function HealComm:PLAYER_EQUIPMENT_CHANGED()
 		end
 	end
 
-	-- Check relic
-	local relic = GetInventoryItemLink("player", RANGED_SLOT)
-	playerCurrentRelic = relic and tonumber(strmatch(relic, "item:(%d+):")) or nil
+	-- Check relic (skip if no ranged slot exists, e.g., MOP+)
+	if RANGED_SLOT then
+		local relic = GetInventoryItemLink("player", RANGED_SLOT)
+		playerCurrentRelic = relic and tonumber(strmatch(relic, "item:(%d+):")) or nil
+	end
 end
 
 -- COMM CODE
@@ -3294,7 +3302,18 @@ function HealComm:OnInitialize()
 
 	-- When first logging in talent data isn't available until at least PLAYER_ALIVE, so if we don't have data
 	-- will wait for that event otherwise will just cache it right now
-	if( GetNumTalentTabs() == 0 ) then
+	-- MoP Compatibility: GetNumTalentTabs was removed in MoP (5.0+)
+	-- Check WoW version to avoid calling unsupported API
+	local numTalentTabs = 0
+	local tocVersion = select(4, GetBuildInfo())
+
+	-- MoP is version 50000+, Cata is 40000-49999, Wrath is 30000-39999
+	if tocVersion and tocVersion < 50000 and GetNumTalentTabs then
+		-- Only call GetNumTalentTabs in Wrath/Cata and earlier
+		numTalentTabs = GetNumTalentTabs()
+	end
+
+	if( numTalentTabs == 0 ) then
 		self.eventFrame:RegisterEvent("PLAYER_ALIVE")
 	else
 		self:CHARACTER_POINTS_CHANGED()
