@@ -294,7 +294,7 @@ local TooltipSetItem = function(tooltip, tooltipData)
 	end
 
 	if itemLink then
-		local quality = C_Item and C_Item.GetItemInfo and select(3, C_Item.GetItemInfo(itemLink)) or select(3, GetItemInfo(itemLink))
+		local quality = select(3, C_Item.GetItemInfo(itemLink))
 		local style = {
 			bgFile = 'Interface/Tooltips/UI-Tooltip-Background'
 		}

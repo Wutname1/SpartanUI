@@ -1706,7 +1706,7 @@ function SUI:GetiLVL(itemLink)
 
 	local scanningTooltip = CreateFrame('GameTooltip', 'AutoTurnInTooltip', nil, 'GameTooltipTemplate')
 	local itemLevelPattern = ITEM_LEVEL:gsub('%%d', '(%%d+)')
-	local itemQuality = C_Item and C_Item.GetItemInfo and select(3, C_Item.GetItemInfo(itemLink)) or select(3, GetItemInfo(itemLink))
+	local itemQuality = select(3, C_Item.GetItemInfo(itemLink))
 
 	-- if a heirloom return a huge number so we dont replace it.
 	if itemQuality == 7 then

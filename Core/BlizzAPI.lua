@@ -139,35 +139,7 @@ end
 ---@param itemID number|string
 ---@return ItemInfo?
 function BlizzAPI.GetItemInfo(itemID)
-	-- Use modern API if available
-	if C_Item and C_Item.GetItemInfo then
-		return C_Item.GetItemInfo(itemID)
-	end
-
-	-- Fallback to classic API
-	local name, link, quality, level, minLevel, type, subType, stackCount,
-		equipLoc, texture, sellPrice, classID, subClassID, bindType,
-		expacID, setID, isCraftingReagent = GetItemInfo(itemID)
-	if not name then return nil end
-	return {
-		itemName = name,
-		itemLink = link,
-		itemQuality = quality,
-		itemLevel = level,
-		itemMinLevel = minLevel,
-		itemType = type,
-		itemSubType = subType,
-		itemStackCount = stackCount,
-		itemEquipLoc = equipLoc,
-		itemTexture = texture,
-		sellPrice = sellPrice,
-		classID = classID,
-		subClassID = subClassID,
-		bindType = bindType,
-		expacID = expacID,
-		itemSetID = setID,
-		isCraftingReagent = isCraftingReagent or false,
-	}
+	return C_Item.GetItemInfo(itemID)
 end
 
 -- ============================================
