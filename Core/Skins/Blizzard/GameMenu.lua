@@ -119,6 +119,7 @@ local function CreateMenuSkin()
 	-- Size matches gearUpdate-BG dimensions: 361x596
 	MenuSkin:SetSize(361, 596)
 	MenuSkin:SetFrameStrata('BACKGROUND')
+	MenuSkin:SetScale(.8)
 	MenuSkin:Hide()
 
 	-- Gradient
@@ -140,13 +141,13 @@ local function CreateMenuSkin()
 
 	-- Top Line
 	MenuSkin.TopLine = MenuSkin:CreateTexture(nil, 'ARTWORK')
-	MenuSkin.TopLine:SetSize(600, 16)
+	MenuSkin.TopLine:SetSize(600, 100)
 	MenuSkin.TopLine:SetPoint('TOP', 0, 100)
 
 	-- Logo Button
 	MenuSkin.LogoButton = CreateFrame('Button', nil, MenuSkin)
 	MenuSkin.LogoButton:SetSize(80, 80)
-	MenuSkin.LogoButton:SetPoint('BOTTOM', 0, -45)
+	MenuSkin.LogoButton:SetPoint('BOTTOM', 0, -25)
 
 	MenuSkin.LogoButton.texture = MenuSkin.LogoButton:CreateTexture(nil, 'ARTWORK')
 	MenuSkin.LogoButton.texture:SetTexture('Interface\\AddOns\\SpartanUI\\images\\Menu\\SUILogo_white.png')
@@ -211,7 +212,7 @@ local function CreateMenuSkin()
 
 	-- Bottom Line
 	MenuSkin.BottomLine = MenuSkin:CreateTexture(nil, 'ARTWORK')
-	MenuSkin.BottomLine:SetSize(600, 16)
+	MenuSkin.BottomLine:SetSize(600, 100)
 	MenuSkin.BottomLine:SetPoint('BOTTOM', 0, 0)
 
 	-- Line Mask
@@ -316,8 +317,17 @@ function MenuSkin:SkinGameMenu()
 		end
 
 		-- Hide all named NineSlice textures directly
-		local nineSliceParts = {'TopLeftCorner', 'TopRightCorner', 'BottomLeftCorner', 'BottomRightCorner',
-								'TopEdge', 'BottomEdge', 'LeftEdge', 'RightEdge', 'Center'}
+		local nineSliceParts = {
+			'TopLeftCorner',
+			'TopRightCorner',
+			'BottomLeftCorner',
+			'BottomRightCorner',
+			'TopEdge',
+			'BottomEdge',
+			'LeftEdge',
+			'RightEdge',
+			'Center'
+		}
 		for _, partName in ipairs(nineSliceParts) do
 			if GameMenuFrame.Border[partName] then
 				GameMenuFrame.Border[partName]:Hide()
@@ -343,12 +353,15 @@ function MenuSkin:SkinGameMenu()
 		end
 
 		-- Hook to keep it hidden if the game tries to show it again
-		GameMenuFrame.Border:SetScript('OnShow', function(self)
-			if logger.debug then
-				logger.debug('Border OnShow triggered - hiding it again')
+		GameMenuFrame.Border:SetScript(
+			'OnShow',
+			function(self)
+				if logger.debug then
+					logger.debug('Border OnShow triggered - hiding it again')
+				end
+				self:Hide()
 			end
-			self:Hide()
-		end)
+		)
 	end
 
 	if GameMenuFrame.Header then
@@ -374,12 +387,15 @@ function MenuSkin:SkinGameMenu()
 		end
 
 		-- Hook to keep it hidden
-		GameMenuFrame.Header:SetScript('OnShow', function(self)
-			if logger.debug then
-				logger.debug('Header OnShow triggered - hiding it again')
+		GameMenuFrame.Header:SetScript(
+			'OnShow',
+			function(self)
+				if logger.debug then
+					logger.debug('Header OnShow triggered - hiding it again')
+				end
+				self:Hide()
 			end
-			self:Hide()
-		end)
+		)
 	end
 end
 
@@ -389,8 +405,8 @@ end
 
 -- Lerp compatibility function for older WoW versions
 local Lerp = Lerp or function(startValue, endValue, amount)
-	return startValue + (endValue - startValue) * amount
-end
+		return startValue + (endValue - startValue) * amount
+	end
 
 local x, y = 4, 5
 function MenuSkin:InterpolatePoints(center)
@@ -418,8 +434,8 @@ function MenuSkin:InterpolatePoints(center)
 			secondGradientPoint[x] = Lerp(secondGradientPoint[x], 70, t)
 			secondGradientPoint[y] = Lerp(secondGradientPoint[y], -135, t)
 
-			topLinePosition[y] = Lerp(topLinePosition[y], 20, t)
-			bottomLinePosition[y] = Lerp(bottomLinePosition[y], -70, t)
+			topLinePosition[y] = Lerp(topLinePosition[y], 0, t)
+			bottomLinePosition[y] = Lerp(bottomLinePosition[y], -50, t)
 
 			MainFramePosition[x] = Lerp(MainFramePosition[x], targetX, t)
 			MainFramePosition[y] = Lerp(MainFramePosition[y], targetY, t)
