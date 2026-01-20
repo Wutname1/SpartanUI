@@ -47,6 +47,5 @@
 		</Anchors>
 	</Frame>
 
-	<Script file="oUF.lua" />
 	<Script file="WhatsNew.lua" />
 </Ui>

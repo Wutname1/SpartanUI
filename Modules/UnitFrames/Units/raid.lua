@@ -235,7 +235,7 @@ local Settings = {
 			height = 30,
 			text = {
 				['1'] = {
-					text = '[SUIHealth(missing,displayDead,hideMax)] [($>SUIHealth<$)(percentage,hideDead,hideMax)]'
+					text = '[SUIHealth(missing,displayDead)] [($>SUIHealth<$)(percentage,hideDead)]'
 				}
 			}
 		},

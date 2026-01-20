@@ -606,7 +606,7 @@ function module:OnInitialize()
 					['1'] = {
 						enabled = true,
 						size = 5,
-						text = '[SUIHealth(percentage,hideMax)]',
+						text = '[SUIHealth(percentage)]',
 						position = {
 							anchor = 'RIGHT',
 							x = -2,

@@ -3,7 +3,6 @@ local SUI = SUI
 local L = SUI.L
 ---@class SUI.Handler.SetupWizard
 local module = SUI:NewModule('Handler.SetupWizard') ---@type SUI.Module
-local StdUi = SUI.StdUi
 module.window = nil
 
 local DisplayRequired, WelcomeAdded = false, false
@@ -23,7 +22,9 @@ local FinishedPage = {
 		FinishedPage:SetParent(module.window.content)
 		FinishedPage:SetAllPoints(module.window.content)
 
-		FinishedPage.Helm = StdUi:Texture(FinishedPage, 190, 190, 'Interface\\AddOns\\SpartanUI\\images\\Spartan-Helm')
+		FinishedPage.Helm = FinishedPage:CreateTexture(nil, 'ARTWORK')
+		FinishedPage.Helm:SetTexture('Interface\\AddOns\\SpartanUI\\images\\Spartan-Helm')
+		FinishedPage.Helm:SetSize(190, 190)
 		FinishedPage.Helm:SetPoint('CENTER')
 		FinishedPage.Helm:SetAlpha(0.6)
 		module.window.Next:SetText('FINISH')
@@ -232,63 +233,108 @@ function module:DisplayPage(PageData)
 end
 
 function module:SetupWizard(RequiredPagesOnly)
-	module.window = StdUi:Window(nil, 650, 500)
-	module.window.StdUi = StdUi
+	local UI = LibAT.UI
+	module.window = UI.CreateWindow({
+		name = 'SUI_SetupWizard',
+		title = 'Setup Wizard',
+		width = 650,
+		height = 500,
+		hidePortrait = true,
+	})
 	module.window:SetPoint('CENTER', 0, 0)
 	module.window:SetFrameStrata('DIALOG')
-	module.window.Title = StdUi:Texture(module.window, 256, 64, 'Interface\\AddOns\\SpartanUI\\images\\setup\\SUISetup')
-	module.window.Title:SetPoint('TOP')
-	module.window.Title:SetAlpha(0.8)
+
+	-- Custom SUI logo
+	local logo = module.window:CreateTexture(nil, 'ARTWORK')
+	logo:SetTexture('Interface\\AddOns\\SpartanUI\\images\\setup\\SUISetup')
+	logo:SetSize(205, 51)
+	logo:SetPoint('TOP', module.window, 'TOP', 0, -25)
+	logo:SetAlpha(0.8)
 
 	-- Setup the Top text fields
-	module.window.SubTitle = StdUi:Label(module.window, '', 16, nil, module.window:GetWidth(), 20)
-	module.window.SubTitle:SetPoint('TOP', module.window.titlePanel, 'BOTTOM', 0, -5)
-	module.window.SubTitle:SetTextColor(0.29, 0.18, 0.96, 1)
-	module.window.SubTitle:SetJustifyH('CENTER')
+	local subtitle = UI.CreateLabel(module.window, '', 'GameFontNormalLarge')
+	subtitle:SetTextColor(0.29, 0.18, 0.96, 1)
+	subtitle:SetJustifyH('CENTER')
+	subtitle:SetPoint('TOP', logo, 'BOTTOM', 0, -10)
+	subtitle:SetWidth(650)
 
-	module.window.Desc1 = StdUi:Label(module.window, '', 13, nil, module.window:GetWidth())
-	module.window.Desc1:SetPoint('TOP', module.window.SubTitle, 'BOTTOM', 0, -5)
-	module.window.Desc1:SetTextColor(1, 1, 1, 0.8)
-	module.window.Desc1:SetWidth(module.window:GetWidth() - 40)
-	module.window.Desc1:SetJustifyH('CENTER')
+	local desc1 = UI.CreateLabel(module.window, '', 'GameFontHighlight')
+	desc1:SetPoint('TOP', subtitle, 'BOTTOM', 0, -5)
+	desc1:SetTextColor(1, 1, 1, 0.8)
+	desc1:SetWidth(610)
+	desc1:SetJustifyH('CENTER')
 
-	module.window.Desc2 = StdUi:Label(module.window, '', 13, nil, module.window:GetWidth())
-	module.window.Desc2:SetPoint('TOP', module.window.Desc1, 'BOTTOM', 0, -3)
-	module.window.Desc2:SetTextColor(1, 1, 1, 0.8)
-	module.window.Desc2:SetWidth(module.window:GetWidth() - 40)
-	module.window.Desc2:SetJustifyH('CENTER')
+	local desc2 = UI.CreateLabel(module.window, '', 'GameFontHighlight')
+	desc2:SetPoint('TOP', desc1, 'BOTTOM', 0, -3)
+	desc2:SetTextColor(1, 1, 1, 0.8)
+	desc2:SetWidth(610)
+	desc2:SetJustifyH('CENTER')
 
-	module.window.Status = StdUi:Label(module.window, '', 9, nil, 40, 15)
-	module.window.Status:SetPoint('TOPRIGHT', module.window, 'TOPRIGHT', -2, -2)
+	-- Status counter (top-right)
+	local status = UI.CreateLabel(module.window, '', 'GameFontNormalSmall')
+	status:SetPoint('TOPRIGHT', module.window, 'TOPRIGHT', -5, -5)
+	status:SetWidth(60)
 
 	-- Create the content area to account for the new layout
 	module.window.content = CreateFrame('Frame', 'SUI_SetupWindow_Content', module.window)
 
-	-- Setup the Buttons
-	module.window.Skip = StdUi:Button(module.window, 150, 20, 'SKIP')
-	module.window.Next = StdUi:Button(module.window, 150, 20, 'CONTINUE')
-
-	-- If we have more than one page to show then add a progress bar, and a selection tree on the side.
+	-- If we have more than one page to show then add a progress bar
 	if TotalPageCount > 1 then
 		-- Add a Progress bar to the bottom
-		local ProgressBar = StdUi:ProgressBar(module.window, (module.window:GetWidth() - 4), 20)
-		ProgressBar:SetMinMaxValues(0, 100)
-		ProgressBar:SetValue(0)
-		ProgressBar:SetPoint('BOTTOM', module.window, 'BOTTOM', 0, 2)
-		module.window.ProgressBar = ProgressBar
+		local progressBar = UI.CreateProgressBar(module.window, 646, 20)
+		progressBar:SetMinMaxValues(0, 100)
+		progressBar:SetValue(0)
+		progressBar:SetPoint('BOTTOM', module.window, 'BOTTOM', 0, 2)
+		module.window.ProgressBar = progressBar
 
-		--Position the Buttons
+		-- Create buttons above progress bar
+		local buttons = UI.CreateActionButtons(module.window, {
+			{ text = 'SKIP', width = 150, onClick = function() end }, -- Set script below
+			{ text = 'CONTINUE', width = 150, onClick = function() end }, -- Set script below
+		}, 5, 28, -2)
+
+		-- Store button references
+		module.window.Skip = buttons[1]
+		module.window.Next = buttons[2]
+
+		-- Reposition buttons to left and right
+		module.window.Skip:ClearAllPoints()
 		module.window.Skip:SetPoint('BOTTOMLEFT', module.window.ProgressBar, 'TOPLEFT', 0, 2)
+		module.window.Next:ClearAllPoints()
 		module.window.Next:SetPoint('BOTTOMRIGHT', module.window.ProgressBar, 'TOPRIGHT', 0, 2)
+
+		-- Position content between desc2 and buttons
+		module.window.content:SetPoint('TOP', desc2, 'BOTTOM', 0, -2)
+		module.window.content:SetPoint('BOTTOMLEFT', module.window.Skip, 'TOPLEFT', 0, 2)
+		module.window.content:SetPoint('BOTTOMRIGHT', module.window.Next, 'TOPRIGHT', 0, 2)
 	else
-		--Position the Buttons
-		module.window.Skip:SetPoint('BOTTOMLEFT', module.window, 'BOTTOMLEFT', 0, 2)
-		module.window.Next:SetPoint('BOTTOMRIGHT', module.window, 'BOTTOMRIGHT', 0, 2)
+		-- Create buttons at bottom (no progress bar)
+		local buttons = UI.CreateActionButtons(module.window, {
+			{ text = 'SKIP', width = 150, onClick = function() end }, -- Set script below
+			{ text = 'CONTINUE', width = 150, onClick = function() end }, -- Set script below
+		})
+
+		-- Store button references
+		module.window.Skip = buttons[1]
+		module.window.Next = buttons[2]
+
+		-- Reposition buttons to left and right
+		module.window.Skip:ClearAllPoints()
+		module.window.Skip:SetPoint('BOTTOMLEFT', module.window, 'BOTTOMLEFT', 3, 4)
+		module.window.Next:ClearAllPoints()
+		module.window.Next:SetPoint('BOTTOMRIGHT', module.window, 'BOTTOMRIGHT', -3, 4)
+
+		-- Position content between desc2 and buttons
+		module.window.content:SetPoint('TOP', desc2, 'BOTTOM', 0, -2)
+		module.window.content:SetPoint('BOTTOMLEFT', module.window.Skip, 'TOPLEFT', 0, 2)
+		module.window.content:SetPoint('BOTTOMRIGHT', module.window.Next, 'TOPRIGHT', 0, 2)
 	end
 
-	module.window.content:SetPoint('TOP', module.window.Desc2, 'BOTTOM', 0, -2)
-	module.window.content:SetPoint('BOTTOMLEFT', module.window.Skip, 'TOPLEFT', 0, 2)
-	module.window.content:SetPoint('BOTTOMRIGHT', module.window.Next, 'TOPRIGHT', 0, 2)
+	-- Store label references
+	module.window.SubTitle = subtitle
+	module.window.Desc1 = desc1
+	module.window.Desc2 = desc2
+	module.window.Status = status
 
 	local function LoadNextPage()
 		--Hide anything attached to the Content frame
@@ -324,9 +370,6 @@ function module:SetupWizard(RequiredPagesOnly)
 			LoadNextPage()
 		end
 	)
-
-	module.window.Status = StdUi:Label(module.window, '', 9, nil, 60, 15)
-	module.window.Status:SetPoint('TOPRIGHT', module.window, 'TOPRIGHT', -2, -2)
 
 	-- Display first page
 	module.window.closeBtn:Hide()
@@ -376,6 +419,7 @@ local function WelcomePage()
 		Desc1 = "Welcome to SpartanUI, This setup wizard help guide you through the inital setup of the UI and it's modules.",
 		Desc2 = 'This setup wizard may be re-ran at any time via the SUI settings screen. You can access the SUI settings via the /sui chat command. For a full list of chat commands as well as common questions visit the wiki at http://wiki.spartanui.net or Join the SpartanUI Discord.',
 		Display = function()
+			local UI = LibAT.UI
 			local profiles = {}
 			local currentProfile = SUI.SpartanUIDB:GetCurrentProfile()
 			for _, v in pairs(SUI.SpartanUIDB:GetProfiles()) do
@@ -388,24 +432,47 @@ local function WelcomePage()
 			IntroPage:SetParent(module.window.content)
 			IntroPage:SetAllPoints(module.window.content)
 
-			IntroPage.Helm = StdUi:Texture(IntroPage, 190, 190, 'Interface\\AddOns\\SpartanUI\\images\\Spartan-Helm')
-			IntroPage.Helm:SetPoint('CENTER', 0, 45)
+			-- Spartan Helm texture
+			IntroPage.Helm = IntroPage:CreateTexture(nil, 'ARTWORK')
+			IntroPage.Helm:SetTexture('Interface\\AddOns\\SpartanUI\\images\\Spartan-Helm')
+			IntroPage.Helm:SetSize(114, 114)
+			IntroPage.Helm:SetPoint('CENTER', IntroPage, 'CENTER', 0, 60)
 			IntroPage.Helm:SetAlpha(0.6)
 
 			if not SUI:IsAddonEnabled('Bartender4') then
-				module.window.BT4Warning = StdUi:Label(module.window, L['Bartender4 not detected! Please download and install Bartender4.'], 25, nil, module.window:GetWidth(), 40)
+				module.window.BT4Warning = UI.CreateLabel(UIParent, L['Bartender4 not detected! Please download and install Bartender4.'], 'GameFontNormalLarge')
 				module.window.BT4Warning:SetTextColor(1, 0.18, 0.18, 1)
-				StdUi:GlueAbove(module.window.BT4Warning, module.window, 0, 20)
+				module.window.BT4Warning:SetWidth(650)
+				module.window.BT4Warning:SetJustifyH('CENTER')
+				module.window.BT4Warning:SetPoint('BOTTOM', module.window, 'TOP', 0, 10)
+				module.window.BT4Warning:SetFrameStrata('DIALOG')
 			end
 
-			IntroPage.ProfileCopyLabel = StdUi:Label(IntroPage, L['If you would like to copy the configuration from another character you may do so below.'])
+			-- Profile copy section
+			IntroPage.ProfileCopyLabel = UI.CreateLabel(IntroPage, L['If you would like to copy the configuration from another character you may do so below.'])
+			IntroPage.ProfileCopyLabel:SetWidth(500)
+			IntroPage.ProfileCopyLabel:SetJustifyH('CENTER')
+			IntroPage.ProfileCopyLabel:SetWordWrap(true)
+			IntroPage.ProfileCopyLabel:SetPoint('TOP', IntroPage.Helm, 'BOTTOM', 0, -15)
 
-			IntroPage.ProfileList = StdUi:Dropdown(IntroPage, 200, 20, profiles)
-			IntroPage.CopyProfileButton = StdUi:Button(IntroPage, 60, 20, 'COPY')
+			IntroPage.ProfileList = UI.CreateDropdown(IntroPage, '', 200, 20)
+			IntroPage.ProfileList:SetupMenu(function(dropdown, rootDescription)
+				for _, profile in ipairs(profiles) do
+					rootDescription:CreateButton(profile.text, function()
+						dropdown:SetSelectionText(function() return profile.text end)
+						dropdown.selectedValue = profile.value
+					end)
+				end
+			end)
+			IntroPage.ProfileList:SetPoint('TOP', IntroPage.ProfileCopyLabel, 'BOTTOM', 0, -10)
+			IntroPage.ProfileList:SetPoint('CENTER', IntroPage, 'CENTER', -33, 0)
+
+			IntroPage.CopyProfileButton = UI.CreateButton(IntroPage, 60, 20, 'COPY')
 			IntroPage.CopyProfileButton:SetScript(
 				'OnClick',
 				function()
-					local ProfileSelection = module.window.content.WelcomePage.ProfileList:GetValue()
+					local dropdown = module.window.content.WelcomePage.ProfileList
+					local ProfileSelection = dropdown.selectedValue
 					if not ProfileSelection or ProfileSelection == '' then
 						return
 					end
@@ -415,17 +482,10 @@ local function WelcomePage()
 					SUI:SafeReloadUI()
 				end
 			)
-			if #profiles == 0 then
-				IntroPage.ProfileCopyLabel:Hide()
-				IntroPage.ProfileList:Hide()
-				IntroPage.CopyProfileButton:Hide()
-			end
+			IntroPage.CopyProfileButton:SetPoint('LEFT', IntroPage.ProfileList, 'RIGHT', 4, 0)
 
-			StdUi:GlueBottom(IntroPage.ProfileCopyLabel, IntroPage.Helm, 0, -25)
-			StdUi:GlueBottom(IntroPage.ProfileList, IntroPage.ProfileCopyLabel, -31, -25)
-			StdUi:GlueRight(IntroPage.CopyProfileButton, IntroPage.ProfileList, 2, 0)
-
-			IntroPage.Import = StdUi:Button(IntroPage, 200, 20, 'IMPORT SETTINGS')
+			-- Import button (create before conditional check)
+			IntroPage.Import = UI.CreateButton(IntroPage, 200, 20, 'IMPORT SETTINGS')
 			IntroPage.Import:SetScript(
 				'OnClick',
 				function()
@@ -433,9 +493,22 @@ local function WelcomePage()
 					Profiles:ImportUI()
 				end
 			)
-			IntroPage.Import:SetPoint('TOP', IntroPage.ProfileList, 'BOTTOM', 31, -5)
+			IntroPage.Import:SetPoint('TOP', IntroPage.ProfileList, 'BOTTOM', 0, -15)
+			IntroPage.Import:SetPoint('LEFT', IntroPage, 'CENTER', -100, 0)
 
-			IntroPage.SkipAllButton = StdUi:Button(IntroPage, 150, 20, 'SKIP SETUP')
+			if #profiles == 0 then
+				IntroPage.ProfileCopyLabel:Hide()
+				IntroPage.ProfileList:Hide()
+				IntroPage.CopyProfileButton:Hide()
+
+				-- Reposition Import button when profile section is hidden
+				IntroPage.Import:ClearAllPoints()
+				IntroPage.Import:SetPoint('TOP', IntroPage.Helm, 'BOTTOM', 0, -25)
+				IntroPage.Import:SetPoint('LEFT', IntroPage, 'CENTER', -100, 0)
+			end
+
+			-- Skip setup button
+			IntroPage.SkipAllButton = UI.CreateButton(IntroPage, 150, 20, 'SKIP SETUP')
 			IntroPage.SkipAllButton:SetScript(
 				'OnClick',
 				function()
@@ -453,12 +526,18 @@ local function WelcomePage()
 					module.window:Hide()
 				end
 			)
-			IntroPage.SkipOr = StdUi:Label(IntroPage, 'OR')
-			StdUi:GlueBelow(IntroPage.SkipOr, IntroPage.SkipAllButton, 0, -5)
 
+			-- Hide progress bar and reposition buttons for welcome page
 			module.window.ProgressBar:Hide()
-			module.window.Next:SetPoint('BOTTOMRIGHT', module.window, 'BOTTOMRIGHT', 0, 2)
-			IntroPage.SkipAllButton:SetPoint('BOTTOMRIGHT', 0, 2)
+			module.window.Next:SetPoint('BOTTOMRIGHT', module.window, 'BOTTOMRIGHT', -3, 4)
+
+			-- Position Skip All button in bottom-left
+			IntroPage.SkipAllButton:SetPoint('BOTTOMLEFT', module.window, 'BOTTOMLEFT', 3, 4)
+
+			-- Add "OR" label below Skip All button
+			IntroPage.SkipOr = UI.CreateLabel(IntroPage, 'OR')
+			IntroPage.SkipOr:SetJustifyH('CENTER')
+			IntroPage.SkipOr:SetPoint('TOP', IntroPage.SkipAllButton, 'BOTTOM', 0, -5)
 
 			module.window.content.WelcomePage = IntroPage
 		end,

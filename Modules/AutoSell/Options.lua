@@ -8,6 +8,9 @@ local MAX_BAG_SLOTS = 12 -- Maximum number of bag slots to scan (0-12 covers all
 local buildItemList, buildCharacterList, OptionTable
 
 local function SetupPage()
+	-- Access LibAT from global namespace (not LibStub)
+	local LibAT = _G.LibAT
+
 	---@type SUI.SetupWizard.PageData
 	local PageData = {
 		ID = 'Autosell',
@@ -18,7 +21,6 @@ local function SetupPage()
 		RequireDisplay = module.DB.FirstLaunch,
 		Display = function()
 			local SUI_Win = SUI.Setup.window.content
-			local StdUi = SUI.StdUi
 
 			--Container
 			local AutoSell = CreateFrame('Frame', nil)
@@ -26,53 +28,54 @@ local function SetupPage()
 			AutoSell:SetAllPoints(SUI_Win)
 
 			if SUI:IsModuleDisabled('AutoSell') then
-				AutoSell.lblDisabled = StdUi:Label(AutoSell, 'Disabled', 20)
+				AutoSell.lblDisabled = LibAT.UI.CreateLabel(AutoSell, 'Disabled', 'GameFontNormalLarge')
 				AutoSell.lblDisabled:SetPoint('CENTER', AutoSell)
 				-- Attaching
 				SUI_Win.AutoSell = AutoSell
 			else
 				-- Quality Selling Options
-				AutoSell.SellGray = StdUi:Checkbox(AutoSell, L['Sell gray'], 220, 20)
-				AutoSell.SellWhite = StdUi:Checkbox(AutoSell, L['Sell white'], 220, 20)
-				AutoSell.SellGreen = StdUi:Checkbox(AutoSell, L['Sell green'], 220, 20)
-				AutoSell.SellBlue = StdUi:Checkbox(AutoSell, L['Sell blue'], 220, 20)
-				AutoSell.SellPurple = StdUi:Checkbox(AutoSell, L['Sell purple'], 220, 20)
+				AutoSell.SellGray = LibAT.UI.CreateCheckbox(AutoSell, L['Sell gray'])
+				AutoSell.SellWhite = LibAT.UI.CreateCheckbox(AutoSell, L['Sell white'])
+				AutoSell.SellGreen = LibAT.UI.CreateCheckbox(AutoSell, L['Sell green'])
+				AutoSell.SellBlue = LibAT.UI.CreateCheckbox(AutoSell, L['Sell blue'])
+				AutoSell.SellPurple = LibAT.UI.CreateCheckbox(AutoSell, L['Sell purple'])
 
 				-- Max iLVL
-				AutoSell.iLVLDesc = StdUi:Label(AutoSell, L['Maximum iLVL to sell'], nil, nil, 350)
-				AutoSell.iLVLLabel = StdUi:NumericBox(AutoSell, 80, 20, module.DB.MaxILVL)
-				AutoSell.iLVLLabel:SetMaxValue(module.DB.MaximumiLVL)
-				AutoSell.iLVLLabel:SetMinValue(1)
-				AutoSell.iLVLLabel.OnValueChanged = function()
-					local win = SUI.Setup.window.content.AutoSell
-
-					if math.floor(AutoSell.iLVLLabel:GetValue()) ~= math.floor(AutoSell.iLVLSlider:GetValue()) then
-						AutoSell.iLVLSlider:SetValue(math.floor(AutoSell.iLVLLabel:GetValue()))
+				AutoSell.iLVLDesc = LibAT.UI.CreateLabel(AutoSell, L['Maximum iLVL to sell'])
+				AutoSell.iLVLLabel = LibAT.UI.CreateNumericBox(AutoSell, 80, 20, 1, module.DB.MaximumiLVL)
+				AutoSell.iLVLLabel:SetValue(module.DB.MaxILVL)
+				AutoSell.iLVLLabel:SetScript('OnTextChanged', function(self)
+					local value = self:GetValue()
+					if value and AutoSell.iLVLSlider then
+						if math.floor(value) ~= math.floor(AutoSell.iLVLSlider:GetValue()) then
+							AutoSell.iLVLSlider:SetValue(math.floor(value))
+						end
 					end
-				end
+				end)
 
-				AutoSell.iLVLSlider = StdUi:Slider(AutoSell, module.DB.MaximumiLVL, 20, module.DB.MaxILVL, false, 1, module.DB.MaximumiLVL)
-				AutoSell.iLVLSlider.OnValueChanged = function()
-					local win = SUI.Setup.window.content.AutoSell
-
-					if math.floor(AutoSell.iLVLLabel:GetValue()) ~= math.floor(AutoSell.iLVLSlider:GetValue()) then
-						AutoSell.iLVLLabel:SetValue(math.floor(AutoSell.iLVLSlider:GetValue()))
+				AutoSell.iLVLSlider = LibAT.UI.CreateSlider(AutoSell, module.DB.MaximumiLVL, 20, 1, module.DB.MaximumiLVL, 1)
+				AutoSell.iLVLSlider:SetValue(module.DB.MaxILVL)
+				AutoSell.iLVLSlider:SetScript('OnValueChanged', function(self, value)
+					if AutoSell.iLVLLabel then
+						if math.floor(AutoSell.iLVLLabel:GetValue()) ~= math.floor(value) then
+							AutoSell.iLVLLabel:SetValue(math.floor(value))
+						end
 					end
-				end
+				end)
 
 				-- AutoRepair
-				AutoSell.AutoRepair = StdUi:Checkbox(AutoSell, L['Auto repair'], 220, 20)
+				AutoSell.AutoRepair = LibAT.UI.CreateCheckbox(AutoSell, L['Auto repair'])
 
-				-- Positioning
-				StdUi:GlueTop(AutoSell.SellGray, SUI_Win, 0, -30)
-				StdUi:GlueBelow(AutoSell.SellWhite, AutoSell.SellGray, 0, -5)
-				StdUi:GlueBelow(AutoSell.SellGreen, AutoSell.SellWhite, 0, -5)
-				StdUi:GlueBelow(AutoSell.SellBlue, AutoSell.SellGreen, 0, -5)
-				StdUi:GlueBelow(AutoSell.SellPurple, AutoSell.SellBlue, 0, -5)
-				StdUi:GlueBelow(AutoSell.iLVLDesc, AutoSell.SellPurple, 0, -5)
-				StdUi:GlueBelow(AutoSell.iLVLSlider, AutoSell.iLVLDesc, -40, -5)
-				StdUi:GlueRight(AutoSell.iLVLLabel, AutoSell.iLVLSlider, 2, 0)
-				StdUi:GlueBelow(AutoSell.AutoRepair, AutoSell.iLVLSlider, 40, -5)
+				-- Positioning using SUI.UI helpers
+				SUI.UI.GlueTop(AutoSell.SellGray, SUI_Win, 0, -30)
+				SUI.UI.GlueBelow(AutoSell.SellWhite, AutoSell.SellGray, 0, -5)
+				SUI.UI.GlueBelow(AutoSell.SellGreen, AutoSell.SellWhite, 0, -5)
+				SUI.UI.GlueBelow(AutoSell.SellBlue, AutoSell.SellGreen, 0, -5)
+				SUI.UI.GlueBelow(AutoSell.SellPurple, AutoSell.SellBlue, 0, -5)
+				SUI.UI.GlueBelow(AutoSell.iLVLDesc, AutoSell.SellPurple, 0, -5)
+				SUI.UI.GlueBelow(AutoSell.iLVLSlider, AutoSell.iLVLDesc, -40, -5)
+				SUI.UI.GlueRight(AutoSell.iLVLLabel, AutoSell.iLVLSlider, 2, 0)
+				SUI.UI.GlueBelow(AutoSell.AutoRepair, AutoSell.iLVLSlider, 40, -5)
 
 				-- Attaching
 				SUI_Win.AutoSell = AutoSell
@@ -509,7 +512,14 @@ end
 function module:CreateMiniVendorPanels()
 	-- Create quick access panel for vendor windows
 	local IsCollapsed = true
-	local StdUi = SUI.StdUi
+	-- Access LibAT from global namespace (not LibStub)
+	local LibAT = _G.LibAT
+
+	-- LibAT is required for vendor panels
+	if not LibAT or not LibAT.UI then
+		SUI:Print('AutoSell vendor panels require Libs-AddonTools')
+		return
+	end
 
 	-- Store panel references so we can hide them on disable
 	if not module.VendorPanels then
@@ -519,11 +529,23 @@ function module:CreateMiniVendorPanels()
 	for _, v in ipairs({'MerchantFrame'}) do
 		local panelWidth = _G[v]:GetWidth() / 3
 
-		local OptionsPopdown = StdUi:Panel(_G[v], panelWidth, 20)
+		-- Create panel using native frame (StdUi:Panel replacement)
+		local OptionsPopdown = CreateFrame('Frame', nil, _G[v], 'BackdropTemplate')
+		OptionsPopdown:SetSize(panelWidth, 20)
+		OptionsPopdown:SetBackdrop({
+			bgFile = 'Interface\\Tooltips\\UI-Tooltip-Background',
+			edgeFile = 'Interface\\Tooltips\\UI-Tooltip-Border',
+			tile = true,
+			tileSize = 16,
+			edgeSize = 16,
+			insets = { left = 4, right = 4, top = 4, bottom = 4 },
+		})
+		OptionsPopdown:SetBackdropColor(0.1, 0.1, 0.1, 0.9)
+		OptionsPopdown:SetBackdropBorderColor(0.4, 0.4, 0.4, 1)
 		OptionsPopdown:SetScale(0.95)
 		-- Position on bottom right, avoiding the tabs on the bottom left
 		OptionsPopdown:SetPoint('TOPRIGHT', _G[v], 'BOTTOMRIGHT', -5, -2)
-		OptionsPopdown.title = StdUi:Label(OptionsPopdown, '|cffffffffSpartan|cffe21f1fUI|r AutoSell', 10)
+		OptionsPopdown.title = LibAT.UI.CreateLabel(OptionsPopdown, '|cffffffffSpartan|cffe21f1fUI|r AutoSell', 'GameFontNormalSmall')
 		OptionsPopdown.title:SetPoint('CENTER')
 
 		-- Function to count sellable items and update sell button
@@ -649,14 +671,25 @@ function module:CreateMiniVendorPanels()
 		)
 
 		-- Create the expanded panel with increased height to accommodate the settings button
-		local Panel = StdUi:Panel(OptionsPopdown, _G[v]:GetWidth(), 120)
+		local Panel = CreateFrame('Frame', nil, OptionsPopdown, 'BackdropTemplate')
+		Panel:SetSize(_G[v]:GetWidth(), 120)
+		Panel:SetBackdrop({
+			bgFile = 'Interface\\Tooltips\\UI-Tooltip-Background',
+			edgeFile = 'Interface\\Tooltips\\UI-Tooltip-Border',
+			tile = true,
+			tileSize = 16,
+			edgeSize = 16,
+			insets = { left = 4, right = 4, top = 4, bottom = 4 },
+		})
+		Panel:SetBackdropColor(0.1, 0.1, 0.1, 0.9)
+		Panel:SetBackdropBorderColor(0.4, 0.4, 0.4, 1)
 		Panel:SetPoint('TOPRIGHT', OptionsPopdown, 'BOTTOMRIGHT', 0, -10)
 		Panel:Hide()
 
 		local options = {}
 
 		-- Settings button (moved into the expanded area)
-		options.openSettingsButton = StdUi:Button(Panel, 120, 20, L['All Settings'])
+		options.openSettingsButton = LibAT.UI.CreateButton(Panel, 120, 20, L['All Settings'])
 		options.openSettingsButton:SetScript(
 			'OnClick',
 			function()
@@ -665,7 +698,7 @@ function module:CreateMiniVendorPanels()
 		)
 
 		-- Sell Items button (appears in top right when items are detected)
-		options.sellItemsButton = StdUi:Button(Panel, 120, 20, 'Sell 0 Items')
+		options.sellItemsButton = LibAT.UI.CreateButton(Panel, 120, 20, 'Sell 0 Items')
 		options.sellItemsButton:SetScript(
 			'OnClick',
 			function()
@@ -676,25 +709,19 @@ function module:CreateMiniVendorPanels()
 		options.sellItemsButton:Hide()
 
 		-- Auto repair checkbox
-		options.AutoRepair = StdUi:Checkbox(Panel, L['Auto repair'], nil, 20)
+		options.AutoRepair = LibAT.UI.CreateCheckbox(Panel, L['Auto repair'])
 
 		-- Max iLVL slider and input (adjusted for smaller panel width)
-		options.MaxILVLLabel = StdUi:Label(Panel, L['Maximum iLVL to sell'], nil, nil, Panel:GetWidth() - 10)
-		options.MaxILVLSlider = StdUi:Slider(Panel, Panel:GetWidth() - 70, 20, module.DB.MaxILVL, false, 1, module.DB.MaximumiLVL)
-		options.MaxILVLInput = StdUi:NumericBox(Panel, 50, 20, module.DB.MaxILVL)
-
-		-- Configure numeric box
-		if options.MaxILVLInput.SetMaxValue then
-			options.MaxILVLInput:SetMaxValue(module.DB.MaximumiLVL)
-		end
-		if options.MaxILVLInput.SetMinValue then
-			options.MaxILVLInput:SetMinValue(1)
-		end
+		options.MaxILVLLabel = LibAT.UI.CreateLabel(Panel, L['Maximum iLVL to sell'])
+		options.MaxILVLSlider = LibAT.UI.CreateSlider(Panel, Panel:GetWidth() - 70, 20, 1, module.DB.MaximumiLVL, 1)
+		options.MaxILVLSlider:SetValue(module.DB.MaxILVL)
+		options.MaxILVLInput = LibAT.UI.CreateNumericBox(Panel, 50, 20, 1, module.DB.MaximumiLVL)
+		options.MaxILVLInput:SetValue(module.DB.MaxILVL)
 
 		-- Quality checkboxes
-		options.Green = StdUi:Checkbox(Panel, L['Sell green'], nil, 20)
-		options.Blue = StdUi:Checkbox(Panel, L['Sell blue'], nil, 20)
-		options.Purple = StdUi:Checkbox(Panel, L['Sell purple'], nil, 20)
+		options.Green = LibAT.UI.CreateCheckbox(Panel, L['Sell green'])
+		options.Blue = LibAT.UI.CreateCheckbox(Panel, L['Sell blue'])
+		options.Purple = LibAT.UI.CreateCheckbox(Panel, L['Sell purple'])
 
 		-- Set up event handlers
 		for setting, control in pairs(options) do
@@ -754,18 +781,18 @@ function module:CreateMiniVendorPanels()
 		end
 
 		-- Position the controls (settings button at top, then other controls below)
-		StdUi:GlueTop(options.openSettingsButton, Panel, 5, -5, 'LEFT')
-		StdUi:GlueTop(options.sellItemsButton, Panel, -5, -5, 'RIGHT')
+		SUI.UI.GlueTop(options.openSettingsButton, Panel, 5, -5, 'LEFT')
+		SUI.UI.GlueTop(options.sellItemsButton, Panel, -5, -5, 'RIGHT')
 
-		StdUi:GlueBelow(options.AutoRepair, options.openSettingsButton, 0, -5, 'LEFT')
+		SUI.UI.GlueBelow(options.AutoRepair, options.openSettingsButton, 0, -5, 'LEFT')
 
-		StdUi:GlueBelow(options.MaxILVLLabel, options.AutoRepair, 0, -5, 'LEFT')
-		StdUi:GlueBelow(options.MaxILVLSlider, options.MaxILVLLabel, 0, -2, 'LEFT')
-		StdUi:GlueRight(options.MaxILVLInput, options.MaxILVLSlider, 5, 0)
+		SUI.UI.GlueBelow(options.MaxILVLLabel, options.AutoRepair, 0, -5, 'LEFT')
+		SUI.UI.GlueBelow(options.MaxILVLSlider, options.MaxILVLLabel, 0, -2, 'LEFT')
+		SUI.UI.GlueRight(options.MaxILVLInput, options.MaxILVLSlider, 5, 0)
 
-		StdUi:GlueBelow(options.Green, options.MaxILVLSlider, 0, -5, 'LEFT')
-		StdUi:GlueRight(options.Blue, options.Green, 0, 0)
-		StdUi:GlueRight(options.Purple, options.Blue, 0, 0)
+		SUI.UI.GlueBelow(options.Green, options.MaxILVLSlider, 0, -5, 'LEFT')
+		SUI.UI.GlueRight(options.Blue, options.Green, 0, 0)
+		SUI.UI.GlueRight(options.Purple, options.Blue, 0, 0)
 
 		OptionsPopdown.Panel = Panel
 		OptionsPopdown.Panel.options = options

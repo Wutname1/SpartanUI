@@ -4,6 +4,12 @@ local GameMenuFrame = GameMenuFrame
 ---@class SUIMenuSkin : Frame
 local MenuSkin = _G['SUIMenuSkin'] or CreateFrame('Frame', 'SUIMenuSkin', UIParent)
 
+-- Logger integration
+local logger = SUI.Logger or {}
+if LibAT and LibAT.Logger then
+	logger = LibAT.Logger.RegisterAddon('SUI-GameMenu')
+end
+
 ---@param frame Frame The frame to reskin buttons for (typically GameMenuFrame)
 local function ReskinGameMenuButtons(frame)
 	-- Check if the frame exists
@@ -77,15 +83,22 @@ function SUIGameMenu:OnEnable()
 		end
 	)
 
-	MenuSkin.Background:SetTexCoord(0, 1, 0, 1)
-	-- self.Background:SetAtlas(visual, true)
-	MenuSkin.Background:SetAtlas('gearUpdate-BG', true)
+	-- Use direct texture file from Interface\AddOns\SpartanUI\images\Menu\UIGearUpdate.png
+	-- This ensures consistency across all WoW versions (Retail, TBC, Mists, Classic)
+	local texturePath = 'Interface\\AddOns\\SpartanUI\\images\\Menu\\UIGearUpdate.png'
 
-	MenuSkin.TopLine:SetTexCoord(0, 1, 1, 0)
-	MenuSkin.TopLine:SetAtlas('gearUpdate-glow-filigree', true)
+	-- Background: gearUpdate-BG coordinates
+	MenuSkin.Background:SetTexture(texturePath)
+	MenuSkin.Background:SetTexCoord(0.0009765625, 0.7060546875, 0.00048828125, 0.58251953125)
+
+	-- Top Line: gearUpdate-glow-filigree coordinates (flipped vertically)
+	MenuSkin.TopLine:SetTexture(texturePath)
+	MenuSkin.TopLine:SetTexCoord(0.0009765625, 0.6865234375, 0.70947265625, 0.58349609375)
 	MenuSkin.TopLine:SetAlpha(0.5)
 
-	MenuSkin.BottomLine:SetAtlas('gearUpdate-glow-filigree', true)
+	-- Bottom Line: gearUpdate-glow-filigree coordinates
+	MenuSkin.BottomLine:SetTexture(texturePath)
+	MenuSkin.BottomLine:SetTexCoord(0.0009765625, 0.6865234375, 0.58349609375, 0.70947265625)
 	MenuSkin.BottomLine:SetAlpha(0.5)
 
 	if GameMenuFrame.Layout then
@@ -103,8 +116,10 @@ function SUIGameMenu:OnEnable()
 end
 
 local function CreateMenuSkin()
-	MenuSkin:SetSize(330, 450)
+	-- Size matches gearUpdate-BG dimensions: 361x596
+	MenuSkin:SetSize(361, 596)
 	MenuSkin:SetFrameStrata('BACKGROUND')
+	MenuSkin:SetScale(.8)
 	MenuSkin:Hide()
 
 	-- Gradient
@@ -126,13 +141,13 @@ local function CreateMenuSkin()
 
 	-- Top Line
 	MenuSkin.TopLine = MenuSkin:CreateTexture(nil, 'ARTWORK')
-	MenuSkin.TopLine:SetSize(600, 16)
+	MenuSkin.TopLine:SetSize(600, 100)
 	MenuSkin.TopLine:SetPoint('TOP', 0, 100)
 
 	-- Logo Button
 	MenuSkin.LogoButton = CreateFrame('Button', nil, MenuSkin)
 	MenuSkin.LogoButton:SetSize(80, 80)
-	MenuSkin.LogoButton:SetPoint('BOTTOM', 0, -45)
+	MenuSkin.LogoButton:SetPoint('BOTTOM', 0, -25)
 
 	MenuSkin.LogoButton.texture = MenuSkin.LogoButton:CreateTexture(nil, 'ARTWORK')
 	MenuSkin.LogoButton.texture:SetTexture('Interface\\AddOns\\SpartanUI\\images\\Menu\\SUILogo_white.png')
@@ -197,7 +212,7 @@ local function CreateMenuSkin()
 
 	-- Bottom Line
 	MenuSkin.BottomLine = MenuSkin:CreateTexture(nil, 'ARTWORK')
-	MenuSkin.BottomLine:SetSize(600, 16)
+	MenuSkin.BottomLine:SetSize(600, 100)
 	MenuSkin.BottomLine:SetPoint('BOTTOM', 0, 0)
 
 	-- Line Mask
@@ -269,13 +284,130 @@ function MenuSkin:GetTargetOffsets(target)
 end
 
 function MenuSkin:SkinGameMenu()
-	GameMenuFrame.Border:SetShown(false)
-	GameMenuFrame.Header:SetShown(false)
+	-- Hide Border and Header frames that exist in Classic/Mists/TBC versions
+	-- These are defined in MainMenuFrameTemplate and need to be hidden for our custom skin
+
+	if logger.debug then
+		logger.debug('SkinGameMenu called - Border exists:', GameMenuFrame.Border ~= nil, 'Header exists:', GameMenuFrame.Header ~= nil)
+	end
+
+	if GameMenuFrame.Border then
+		if logger.debug then
+			logger.debug('Hiding GameMenuFrame.Border')
+		end
+
+		GameMenuFrame.Border:Hide()
+		GameMenuFrame.Border:SetAlpha(0)
+
+		-- Clear the backdrop which contains the dialog border texture
+		if GameMenuFrame.Border.SetBackdrop then
+			GameMenuFrame.Border:SetBackdrop(nil)
+			if logger.debug then
+				logger.debug('Cleared Border backdrop')
+			end
+		end
+
+		-- Hide NineSlice elements (used in Classic/Mists/TBC)
+		if GameMenuFrame.Border.NineSlice then
+			GameMenuFrame.Border.NineSlice:Hide()
+			GameMenuFrame.Border.NineSlice:SetAlpha(0)
+			if logger.debug then
+				logger.debug('Hidden NineSlice border')
+			end
+		end
+
+		-- Hide all named NineSlice textures directly
+		local nineSliceParts = {
+			'TopLeftCorner',
+			'TopRightCorner',
+			'BottomLeftCorner',
+			'BottomRightCorner',
+			'TopEdge',
+			'BottomEdge',
+			'LeftEdge',
+			'RightEdge',
+			'Center'
+		}
+		for _, partName in ipairs(nineSliceParts) do
+			if GameMenuFrame.Border[partName] then
+				GameMenuFrame.Border[partName]:Hide()
+				GameMenuFrame.Border[partName]:SetAlpha(0)
+				if logger.debug then
+					logger.debug('Hidden Border.' .. partName)
+				end
+			end
+		end
+
+		-- Hide all border textures to ensure clean appearance
+		local textureCount = 0
+		for _, region in pairs({GameMenuFrame.Border:GetRegions()}) do
+			if region:IsObjectType('Texture') then
+				region:Hide()
+				region:SetAlpha(0)
+				textureCount = textureCount + 1
+			end
+		end
+
+		if logger.debug then
+			logger.debug('Hidden', textureCount, 'border textures')
+		end
+
+		-- Hook to keep it hidden if the game tries to show it again
+		GameMenuFrame.Border:SetScript(
+			'OnShow',
+			function(self)
+				if logger.debug then
+					logger.debug('Border OnShow triggered - hiding it again')
+				end
+				self:Hide()
+			end
+		)
+	end
+
+	if GameMenuFrame.Header then
+		if logger.debug then
+			logger.debug('Hiding GameMenuFrame.Header')
+		end
+
+		GameMenuFrame.Header:Hide()
+		GameMenuFrame.Header:SetAlpha(0)
+
+		-- Hide header textures as well
+		local headerTextureCount = 0
+		for _, region in pairs({GameMenuFrame.Header:GetRegions()}) do
+			if region:IsObjectType('Texture') then
+				region:Hide()
+				region:SetAlpha(0)
+				headerTextureCount = headerTextureCount + 1
+			end
+		end
+
+		if logger.debug then
+			logger.debug('Hidden', headerTextureCount, 'header textures')
+		end
+
+		-- Hook to keep it hidden
+		GameMenuFrame.Header:SetScript(
+			'OnShow',
+			function(self)
+				if logger.debug then
+					logger.debug('Header OnShow triggered - hiding it again')
+				end
+				self:Hide()
+			end
+		)
+	end
 end
 
 ---------------------------------------------------------------
 -- Animation
 ---------------------------------------------------------------
+
+-- Lerp compatibility function for older WoW versions
+local Lerp = Lerp or function(startValue, endValue, amount)
+		return startValue + (endValue - startValue) * amount
+	end
+
 local x, y = 4, 5
 function MenuSkin:InterpolatePoints(center)
 	if SUIGameMenu:IsDisabled() then
@@ -302,8 +434,8 @@ function MenuSkin:InterpolatePoints(center)
 			secondGradientPoint[x] = Lerp(secondGradientPoint[x], 70, t)
 			secondGradientPoint[y] = Lerp(secondGradientPoint[y], -135, t)
 
-			topLinePosition[y] = Lerp(topLinePosition[y], 20, t)
-			bottomLinePosition[y] = Lerp(bottomLinePosition[y], -70, t)
+			topLinePosition[y] = Lerp(topLinePosition[y], 0, t)
+			bottomLinePosition[y] = Lerp(bottomLinePosition[y], -50, t)
 
 			MainFramePosition[x] = Lerp(MainFramePosition[x], targetX, t)
 			MainFramePosition[y] = Lerp(MainFramePosition[y], targetY, t)

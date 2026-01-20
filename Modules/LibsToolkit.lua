@@ -10,6 +10,9 @@ local function SetupTweaks()
 		return
 	end
 
+	-- Access LibAT from global namespace (not LibStub)
+	local LibAT = _G.LibAT
+
 	local LibsToolkit = {
 		ID = 'LibsToolkit',
 		Name = "Lib's Toolkit",
@@ -17,7 +20,6 @@ local function SetupTweaks()
 		Desc1 = 'Below are a collection of tweaks I find myself making often, so I decided to add them in here.',
 		Display = function()
 			local SUI_Win = SUI.Setup.window.content
-			local StdUi = SUI.StdUi
 
 			local CheckboxItem = {}
 			SetCVar('nameplateShowSelf', 0)
@@ -31,11 +33,11 @@ local function SetupTweaks()
 			LibsToolkit:SetAllPoints(SUI_Win)
 			if SUI:IsModuleEnabled('LibsToolkit') then
 				local LDBIcon = LibStub('LibDBIcon-1.0')
-				local Nameplate = StdUi:Checkbox(LibsToolkit, 'Disable ' .. DISPLAY_PERSONAL_RESOURCE, 240, 20)
-				local AutoLoot = StdUi:Checkbox(LibsToolkit, 'Enable AutoLoot', 240, 20)
-				local ShowNameplates = StdUi:Checkbox(LibsToolkit, 'Enable ' .. UNIT_NAMEPLATES_AUTOMODE, 240, 20)
-				local DisableTutorials = StdUi:Checkbox(LibsToolkit, 'Disable ALL tutorials', 240, 20)
-				local DisableTutorialsWarning = StdUi:Label(LibsToolkit, 'For experienced players only')
+				local Nameplate = LibAT.UI.CreateCheckbox(LibsToolkit, 'Disable ' .. DISPLAY_PERSONAL_RESOURCE)
+				local AutoLoot = LibAT.UI.CreateCheckbox(LibsToolkit, 'Enable AutoLoot')
+				local ShowNameplates = LibAT.UI.CreateCheckbox(LibsToolkit, 'Enable ' .. UNIT_NAMEPLATES_AUTOMODE)
+				local DisableTutorials = LibAT.UI.CreateCheckbox(LibsToolkit, 'Disable ALL tutorials')
+				local DisableTutorialsWarning = LibAT.UI.CreateLabel(LibsToolkit, 'For experienced players only')
 				DisableTutorialsWarning:SetTextColor(1, 0, 0, 0.7)
 
 				Nameplate:SetChecked(true)
@@ -50,7 +52,7 @@ local function SetupTweaks()
 				Nameplate:HookScript(
 					'OnClick',
 					function()
-						if Nameplate:GetValue() or false then
+						if Nameplate:GetChecked() or false then
 							SetCVar('nameplateShowSelf', 0)
 						else
 							SetCVar('nameplateShowSelf', 1)
@@ -60,7 +62,7 @@ local function SetupTweaks()
 				AutoLoot:HookScript(
 					'OnClick',
 					function()
-						if AutoLoot:GetValue() or false then
+						if AutoLoot:GetChecked() or false then
 							SetCVar('autoLootDefault', 1)
 						else
 							SetCVar('autoLootDefault', 0)
@@ -70,7 +72,7 @@ local function SetupTweaks()
 				ShowNameplates:HookScript(
 					'OnClick',
 					function()
-						if ShowNameplates:GetValue() or false then
+						if ShowNameplates:GetChecked() or false then
 							SetCVar('nameplateShowAll', 1)
 						else
 							SetCVar('nameplateShowAll', 0)
@@ -85,13 +87,13 @@ local function SetupTweaks()
 
 				if DBM_MinimapIcon then
 					DBM_MinimapIcon.hide = true
-					local DBMMinimap = StdUi:Checkbox(LibsToolkit, 'Hide DBM Minimap Icon', 240, 20)
+					local DBMMinimap = LibAT.UI.CreateCheckbox(LibsToolkit, 'Hide DBM Minimap Icon')
 					DBMMinimap:SetChecked(true)
 					DBMMinimap:HookScript(
 						'OnClick',
 						function()
-							DBM_MinimapIcon.hide = (not DBMMinimap:GetValue() or false)
-							if DBMMinimap:GetValue() or false then
+							DBM_MinimapIcon.hide = (not DBMMinimap:GetChecked() or false)
+							if DBMMinimap:GetChecked() or false then
 								LDBIcon:Hide('DBM')
 							else
 								LDBIcon:Show('DBM')
@@ -105,13 +107,13 @@ local function SetupTweaks()
 					Bartender4.db.profile.minimapIcon.hide = true
 					LDBIcon:Hide('Bartender4')
 
-					local BT4MiniMap = StdUi:Checkbox(LibsToolkit, 'Hide Bartender4 Minimap Icon', 240, 20)
+					local BT4MiniMap = LibAT.UI.CreateCheckbox(LibsToolkit, 'Hide Bartender4 Minimap Icon')
 					BT4MiniMap:SetChecked(true)
 					BT4MiniMap:HookScript(
 						'OnClick',
 						function()
-							Bartender4.db.profile.minimapIcon.hide = (not BT4MiniMap:GetValue() or false)
-							if BT4MiniMap:GetValue() or false then
+							Bartender4.db.profile.minimapIcon.hide = (not BT4MiniMap:GetChecked() or false)
+							if BT4MiniMap:GetChecked() or false then
 								LDBIcon:Hide('Bartender4')
 							else
 								LDBIcon:Show('Bartender4')
@@ -125,13 +127,13 @@ local function SetupTweaks()
 					WeakAurasSaved.minimap.hide = true
 					LDBIcon:Hide('WeakAuras')
 
-					local WAMiniMap = StdUi:Checkbox(LibsToolkit, 'Hide WeakAuras Minimap Icon', 240, 20)
+					local WAMiniMap = LibAT.UI.CreateCheckbox(LibsToolkit, 'Hide WeakAuras Minimap Icon')
 					WAMiniMap:SetChecked(true)
 					WAMiniMap:HookScript(
 						'OnClick',
 						function()
-							Bartender4.db.profile.minimapIcon.hide = (not WAMiniMap:GetValue() or false)
-							if WAMiniMap:GetValue() or false then
+							Bartender4.db.profile.minimapIcon.hide = (not WAMiniMap:GetChecked() or false)
+							if WAMiniMap:GetChecked() or false then
 								LDBIcon:Hide('WeakAuras')
 							else
 								LDBIcon:Show('WeakAuras')
@@ -144,18 +146,18 @@ local function SetupTweaks()
 				local lastItem = false
 				for k, v in pairs(CheckboxItem) do
 					if not lastItem then
-						StdUi:GlueTop(v, LibsToolkit, 0, -30)
+						SUI.UI.GlueTop(v, LibsToolkit, 0, -30)
 					else
-						StdUi:GlueBelow(v, lastItem, 0, -10)
+						SUI.UI.GlueBelow(v, lastItem, 0, -10)
 					end
 					lastItem = v
 				end
 
-				StdUi:GlueRight(DisableTutorialsWarning, DisableTutorials, -85, 0)
+				SUI.UI.GlueRight(DisableTutorialsWarning, DisableTutorials, -85, 0)
 
 				LibsToolkit.DisableTutorials = DisableTutorials
 			else
-				LibsToolkit.lblDisabled = StdUi:Label(LibsToolkit, 'Disabled', 20)
+				LibsToolkit.lblDisabled = LibAT.UI.CreateLabel(LibsToolkit, 'Disabled', 'GameFontNormalLarge')
 				LibsToolkit.lblDisabled:SetPoint('CENTER', LibsToolkit)
 			end
 
@@ -164,7 +166,7 @@ local function SetupTweaks()
 		Next = function()
 			if SUI:IsModuleEnabled('LibsToolkit') then
 				local LibsToolkit = SUI.Setup.window.content.LibsToolkit
-				if LibsToolkit.DisableTutorials:GetValue() or false then
+				if LibsToolkit.DisableTutorials:GetChecked() or false then
 					local bitfieldListing = {
 						LE_FRAME_TUTORIAL_ACCCOUNT_RAF_INTRO,
 						LE_FRAME_TUTORIAL_ACCCOUNT_CLUB_FINDER_NEW_FEATURE,

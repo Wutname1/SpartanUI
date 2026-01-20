@@ -1,6 +1,6 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
 	<Script file='oUF_SpartanArt\oUF_SpartanArt.lua' />
-	<Script file='oUF_AuraBars.lua' />
+	<!-- <Script file='oUF_AuraBars.lua' /> DECOMMISSIONED: Not maintaining if unavailable in retail -->
 	<Script file='oUF_AuraHighlight.lua' />
 	<Script file='oUF_AuraWatch.lua' />
 	<Script file='oUF_ClassicAuraDurations.lua'/>
@@ -9,6 +9,6 @@
 	<Script file='oUF_QuestMob.lua'/>
 	<Script file='oUF_PVPSpecIcons.lua'/>
 	<Script file='oUF_RaidDebuffs.lua' />
-	<Script file='oUF_Trinkets.lua'/>
+	<!-- <Script file='oUF_Trinkets.lua'/> REMOVED: Not needed -->
 	<Script file='oUF_WidgetXPBar.lua'/>
 </Ui>

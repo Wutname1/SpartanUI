@@ -125,14 +125,32 @@ function module:GetExperienceTooltipText()
 end
 
 function module:GetReputationTooltipText()
-	local data = C_Reputation.GetWatchedFactionData()
-	if not data then return end
+	local data
+	if C_Reputation and C_Reputation.GetWatchedFactionData then
+		data = C_Reputation.GetWatchedFactionData()
+	else
+		-- Classic fallback
+		local name, standingID, barMin, barMax, barValue, factionID = GetWatchedFactionInfo()
+		if name then
+			data = {
+				name = name,
+				reaction = standingID,
+				factionID = factionID,
+				currentStanding = barValue,
+				currentReactionThreshold = barMin,
+				nextReactionThreshold = barMax
+			}
+		end
+	end
+	if not data then
+		return
+	end
 
 	GameTooltip:AddLine(data.name)
 	GameTooltip:AddLine(' ')
 
-	local friendshipInfo = C_GossipInfo.GetFriendshipReputation(data.factionID)
-	local isMajorFaction = C_Reputation.IsMajorFaction(data.factionID)
+	local friendshipInfo = C_GossipInfo and C_GossipInfo.GetFriendshipReputation and C_GossipInfo.GetFriendshipReputation(data.factionID)
+	local isMajorFaction = C_Reputation and C_Reputation.IsMajorFaction and C_Reputation.IsMajorFaction(data.factionID)
 
 	if friendshipInfo and friendshipInfo.friendshipFactionID > 0 then
 		-- Friendship reputation
@@ -142,7 +160,7 @@ function module:GetReputationTooltipText()
 			local total = friendshipInfo.nextThreshold - (friendshipInfo.reactionThreshold or 0)
 			GameTooltip:AddDoubleLine(REPUTATION .. ':', string.format('%d / %d (%d%%)', current, total, (current / total) * 100), 1, 1, 1)
 		end
-	elseif isMajorFaction then
+	elseif isMajorFaction and C_MajorFactions and C_MajorFactions.GetMajorFactionData then
 		-- Major faction (Dragonflight renown system)
 		local majorFactionData = C_MajorFactions.GetMajorFactionData(data.factionID)
 		local renownLevel = majorFactionData.renownLevel
@@ -163,8 +181,8 @@ function module:GetReputationTooltipText()
 		end
 	end
 
-	-- Paragon reputation (if applicable)
-	if C_Reputation.IsFactionParagon(data.factionID) then
+	-- Paragon reputation (if applicable, retail only)
+	if C_Reputation and C_Reputation.IsFactionParagon and C_Reputation.IsFactionParagon(data.factionID) then
 		local currentValue, threshold, _, hasRewardPending = C_Reputation.GetFactionParagonInfo(data.factionID)
 		local current = currentValue % threshold
 		GameTooltip:AddDoubleLine(L['Paragon'] .. ':', string.format('%d / %d (%d%%)', current, threshold, (current / threshold) * 100), 1, 1, 1)
@@ -196,15 +214,19 @@ function module:GetHonorTooltipText()
 		1
 	)
 
-	-- Next Honor Level Reward
-	local nextHonorLevelForReward = C_PvP.GetNextHonorLevelForReward(honorLevel)
-	if nextHonorLevelForReward then
-		local nextRewardInfo = C_PvP.GetHonorRewardInfo(nextHonorLevelForReward)
-		if nextRewardInfo then
-			GameTooltip:AddLine(' ')
-			GameTooltip:AddDoubleLine(L['Next Honor Reward'], string.format(L['Level %d'], nextHonorLevelForReward), NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b, 1, 1, 1)
-			local rewardItemID = C_AchievementInfo.GetRewardItemID(nextRewardInfo.achievementRewardedID)
-			if rewardItemID then GameTooltip:AddDoubleLine('|---', C_Item.GetItemNameByID(rewardItemID), NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b, 1, 1, 1) end
+	-- Next Honor Level Reward (retail only)
+	if C_PvP and C_PvP.GetNextHonorLevelForReward then
+		local nextHonorLevelForReward = C_PvP.GetNextHonorLevelForReward(honorLevel)
+		if nextHonorLevelForReward then
+			local nextRewardInfo = C_PvP.GetHonorRewardInfo and C_PvP.GetHonorRewardInfo(nextHonorLevelForReward)
+			if nextRewardInfo then
+				GameTooltip:AddLine(' ')
+				GameTooltip:AddDoubleLine(L['Next Honor Reward'], string.format(L['Level %d'], nextHonorLevelForReward), NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b, 1, 1, 1)
+				local rewardItemID = C_AchievementInfo and C_AchievementInfo.GetRewardItemID and C_AchievementInfo.GetRewardItemID(nextRewardInfo.achievementRewardedID)
+				if rewardItemID and C_Item and C_Item.GetItemNameByID then
+					GameTooltip:AddDoubleLine('|---', C_Item.GetItemNameByID(rewardItemID), NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b, 1, 1, 1)
+				end
+			end
 		end
 	end
 
@@ -302,6 +324,10 @@ function module:OnInitialize()
 end
 
 function module:OnEnable()
+	-- StatusTrackingBarContainerTemplate doesn't exist in Classic, skip entirely
+	if not StatusTrackingBarContainerTemplate then
+		return
+	end
 	module:factory()
 	module:BuildOptions()
 end
@@ -309,7 +335,9 @@ end
 function module:factory()
 	local barManager = self:CreateBarManager()
 	self:CreateBarContainers(barManager)
-	barManager:OnLoad()
+	if barManager.OnLoad then
+		barManager:OnLoad()
+	end
 end
 
 function module:UpdateBars()
@@ -384,8 +412,11 @@ end
 
 function module:CreateBarManager()
 	local barManager = CreateFrame('Frame', 'SUI_StatusBar_Manager', SpartanUI)
-	for k, v in pairs(StatusTrackingManagerMixin) do
-		barManager[k] = v
+	-- StatusTrackingManagerMixin is Retail-only, skip for Classic
+	if StatusTrackingManagerMixin then
+		for k, v in pairs(StatusTrackingManagerMixin) do
+			barManager[k] = v
+		end
 	end
 
 	barManager.UpdateBarsShown = function(self)
@@ -518,7 +549,10 @@ function module:CreateBarContainer(barManager, key, index)
 end
 
 function module:SetupBarContainerVisuals(barContainer, barStyle)
-	barContainer.BarFrameTexture:Hide()
+	-- Hide BarFrameTexture if it exists (retail only)
+	if barContainer.BarFrameTexture then
+		barContainer.BarFrameTexture:Hide()
+	end
 	-- Create background
 	barContainer.bg = barContainer:CreateTexture(nil, 'BACKGROUND')
 	barContainer.bg:SetTexture(barStyle.bgTexture or '')

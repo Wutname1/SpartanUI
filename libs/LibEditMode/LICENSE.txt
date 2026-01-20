@@ -1,4 +1,4 @@
-Copyright (c) 2022-2024 Adrian L Lange <addons@p3lim.net>
+Copyright (c) 2022-2025 Adrian L Lange <addons@p3lim.net>
 
 All rights reserved.
 

@@ -1,4 +1,4 @@
-## Interface: 110207
+## Interface: 120000
 ## Title: Spartan|cffe21f1fUI
 ## Notes: User Interface combining elegant artwork with well designed features.
 ## Version: @project-version@
@@ -10,7 +10,8 @@
 ## X-Wago-ID: vEGPqeN1
 ## X-Github: https://github.com/Wutname1/SpartanUI
 ## X-oUF: SUIUF
-## OptionalDeps: Bartender4, Libs-AddonTools
+## RequiredDeps: Libs-AddonTools
+## OptionalDeps: Bartender4
 ## SavedVariables: SpartanUIDB, SUIErrorHandler
 ## SavedVariablesPerCharacter: SpartanUICharDB
 ## X-BugGrabber-Display: SUIErrorDisplay
@@ -24,39 +25,87 @@
 ## Category-zhCN: 用户界面
 ## Category-zhTW: 使用者介面
 
-# General Libraries
-libs\TaintLess\TaintLess.xml
+# ============================================
+# GENERAL LIBRARIES - SHARED (all versions)
+# ============================================
 libs\Ace3\Ace3.xml
-libs\StdUi\StdUi.xml
 libs\LibDataBroker\LibDataBroker-1.1.lua
 libs\LibDBIcon-1.0\lib.xml
-libs\LibEditMode\embed.xml
-libs\LibEditModeOverride\LibEditModeOverride.xml
 
-# Localization
-lang\localization.xml
+# ============================================
+# LIBRARIES - RETAIL ONLY
+# ============================================
+libs\TaintLess\TaintLess.xml [AllowLoadGameType mainline]
+libs\LibEditMode\embed.xml [AllowLoadGameType mainline]
+libs\LibEditModeOverride\LibEditModeOverride.xml [AllowLoadGameType mainline]
+libs\LibDualSpec-1.0\LibDualSpec-1.0.lua [AllowLoadGameType mainline]
+libs\LibQTip-1.0\lib.xml [AllowLoadGameType mainline]
 
-#Setup SUI error catcher
+# ============================================
+# ERROR HANDLING
+# ============================================
 libs\bug-grabber\load.xml
-Core\Handlers\Bugs\loader.xml
+Core\Handlers\Bugs\loader.xml [AllowLoadGameType mainline]
+Core\Handlers\BugWindow.lua [AllowLoadGameType vanilla, tbc, wrath, cata, mists]
 
-# General Libraries Continued
+# ============================================
+# GENERAL LIBRARIES CONTINUED - SHARED
+# ============================================
 libs\LibCompress\lib.xml
 libs\LibBase64-1.0\lib.xml
-libs\LibDualSpec-1.0\LibDualSpec-1.0.lua
 libs\HereBeDragons\HereBeDragons-2.0.lua
 libs\LibSharedMedia-3.0\lib.xml
 libs\AceGUI-3.0-SharedMediaWidgets\widget.xml
-libs\LibQTip-1.0\lib.xml
 
-# Unit Frame libraries
+# ============================================
+# LIBRARIES - CLASSIC ONLY
+# ============================================
+libs\LibHealComm-4.0\LibHealComm-4.0.lua [AllowLoadGameType vanilla, tbc, wrath, cata, mists]
+libs\LibClassicDurations\LibClassicDurations.xml [AllowLoadGameType vanilla, tbc]
+libs\LibClassicCasterino\LibClassicCasterino.lua [AllowLoadGameType vanilla, tbc]
+
+# ============================================
+# UNIT FRAME LIBRARIES
+# ============================================
 libs\LibDispel\LibDispel.lua
-libs\oUF\oUF.xml
+
+# oUF - Retail (upstream, do not modify)
+libs\oUF\oUF.xml [AllowLoadGameType mainline]
+
+# oUF - Classic (custom fork for classic variants)
+libs\oUF_Classic\oUF_Classic.xml [AllowLoadGameType vanilla, tbc]
+libs\oUF_Classic\oUF_Wrath.xml [AllowLoadGameType wrath, cata, mists]
+
+# oUF Plugins
 libs\oUF_Plugins\Loader.xml
 
+# ============================================
+# LOCALIZATION
+# ============================================
+lang\localization.xml
 
-# Now load SpartanUI
-core\Framework.lua
-modules\LoadAll.xml
-core\Framework.xml
+# ============================================
+# CORE FRAMEWORK
+# ============================================
+Core\Framework.lua
+Core\BlizzAPI.lua
+Core\UI\Helpers.lua
+
+# ============================================
+# MODULES
+# ============================================
+Modules\InterruptAnnounce.lua [AllowLoadGameType vanilla, tbc, wrath, cata, mists]
+Modules\TauntWatcher.lua [AllowLoadGameType vanilla, tbc, wrath, cata, mists]
+Modules\LoadAll.xml
+
+# ============================================
+# CORE FRAMEWORK POST-MODULES
+# ============================================
+Core\Framework.xml
+Core\oUF.lua [AllowLoadGameType mainline]
+Core\oUF_Classic.lua [AllowLoadGameType vanilla, tbc, wrath, cata, mists]
+
+# ============================================
+# THEMES
+# ============================================
 Themes\Themes.xml

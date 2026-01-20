@@ -1,7 +1,6 @@
 ---@class SUI
 local SUI = SUI
 local L = SUI.L
-local StdUi = SUI.StdUi
 ---@class SUI.Module.Chatbox : SUI.Module, AceHook-3.0
 local module = SUI:NewModule('Chatbox', 'AceHook-3.0')
 module.description = 'Lightweight quality of life chat improvements'
@@ -1081,18 +1080,21 @@ function module:SetupChatboxes()
 		end
 		hooksecurefunc(ChatFrame.Background, 'SetVertexColor', BackdropColorUpdate)
 
+		-- Edit box focus textures (retail only)
 		local EBFocusLeft = _G[ChatFrameName .. 'EditBoxFocusLeft']
 		local EBFocusMid = _G[ChatFrameName .. 'EditBoxFocusMid']
 		local EBFocusRight = _G[ChatFrameName .. 'EditBoxFocusRight']
-		EBFocusLeft:SetVertexColor(c.r, c.g, c.b, c.a)
-		EBFocusMid:SetVertexColor(c.r, c.g, c.b, c.a)
-		EBFocusRight:SetVertexColor(c.r, c.g, c.b, c.a)
+		if EBFocusLeft and EBFocusMid and EBFocusRight then
+			EBFocusLeft:SetVertexColor(c.r, c.g, c.b, c.a)
+			EBFocusMid:SetVertexColor(c.r, c.g, c.b, c.a)
+			EBFocusRight:SetVertexColor(c.r, c.g, c.b, c.a)
 
-		-- Ensure the edit box hides all textures
-		local EditBoxFocusHide = function(frame)
-			ChatFrameEdit:Hide()
+			-- Ensure the edit box hides all textures
+			local EditBoxFocusHide = function(frame)
+				ChatFrameEdit:Hide()
+			end
+			hooksecurefunc(EBFocusMid, 'Hide', EditBoxFocusHide)
 		end
-		hooksecurefunc(EBFocusMid, 'Hide', EditBoxFocusHide)
 
 		disable(_G[ChatFrameName .. 'ButtonFrame'])
 	end

@@ -218,95 +218,210 @@ if SUI.IsRetail then
 	end
 end
 
-local function dynamicCalc(num)
-	if num >= 1000000000 then
-		return SUI:round(num / 1000000000, 1) .. 'B'
-	elseif num >= 1000000 then
-		return SUI:round(num / 1000000, 1) .. 'M'
-	else
-		return SUI.Font:comma_value(num)
+--[[ WoW 12.0 UPDATED: Custom health/power tags rebuilt using secret-safe APIs
+
+     OLD APPROACH (Broken in 12.0):
+     - Performed arithmetic on UnitHealth/UnitPower secret values
+     - Used division/multiplication for percentages and abbreviations
+
+     NEW APPROACH (12.0 Compatible):
+     - Uses AbbreviateNumbers() for K/M/B formatting (secret-safe)
+     - Uses UnitHealthMissing() instead of subtraction (secret-safe)
+     - Uses UnitHealthPercent() for percentage display (secret-safe)
+     - Uses BreakUpLargeNumbers() for comma formatting (secret-safe)
+
+     SUPPORTED OPTIONS:
+     ✅ displayDead - Show "Dead" when unit is dead
+     ✅ hideDead - Hide output when unit is dead
+     ✅ hideZero - Hide when value is 0
+     ✅ short/dynamic - K/M/B abbreviations (e.g., "1.2K", "45M")
+     ✅ percentage - Show as percentage (e.g., "75")
+     ✅ missing - Show missing health/power
+     ✅ max - Show max health/power
+     ✅ plain - No formatting, raw value
+     ✅ comma/formatted - Comma-separated (e.g., "1,234,567") - DEFAULT if no format specified
+     ❌ hideMax - REMOVED (requires comparing secrets - impossible in 12.0)
+
+     See: https://warcraft.wiki.gg/wiki/Patch_12.0.0/API_changes#Secret_values
+--]]
+
+---Formats health/power values using WoW 12.0 secret-safe APIs
+---@param unit string Unit token
+---@param _ any Unused realUnit parameter
+---@param ... string Options: displayDead, hideDead, hideZero, short, dynamic, percentage, missing, max
+---@return string|nil Formatted value or nil to hide
+local function SUIHealth(unit, _, ...)
+	local isDead = UnitIsDeadOrGhost(unit)
+
+	-- Handle dead state first
+	for i = 1, select('#', ...) do
+		local var = tostring(select(i, ...))
+		if var == 'hideDead' and isDead then
+			return '' -- Hide when dead
+		elseif var == 'displayDead' and isDead then
+			return 'Dead' -- Show "Dead" text
+		end
 	end
-end
 
-local function shortCalc(num)
-	if num >= 1000000 then
-		return SUI:round(num / 1000000, 0) .. 'M'
-	elseif num >= 1000 then
-		return SUI:round(num / 1000, 0) .. 'K'
-	else
-		return SUI.Font:comma_value(num)
+	-- Check if percentage format requested
+	local wantsPercentage = false
+	for i = 1, select('#', ...) do
+		if tostring(select(i, ...)) == 'percentage' then
+			wantsPercentage = true
+			break
+		end
 	end
-end
 
-local function calculateResult(currentVal, maxVal, isDead, ...)
-	local returnVal = ''
-	local num = currentVal
+	-- Handle percentage display (uses secret-safe UnitHealthPercent)
+	if wantsPercentage then
+		local percent = UnitHealthPercent(unit, true, CurveConstants.ScaleTo100)
+		-- Check hideZero
+		for i = 1, select('#', ...) do
+			if tostring(select(i, ...)) == 'hideZero' then
+				local truncated = C_StringUtil.TruncateWhenZero(percent)
+				if not truncated then return '' end
+				break
+			end
+		end
+		return string.format('%d', percent)
+	end
 
+	-- Determine which value to display (current, missing, or max)
+	local value
 	for i = 1, select('#', ...) do
 		local var = tostring(select(i, ...))
 		if var == 'missing' then
-			num = maxVal - currentVal
+			value = UnitHealthMissing(unit) -- Secret-safe subtraction
 		elseif var == 'max' then
-			num = maxVal
+			value = UnitHealthMax(unit)
 		end
 	end
 
+	-- Default to current health if no specific value requested
+	if not value then
+		value = UnitHealth(unit)
+	end
+
+	-- Check hideZero option
+	for i = 1, select('#', ...) do
+		if tostring(select(i, ...)) == 'hideZero' then
+			local truncated = C_StringUtil.TruncateWhenZero(value)
+			if not truncated then return '' end
+			break
+		end
+	end
+
+	-- Format the value based on options
 	for i = 1, select('#', ...) do
 		local var = tostring(select(i, ...))
-
-		if var == 'percentage' then
-			returnVal = math.floor(currentVal / maxVal * 100 + 0.5) .. '%'
-		elseif var == 'dynamic' then
-			returnVal = dynamicCalc(num)
-		elseif var == 'short' then
-			returnVal = shortCalc(num)
-		elseif var == 'hideDead' and isDead then
-			return ''
-		elseif var == 'displayDead' and isDead then
-			return 'Dead'
-		elseif var == 'hideZero' and (currentVal == 0 or num == 0) then
-			return ''
-		elseif var == 'hideMax' and currentVal == maxVal then
-			return ''
+		if var == 'short' or var == 'dynamic' then
+			return AbbreviateNumbers(value) -- Secret-safe abbreviation (1.2K, 45M, etc)
+		elseif var == 'plain' then
+			return tostring(value) -- Plain, unformatted value
+		elseif var == 'comma' or var == 'formatted' then
+			return BreakUpLargeNumbers(value) -- Comma-separated (1,234,567)
 		end
 	end
-	if returnVal == '' then
-		returnVal = SUI.Font:comma_value(num)
-	end
 
-	return returnVal
+	-- Default: comma formatting
+	return BreakUpLargeNumbers(value)
 end
 
-local function SUIHealth(unit, _, ...)
-	local currentVal = UnitHealth(unit) or 0
-	local maxVal = UnitHealthMax(unit) or currentVal
-	local isDead = UnitIsDeadOrGhost(unit)
-	if maxVal == 0 then
-		maxVal = 1
-	end
-	return calculateResult(currentVal, maxVal, isDead, ...)
-end
-
+---Formats power values using WoW 12.0 secret-safe APIs
+---@param unit string Unit token
+---@param _ any Unused realUnit parameter
+---@param ... string Options: displayDead, hideDead, hideZero, short, dynamic, percentage, missing, max
+---@return string|nil Formatted value or nil to hide
 local function SUIPower(unit, _, ...)
-	local returnVal = ''
+	-- Return empty if no options provided
 	if not ... then
-		return returnVal
+		return ''
 	end
 
-	local currentVal = UnitPower(unit) or 0
-	local maxVal = UnitPowerMax(unit) or currentVal
 	local isDead = UnitIsDeadOrGhost(unit)
 
-	return calculateResult(currentVal, maxVal, isDead, ...)
+	-- Handle dead state first
+	for i = 1, select('#', ...) do
+		local var = tostring(select(i, ...))
+		if var == 'hideDead' and isDead then
+			return '' -- Hide when dead
+		elseif var == 'displayDead' and isDead then
+			return 'Dead' -- Show "Dead" text
+		end
+	end
+
+	-- Check if percentage format requested
+	local wantsPercentage = false
+	for i = 1, select('#', ...) do
+		if tostring(select(i, ...)) == 'percentage' then
+			wantsPercentage = true
+			break
+		end
+	end
+
+	-- Handle percentage display (uses secret-safe UnitPowerPercent)
+	if wantsPercentage then
+		local percent = UnitPowerPercent(unit, nil, true, CurveConstants.ScaleTo100)
+		-- Check hideZero
+		for i = 1, select('#', ...) do
+			if tostring(select(i, ...)) == 'hideZero' then
+				local truncated = C_StringUtil.TruncateWhenZero(percent)
+				if not truncated then return '' end
+				break
+			end
+		end
+		return string.format('%d', percent)
+	end
+
+	-- Determine which value to display (current, missing, or max)
+	local value
+	for i = 1, select('#', ...) do
+		local var = tostring(select(i, ...))
+		if var == 'missing' then
+			value = UnitPowerMissing(unit) -- Secret-safe subtraction
+		elseif var == 'max' then
+			value = UnitPowerMax(unit)
+		end
+	end
+
+	-- Default to current power if no specific value requested
+	if not value then
+		value = UnitPower(unit)
+	end
+
+	-- Check hideZero option
+	for i = 1, select('#', ...) do
+		if tostring(select(i, ...)) == 'hideZero' then
+			local truncated = C_StringUtil.TruncateWhenZero(value)
+			if not truncated then return '' end
+			break
+		end
+	end
+
+	-- Format the value based on options
+	for i = 1, select('#', ...) do
+		local var = tostring(select(i, ...))
+		if var == 'short' or var == 'dynamic' then
+			return AbbreviateNumbers(value) -- Secret-safe abbreviation (1.2K, 45M, etc)
+		elseif var == 'plain' then
+			return tostring(value) -- Plain, unformatted value
+		elseif var == 'comma' or var == 'formatted' then
+			return BreakUpLargeNumbers(value) -- Comma-separated (1,234,567)
+		end
+	end
+
+	-- Default: comma formatting
+	return BreakUpLargeNumbers(value)
 end
 
+-- Register the custom tags with oUF
 SUIUF.Tags.Events['SUIHealth'] = 'UNIT_HEALTH UNIT_MAXHEALTH'
 SUIUF.Tags.Methods['SUIHealth'] = SUIHealth
 
 SUIUF.Tags.Events['SUIPower'] = 'UNIT_MAXPOWER UNIT_POWER_UPDATE'
 SUIUF.Tags.Methods['SUIPower'] = SUIPower
 
-do --LEGACY Health Formatting Tags
+do --LEGACY Health Formatting Tags (for backwards compatibility)
 	local listing = {
 		['health:current-short'] = {'short'},
 		['health:current-dynamic'] = {'dynamic'},
@@ -326,7 +441,7 @@ do --LEGACY Health Formatting Tags
 	end
 end
 
-do -- LEGACY Mana Formatting Tags
+do -- LEGACY Power Formatting Tags (for backwards compatibility)
 	local listing = {
 		['power:current-short'] = {'short'},
 		['power:current-dynamic'] = {'dynamic'},

@@ -1,21 +1,45 @@
-local MINOR = 8
+local MINOR = 12
 local lib, minor = LibStub('LibEditMode')
 if minor > MINOR then
 	return
 end
 
+local function showTooltip(self)
+	if self.setting and self.setting.desc then
+		SettingsTooltip:SetOwner(self, 'ANCHOR_NONE')
+		SettingsTooltip:SetPoint('BOTTOMRIGHT', self, 'TOPLEFT')
+		SettingsTooltip:SetText(self.setting.name, 1, 1, 1)
+		SettingsTooltip:AddLine(self.setting.desc)
+		SettingsTooltip:Show()
+	end
+end
+
 local function get(data)
-	return data.get(lib.activeLayoutName) == data.value
+	local value = data.get(lib:GetActiveLayoutName())
+	if value then
+		if data.multiple then
+			assert(type(value) == 'table', "multiple choice dropdowns expects a table from 'get'")
+
+			for _, v in next, value do
+				if v == data.value then
+					return true
+				end
+			end
+		else
+			return value == data.value
+		end
+	end
 end
 
 local function set(data)
-	data.set(lib.activeLayoutName, data.value)
+	data.set(lib:GetActiveLayoutName(), data.value, false)
 end
 
 local dropdownMixin = {}
 function dropdownMixin:Setup(data)
 	self.setting = data
 	self.Label:SetText(data.name)
+	self:SetEnabled(not data.disabled)
 
 	if data.generator then
 		-- let the user have full control
@@ -29,17 +53,19 @@ function dropdownMixin:Setup(data)
 			end
 
 			for _, value in next, data.values do
-				if value.isRadio then
-					rootDescription:CreateRadio(value.text, get, set, {
-						get = data.get,
-						set = data.set,
-						value = value.text,
-					})
-				else
+				if data.multiple then
 					rootDescription:CreateCheckbox(value.text, get, set, {
 						get = data.get,
 						set = data.set,
-						value = value.text
+						value = value.value or value.text,
+						multiple = data.multiple,
+					})
+				else
+					rootDescription:CreateRadio(value.text, get, set, {
+						get = data.get,
+						set = data.set,
+						value = value.value or value.text,
+						multiple = data.multiple,
 					})
 				end
 			end
@@ -47,8 +73,15 @@ function dropdownMixin:Setup(data)
 	end
 end
 
+function dropdownMixin:SetEnabled(enabled)
+	self.Dropdown:SetEnabled(enabled)
+	self.Label:SetTextColor((enabled and WHITE_FONT_COLOR or DISABLED_FONT_COLOR):GetRGB())
+end
+
 lib.internal:CreatePool(lib.SettingType.Dropdown, function()
 	local frame = CreateFrame('Frame', nil, UIParent, 'ResizeLayoutFrame')
+	frame:SetScript('OnLeave', DefaultTooltipMixin.OnLeave)
+	frame:SetScript('OnEnter', showTooltip)
 	frame.fixedHeight = 32
 	Mixin(frame, dropdownMixin)
 

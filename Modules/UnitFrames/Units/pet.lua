@@ -42,7 +42,7 @@ local Settings = {
 			colorReaction = false,
 			text = {
 				['1'] = {
-					text = '[SUIHealth(short,displayDead)] [($>SUIHealth<$)(percentage,hideDead,hideMax)]'
+					text = '[SUIHealth(short,displayDead)] [($>SUIHealth<$)(percentage,hideDead)]'
 				}
 			}
 		},

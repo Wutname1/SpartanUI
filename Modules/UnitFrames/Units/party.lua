@@ -171,7 +171,7 @@ local Settings = {
 		Health = {
 			text = {
 				['1'] = {
-					text = '[SUIHealth(displayDead)] [($>SUIHealth<$)(percentage,hideDead,hideMax)]'
+					text = '[SUIHealth(displayDead)] [($>SUIHealth<$)(percentage,hideDead)]'
 				}
 			},
 			position = {

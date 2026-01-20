@@ -35,8 +35,8 @@ local function Builder(frame)
 		'Runes',
 		'RestingIndicator',
 		'ClassPower',
-		'AdditionalPower',
-		'AuraBars'
+		'AdditionalPower'
+		-- 'AuraBars' -- DECOMMISSIONED: Not maintaining if unavailable in retail
 	}
 
 	for _, elementName in pairs(ElementsToBuild) do
@@ -82,9 +82,9 @@ local Settings = {
 		}
 	},
 	elements = {
-		AuraBars = {
-			enabled = true
-		},
+		-- AuraBars = { -- DECOMMISSIONED: Not maintaining if unavailable in retail
+		-- 	enabled = true
+		-- },
 		Buffs = {
 			enabled = false,
 			rules = {

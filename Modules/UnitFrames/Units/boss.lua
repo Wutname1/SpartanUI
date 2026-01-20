@@ -69,7 +69,7 @@ local Settings = {
 			},
 			text = {
 				['1'] = {
-					text = '[SUIHealth(dynamic,displayDead)] [($>SUIHealth<$)(percentage,hideDead,hideMax)]'
+					text = '[SUIHealth(dynamic,displayDead)] [($>SUIHealth<$)(percentage,hideDead)]'
 				}
 			}
 		},

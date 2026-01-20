@@ -6,6 +6,15 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 SpartanUI is a comprehensive World of Warcraft addon that provides a complete user interface overhaul. It moves interface elements to the bottom of the screen to free up screen real estate and includes modular components for various gameplay features.
 
+## CRITICAL: Active Development Directory
+
+**IMPORTANT**: All development work is done in the `C:\code\SpartanUI` directory ONLY.
+
+- **DO NOT** edit files in `SpartanUI-*` directories (SpartanUI-Classic-Stable, SpartanUI-MOP-Stable, SpartanUI-TBC-Stable, etc.) unless explicitly directed by the user
+- The `SpartanUI-*` directories are version-specific stable branches maintained separately
+- When fixing bugs or making changes, always work in `C:\code\SpartanUI` unless told otherwise
+- Error paths showing `Interface/AddOns/SpartanUI/` refer to the main `C:\code\SpartanUI` directory
+
 ## Core Architecture
 
 ### Main Framework
@@ -30,9 +39,10 @@ The addon uses a modular architecture where each feature is a separate module:
 
 ### Libraries
 
-- **libs/**: Third-party libraries including Ace3, oUF (unit frames), StdUi, LibSharedMedia
+- **libs/**: Third-party libraries including Ace3, oUF (unit frames), LibSharedMedia
 - Uses LibStub for library management
 - Extensive use of Ace3 framework for addon structure
+- **LibAT.UI**: UI widget system provided by Libs-AddonTools for creating windows, buttons, checkboxes, etc.
 
 ## Key Commands
 
@@ -142,8 +152,26 @@ Always document function inputs and outputs to improve code maintainability and 
 
 ### Dependencies
 
-- **Required**: Bartender4 (action bar addon)
+- **Required**: Bartender4 (action bar addon), Libs-AddonTools (UI system and utilities)
 - **Optional**: Various other addons for enhanced functionality
+
+### WoW API Documentation Resources
+
+When working with WoW addon development, use these authoritative resources:
+
+- **TOC Format Variables**: https://warcraft.wiki.gg/wiki/TOC_format
+  - Reference when modifying .toc files for available variables
+- **Latest Interface Versions**: https://warcraft.wiki.gg/wiki/Template:API_LatestInterface
+  - Quick lookup for current patch interface version numbers
+- **WoW UI Source Code Repository**: `C:\code\WOWUICode`
+  - Contains branches for each game version (Retail, Classic, TBC, Wrath, Cata, Mists, etc.)
+  - Extracted Blizzard UI source code from all supported WoW versions
+  - Use `git checkout <branch>` to switch between versions
+- **API Reference**: https://warcraft.wiki.gg
+  - Most up-to-date resource for all WoW API lookups
+  - Prefer this over the local code export for API documentation
+
+Always use warcraft.wiki.gg as the primary reference for API lookups and documentation.
 
 ### Testing
 

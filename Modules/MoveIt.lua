@@ -1031,12 +1031,33 @@ function MoveIt:OnInitialize()
 	--Build Options
 	MoveIt:Options()
 
-	-- Build Coord Frame
-	local StdUi = SUI.StdUi
-	coordFrame = StdUi:Window(nil, 480, 200)
+	-- Build Coord Frame using LibAT.UI
+	-- Access LibAT from global namespace (not LibStub)
+	local LibAT = _G.LibAT
+	if LibAT and LibAT.UI then
+		coordFrame = LibAT.UI.CreateWindow({
+			name = 'SUI_MoveIt_CoordFrame',
+			title = 'MoveIt',
+			width = 480,
+			height = 200,
+			hidePortrait = true,
+		})
+	else
+		-- Fallback to basic frame if LibAT not available
+		coordFrame = CreateFrame('Frame', 'SUI_MoveIt_CoordFrame', UIParent, 'BasicFrameTemplateWithInset')
+		coordFrame:SetSize(480, 200)
+		coordFrame:SetPoint('CENTER')
+		coordFrame:EnableMouse(true)
+		coordFrame:SetMovable(true)
+		coordFrame:RegisterForDrag('LeftButton')
+		coordFrame:SetScript('OnDragStart', coordFrame.StartMoving)
+		coordFrame:SetScript('OnDragStop', coordFrame.StopMovingOrSizing)
+	end
 	coordFrame:SetFrameStrata('DIALOG')
+	coordFrame:Hide()
 
-	coordFrame.Title = StdUi:Texture(coordFrame, 104, 30, 'Interface\\AddOns\\SpartanUI\\images\\setup\\SUISetup')
+	-- Create title texture
+	coordFrame.Title = SUI.UI.CreateTexture(coordFrame, 104, 30, 'Interface\\AddOns\\SpartanUI\\images\\setup\\SUISetup')
 	coordFrame.Title:SetTexCoord(0, 0.611328125, 0, 0.6640625)
 	coordFrame.Title:SetPoint('TOP')
 	coordFrame.Title:SetAlpha(0.8)

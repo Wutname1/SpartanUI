@@ -289,6 +289,9 @@ function module:Options()
 end
 
 function module:FirstLaunch()
+	-- Access LibAT from global namespace (not LibStub)
+	local LibAT = _G.LibAT
+
 	local PageData = {
 		ID = 'CombatLog',
 		Name = L['Combat logging'],
@@ -298,7 +301,6 @@ function module:FirstLaunch()
 		RequireDisplay = module.DB.FirstLaunch,
 		Display = function()
 			local SUI_Win = SUI.Setup.window.content
-			local StdUi = SUI.StdUi
 
 			--Container
 			local cLog = CreateFrame('Frame', nil)
@@ -306,52 +308,59 @@ function module:FirstLaunch()
 			cLog:SetAllPoints(SUI_Win)
 
 			if SUI:IsModuleDisabled('CombatLog') then
-				cLog.lblDisabled = StdUi:Label(cLog, 'Disabled', 20)
+				cLog.lblDisabled = LibAT.UI.CreateLabel(cLog, 'Disabled', 'GameFontNormalLarge')
 				cLog.lblDisabled:SetPoint('CENTER', cLog)
 			else
 				-- Setup checkboxes
 				cLog.options = {}
-				cLog.options.alwayson = StdUi:Checkbox(cLog, L['Always on'], nil, 20)
-				cLog.options.announce = StdUi:Checkbox(cLog, L['Announce logging in chat'], nil, 20)
-				cLog.modEnabled = StdUi:Checkbox(cLog, L['Module enabled'], nil, 20)
+				cLog.options.alwayson = LibAT.UI.CreateCheckbox(cLog, L['Always on'])
+				cLog.options.announce = LibAT.UI.CreateCheckbox(cLog, L['Announce logging in chat'])
+				cLog.modEnabled = LibAT.UI.CreateCheckbox(cLog, L['Module enabled'])
 
-				-- Positioning
-				StdUi:GlueTop(cLog.modEnabled, SUI_Win, 0, -10)
-				StdUi:GlueBelow(cLog.options.alwayson, cLog.modEnabled, -100, -5)
-				StdUi:GlueRight(cLog.options.announce, cLog.options.alwayson, 5, 0)
+				-- Positioning - 2 column layout with proper spacing
+				local col1X, col2X, col3X = -200, -20, 160  -- X positions for columns
+				local startY = -10  -- Starting Y position
+				local rowHeight = 25  -- Height per row
+
+				-- Module enabled at top
+				cLog.modEnabled:SetPoint('TOPLEFT', SUI_Win, 'TOP', -60, startY)
+
+				-- Always on and announce in 2 columns
+				cLog.options.alwayson:SetPoint('TOPLEFT', SUI_Win, 'TOP', col1X, startY - rowHeight)
+				cLog.options.announce:SetPoint('TOPLEFT', SUI_Win, 'TOP', col2X, startY - rowHeight)
 
 				if SUI.IsRetail then
-					cLog.options.raidmythic = StdUi:Checkbox(cLog, L['Mythic'], 150, 20)
-					cLog.options.raidheroic = StdUi:Checkbox(cLog, L['Heroic'], 150, 20)
-					cLog.options.raidnormal = StdUi:Checkbox(cLog, L['Normal'], 150, 20)
-					cLog.options.raidlfr = StdUi:Checkbox(cLog, L['Looking for raid'], 150, 20)
-					cLog.options.raidlegacy = StdUi:Checkbox(cLog, L['Legacy raids'], 150, 20)
+					cLog.options.raidmythic = LibAT.UI.CreateCheckbox(cLog, L['Mythic'])
+					cLog.options.raidheroic = LibAT.UI.CreateCheckbox(cLog, L['Heroic'])
+					cLog.options.raidnormal = LibAT.UI.CreateCheckbox(cLog, L['Normal'])
+					cLog.options.raidlfr = LibAT.UI.CreateCheckbox(cLog, L['Looking for raid'])
+					cLog.options.raidlegacy = LibAT.UI.CreateCheckbox(cLog, L['Legacy raids'])
 
-					cLog.options.mythicplus = StdUi:Checkbox(cLog, L['Mythic+'], 150, 20)
-					cLog.options.mythicdungeon = StdUi:Checkbox(cLog, L['Mythic'], 150, 20)
-					cLog.options.heroicdungeon = StdUi:Checkbox(cLog, L['Heroic'], 150, 20)
-					cLog.options.normaldungeon = StdUi:Checkbox(cLog, L['Normal'], 150, 20)
+					cLog.options.mythicplus = LibAT.UI.CreateCheckbox(cLog, L['Mythic+'])
+					cLog.options.mythicdungeon = LibAT.UI.CreateCheckbox(cLog, L['Mythic'])
+					cLog.options.heroicdungeon = LibAT.UI.CreateCheckbox(cLog, L['Heroic'])
+					cLog.options.normaldungeon = LibAT.UI.CreateCheckbox(cLog, L['Normal'])
 
 					-- Create Labels
-					cLog.lblRaid = StdUi:Label(cLog, L['Raid settings'], 13)
-					cLog.lblDungeon = StdUi:Label(cLog, L['Dungeon settings'], 13)
+					cLog.lblRaid = LibAT.UI.CreateLabel(cLog, L['Raid settings'])
+					cLog.lblDungeon = LibAT.UI.CreateLabel(cLog, L['Dungeon settings'])
 
-					-- Raid Settings
-					StdUi:GlueTop(cLog.lblRaid, cLog.modEnabled, -150, -80)
-					StdUi:GlueBelow(cLog.options.raidmythic, cLog.lblRaid, 0, -5)
-					StdUi:GlueRight(cLog.options.raidheroic, cLog.options.raidmythic, 5, 0)
-					StdUi:GlueRight(cLog.options.raidnormal, cLog.options.raidheroic, 5, 0)
+					-- Raid Settings label and checkboxes in 3 columns
+					cLog.lblRaid:SetPoint('TOPLEFT', SUI_Win, 'TOP', col1X, startY - (rowHeight * 2.5))
+					cLog.options.raidmythic:SetPoint('TOPLEFT', SUI_Win, 'TOP', col1X, startY - (rowHeight * 3.5))
+					cLog.options.raidheroic:SetPoint('TOPLEFT', SUI_Win, 'TOP', col2X, startY - (rowHeight * 3.5))
+					cLog.options.raidnormal:SetPoint('TOPLEFT', SUI_Win, 'TOP', col3X, startY - (rowHeight * 3.5))
 
-					StdUi:GlueBelow(cLog.options.raidlfr, cLog.options.raidmythic, 0, -5)
-					StdUi:GlueRight(cLog.options.raidlegacy, cLog.options.raidlfr, 5, 0)
+					cLog.options.raidlfr:SetPoint('TOPLEFT', SUI_Win, 'TOP', col1X, startY - (rowHeight * 4.5))
+					cLog.options.raidlegacy:SetPoint('TOPLEFT', SUI_Win, 'TOP', col2X, startY - (rowHeight * 4.5))
 
-					--Dungeon Settings
-					StdUi:GlueBelow(cLog.lblDungeon, cLog.options.raidlfr, 0, -20)
-					StdUi:GlueBelow(cLog.options.mythicplus, cLog.lblDungeon, 0, -5)
-					StdUi:GlueRight(cLog.options.mythicdungeon, cLog.options.mythicplus, 5, 0)
-					StdUi:GlueRight(cLog.options.heroicdungeon, cLog.options.mythicdungeon, 5, 0)
+					-- Dungeon Settings label and checkboxes in 3 columns
+					cLog.lblDungeon:SetPoint('TOPLEFT', SUI_Win, 'TOP', col1X, startY - (rowHeight * 6))
+					cLog.options.mythicplus:SetPoint('TOPLEFT', SUI_Win, 'TOP', col1X, startY - (rowHeight * 7))
+					cLog.options.mythicdungeon:SetPoint('TOPLEFT', SUI_Win, 'TOP', col2X, startY - (rowHeight * 7))
+					cLog.options.heroicdungeon:SetPoint('TOPLEFT', SUI_Win, 'TOP', col3X, startY - (rowHeight * 7))
 
-					StdUi:GlueBelow(cLog.options.normaldungeon, cLog.options.mythicplus, 0, -5)
+					cLog.options.normaldungeon:SetPoint('TOPLEFT', SUI_Win, 'TOP', col1X, startY - (rowHeight * 8))
 				end
 
 				-- Defaults

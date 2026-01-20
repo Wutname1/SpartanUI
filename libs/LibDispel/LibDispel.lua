@@ -2,7 +2,9 @@ local MAJOR, MINOR = 'LibDispel-1.0', 18
 assert(LibStub, MAJOR .. ' requires LibStub')
 
 local lib = LibStub:NewLibrary(MAJOR, MINOR)
-if not lib then return end
+if not lib then
+	return
+end
 
 local next = next
 local wipe = wipe
@@ -18,6 +20,9 @@ local IsSpellKnown = C_SpellBook.IsSpellKnown or IsPlayerSpell
 
 local Retail = WOW_PROJECT_ID == WOW_PROJECT_MAINLINE
 local Classic = WOW_PROJECT_ID == WOW_PROJECT_CLASSIC
+local TBC = WOW_PROJECT_ID == WOW_PROJECT_BURNING_CRUSADE_CLASSIC
+local Wrath = WOW_PROJECT_ID == WOW_PROJECT_WRATH_CLASSIC
+local Cata = WOW_PROJECT_ID == WOW_PROJECT_CATACLYSM_CLASSIC
 local Mists = WOW_PROJECT_ID == WOW_PROJECT_MISTS_CLASSIC
 
 local function GetList(name, data)
@@ -49,10 +54,10 @@ local DispelList = GetList('DispelList') -- List of types the player can dispel
 local DebuffColors = GetList('DebuffTypeColor', _G.DebuffTypeColor)
 
 -- These dont exist in Blizzards color table
-DebuffColors.Bleed = { r = 1, g = 0.2, b = 0.6 }
-DebuffColors.EnemyNPC = { r = 0.9, g = 0.1, b = 0.1 }
-DebuffColors.BadDispel = { r = 0.05, g = 0.85, b = 0.94 }
-DebuffColors.Stealable = { r = 0.93, g = 0.91, b = 0.55 }
+DebuffColors.Bleed = {r = 1, g = 0.2, b = 0.6}
+DebuffColors.EnemyNPC = {r = 0.9, g = 0.1, b = 0.1}
+DebuffColors.BadDispel = {r = 0.05, g = 0.85, b = 0.94}
+DebuffColors.Stealable = {r = 0.93, g = 0.91, b = 0.55}
 
 if Retail then
 	-- Bad to dispel spells
@@ -1262,7 +1267,7 @@ end
 do
 	local _, myClass = UnitClass('player')
 	local WarlockPetSpells = {
-		[89808] = 'Singe',
+		[89808] = 'Singe'
 	}
 
 	if Retail then
@@ -1283,7 +1288,9 @@ do
 
 	local function CheckPetSpells()
 		for spellID in next, WarlockPetSpells do
-			if CheckSpell(spellID, Retail and 1 or true) then return true end
+			if CheckSpell(spellID, Retail and 1 or true) then
+				return true
+			end
 		end
 	end
 
@@ -1309,7 +1316,7 @@ do
 			DispelList.Magic = greater
 		elseif myClass == 'MONK' then
 			local mwDetox = CheckSpell(115450) -- Detox (Mistweaver)
-			local detox = (not Retail and mwDetox) or (Retail and (CheckSpell(218164) or IsSpellKnown(388874))) -- Detox (Brewmaster or Windwalker) or Improved Detox (Mistweaver)
+			local detox = (not Retail and mwDetox) or (Retail and (CheckSpell(218164) or C_SpellBook.IsSpellInSpellBook(388874))) -- Detox (Brewmaster or Windwalker) or Improved Detox (Mistweaver)
 			DispelList.Magic = mwDetox and (not Mists or CheckSpell(115451))
 			DispelList.Disease = detox
 			DispelList.Poison = detox
@@ -1323,7 +1330,7 @@ do
 		elseif myClass == 'PRIEST' then
 			local dispel = CheckSpell(527) -- Dispel Magic
 			DispelList.Magic = dispel or CheckSpell(32375)
-			DispelList.Disease = Retail and (IsSpellKnown(390632) or CheckSpell(213634)) or not Retail and (CheckSpell(552) or CheckSpell(528)) -- Purify Disease / Abolish Disease / Cure Disease
+			DispelList.Disease = Retail and (C_SpellBook.IsSpellInSpellBook(390632) or CheckSpell(213634)) or not Retail and (CheckSpell(552) or CheckSpell(528)) -- Purify Disease / Abolish Disease / Cure Disease
 		elseif myClass == 'SHAMAN' then
 			local purify = CheckSpell(77130) -- Purify Spirit
 			local cleanse = purify or CheckSpell(51886) -- Cleanse Spirit (Retail/Mists)
@@ -1348,7 +1355,9 @@ do
 			DispelList.Bleed = cauterizing
 		end
 
-		if undoRanks then SetCVar('ShowAllSpellRanks', '0') end
+		if undoRanks then
+			SetCVar('ShowAllSpellRanks', '0')
+		end
 	end
 
 	-- setup events
@@ -1361,10 +1370,17 @@ do
 	local frame = lib.frame
 	frame:SetScript('OnEvent', UpdateDispels)
 	frame:RegisterEvent('CHARACTER_POINTS_CHANGED')
-	frame:RegisterEvent('LEARNED_SPELL_IN_TAB')
+	-- LEARNED_SPELL_IN_TAB only exists in vanilla Classic
+	if Classic then
+		frame:RegisterEvent('LEARNED_SPELL_IN_TAB')
+	end
 	frame:RegisterEvent('SPELLS_CHANGED')
 
-	if Retail or Mists then frame:RegisterEvent('PLAYER_TALENT_UPDATE') end
+	if Retail or Mists then
+		frame:RegisterEvent('PLAYER_TALENT_UPDATE')
+	end
 
-	if myClass == 'WARLOCK' then frame:RegisterUnitEvent('UNIT_PET', 'player') end
+	if myClass == 'WARLOCK' then
+		frame:RegisterUnitEvent('UNIT_PET', 'player')
+	end
 end
