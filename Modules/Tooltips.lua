@@ -294,7 +294,7 @@ local TooltipSetItem = function(tooltip, tooltipData)
 	end
 
 	if itemLink then
-		local quality = C_Item and C_Item.GetItemInfo and select(3, C_Item.GetItemInfo(itemLink)) or select(3, GetItemInfo(itemLink))
+		local quality = select(3, C_Item.GetItemInfo(itemLink))
 		local style = {
 			bgFile = 'Interface/Tooltips/UI-Tooltip-Background'
 		}
@@ -571,11 +571,20 @@ function module:OnEnable()
 	)
 
 	GameTooltip:HookScript('OnTooltipCleared', TipCleared)
-	TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Item, TooltipSetItem)
-	TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Unit, TooltipSetUnit)
-	TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Spell, TooltipSetSpell)
-	TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Mount, TooltipSetGeneric)
-	TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Quest, TooltipSetGeneric)
+
+	-- TooltipDataProcessor is Retail-only (10.0.2+), use old-style hooks for Classic
+	if TooltipDataProcessor then
+		TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Item, TooltipSetItem)
+		TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Unit, TooltipSetUnit)
+		TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Spell, TooltipSetSpell)
+		TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Mount, TooltipSetGeneric)
+		TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Quest, TooltipSetGeneric)
+	else
+		-- Classic compatibility: use old-style tooltip hooks
+		GameTooltip:HookScript('OnTooltipSetItem', TooltipSetItem)
+		GameTooltip:HookScript('OnTooltipSetUnit', TooltipSetUnit)
+		GameTooltip:HookScript('OnTooltipSetSpell', TooltipSetSpell)
+	end
 end
 
 function module:BuildOptions()

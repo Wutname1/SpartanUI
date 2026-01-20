@@ -307,7 +307,8 @@ function module:Options()
 end
 
 function module:SetupWizard()
-	local LibAT = LibStub('Libs-AddonTools-1.0', true)
+	-- Access LibAT from global namespace (not LibStub)
+	local LibAT = _G.LibAT
 
 	local PageData = {
 		ID = 'TauntWatcher',
@@ -352,22 +353,32 @@ function module:SetupWizard()
 				TauntWatch.options.inArena = LibAT.UI.CreateCheckbox(TauntWatch, L['Arena'])
 				TauntWatch.options.outdoors = LibAT.UI.CreateCheckbox(TauntWatch, L['Outdoors'])
 
-				-- Positioning
-				SUI.UI.GlueTop(TauntWatch.modEnabled, SUI_Win, 0, -10)
-				SUI.UI.GlueBelow(TauntWatch.lblAnnouncelocation, TauntWatch.modEnabled, -100, -20)
-				SUI.UI.GlueRight(TauntWatch.announceLocation, TauntWatch.lblAnnouncelocation, 5, 0)
+				-- Positioning - column layout with proper spacing
+				local col1X, col2X, col3X = -200, -40, 120  -- X positions for columns
+				local startY = -10  -- Starting Y position
+				local rowHeight = 25  -- Height per row
 
-				-- Active location Positioning
-				SUI.UI.GlueBelow(TauntWatch.lblActive, TauntWatch.lblAnnouncelocation, -80, -20)
+				-- Module enabled at top
+				TauntWatch.modEnabled:SetPoint('TOPLEFT', SUI_Win, 'TOP', -60, startY)
 
-				SUI.UI.GlueBelow(TauntWatch.options.inBG, TauntWatch.lblActive, 30, 0)
-				SUI.UI.GlueRight(TauntWatch.options.inArena, TauntWatch.options.inBG, 0, 0)
-				SUI.UI.GlueRight(TauntWatch.options.outdoors, TauntWatch.options.inArena, 0, 0)
+				-- Announce location label and dropdown
+				TauntWatch.lblAnnouncelocation:SetPoint('TOPLEFT', SUI_Win, 'TOP', -180, startY - rowHeight)
+				TauntWatch.announceLocation:SetPoint('LEFT', TauntWatch.lblAnnouncelocation, 'RIGHT', 5, 0)
 
-				SUI.UI.GlueBelow(TauntWatch.options.inRaid, TauntWatch.options.inBG, 0, 0)
-				SUI.UI.GlueRight(TauntWatch.options.inParty, TauntWatch.options.inRaid, 0, 0)
+				-- Active when in label
+				TauntWatch.lblActive:SetPoint('TOPLEFT', SUI_Win, 'TOP', col1X, startY - (rowHeight * 2.5))
 
-				-- Announce text
+				-- Checkboxes in 3 columns below "Active when in"
+				-- Row 1: Battleground, Arena, Outdoors
+				TauntWatch.options.inBG:SetPoint('TOPLEFT', SUI_Win, 'TOP', col1X, startY - (rowHeight * 3.5))
+				TauntWatch.options.inArena:SetPoint('TOPLEFT', SUI_Win, 'TOP', col2X, startY - (rowHeight * 3.5))
+				TauntWatch.options.outdoors:SetPoint('TOPLEFT', SUI_Win, 'TOP', col3X, startY - (rowHeight * 3.5))
+
+				-- Row 2: Raid, Party
+				TauntWatch.options.inRaid:SetPoint('TOPLEFT', SUI_Win, 'TOP', col1X, startY - (rowHeight * 4.5))
+				TauntWatch.options.inParty:SetPoint('TOPLEFT', SUI_Win, 'TOP', col2X, startY - (rowHeight * 4.5))
+
+				-- Announce text section
 				TauntWatch.lblAnnouncetext = LibAT.UI.CreateLabel(TauntWatch, L['Announce text:'])
 				TauntWatch.lblvariable1 = LibAT.UI.CreateLabel(TauntWatch, '%who - ' .. L['Player/Pet that taunted'])
 				TauntWatch.lblvariable2 = LibAT.UI.CreateLabel(TauntWatch, '%what - ' .. L['Name of mob taunted'])
@@ -375,15 +386,17 @@ function module:SetupWizard()
 				TauntWatch.tbAnnounceText = LibAT.UI.CreateEditBox(TauntWatch, 300, 24)
 				TauntWatch.tbAnnounceText:SetText(module.DB.text or '')
 
-				SUI.UI.GlueBelow(TauntWatch.lblAnnouncetext, TauntWatch.lblActive, 0, -80)
-				SUI.UI.GlueBelow(TauntWatch.lblvariable1, TauntWatch.lblAnnouncetext, 15, -5, 'LEFT')
-				SUI.UI.GlueBelow(TauntWatch.lblvariable2, TauntWatch.lblvariable1, 0, -5, 'LEFT')
+				-- Position announce text section
+				TauntWatch.lblAnnouncetext:SetPoint('TOPLEFT', SUI_Win, 'TOP', col1X, startY - (rowHeight * 6))
+				TauntWatch.lblvariable1:SetPoint('TOPLEFT', SUI_Win, 'TOP', col1X + 15, startY - (rowHeight * 7))
+				TauntWatch.lblvariable2:SetPoint('TOPLEFT', SUI_Win, 'TOP', col1X + 15, startY - (rowHeight * 7.8))
+
 				if SUI.IsClassic then
-					SUI.UI.GlueBelow(TauntWatch.tbAnnounceText, TauntWatch.lblvariable2, -15, -5, 'LEFT')
+					TauntWatch.tbAnnounceText:SetPoint('TOPLEFT', SUI_Win, 'TOP', col1X, startY - (rowHeight * 8.6))
 				else
 					TauntWatch.lblvariable3 = LibAT.UI.CreateLabel(TauntWatch, '%spell - ' .. L['Spell link of spell used to taunt'])
-					SUI.UI.GlueBelow(TauntWatch.lblvariable3, TauntWatch.lblvariable2, 0, -5, 'LEFT')
-					SUI.UI.GlueBelow(TauntWatch.tbAnnounceText, TauntWatch.lblvariable3, -15, -5, 'LEFT')
+					TauntWatch.lblvariable3:SetPoint('TOPLEFT', SUI_Win, 'TOP', col1X + 15, startY - (rowHeight * 8.6))
+					TauntWatch.tbAnnounceText:SetPoint('TOPLEFT', SUI_Win, 'TOP', col1X, startY - (rowHeight * 9.4))
 				end
 
 				-- Defaults

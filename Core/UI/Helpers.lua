@@ -1,6 +1,7 @@
 ---@class SUI
 local SUI = SUI
-local LibAT = LibStub('Libs-AddonTools-1.0', true)
+-- Access LibAT from global namespace (not LibStub)
+local LibAT = _G.LibAT
 
 ---@class SUI.UI
 ---@field GlueTop fun(widget: Frame, parent: Frame, xOffset?: number, yOffset?: number, anchor?: 'LEFT'|'RIGHT'|nil)

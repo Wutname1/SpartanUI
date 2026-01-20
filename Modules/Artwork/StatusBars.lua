@@ -275,6 +275,10 @@ function module:OnInitialize()
 end
 
 function module:OnEnable()
+	-- StatusTrackingBarContainerTemplate doesn't exist in Classic, skip entirely
+	if not StatusTrackingBarContainerTemplate then
+		return
+	end
 	module:factory()
 	module:BuildOptions()
 end
@@ -282,7 +286,9 @@ end
 function module:factory()
 	local barManager = self:CreateBarManager()
 	self:CreateBarContainers(barManager)
-	barManager:OnLoad()
+	if barManager.OnLoad then
+		barManager:OnLoad()
+	end
 end
 
 function module:UpdateBars()
@@ -361,8 +367,11 @@ end
 
 function module:CreateBarManager()
 	local barManager = CreateFrame('Frame', 'SUI_StatusBar_Manager', SpartanUI)
-	for k, v in pairs(StatusTrackingManagerMixin) do
-		barManager[k] = v
+	-- StatusTrackingManagerMixin is Retail-only, skip for Classic
+	if StatusTrackingManagerMixin then
+		for k, v in pairs(StatusTrackingManagerMixin) do
+			barManager[k] = v
+		end
 	end
 
 	barManager.UpdateBarsShown = function(self)
@@ -514,7 +523,10 @@ function module:CreateBarContainer(barManager, key, index)
 end
 
 function module:SetupBarContainerVisuals(barContainer, barStyle)
-	barContainer.BarFrameTexture:Hide()
+	-- Hide BarFrameTexture if it exists (retail only)
+	if barContainer.BarFrameTexture then
+		barContainer.BarFrameTexture:Hide()
+	end
 	-- Create background
 	barContainer.bg = barContainer:CreateTexture(nil, 'BACKGROUND')
 	barContainer.bg:SetTexture(barStyle.bgTexture or '')

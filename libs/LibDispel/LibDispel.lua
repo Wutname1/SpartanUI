@@ -20,6 +20,9 @@ local IsSpellKnown = C_SpellBook.IsSpellKnown or IsPlayerSpell
 
 local Retail = WOW_PROJECT_ID == WOW_PROJECT_MAINLINE
 local Classic = WOW_PROJECT_ID == WOW_PROJECT_CLASSIC
+local TBC = WOW_PROJECT_ID == WOW_PROJECT_BURNING_CRUSADE_CLASSIC
+local Wrath = WOW_PROJECT_ID == WOW_PROJECT_WRATH_CLASSIC
+local Cata = WOW_PROJECT_ID == WOW_PROJECT_CATACLYSM_CLASSIC
 local Mists = WOW_PROJECT_ID == WOW_PROJECT_MISTS_CLASSIC
 
 local function GetList(name, data)
@@ -1367,8 +1370,8 @@ do
 	local frame = lib.frame
 	frame:SetScript('OnEvent', UpdateDispels)
 	frame:RegisterEvent('CHARACTER_POINTS_CHANGED')
-	-- LEARNED_SPELL_IN_TAB doesn't exist in Retail
-	if not Retail then
+	-- LEARNED_SPELL_IN_TAB only exists in vanilla Classic
+	if Classic then
 		frame:RegisterEvent('LEARNED_SPELL_IN_TAB')
 	end
 	frame:RegisterEvent('SPELLS_CHANGED')

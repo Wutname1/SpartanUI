@@ -264,13 +264,15 @@ function module:OnEnable()
 		end
 	)
 
-	--Equit item flyout
-	hooksecurefunc(
-		'EquipmentFlyout_DisplayButton',
-		function(button)
-			UpdateSpellFlyout(button)
-		end
-	)
+	--Equit item flyout (retail only)
+	if EquipmentFlyout_DisplayButton then
+		hooksecurefunc(
+			'EquipmentFlyout_DisplayButton',
+			function(button)
+				UpdateSpellFlyout(button)
+			end
+		)
+	end
 	-- Hook Inspect frame
 	EventUtil.ContinueOnAddOnLoaded(
 		'Blizzard_InspectUI',

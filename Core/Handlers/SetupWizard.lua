@@ -247,8 +247,8 @@ function module:SetupWizard(RequiredPagesOnly)
 	-- Custom SUI logo
 	local logo = module.window:CreateTexture(nil, 'ARTWORK')
 	logo:SetTexture('Interface\\AddOns\\SpartanUI\\images\\setup\\SUISetup')
-	logo:SetSize(256, 64)
-	logo:SetPoint('TOP', module.window, 'TOP', 0, -35)
+	logo:SetSize(205, 51)
+	logo:SetPoint('TOP', module.window, 'TOP', 0, -25)
 	logo:SetAlpha(0.8)
 
 	-- Setup the Top text fields
@@ -297,6 +297,12 @@ function module:SetupWizard(RequiredPagesOnly)
 		module.window.Skip = buttons[1]
 		module.window.Next = buttons[2]
 
+		-- Reposition buttons to left and right
+		module.window.Skip:ClearAllPoints()
+		module.window.Skip:SetPoint('BOTTOMLEFT', module.window.ProgressBar, 'TOPLEFT', 0, 2)
+		module.window.Next:ClearAllPoints()
+		module.window.Next:SetPoint('BOTTOMRIGHT', module.window.ProgressBar, 'TOPRIGHT', 0, 2)
+
 		-- Position content between desc2 and buttons
 		module.window.content:SetPoint('TOP', desc2, 'BOTTOM', 0, -2)
 		module.window.content:SetPoint('BOTTOMLEFT', module.window.Skip, 'TOPLEFT', 0, 2)
@@ -311,6 +317,12 @@ function module:SetupWizard(RequiredPagesOnly)
 		-- Store button references
 		module.window.Skip = buttons[1]
 		module.window.Next = buttons[2]
+
+		-- Reposition buttons to left and right
+		module.window.Skip:ClearAllPoints()
+		module.window.Skip:SetPoint('BOTTOMLEFT', module.window, 'BOTTOMLEFT', 3, 4)
+		module.window.Next:ClearAllPoints()
+		module.window.Next:SetPoint('BOTTOMRIGHT', module.window, 'BOTTOMRIGHT', -3, 4)
 
 		-- Position content between desc2 and buttons
 		module.window.content:SetPoint('TOP', desc2, 'BOTTOM', 0, -2)
@@ -423,23 +435,25 @@ local function WelcomePage()
 			-- Spartan Helm texture
 			IntroPage.Helm = IntroPage:CreateTexture(nil, 'ARTWORK')
 			IntroPage.Helm:SetTexture('Interface\\AddOns\\SpartanUI\\images\\Spartan-Helm')
-			IntroPage.Helm:SetSize(190, 190)
-			IntroPage.Helm:SetPoint('CENTER', 0, 45)
+			IntroPage.Helm:SetSize(114, 114)
+			IntroPage.Helm:SetPoint('CENTER', IntroPage, 'CENTER', 0, 60)
 			IntroPage.Helm:SetAlpha(0.6)
 
 			if not SUI:IsAddonEnabled('Bartender4') then
-				module.window.BT4Warning = UI.CreateLabel(module.window, L['Bartender4 not detected! Please download and install Bartender4.'], 'GameFontNormal')
+				module.window.BT4Warning = UI.CreateLabel(UIParent, L['Bartender4 not detected! Please download and install Bartender4.'], 'GameFontNormalLarge')
 				module.window.BT4Warning:SetTextColor(1, 0.18, 0.18, 1)
 				module.window.BT4Warning:SetWidth(650)
 				module.window.BT4Warning:SetJustifyH('CENTER')
-				module.window.BT4Warning:SetPoint('BOTTOM', module.window, 'TOP', 0, 20)
+				module.window.BT4Warning:SetPoint('BOTTOM', module.window, 'TOP', 0, 10)
+				module.window.BT4Warning:SetFrameStrata('DIALOG')
 			end
 
 			-- Profile copy section
 			IntroPage.ProfileCopyLabel = UI.CreateLabel(IntroPage, L['If you would like to copy the configuration from another character you may do so below.'])
-			IntroPage.ProfileCopyLabel:SetWidth(400)
+			IntroPage.ProfileCopyLabel:SetWidth(500)
 			IntroPage.ProfileCopyLabel:SetJustifyH('CENTER')
-			IntroPage.ProfileCopyLabel:SetPoint('TOP', IntroPage.Helm, 'BOTTOM', 0, -25)
+			IntroPage.ProfileCopyLabel:SetWordWrap(true)
+			IntroPage.ProfileCopyLabel:SetPoint('TOP', IntroPage.Helm, 'BOTTOM', 0, -15)
 
 			IntroPage.ProfileList = UI.CreateDropdown(IntroPage, '', 200, 20)
 			IntroPage.ProfileList:SetupMenu(function(dropdown, rootDescription)
@@ -450,7 +464,8 @@ local function WelcomePage()
 					end)
 				end
 			end)
-			IntroPage.ProfileList:SetPoint('TOP', IntroPage.ProfileCopyLabel, 'BOTTOM', -31, -25)
+			IntroPage.ProfileList:SetPoint('TOP', IntroPage.ProfileCopyLabel, 'BOTTOM', 0, -10)
+			IntroPage.ProfileList:SetPoint('CENTER', IntroPage, 'CENTER', -33, 0)
 
 			IntroPage.CopyProfileButton = UI.CreateButton(IntroPage, 60, 20, 'COPY')
 			IntroPage.CopyProfileButton:SetScript(
@@ -467,15 +482,9 @@ local function WelcomePage()
 					SUI:SafeReloadUI()
 				end
 			)
-			IntroPage.CopyProfileButton:SetPoint('LEFT', IntroPage.ProfileList, 'RIGHT', 2, 0)
+			IntroPage.CopyProfileButton:SetPoint('LEFT', IntroPage.ProfileList, 'RIGHT', 4, 0)
 
-			if #profiles == 0 then
-				IntroPage.ProfileCopyLabel:Hide()
-				IntroPage.ProfileList:Hide()
-				IntroPage.CopyProfileButton:Hide()
-			end
-
-			-- Import button
+			-- Import button (create before conditional check)
 			IntroPage.Import = UI.CreateButton(IntroPage, 200, 20, 'IMPORT SETTINGS')
 			IntroPage.Import:SetScript(
 				'OnClick',
@@ -484,7 +493,19 @@ local function WelcomePage()
 					Profiles:ImportUI()
 				end
 			)
-			IntroPage.Import:SetPoint('TOP', IntroPage.ProfileList, 'BOTTOM', 31, -5)
+			IntroPage.Import:SetPoint('TOP', IntroPage.ProfileList, 'BOTTOM', 0, -15)
+			IntroPage.Import:SetPoint('LEFT', IntroPage, 'CENTER', -100, 0)
+
+			if #profiles == 0 then
+				IntroPage.ProfileCopyLabel:Hide()
+				IntroPage.ProfileList:Hide()
+				IntroPage.CopyProfileButton:Hide()
+
+				-- Reposition Import button when profile section is hidden
+				IntroPage.Import:ClearAllPoints()
+				IntroPage.Import:SetPoint('TOP', IntroPage.Helm, 'BOTTOM', 0, -25)
+				IntroPage.Import:SetPoint('LEFT', IntroPage, 'CENTER', -100, 0)
+			end
 
 			-- Skip setup button
 			IntroPage.SkipAllButton = UI.CreateButton(IntroPage, 150, 20, 'SKIP SETUP')
@@ -506,12 +527,17 @@ local function WelcomePage()
 				end
 			)
 
-			IntroPage.SkipOr = UI.CreateLabel(IntroPage, 'OR')
-			IntroPage.SkipOr:SetPoint('TOP', IntroPage.SkipAllButton, 'BOTTOM', 0, -5)
-
+			-- Hide progress bar and reposition buttons for welcome page
 			module.window.ProgressBar:Hide()
-			module.window.Next:SetPoint('BOTTOMRIGHT', module.window, 'BOTTOMRIGHT', 0, 2)
-			IntroPage.SkipAllButton:SetPoint('BOTTOMRIGHT', 0, 2)
+			module.window.Next:SetPoint('BOTTOMRIGHT', module.window, 'BOTTOMRIGHT', -3, 4)
+
+			-- Position Skip All button in bottom-left
+			IntroPage.SkipAllButton:SetPoint('BOTTOMLEFT', module.window, 'BOTTOMLEFT', 3, 4)
+
+			-- Add "OR" label below Skip All button
+			IntroPage.SkipOr = UI.CreateLabel(IntroPage, 'OR')
+			IntroPage.SkipOr:SetJustifyH('CENTER')
+			IntroPage.SkipOr:SetPoint('TOP', IntroPage.SkipAllButton, 'BOTTOM', 0, -5)
 
 			module.window.content.WelcomePage = IntroPage
 		end,
