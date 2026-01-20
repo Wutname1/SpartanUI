@@ -484,18 +484,7 @@ local function WelcomePage()
 			)
 			IntroPage.CopyProfileButton:SetPoint('LEFT', IntroPage.ProfileList, 'RIGHT', 4, 0)
 
-			if #profiles == 0 then
-				IntroPage.ProfileCopyLabel:Hide()
-				IntroPage.ProfileList:Hide()
-				IntroPage.CopyProfileButton:Hide()
-
-				-- Reposition Import button when profile section is hidden
-				IntroPage.Import:ClearAllPoints()
-				IntroPage.Import:SetPoint('TOP', IntroPage.Helm, 'BOTTOM', 0, -25)
-				IntroPage.Import:SetPoint('LEFT', IntroPage, 'CENTER', -100, 0)
-			end
-
-			-- Import button
+			-- Import button (create before conditional check)
 			IntroPage.Import = UI.CreateButton(IntroPage, 200, 20, 'IMPORT SETTINGS')
 			IntroPage.Import:SetScript(
 				'OnClick',
@@ -506,6 +495,17 @@ local function WelcomePage()
 			)
 			IntroPage.Import:SetPoint('TOP', IntroPage.ProfileList, 'BOTTOM', 0, -15)
 			IntroPage.Import:SetPoint('LEFT', IntroPage, 'CENTER', -100, 0)
+
+			if #profiles == 0 then
+				IntroPage.ProfileCopyLabel:Hide()
+				IntroPage.ProfileList:Hide()
+				IntroPage.CopyProfileButton:Hide()
+
+				-- Reposition Import button when profile section is hidden
+				IntroPage.Import:ClearAllPoints()
+				IntroPage.Import:SetPoint('TOP', IntroPage.Helm, 'BOTTOM', 0, -25)
+				IntroPage.Import:SetPoint('LEFT', IntroPage, 'CENTER', -100, 0)
+			end
 
 			-- Skip setup button
 			IntroPage.SkipAllButton = UI.CreateButton(IntroPage, 150, 20, 'SKIP SETUP')
