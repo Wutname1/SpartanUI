@@ -295,10 +295,18 @@ function module:SetupWizard(RequiredPagesOnly)
 			UI.CreateActionButtons(
 			module.window,
 			{
-				{text = 'SKIP', width = 150, onClick = function()
-					end}, -- Set script below
-				{text = 'CONTINUE', width = 150, onClick = function()
-					end} -- Set script below
+				{
+					text = 'SKIP',
+					width = 150,
+					onClick = function()
+					end
+				}, -- Set script below
+				{
+					text = 'CONTINUE',
+					width = 150,
+					onClick = function()
+					end
+				} -- Set script below
 			},
 			5,
 			28,
@@ -325,10 +333,18 @@ function module:SetupWizard(RequiredPagesOnly)
 			UI.CreateActionButtons(
 			module.window,
 			{
-				{text = 'SKIP', width = 150, onClick = function()
-					end}, -- Set script below
-				{text = 'CONTINUE', width = 150, onClick = function()
-					end} -- Set script below
+				{
+					text = 'SKIP',
+					width = 150,
+					onClick = function()
+					end
+				}, -- Set script below
+				{
+					text = 'CONTINUE',
+					width = 150,
+					onClick = function()
+					end
+				} -- Set script below
 			}
 		)
 
@@ -463,7 +479,6 @@ local function WelcomePage()
 				module.window.BT4Warning:SetWidth(650)
 				module.window.BT4Warning:SetJustifyH('CENTER')
 				module.window.BT4Warning:SetPoint('BOTTOM', module.window, 'TOP', 0, 10)
-				module.window.BT4Warning:SetFrameStrata('DIALOG')
 			end
 
 			-- Profile copy section
