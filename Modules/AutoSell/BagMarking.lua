@@ -45,20 +45,11 @@ local function displaySellIcon(bagNumber, slotNumber, itemButton)
 		return
 	end
 
-	local itemInfo, _, _, _, _, _, link, _, _, itemID = C_Container.GetContainerItemInfo(bagNumber, slotNumber)
+	local itemInfo = C_Container.GetContainerItemInfo(bagNumber, slotNumber)
 
-	if SUI.IsRetail and itemInfo then
+	if itemInfo then
 		debugMsg('Checking item in bag ' .. bagNumber .. ' slot ' .. slotNumber .. ': ' .. tostring(itemInfo.itemID))
 		local sellable = module:IsSellable(itemInfo.itemID, itemInfo.hyperlink, bagNumber, slotNumber)
-		debugMsg('Marking result: ' .. tostring(sellable))
-		if sellable then
-			showSellIcon(itemButton)
-		else
-			hideSellIcon(itemButton)
-		end
-	elseif not SUI.IsRetail and itemID then
-		debugMsg('Checking item in bag ' .. bagNumber .. ' slot ' .. slotNumber .. ': ' .. tostring(itemID))
-		local sellable = module:IsSellable(itemID, link, bagNumber, slotNumber)
 		debugMsg('Marking result: ' .. tostring(sellable))
 		if sellable then
 			showSellIcon(itemButton)

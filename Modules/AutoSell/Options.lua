@@ -560,8 +560,8 @@ function module:CreateMiniVendorPanels()
 			-- Count items that would be sold with current settings
 			for bag = 0, MAX_BAG_SLOTS do
 				for slot = 1, C_Container.GetContainerNumSlots(bag) do
-					local itemInfo, _, _, _, _, _, link, _, _, itemID = C_Container.GetContainerItemInfo(bag, slot)
-					if SUI.IsRetail and itemInfo then
+					local itemInfo = C_Container.GetContainerItemInfo(bag, slot)
+					if itemInfo then
 						-- Check if Blizzard will sell this item
 						local _, _, quality = C_Item.GetItemInfo(itemInfo.itemID)
 						if module:WouldBlizzardSell(itemInfo.itemID, quality) and module.DB.Gray then
@@ -572,12 +572,6 @@ function module:CreateMiniVendorPanels()
 							if success and result then
 								sellableCount = sellableCount + 1
 							end
-						end
-					elseif not SUI.IsRetail and itemID then
-						-- Use pcall to safely handle any tooltip-related errors
-						local success, result = pcall(module.IsSellable, module, itemID, link, bag, slot)
-						if success and result then
-							sellableCount = sellableCount + 1
 						end
 					end
 				end

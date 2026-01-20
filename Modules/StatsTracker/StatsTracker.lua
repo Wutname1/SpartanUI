@@ -348,10 +348,10 @@ local function CollectCharacterStats()
 	local totalSlots = 0
 	local usedSlots = 0
 	for bag = 0, 4 do
-		local slots = (C_Container and C_Container.GetContainerNumSlots or GetContainerNumSlots)(bag) or 0
+		local slots = C_Container.GetContainerNumSlots(bag) or 0
 		totalSlots = totalSlots + slots
 		for slot = 1, slots do
-			local itemInfo = (C_Container and C_Container.GetContainerItemInfo or GetContainerItemInfo)(bag, slot)
+			local itemInfo = C_Container.GetContainerItemInfo(bag, slot)
 			if itemInfo then
 				usedSlots = usedSlots + 1
 			end

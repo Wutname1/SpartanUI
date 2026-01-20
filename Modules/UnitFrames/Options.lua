@@ -1,17 +1,9 @@
 local _G, SUI, L = _G, SUI, SUI.L
 local UF = SUI.UF ---@class SUI.UF
 ----------------------------------------------------------------------------------------------------
--- Helper for spell info (retail vs classic API)
+-- Helper for spell info (uses unified C_Spell API available in all current versions)
 local function GetSpellInfoCompat(spellInput)
-	if C_Spell and GetSpellInfoCompat then
-		return GetSpellInfoCompat(spellInput)
-	else
-		local name, _, icon, _, _, _, spellId = GetSpellInfo(spellInput)
-		if name then
-			return { name = name, iconID = icon, spellID = spellId }
-		end
-		return nil
-	end
+	return C_Spell.GetSpellInfo(spellInput)
 end
 
 local anchorPoints = {

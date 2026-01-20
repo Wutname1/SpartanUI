@@ -1,10 +1,35 @@
+--[[
+	BlizzAPI.lua - Blizzard API Compatibility Layer
+
+	PURPOSE:
+	This file provides wrapper functions for Blizzard APIs that have DIFFERENT signatures
+	or return values between WoW versions (Retail vs Classic variants).
+
+	IMPORTANT NOTES:
+	- As of Patch 1.15.2 (Dec 2024), many APIs were unified across all WoW versions
+	- C_Item.*, C_Spell.*, and C_Container.* APIs are now IDENTICAL across all versions
+	- These unified APIs should be called DIRECTLY - no wrapper needed
+	- This file should ONLY contain wrappers for APIs that still differ between versions
+
+	UNIFIED APIs (use directly, no wrapper):
+	- C_Item.GetItemInfo() - Available in ALL versions (1.15.2+)
+	- C_Item.GetDetailedItemLevelInfo() - Available in ALL versions (1.15.2+)
+	- C_Spell.GetSpellInfo() - Available in ALL versions
+	- C_Container.GetContainerItemInfo() - Available in ALL versions (1.15.0+)
+	- C_Container.GetContainerNumSlots() - Available in ALL versions (1.15.0+)
+
+	APIs THAT STILL NEED WRAPPERS:
+	- Merchant APIs (C_MerchantFrame vs GetMerchantItemInfo - different return structures)
+
+	USAGE:
+	Only add wrappers here when an API has genuinely different signatures or return types
+	across WoW versions. Document the differences clearly.
+]]
 ---@class SUI
 local SUI = SUI
 
 ---@class SUI.BlizzAPI
----API Compatibility Layer
----Normalizes Blizzard API differences between retail and classic versions.
----Uses nil checks so backported APIs work automatically.
+---API Compatibility Layer for version-specific API differences
 SUI.BlizzAPI = {}
 
 local BlizzAPI = SUI.BlizzAPI
@@ -48,221 +73,17 @@ function BlizzAPI.GetMerchantItemInfo(index)
 		hasExtendedCost = extendedCost and true or false,
 		currencyID = currencyID,
 		spellID = spellID,
-		isQuestStartItem = false, -- Not available in classic
+		isQuestStartItem = false -- Not available in classic
 	}
-end
-
--- ============================================
--- SPELL API
--- ============================================
-
----@class SpellInfo
----@field name string
----@field iconID number
----@field castTime number
----@field minRange number
----@field maxRange number
----@field spellID number
----@field originalIconID number?
-
----Get spell info (normalized to retail structure)
----@param spellID number
----@return SpellInfo?
-function BlizzAPI.GetSpellInfo(spellID)
-	-- Use modern API if available
-	if C_Spell and C_Spell.GetSpellInfo then
-		return C_Spell.GetSpellInfo(spellID)
-	end
-
-	-- Fallback to classic API
-	local name, _, icon, castTime, minRange, maxRange, returnedSpellID = GetSpellInfo(spellID)
-	if not name then return nil end
-	return {
-		name = name,
-		iconID = icon,
-		castTime = castTime,
-		minRange = minRange,
-		maxRange = maxRange,
-		spellID = returnedSpellID or spellID,
-		originalIconID = icon,
-	}
-end
-
----Get spell name
----@param spellID number
----@return string?
-function BlizzAPI.GetSpellName(spellID)
-	if C_Spell and C_Spell.GetSpellName then
-		return C_Spell.GetSpellName(spellID)
-	end
-
-	local name = GetSpellInfo(spellID)
-	return name
-end
-
----Get spell texture/icon
----@param spellID number
----@return number?
-function BlizzAPI.GetSpellTexture(spellID)
-	if C_Spell and C_Spell.GetSpellTexture then
-		return C_Spell.GetSpellTexture(spellID)
-	end
-
-	local _, _, icon = GetSpellInfo(spellID)
-	return icon
-end
-
--- ============================================
--- ITEM API
--- ============================================
-
----@class ItemInfo
----@field itemName string
----@field itemLink string
----@field itemQuality number
----@field itemLevel number
----@field itemMinLevel number
----@field itemType string
----@field itemSubType string
----@field itemStackCount number
----@field itemEquipLoc string
----@field itemTexture number
----@field sellPrice number
----@field classID number
----@field subClassID number
----@field bindType number
----@field expacID number
----@field itemSetID number?
----@field isCraftingReagent boolean
-
----Get item info (normalized)
----@param itemID number|string
----@return ItemInfo?
-function BlizzAPI.GetItemInfo(itemID)
-	return C_Item.GetItemInfo(itemID)
-end
-
--- ============================================
--- CONTAINER/BAG API
--- ============================================
-
----Get container item info
----@param bagID number
----@param slot number
----@return table?
-function BlizzAPI.GetContainerItemInfo(bagID, slot)
-	-- Use modern API if available
-	if C_Container and C_Container.GetContainerItemInfo then
-		return C_Container.GetContainerItemInfo(bagID, slot)
-	end
-
-	-- Fallback to classic API
-	local icon, itemCount, locked, quality, readable, lootable, itemLink, isFiltered, noValue, itemID, isBound = GetContainerItemInfo(bagID, slot)
-	if not icon then return nil end
-	return {
-		iconFileID = icon,
-		stackCount = itemCount,
-		isLocked = locked,
-		quality = quality,
-		isReadable = readable,
-		hasLoot = lootable,
-		hyperlink = itemLink,
-		isFiltered = isFiltered,
-		hasNoValue = noValue,
-		itemID = itemID,
-		isBound = isBound,
-	}
-end
-
----Get number of container slots
----@param bagID number
----@return number
-function BlizzAPI.GetContainerNumSlots(bagID)
-	if C_Container and C_Container.GetContainerNumSlots then
-		return C_Container.GetContainerNumSlots(bagID)
-	end
-	return GetContainerNumSlots(bagID)
 end
 
 -- ============================================
 -- FEATURE DETECTION
 -- ============================================
 
----Check if EditMode is available
+---Check if EditMode is available (being progressively backported to classic clients)
+---Prefer checking C_EditMode directly where needed rather than using this wrapper
 ---@return boolean
 function BlizzAPI.HasEditMode()
 	return C_EditMode ~= nil
-end
-
----Check if modern spell API is available
----@return boolean
-function BlizzAPI.HasModernSpellAPI()
-	return C_Spell ~= nil and C_Spell.GetSpellInfo ~= nil
-end
-
----Check if modern item API is available
----@return boolean
-function BlizzAPI.HasModernItemAPI()
-	return C_Item ~= nil and C_Item.GetItemInfo ~= nil
-end
-
----Check if modern container API is available
----@return boolean
-function BlizzAPI.HasModernContainerAPI()
-	return C_Container ~= nil and C_Container.GetContainerItemInfo ~= nil
-end
-
--- ============================================
--- SPECIALIZATION API (Retail only)
--- ============================================
-
----Get current specialization info
----@return number? specID
----@return string? specName
----@return string? description
----@return number? icon
----@return string? role
-function BlizzAPI.GetSpecialization()
-	if GetSpecialization then
-		local spec = GetSpecialization()
-		if spec and GetSpecializationInfo then
-			return GetSpecializationInfo(spec)
-		end
-	end
-	return nil
-end
-
----Get specialization role (TANK, HEALER, DAMAGER)
----@return string?
-function BlizzAPI.GetSpecializationRole()
-	if GetSpecialization and GetSpecializationRole then
-		local spec = GetSpecialization()
-		if spec then
-			return GetSpecializationRole(spec)
-		end
-	end
-	return nil
-end
-
--- ============================================
--- TITLE API (Retail only)
--- ============================================
-
----Get title name by ID
----@param titleID number
----@return string?
-function BlizzAPI.GetTitleName(titleID)
-	if GetTitleName then
-		return GetTitleName(titleID)
-	end
-	return nil
-end
-
----Get current title ID
----@return number?
-function BlizzAPI.GetCurrentTitle()
-	if GetCurrentTitle then
-		return GetCurrentTitle()
-	end
-	return nil
 end

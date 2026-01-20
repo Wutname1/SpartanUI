@@ -381,8 +381,8 @@ function module:SellTrash()
 	-- Scan through all possible bag slots (0-12 covers all normal bags plus extras)
 	for bag = 0, MAX_BAG_SLOTS do
 		for slot = 1, C_Container.GetContainerNumSlots(bag) do
-			local itemInfo, _, _, _, _, _, link, _, _, itemID = C_Container.GetContainerItemInfo(bag, slot)
-			if SUI.IsRetail and itemInfo then
+			local itemInfo = C_Container.GetContainerItemInfo(bag, slot)
+			if itemInfo then
 				local iLevel = SUI:GetiLVL(itemInfo.hyperlink)
 				if iLevel and iLevel > highestILVL then
 					highestILVL = iLevel
@@ -391,16 +391,6 @@ function module:SellTrash()
 				if sellable then
 					ItemToSell[#ItemToSell + 1] = {bag, slot}
 					totalValue = totalValue + (select(11, C_Item.GetItemInfo(itemInfo.itemID)) * itemInfo.stackCount)
-				end
-			elseif not SUI.IsRetail and itemID then
-				local iLevel = SUI:GetiLVL(link)
-				if iLevel and iLevel > highestILVL then
-					highestILVL = iLevel
-				end
-				local sellable = module:IsSellable(itemID, link, bag, slot)
-				if sellable then
-					ItemToSell[#ItemToSell + 1] = {bag, slot}
-					totalValue = totalValue + (select(11, C_Item.GetItemInfo(itemID)) * select(2, C_Container.GetContainerItemInfo(bag, slot)))
 				end
 			end
 		end
@@ -432,8 +422,8 @@ function module:SellAdditionalItems()
 	-- Scan through all possible bag slots (0-12 covers all normal bags plus extras)
 	for bag = 0, MAX_BAG_SLOTS do
 		for slot = 1, C_Container.GetContainerNumSlots(bag) do
-			local itemInfo, _, _, _, _, _, link, _, _, itemID = C_Container.GetContainerItemInfo(bag, slot)
-			if SUI.IsRetail and itemInfo then
+			local itemInfo = C_Container.GetContainerItemInfo(bag, slot)
+			if itemInfo then
 				local iLevel = SUI:GetiLVL(itemInfo.hyperlink)
 				if iLevel and iLevel > highestILVL then
 					highestILVL = iLevel
@@ -443,17 +433,6 @@ function module:SellAdditionalItems()
 				if quality ~= 0 and module:IsSellable(itemInfo.itemID, itemInfo.hyperlink, bag, slot) then
 					ItemToSell[#ItemToSell + 1] = {bag, slot}
 					totalValue = totalValue + (select(11, C_Item.GetItemInfo(itemInfo.itemID)) * itemInfo.stackCount)
-				end
-			elseif not SUI.IsRetail and itemID then
-				local iLevel = SUI:GetiLVL(link)
-				if iLevel and iLevel > highestILVL then
-					highestILVL = iLevel
-				end
-				-- Skip gray items as they were already handled by Blizzard
-				local _, _, quality = C_Item.GetItemInfo(itemID)
-				if quality ~= 0 and module:IsSellable(itemID, link, bag, slot) then
-					ItemToSell[#ItemToSell + 1] = {bag, slot}
-					totalValue = totalValue + (select(11, C_Item.GetItemInfo(itemID)) * select(2, C_Container.GetContainerItemInfo(bag, slot)))
 				end
 			end
 		end
@@ -543,15 +522,12 @@ local function HandleItemLevelSquish()
 		local newHighestILVL = 0
 		for bag = 0, MAX_BAG_SLOTS do
 			for slot = 1, C_Container.GetContainerNumSlots(bag) do
-				local itemInfo, _, _, _, _, _, link, _, _, itemID = C_Container.GetContainerItemInfo(bag, slot)
-				local iLevel = 0
-				if SUI.IsRetail and itemInfo then
-					iLevel = SUI:GetiLVL(itemInfo.hyperlink)
-				elseif not SUI.IsRetail and itemID then
-					iLevel = SUI:GetiLVL(link)
-				end
-				if iLevel and iLevel > newHighestILVL then
-					newHighestILVL = iLevel
+				local itemInfo = C_Container.GetContainerItemInfo(bag, slot)
+				if itemInfo then
+					local iLevel = SUI:GetiLVL(itemInfo.hyperlink)
+					if iLevel and iLevel > newHighestILVL then
+						newHighestILVL = iLevel
+					end
 				end
 			end
 		end
