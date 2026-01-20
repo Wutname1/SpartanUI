@@ -250,11 +250,14 @@ function module:ModifyMinimapLayout()
 			end
 		end)
 
-		-- Hide border textures if we're using custom background
-		if module.Settings.background and module.Settings.background.enabled then
-			if MinimapBorderTop then MinimapBorderTop:Hide() end
-			if MinimapBorder then MinimapBorder:Hide() end
-		end
+		-- Position Minimap inside SUIMinimap holder
+		Minimap:ClearAllPoints()
+		Minimap:SetPoint('TOPLEFT', SUIMinimap, 'TOPLEFT', 0, 0)
+
+		-- Hide all border textures comprehensively
+		if MinimapBorderTop then MinimapBorderTop:Hide() end
+		if MinimapBorder then MinimapBorder:Hide() end
+		if MinimapBackdrop then MinimapBackdrop:Hide() end
 
 		-- Hide or show north tag based on settings
 		if MinimapNorthTag then
@@ -891,9 +894,14 @@ end
 function module:RegisterEvents()
 	MinimapUpdater:SetScript(
 		'OnEvent',
-		function()
+		function(self, event)
 			if not InCombatLockdown() then
 				module:ScheduleTimer(module.Update, 2, module, true)
+			end
+
+			-- Update zone text on zone changes for Classic
+			if not SUI.IsRetail and (event == 'ZONE_CHANGED' or event == 'ZONE_CHANGED_INDOORS' or event == 'ZONE_CHANGED_NEW_AREA') then
+				module:UpdateClassicZoneText()
 			end
 		end
 	)
