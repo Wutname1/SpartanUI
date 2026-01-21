@@ -52,7 +52,7 @@
 
 	<!-- <Script file="Units\arena.lua"/> -->
 	<Script file="Units\boss.lua"/>
-	<!-- <Script file="Units\bosstarget.lua"/> -->
+	<Script file="Units\bosstarget.lua"/>
 	<Script file="Units\focus.lua"/>
 	<Script file="Units\focustarget.lua"/>
 	<Script file="Units\party.lua"/>
