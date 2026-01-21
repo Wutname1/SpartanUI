@@ -49,7 +49,6 @@ local function GroupBuilder(holder)
 		SUIUF:SpawnHeader(
 		'SUI_UF_raid_Header',
 		nil,
-		'raid',
 		'showRaid',
 		true,
 		'showParty',
@@ -79,7 +78,9 @@ local function GroupBuilder(holder)
 		'columnAnchorPoint',
 		'LEFT',
 		'oUF-initialConfigFunction',
-		configFunc
+		configFunc,
+		'templateType',
+		'Button'
 	)
 
 	UF:debug('Raid GroupBuilder - Header spawned, setting up attributes')

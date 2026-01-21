@@ -42,10 +42,9 @@ libs\LibDualSpec-1.0\LibDualSpec-1.0.lua [AllowLoadGameType mainline]
 libs\LibQTip-1.0\lib.xml [AllowLoadGameType mainline]
 
 # ============================================
-# ERROR HANDLING
+# ERROR HANDLING (Custom SUI minimap icon using LibAT error handler)
 # ============================================
-Core\Handlers\Bugs\loader.xml [AllowLoadGameType mainline]
-Core\Handlers\BugWindow.lua [AllowLoadGameType vanilla, tbc, wrath, cata, mists]
+Core\Handlers\MinimapErrorIcon.lua
 
 # ============================================
 # GENERAL LIBRARIES CONTINUED - SHARED
@@ -76,7 +75,17 @@ libs\oUF_Classic\oUF_Classic.xml [AllowLoadGameType vanilla, tbc]
 libs\oUF_Classic\oUF_Wrath.xml [AllowLoadGameType wrath, cata, mists]
 
 # oUF Plugins
-libs\oUF_Plugins\Loader.xml
+libs\oUF_Plugins\oUF_SpartanArt\oUF_SpartanArt.lua
+libs\oUF_Plugins\oUF_AuraBars.lua [AllowLoadGameType vanilla, tbc, wrath, cata, mists]
+libs\oUF_Plugins\oUF_AuraHighlight.lua
+libs\oUF_Plugins\oUF_AuraWatch.lua [AllowLoadGameType vanilla, tbc, wrath, cata, mists]
+libs\oUF_Plugins\oUF_ClassicAuraDurations.lua [AllowLoadGameType vanilla, tbc, wrath, cata, mists]
+libs\oUF_Plugins\oUF_Fader.lua
+libs\oUF_Plugins\oUF_PvPRoleIndicator.lua
+libs\oUF_Plugins\oUF_QuestMob.lua
+libs\oUF_Plugins\oUF_PVPSpecIcons.lua
+libs\oUF_Plugins\oUF_RaidDebuffs.lua
+libs\oUF_Plugins\oUF_WidgetXPBar.lua
 
 # ============================================
 # LOCALIZATION

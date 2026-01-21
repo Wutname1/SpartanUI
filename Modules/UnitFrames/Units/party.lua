@@ -34,7 +34,6 @@ local function GroupBuilder(holder)
 		SUIUF:SpawnHeader(
 		'SUI_UF_party_Header',
 		nil,
-		'party',
 		'showRaid',
 		UF.CurrentSettings.party.showRaid,
 		'showParty',
@@ -55,12 +54,10 @@ local function GroupBuilder(holder)
 		UF.CurrentSettings.party.columnSpacing,
 		'columnAnchorPoint',
 		'TOPLEFT',
-		'initial-anchor',
-		'TOPLEFT',
 		'oUF-initialConfigFunction',
 		('self:SetWidth(%d) self:SetHeight(%d)'):format(UF.CurrentSettings.party.width, UF:CalculateHeight('party')),
-		'template',
-		'SUI_UNITPET, SUI_UNITTARGET'
+		'templateType',
+		'Button'
 	)
 	holder.header:Show()
 	holder.header:SetPoint('TOPLEFT', holder, 'TOPLEFT')
