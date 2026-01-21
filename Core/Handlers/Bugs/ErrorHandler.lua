@@ -6,7 +6,17 @@ end
 ---@class Lib.ErrorWindow
 local addon = select(2, ...)
 
-local L = LibStub('AceLocale-3.0'):GetLocale('SpartanUI', true)
+-- Use silent locale lookup with fallback to key passthrough (locale may not be registered yet)
+local L =
+	LibStub('AceLocale-3.0'):GetLocale('SpartanUI', true) or
+	setmetatable(
+		{},
+		{
+		__index = function(_, key)
+				return key
+			end
+		}
+	)
 
 addon.ErrorHandler = {}
 
