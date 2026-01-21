@@ -314,8 +314,10 @@ local TooltipSetItem = function(tooltip, tooltipData)
 
 		if quality and tooltip.SetBorderColor then
 			local r, g, b = C_Item.GetItemQualityColor(quality)
-			r, g, b = (r * 0.5), (g * 0.5), (b * 0.5)
-			tooltip:SetBorderColor(r, g, b)
+			if r and g and b then
+				r, g, b = (r * 0.5), (g * 0.5), (b * 0.5)
+				tooltip:SetBorderColor(r, g, b)
+			end
 		end
 		tooltip.itemCleared = true
 
