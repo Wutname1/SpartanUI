@@ -44,7 +44,6 @@ libs\LibQTip-1.0\lib.xml [AllowLoadGameType mainline]
 # ============================================
 # ERROR HANDLING
 # ============================================
-libs\bug-grabber\load.xml
 Core\Handlers\Bugs\loader.xml [AllowLoadGameType mainline]
 Core\Handlers\BugWindow.lua [AllowLoadGameType vanilla, tbc, wrath, cata, mists]
 
