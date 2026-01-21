@@ -30,35 +30,72 @@ local elementList = {
 }
 
 local function GroupBuilder(holder)
-	holder.header =
-		SUIUF:SpawnHeader(
-		'SUI_UF_party_Header',
-		nil,
-		'showRaid',
-		UF.CurrentSettings.party.showRaid,
-		'showParty',
-		true,
-		'showPlayer',
-		UF.CurrentSettings.party.showPlayer,
-		'showSolo',
-		true,
-		'xoffset',
-		UF.CurrentSettings.party.xOffset,
-		'yOffset',
-		UF.CurrentSettings.party.yOffset,
-		'maxColumns',
-		UF.CurrentSettings.party.maxColumns,
-		'unitsPerColumn',
-		UF.CurrentSettings.party.unitsPerColumn,
-		'columnSpacing',
-		UF.CurrentSettings.party.columnSpacing,
-		'columnAnchorPoint',
-		'TOPLEFT',
-		'oUF-initialConfigFunction',
-		('self:SetWidth(%d) self:SetHeight(%d)'):format(UF.CurrentSettings.party.width, UF:CalculateHeight('party')),
-		'templateType',
-		'Button'
-	)
+	if SUI.IsRetail then
+		-- Retail uses templateType
+		holder.header =
+			SUIUF:SpawnHeader(
+			'SUI_UF_party_Header',
+			nil,
+			'showRaid',
+			UF.CurrentSettings.party.showRaid,
+			'showParty',
+			true,
+			'showPlayer',
+			UF.CurrentSettings.party.showPlayer,
+			'showSolo',
+			true,
+			'xoffset',
+			UF.CurrentSettings.party.xOffset,
+			'yOffset',
+			UF.CurrentSettings.party.yOffset,
+			'maxColumns',
+			UF.CurrentSettings.party.maxColumns,
+			'unitsPerColumn',
+			UF.CurrentSettings.party.unitsPerColumn,
+			'columnSpacing',
+			UF.CurrentSettings.party.columnSpacing,
+			'columnAnchorPoint',
+			'TOPLEFT',
+			'oUF-initialConfigFunction',
+			('self:SetWidth(%d) self:SetHeight(%d)'):format(UF.CurrentSettings.party.width, UF:CalculateHeight('party')),
+			'templateType',
+			'Button'
+		)
+	else
+		-- Classic versions use unit string and template
+		holder.header =
+			SUIUF:SpawnHeader(
+			'SUI_UF_party_Header',
+			nil,
+			'party',
+			'showRaid',
+			UF.CurrentSettings.party.showRaid,
+			'showParty',
+			true,
+			'showPlayer',
+			UF.CurrentSettings.party.showPlayer,
+			'showSolo',
+			true,
+			'xoffset',
+			UF.CurrentSettings.party.xOffset,
+			'yOffset',
+			UF.CurrentSettings.party.yOffset,
+			'maxColumns',
+			UF.CurrentSettings.party.maxColumns,
+			'unitsPerColumn',
+			UF.CurrentSettings.party.unitsPerColumn,
+			'columnSpacing',
+			UF.CurrentSettings.party.columnSpacing,
+			'columnAnchorPoint',
+			'TOPLEFT',
+			'initial-anchor',
+			'TOPLEFT',
+			'oUF-initialConfigFunction',
+			('self:SetWidth(%d) self:SetHeight(%d)'):format(UF.CurrentSettings.party.width, UF:CalculateHeight('party')),
+			'template',
+			'SUI_UNITPET, SUI_UNITTARGET'
+		)
+	end
 	holder.header:Show()
 	holder.header:SetPoint('TOPLEFT', holder, 'TOPLEFT')
 

@@ -45,43 +45,84 @@ local function GroupBuilder(holder)
 	UF:debug('Raid GroupBuilder - Config function: ' .. configFunc)
 	UF:debug('Raid GroupBuilder - Settings: mode=' .. UF.CurrentSettings.raid.mode .. ', maxColumns=' .. UF.CurrentSettings.raid.maxColumns .. ', unitsPerColumn=' .. UF.CurrentSettings.raid.unitsPerColumn)
 
-	holder.header =
-		SUIUF:SpawnHeader(
-		'SUI_UF_raid_Header',
-		nil,
-		'showRaid',
-		true,
-		'showParty',
-		false,
-		'showPlayer',
-		UF.CurrentSettings.raid.showPlayer,
-		'showSolo',
-		true,
-		'xoffset',
-		UF.CurrentSettings.raid.xOffset,
-		'yOffset',
-		UF.CurrentSettings.raid.yOffset,
-		'point',
-		'TOP',
-		'groupBy',
-		UF.CurrentSettings.raid.mode,
-		'groupingOrder',
-		groupingOrder(),
-		'sortMethod',
-		'index',
-		'maxColumns',
-		UF.CurrentSettings.raid.maxColumns,
-		'unitsPerColumn',
-		UF.CurrentSettings.raid.unitsPerColumn,
-		'columnSpacing',
-		UF.CurrentSettings.raid.columnSpacing,
-		'columnAnchorPoint',
-		'LEFT',
-		'oUF-initialConfigFunction',
-		configFunc,
-		'templateType',
-		'Button'
-	)
+	if SUI.IsRetail then
+		-- Retail uses templateType
+		holder.header =
+			SUIUF:SpawnHeader(
+			'SUI_UF_raid_Header',
+			nil,
+			'showRaid',
+			true,
+			'showParty',
+			false,
+			'showPlayer',
+			UF.CurrentSettings.raid.showPlayer,
+			'showSolo',
+			true,
+			'xoffset',
+			UF.CurrentSettings.raid.xOffset,
+			'yOffset',
+			UF.CurrentSettings.raid.yOffset,
+			'point',
+			'TOP',
+			'groupBy',
+			UF.CurrentSettings.raid.mode,
+			'groupingOrder',
+			groupingOrder(),
+			'sortMethod',
+			'index',
+			'maxColumns',
+			UF.CurrentSettings.raid.maxColumns,
+			'unitsPerColumn',
+			UF.CurrentSettings.raid.unitsPerColumn,
+			'columnSpacing',
+			UF.CurrentSettings.raid.columnSpacing,
+			'columnAnchorPoint',
+			'LEFT',
+			'oUF-initialConfigFunction',
+			configFunc,
+			'templateType',
+			'Button'
+		)
+	else
+		-- Classic versions use unit string without templateType
+		holder.header =
+			SUIUF:SpawnHeader(
+			'SUI_UF_raid_Header',
+			nil,
+			'raid',
+			'showRaid',
+			true,
+			'showParty',
+			false,
+			'showPlayer',
+			UF.CurrentSettings.raid.showPlayer,
+			'showSolo',
+			true,
+			'xoffset',
+			UF.CurrentSettings.raid.xOffset,
+			'yOffset',
+			UF.CurrentSettings.raid.yOffset,
+			'point',
+			'TOP',
+			'groupBy',
+			UF.CurrentSettings.raid.mode,
+			'groupingOrder',
+			groupingOrder(),
+			'sortMethod',
+			'index',
+			'maxColumns',
+			UF.CurrentSettings.raid.maxColumns,
+			'unitsPerColumn',
+			UF.CurrentSettings.raid.unitsPerColumn,
+			'columnSpacing',
+			UF.CurrentSettings.raid.columnSpacing,
+			'columnAnchorPoint',
+			'LEFT',
+			'oUF-initialConfigFunction',
+			configFunc
+		)
+	end
 
 	UF:debug('Raid GroupBuilder - Header spawned, setting up attributes')
 	holder.header:SetPoint('TOPLEFT', holder, 'TOPLEFT')
