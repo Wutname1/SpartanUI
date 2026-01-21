@@ -30,28 +30,77 @@ local BarLabels = {
 	[Enums.Bars.HouseFavor] = 'Housing',
 }
 
----@class SUI.StatusBars.DB
-local DBDefaults = {
-	AllowRep = true,
-	PriorityDirection = 'ltr',
-	BarPriorities = {
-		[Enums.Bars.Experience] = 0,
-		[Enums.Bars.Reputation] = 1,
-		[Enums.Bars.Honor] = 3,
-		[Enums.Bars.Azerite] = 4,
-		[Enums.Bars.Artifact] = 5,
-		[Enums.Bars.HouseFavor] = 6,
-	},
-	bars = {
-		['**'] = {
-			ToolTip = 'hover',
-			text = Enums.TextDisplayMode.OnMouseOver,
-			alpha = 1,
-			enabled = true,
-			showTooltip = true,
-		},
-	},
+-- Colors for Classic bars
+local FACTION_BAR_COLORS = {
+	[1] = { r = 1, g = 0.2, b = 0 },
+	[2] = { r = 0.8, g = 0.3, b = 0 },
+	[3] = { r = 0.8, g = 0.2, b = 0 },
+	[4] = { r = 1, g = 0.8, b = 0 },
+	[5] = { r = 0, g = 1, b = 0.1 },
+	[6] = { r = 0, g = 1, b = 0.2 },
+	[7] = { r = 0, g = 1, b = 0.3 },
+	[8] = { r = 0, g = 0.6, b = 0.1 },
 }
+local COLORS = {
+	Orange = { r = 1, g = 0.2, b = 0, a = 0.7 },
+	Yellow = { r = 1, g = 0.8, b = 0, a = 0.7 },
+	Green = { r = 0, g = 1, b = 0.1, a = 0.7 },
+	Blue = { r = 0, g = 0.1, b = 1, a = 0.7 },
+	Red = { r = 1, g = 0, b = 0.08, a = 0.7 },
+	Light_Blue = { r = 0, g = 0.5, b = 1, a = 0.7 },
+}
+
+---@class SUI.StatusBars.DB
+---@return table Database defaults based on WoW version
+local function GetDBDefaults()
+	if SUI.IsRetail then
+		-- Retail database structure: named bars with priority system
+		return {
+			AllowRep = true,
+			PriorityDirection = 'ltr',
+			BarPriorities = {
+				[Enums.Bars.Experience] = 0,
+				[Enums.Bars.Reputation] = 1,
+				[Enums.Bars.Honor] = 3,
+				[Enums.Bars.Azerite] = 4,
+				[Enums.Bars.Artifact] = 5,
+				[Enums.Bars.HouseFavor] = 6,
+			},
+			bars = {
+				['**'] = {
+					ToolTip = 'hover',
+					text = Enums.TextDisplayMode.OnMouseOver,
+					alpha = 1,
+					enabled = true,
+					showTooltip = true,
+				},
+			},
+		}
+	else
+		-- Classic database structure: indexed bars with display modes
+		return {
+			[1] = {
+				display = 'xp',
+				text = true,
+				ToolTip = 'hover',
+				alpha = 1,
+				AutoColor = true,
+				CustomColor = { r = 0, g = 0.1, b = 1, a = 0.7 },
+				CustomColor2 = { r = 0, g = 0.5, b = 1, a = 0.7 },
+			},
+			[2] = {
+				display = 'rep',
+				text = true,
+				ToolTip = 'hover',
+				alpha = 1,
+				AutoColor = true,
+				CustomColor = { r = 0, g = 1, b = 0.3, a = 0.7 },
+				CustomColor2 = { r = 0, g = 0.5, b = 1, a = 0.7 },
+			},
+			default = { FontSize = 10 },
+		}
+	end
+end
 
 ---@class SUI.Style.Settings.StatusBars.Storage
 ---@field Left SUI.Style.Settings.StatusBars
@@ -138,13 +187,11 @@ function module:GetReputationTooltipText()
 				factionID = factionID,
 				currentStanding = barValue,
 				currentReactionThreshold = barMin,
-				nextReactionThreshold = barMax
+				nextReactionThreshold = barMax,
 			}
 		end
 	end
-	if not data then
-		return
-	end
+	if not data then return end
 
 	GameTooltip:AddLine(data.name)
 	GameTooltip:AddLine(' ')
@@ -286,9 +333,7 @@ function module:GetHouseFavorTooltipText(bar)
 		end
 	end
 
-	if not houseLevel or not houseFavorNeeded then
-		return
-	end
+	if not houseLevel or not houseFavorNeeded then return end
 
 	-- Use Blizzard's tooltip format
 	if HOUSING_DASHBOARD_HOUSE_LEVEL then
@@ -303,13 +348,12 @@ function module:GetHouseFavorTooltipText(bar)
 		GameTooltip_AddHighlightLine(GameTooltip, string.format('%d / %d', houseFavor, houseFavorNeeded))
 	end
 
-	if HOUSING_DASHBOARD_NEIGHBORHOOD_FAVOR_TOOLTIP then
-		GameTooltip_AddHighlightLine(GameTooltip, HOUSING_DASHBOARD_NEIGHBORHOOD_FAVOR_TOOLTIP)
-	end
+	if HOUSING_DASHBOARD_NEIGHBORHOOD_FAVOR_TOOLTIP then GameTooltip_AddHighlightLine(GameTooltip, HOUSING_DASHBOARD_NEIGHBORHOOD_FAVOR_TOOLTIP) end
 end
 
 function module:OnInitialize()
-	module.Database = SUI.SpartanUIDB:RegisterNamespace('StatusBars', { profile = DBDefaults })
+	local defaults = GetDBDefaults()
+	module.Database = SUI.SpartanUIDB:RegisterNamespace('StatusBars', { profile = defaults })
 	DB = module.Database.profile
 
 	-- Migrate old settings
@@ -321,23 +365,47 @@ function module:OnInitialize()
 		-- Remove old settings
 		SUI.DB.StatusBars = nil
 	end
+
+	-- Database migration: detect version mismatch
+	if SUI.IsAnyClassic and DB.BarPriorities and not DB[1] then
+		-- User has Retail structure on Classic - reset to defaults
+		module.Database:ResetProfile()
+		if LibAT and LibAT.Logger then
+			local logger = LibAT.Logger.RegisterAddon('SpartanUI')
+			logger.warning('StatusBar settings reset due to WoW version change')
+		end
+	elseif SUI.IsRetail and DB[1] and not DB.BarPriorities then
+		-- User has Classic structure on Retail - reset to defaults
+		module.Database:ResetProfile()
+		if LibAT and LibAT.Logger then
+			local logger = LibAT.Logger.RegisterAddon('SpartanUI')
+			logger.warning('StatusBar settings reset due to WoW version change')
+		end
+	end
 end
 
 function module:OnEnable()
-	-- StatusTrackingBarContainerTemplate doesn't exist in Classic, skip entirely
-	if not StatusTrackingBarContainerTemplate then
-		return
-	end
+	-- NO EARLY RETURN - let factory dispatch to correct version
 	module:factory()
 	module:BuildOptions()
 end
 
 function module:factory()
-	local barManager = self:CreateBarManager()
-	self:CreateBarContainers(barManager)
-	if barManager.OnLoad then
-		barManager:OnLoad()
+	if SUI.IsRetail then
+		self:factory_Retail()
+	else
+		self:factory_Classic()
 	end
+end
+
+----------------------------------------------------------------------------------------------------
+-- RETAIL IMPLEMENTATION
+----------------------------------------------------------------------------------------------------
+
+function module:factory_Retail()
+	local barManager = self:CreateBarManager_Retail()
+	self:CreateBarContainers_Retail(barManager)
+	if barManager.OnLoad then barManager:OnLoad() end
 end
 
 function module:UpdateBars()
@@ -410,13 +478,10 @@ function module:RefreshBarPriorityOptions()
 	end
 end
 
-function module:CreateBarManager()
+function module:CreateBarManager_Retail()
 	local barManager = CreateFrame('Frame', 'SUI_StatusBar_Manager', SpartanUI)
-	-- StatusTrackingManagerMixin is Retail-only, skip for Classic
-	if StatusTrackingManagerMixin then
-		for k, v in pairs(StatusTrackingManagerMixin) do
-			barManager[k] = v
-		end
+	for k, v in pairs(StatusTrackingManagerMixin) do
+		barManager[k] = v
 	end
 
 	barManager.UpdateBarsShown = function(self)
@@ -508,15 +573,15 @@ function module:CreateBarManager()
 	return barManager
 end
 
-function module:CreateBarContainers(barManager)
+function module:CreateBarContainers_Retail(barManager)
 	for i, key in ipairs({ 'Left', 'Right' }) do
-		local barContainer = self:CreateBarContainer(barManager, key, i)
+		local barContainer = self:CreateBarContainer_Retail(barManager, key, i)
 		self:SetupBarContainerBehavior(barContainer, i)
 		module.bars[key] = barContainer
 	end
 end
 
-function module:CreateBarContainer(barManager, key, index)
+function module:CreateBarContainer_Retail(barManager, key, index)
 	local barStyle = GetStyleSettings(key)
 	local barContainer = CreateFrame('Frame', 'SUI_StatusBar_' .. key, barManager, 'StatusTrackingBarContainerTemplate')
 	barContainer.barStyle = barStyle
@@ -549,10 +614,7 @@ function module:CreateBarContainer(barManager, key, index)
 end
 
 function module:SetupBarContainerVisuals(barContainer, barStyle)
-	-- Hide BarFrameTexture if it exists (retail only)
-	if barContainer.BarFrameTexture then
-		barContainer.BarFrameTexture:Hide()
-	end
+	barContainer.BarFrameTexture:Hide()
 	-- Create background
 	barContainer.bg = barContainer:CreateTexture(nil, 'BACKGROUND')
 	barContainer.bg:SetTexture(barStyle.bgTexture or '')
@@ -767,7 +829,399 @@ function module:SetupBarText(bar, StyleSetting, index)
 	end
 end
 
+----------------------------------------------------------------------------------------------------
+-- CLASSIC IMPLEMENTATION
+----------------------------------------------------------------------------------------------------
+
+local function SetBarColor_Classic(statusbar, side)
+	local display = DB[side].display
+	local color1 = DB[side].CustomColor
+	local color2 = DB[side].CustomColor2
+	local r, g, b, a
+
+	if DB[side].AutoColor then
+		if display == 'xp' then
+			color1 = COLORS.Blue
+			color2 = COLORS.Light_Blue
+		elseif display == 'az' then
+			color1 = COLORS.Orange
+		elseif display == 'honor' then
+			color1 = COLORS.Red
+		elseif display == 'rep' then
+			color1 = FACTION_BAR_COLORS[select(2, GetWatchedFactionInfo())] or FACTION_BAR_COLORS[7]
+		end
+	end
+	r, g, b, a = color1.r, color1.g, color1.b, color1.a
+
+	statusbar.Fill:SetVertexColor(r, g, b, a)
+	statusbar.FillGlow:SetVertexColor(r, g, b, a)
+	if display == 'xp' then
+		r, g, b, a = color2.r, color2.g, color2.b, color2.a
+		statusbar.Lead:SetVertexColor(r, g, b, a)
+		statusbar.LeadGlow:SetVertexColor(r, g, b, a)
+	end
+end
+
+local function updateText_Classic(statusbar)
+	-- Reset graphics to avoid issues
+	statusbar.Fill:SetWidth(0.1)
+	statusbar.Lead:SetWidth(0.1)
+	-- Reset Text
+	statusbar.Text:SetText('')
+
+	local side = statusbar.i
+	local valFill, valMax, valPercent
+	local remaining = ''
+
+	if (DB[side].display == 'xp') and UnitLevel('player') <= GetMaxPlayerLevel() then
+		local rested, now, goal = GetXPExhaustion() or 0, UnitXP('player'), UnitXPMax('player')
+		if now ~= 0 then
+			rested = (rested / goal) * statusbar:GetWidth()
+
+			if
+				(rested + (now / goal) * (statusbar:GetWidth() - (statusbar.settings.MaxWidth - math.abs(statusbar.settings.GlowPoint.x))))
+				> (statusbar:GetWidth() - (statusbar.settings.MaxWidth - math.abs(statusbar.settings.GlowPoint.x)))
+			then
+				rested = (statusbar:GetWidth() - (statusbar.settings.MaxWidth - math.abs(statusbar.settings.GlowPoint.x)))
+					- (now / goal) * (statusbar:GetWidth() - (statusbar.settings.MaxWidth - math.abs(statusbar.settings.GlowPoint.x)))
+			end
+
+			if rested == 0 then rested = 0.001 end
+			statusbar.Lead:SetWidth(rested)
+		end
+		valFill = now
+		valMax = goal
+		remaining = SUI.Font:comma_value(goal - now)
+		valPercent = (UnitXP('player') / UnitXPMax('player') * 100)
+	elseif DB[side].display == 'rep' then
+		local name, _, low, high, current, factionID = GetWatchedFactionInfo()
+		if SUI.IsRetail and C_Reputation and C_Reputation.GetFactionParagonInfo then
+			local currentValue, threshold, _, _, _ = C_Reputation.GetFactionParagonInfo(factionID)
+			if currentValue ~= nil then
+				current = currentValue % threshold
+				low = 0
+				high = threshold
+			end
+		end
+		local repLevelLow = (current - low)
+		local repLevelHigh = (high - low)
+
+		if repLevelHigh == 0 and name then
+			valFill = 42000
+			valMax = 42000
+			valPercent = 100
+		elseif name then
+			valFill = repLevelLow
+			valMax = repLevelHigh
+			valPercent = (repLevelLow / repLevelHigh) * 100
+		end
+	elseif DB[side].display == 'az' then
+		if C_AzeriteItem and C_AzeriteItem.HasActiveAzeriteItem and C_AzeriteItem.HasActiveAzeriteItem() then
+			local azeriteItemLocation = C_AzeriteItem.FindActiveAzeriteItem()
+			if not azeriteItemLocation then return end
+			local xp, totalLevelXP = C_AzeriteItem.GetAzeriteItemXPInfo(azeriteItemLocation)
+			valMax = totalLevelXP - xp
+			local ratio = (xp / totalLevelXP)
+			valFill = xp
+			valPercent = ratio * 100
+		end
+	elseif DB[side].display == 'honor' then
+		valFill = UnitHonor('player')
+		valMax = UnitHonorMax('player')
+		valPercent = ((valFill / valMax) * 100)
+	end
+
+	if type(valPercent) == 'number' then
+		if valPercent ~= 0 and valPercent then
+			local ratio = (valPercent / 100)
+			if (ratio * statusbar:GetWidth()) > statusbar:GetWidth() then
+				statusbar.Fill:SetWidth(statusbar:GetWidth())
+			else
+				statusbar.Fill:SetWidth(ratio * (statusbar:GetWidth() - (statusbar.settings.MaxWidth - math.abs(statusbar.settings.GlowPoint.x))))
+			end
+		end
+		if DB[side].text and valFill and valMax then
+			statusbar.Text:SetFormattedText('( %s / %s ) %d%% %s', SUI.Font:comma_value(valFill), SUI.Font:comma_value(valMax), valPercent, remaining or '')
+		end
+	end
+
+	SetBarColor_Classic(statusbar, side)
+end
+
+local function GetFactionDetails_Classic(name)
+	if not name then return end
+	local description = ' '
+	for i = 1, GetNumFactions() do
+		if name == GetFactionInfo(i) then description = select(2, GetFactionInfo(i)) end
+	end
+	return description
+end
+
+local function showXPTooltip_Classic(statusbar)
+	local xptip1 = string.gsub(EXHAUST_TOOLTIP1, '\n', ' ')
+	local XP_LEVEL_TEMPLATE = '( %s / %s ) %d%% ' .. COMBAT_XP_GAIN
+	local xprest = TUTORIAL_TITLE26 .. ' (%d%%) -'
+	local a = format('Level %s ', UnitLevel('player'))
+	local b = format(XP_LEVEL_TEMPLATE, SUI.Font:comma_value(UnitXP('player')), SUI.Font:comma_value(UnitXPMax('player')), (UnitXP('player') / UnitXPMax('player') * 100))
+	statusbar.tooltip.TextFrame.HeaderText:SetText(a .. b)
+	local rested, text = GetXPExhaustion() or 0, ''
+	if rested > 0 then
+		text = format(xptip1, format(xprest, (rested / UnitXPMax('player')) * 100), 200)
+		statusbar.tooltip.TextFrame.MainText:SetText(text)
+	else
+		statusbar.tooltip.TextFrame.MainText:SetText(format(xptip1, EXHAUST_TOOLTIP2, 100))
+	end
+	statusbar.tooltip:Show()
+end
+
+local function showRepTooltip_Classic(statusbar)
+	local name, react, low, high, current = GetWatchedFactionInfo()
+	local repLevelLow = (current - low)
+	local repLevelHigh = (high - low)
+	local percentage
+
+	if name then
+		local text = GetFactionDetails_Classic(name)
+		if repLevelHigh == 0 then
+			percentage = 100
+		else
+			percentage = (repLevelLow / repLevelHigh) * 100
+		end
+		statusbar.tooltip.TextFrame.HeaderText:SetText(
+			format('%s ( %s / %s ) %d%% %s', name, SUI.Font:comma_value(repLevelLow), SUI.Font:comma_value(repLevelHigh), percentage, _G['FACTION_STANDING_LABEL' .. react])
+		)
+		statusbar.tooltip.TextFrame.MainText:SetText('|cffffd200' .. text .. '|r')
+		statusbar.tooltip:Show()
+	else
+		statusbar.tooltip.TextFrame.HeaderText:SetText(REPUTATION)
+		statusbar.tooltip.TextFrame.MainText:SetText(REPUTATION_STANDING_DESCRIPTION)
+	end
+end
+
+local function showHonorTooltip_Classic(statusbar)
+	local honorLevel = UnitHonorLevel('player')
+	local currentHonor = UnitHonor('player')
+	local maxHonor = UnitHonorMax('player')
+
+	if currentHonor == 0 and maxHonor == 0 then return end
+
+	statusbar.tooltip.TextFrame.HeaderText:SetFormattedText(HONOR_LEVEL_LABEL, honorLevel)
+	statusbar.tooltip.TextFrame.MainText:SetFormattedText('( %s / %s ) %d%%', SUI.Font:comma_value(currentHonor), SUI.Font:comma_value(maxHonor), ((currentHonor / maxHonor) * 100))
+
+	statusbar.tooltip:Show()
+end
+
+local function showAzeriteTooltip_Classic(statusbar)
+	if C_AzeriteItem and C_AzeriteItem.HasActiveAzeriteItem and C_AzeriteItem.HasActiveAzeriteItem() then
+		local azeriteItemLocation = C_AzeriteItem.FindActiveAzeriteItem()
+		if not azeriteItemLocation then return end
+		local azeriteItem = Item:CreateFromItemLocation(azeriteItemLocation)
+		local xp, totalLevelXP = C_AzeriteItem.GetAzeriteItemXPInfo(azeriteItemLocation)
+		local currentLevel = C_AzeriteItem.GetPowerLevel(azeriteItemLocation)
+		local xpToNextLevel = totalLevelXP - xp
+		if currentLevel and xpToNextLevel then
+			statusbar.tooltip.TextFrame.HeaderText:SetText(AZERITE_POWER_TOOLTIP_TITLE:format(currentLevel, xpToNextLevel), HIGHLIGHT_FONT_COLOR:GetRGB())
+			if azeriteItem:GetItemName() then statusbar.tooltip.TextFrame.MainText:SetText(AZERITE_POWER_TOOLTIP_BODY:format(azeriteItem:GetItemName())) end
+		end
+	end
+	statusbar.tooltip:Show()
+end
+
+function module:factory_Classic()
+	for i, key in ipairs({ 'Left', 'Right' }) do
+		local StyleSetting = SUI.DB.Styles[SUI.DB.Artwork.Style].StatusBars[key]
+
+		-- Status Bar
+		local statusbar = CreateFrame('Frame', 'SUI_StatusBar_' .. key, SpartanUI)
+		statusbar:SetSize(unpack(StyleSetting.size))
+		statusbar:SetFrameStrata('BACKGROUND')
+
+		-- Status Bar Images
+		statusbar.bg = statusbar:CreateTexture(nil, 'BACKGROUND')
+		statusbar.bg:SetTexture(StyleSetting.bgImg or '')
+		statusbar.bg:SetAllPoints(statusbar)
+		statusbar.bg:SetTexCoord(unpack(StyleSetting.texCords))
+
+		statusbar.overlay = statusbar:CreateTexture(nil, 'OVERLAY')
+		statusbar.overlay:SetTexture(StyleSetting.bgImg)
+		statusbar.overlay:SetAllPoints(statusbar.bg)
+		statusbar.overlay:SetTexCoord(unpack(StyleSetting.texCords))
+
+		statusbar.Fill = statusbar:CreateTexture(nil, 'BORDER')
+		statusbar.Fill:SetTexture(StyleSetting.GlowImage)
+		statusbar.Fill:SetSize(0.1, StyleSetting.GlowHeight)
+
+		statusbar.Lead = statusbar:CreateTexture(nil, 'BORDER')
+		statusbar.Lead:SetTexture(StyleSetting.GlowImage)
+		statusbar.Lead:SetSize(0.1, StyleSetting.GlowHeight)
+
+		statusbar.FillGlow = statusbar:CreateTexture(nil, 'ARTWORK')
+		statusbar.FillGlow:SetTexture(StyleSetting.GlowImage)
+		statusbar.FillGlow:SetAllPoints(statusbar.Fill)
+
+		statusbar.LeadGlow = statusbar:CreateTexture(nil, 'ARTWORK')
+		statusbar.LeadGlow:SetTexture(StyleSetting.GlowImage)
+		statusbar.LeadGlow:SetAllPoints(statusbar.Lead)
+
+		if StyleSetting.Grow == 'LEFT' then
+			statusbar.Fill:SetPoint('RIGHT', statusbar, 'RIGHT', StyleSetting.GlowPoint.x, StyleSetting.GlowPoint.y)
+			statusbar.Lead:SetPoint('RIGHT', statusbar.Fill, 'LEFT', 0, 0)
+		else
+			statusbar.Fill:SetPoint('LEFT', statusbar, 'LEFT', StyleSetting.GlowPoint.x, StyleSetting.GlowPoint.y)
+			statusbar.Lead:SetPoint('LEFT', statusbar.Fill, 'RIGHT', 0, 0)
+		end
+
+		-- Status Bar Text
+		statusbar.Text = statusbar:CreateFontString(nil, 'OVERLAY')
+		local tmp = DB.default.FontSize
+		if StyleSetting.FontSize and DB[i].FontSize == DB.default.FontSize then tmp = StyleSetting.FontSize end
+		SUI.Font:Format(statusbar.Text, tmp)
+		statusbar.Text:SetJustifyH('CENTER')
+		statusbar.Text:SetJustifyV('MIDDLE')
+		statusbar.Text:SetAllPoints(statusbar)
+		statusbar.Text:SetTextColor(unpack(StyleSetting.TextColor))
+
+		-- Tooltip
+		local tooltip = CreateFrame('Frame')
+		tooltip:SetParent(statusbar)
+		tooltip:SetFrameStrata('TOOLTIP')
+		tooltip:SetSize(unpack(StyleSetting.TooltipSize))
+		if StyleSetting.tooltipAnchor == 'TOP' then
+			tooltip:SetPoint('BOTTOM', statusbar, 'TOP')
+		else
+			tooltip:SetPoint('TOP', statusbar, 'BOTTOM')
+		end
+
+		tooltip.bg = tooltip:CreateTexture(nil, 'BORDER')
+		tooltip.bg:SetTexture(StyleSetting.bgTooltip)
+		tooltip.bg:SetAllPoints(tooltip)
+		tooltip.bg:SetTexCoord(unpack(StyleSetting.texCordsTooltip))
+
+		local TextFrame = CreateFrame('Frame')
+		TextFrame:SetFrameStrata('TOOLTIP')
+		TextFrame:SetParent(tooltip)
+		TextFrame:SetSize(unpack(StyleSetting.TooltipTextSize))
+		TextFrame:SetPoint('CENTER', tooltip, 'CENTER')
+
+		TextFrame.HeaderText = TextFrame:CreateFontString(nil, 'OVERLAY')
+		SUI.Font:Format(TextFrame.HeaderText, 10)
+		TextFrame.HeaderText:SetPoint('TOPLEFT', TextFrame)
+		TextFrame.HeaderText:SetPoint('TOPRIGHT', TextFrame)
+		TextFrame.HeaderText:SetHeight((0.18 * TextFrame:GetHeight()))
+
+		TextFrame.MainText = TextFrame:CreateFontString(nil, 'OVERLAY')
+		SUI.Font:Format(TextFrame.MainText, 8)
+		TextFrame.MainText:SetPoint('TOPLEFT', TextFrame.HeaderText, 'BOTTOMLEFT', 0, -2)
+		TextFrame.MainText:SetPoint('TOPRIGHT', TextFrame.HeaderText, 'BOTTOMRIGHT', 0, -2)
+		TextFrame.MainText:SetHeight((0.82 * TextFrame:GetHeight()))
+
+		TextFrame.MainText2 = TextFrame:CreateFontString(nil, 'OVERLAY')
+		SUI.Font:Format(TextFrame.MainText2, 8)
+		TextFrame.MainText2:SetPoint('TOPLEFT', TextFrame.MainText, 'BOTTOMLEFT', 0, -2)
+		TextFrame.MainText2:SetPoint('TOPRIGHT', TextFrame.MainText, 'BOTTOMRIGHT', 0, -2)
+		TextFrame.MainText2:SetHeight((0.82 * TextFrame:GetHeight()))
+
+		TextFrame.HeaderText:SetJustifyH('LEFT')
+		TextFrame.MainText:SetJustifyH('LEFT')
+		TextFrame.MainText:SetJustifyV('TOP')
+
+		-- Assign to globals
+		tooltip.TextFrame = TextFrame
+		statusbar.tooltip = tooltip
+		statusbar.settings = StyleSetting
+		statusbar.i = i
+		module.bars[key] = statusbar
+
+		-- Position
+		local point, anchor, secondaryPoint, x, y = strsplit(',', StyleSetting.Position)
+		statusbar:ClearAllPoints()
+		statusbar:SetPoint(point, anchor, secondaryPoint, x, y)
+		statusbar:SetAlpha(DB[i].alpha or 1)
+
+		-- Setup Actions
+		statusbar:RegisterEvent('PLAYER_ENTERING_WORLD')
+		statusbar:RegisterEvent('UNIT_INVENTORY_CHANGED')
+		statusbar:RegisterEvent('PLAYER_XP_UPDATE')
+		statusbar:RegisterEvent('PLAYER_LEVEL_UP')
+		statusbar:RegisterEvent('UPDATE_FACTION')
+
+		if SUI.IsRetail then statusbar:RegisterEvent('ARTIFACT_XP_UPDATE') end
+
+		-- Statusbar Update event
+		statusbar:SetScript('OnEvent', function(self)
+			if DB[i].display ~= 'disabled' then
+				self:Show()
+				updateText_Classic(self)
+			else
+				self:Hide()
+			end
+		end)
+
+		-- Tooltip Display Events
+		statusbar:SetScript('OnEnter', function()
+			if DB[i].display == 'rep' and DB[i].ToolTip == 'hover' then showRepTooltip_Classic(statusbar) end
+			if DB[i].display == 'xp' and DB[i].ToolTip == 'hover' then showXPTooltip_Classic(statusbar) end
+			if DB[i].display == 'az' and DB[i].ToolTip == 'hover' then showAzeriteTooltip_Classic(statusbar) end
+			if DB[i].display == 'honor' and DB[i].ToolTip == 'hover' then showHonorTooltip_Classic(statusbar) end
+		end)
+		statusbar:SetScript('OnMouseDown', function()
+			if DB[i].display == 'rep' and DB[i].ToolTip == 'click' then showRepTooltip_Classic(statusbar) end
+			if DB[i].display == 'xp' and DB[i].ToolTip == 'click' then showXPTooltip_Classic(statusbar) end
+			if DB[i].display == 'az' and DB[i].ToolTip == 'click' then showAzeriteTooltip_Classic(statusbar) end
+			if DB[i].display == 'honor' and DB[i].ToolTip == 'click' then showHonorTooltip_Classic(statusbar) end
+		end)
+		statusbar:SetScript('OnLeave', function()
+			statusbar.tooltip:Hide()
+		end)
+
+		-- Hide with SpartanUI
+		SpartanUI:HookScript('OnHide', function()
+			statusbar:Hide()
+		end)
+		SpartanUI:HookScript('OnShow', function()
+			statusbar:Show()
+		end)
+
+		-- Hook the visibility of the tooltip to the text
+		tooltip:HookScript('OnHide', function()
+			tooltip.TextFrame:Hide()
+		end)
+		tooltip:HookScript('OnShow', function()
+			tooltip.TextFrame:Show()
+		end)
+		-- Hide the new tooltip
+		tooltip:Hide()
+
+		-- MoveIt integration
+		if SUI.MoveIt then SUI.MoveIt:CreateMover(statusbar, 'StatusBar_' .. key, key .. ' Status Bar', nil, 'StatusBars') end
+	end
+
+	SUI:RegisterMessage('StatusBarUpdate', function()
+		for i, key in ipairs({ 'Left', 'Right' }) do
+			if DB[i].display ~= 'disabled' then
+				module.bars[key]:Show()
+				updateText_Classic(module.bars[key])
+			else
+				module.bars[key]:Hide()
+			end
+			module.bars[key]:SetAlpha(DB[i].alpha or 1)
+		end
+	end)
+end
+
+----------------------------------------------------------------------------------------------------
+-- OPTIONS SYSTEM
+----------------------------------------------------------------------------------------------------
+
 function module:BuildOptions()
+	if SUI.IsRetail then
+		self:BuildOptions_Retail()
+	else
+		self:BuildOptions_Classic()
+	end
+end
+
+function module:BuildOptions_Retail()
 	SUI.opt.args['Artwork'].args['StatusBars'] = {
 		name = L['Status bars'],
 		type = 'group',
@@ -781,6 +1235,18 @@ function module:BuildOptions()
 				end,
 				set = function(_, value)
 					SetCVar('showHonorAsExperience', value)
+				end,
+			},
+			ShowHousingXP = {
+				name = 'Show Housing XP',
+				type = 'toggle',
+				order = 2.5,
+				get = function()
+					return GetCVarBool('trackedHouseFavor')
+				end,
+				set = function(_, value)
+					SetCVar('trackedHouseFavor', value)
+					self:UpdateBars()
 				end,
 			},
 			EnableReputation = {
@@ -817,6 +1283,154 @@ function module:BuildOptions()
 			Right = self:CreateContainerOptions('Right', 120),
 		},
 	}
+end
+
+function module:BuildOptions_Classic()
+	local StatusBars = {
+		['xp'] = L['Experiance'],
+		['rep'] = L['Reputation'],
+		['honor'] = L['Honor'],
+		['disabled'] = L['Disabled'],
+	}
+
+	-- Add Azerite for versions that support it (BFA Classic)
+	if C_AzeriteItem and C_AzeriteItem.HasActiveAzeriteItem then StatusBars['az'] = L['Azerite Bar'] end
+
+	local ids = {
+		[1] = 'one',
+		[2] = 'two',
+	}
+
+	-- Build Holder
+	SUI.opt.args['Artwork'].args['StatusBars'] = {
+		name = L['Status bars'],
+		type = 'group',
+		args = {},
+	}
+
+	-- Bar Display dropdowns
+	for i, _ in ipairs({ 'Left', 'Right' }) do
+		SUI.opt.args['Artwork'].args['StatusBars'].args[ids[i]] = {
+			name = L['Status bar'] .. ' ' .. i,
+			order = i,
+			type = 'group',
+			inline = true,
+			args = {
+				display = {
+					name = L['Display mode'],
+					type = 'select',
+					order = 1,
+					values = StatusBars,
+					get = function(info)
+						return DB[i].display
+					end,
+					set = function(info, val)
+						DB[i].display = val
+						SUI:SendMessage('StatusBarUpdate')
+					end,
+				},
+				text = {
+					name = L['Display statusbar text'],
+					type = 'toggle',
+					order = 2,
+					get = function(info)
+						return DB[i].text
+					end,
+					set = function(info, val)
+						DB[i].text = val
+						SUI:SendMessage('StatusBarUpdate')
+					end,
+				},
+				TooltipDisplay = {
+					name = L['Tooltip display mode'],
+					type = 'select',
+					order = 3,
+					values = {
+						['hover'] = L['On mouse over'],
+						['click'] = L['On click'],
+						['off'] = L['Disabled'],
+					},
+					get = function(info)
+						return DB[i].ToolTip
+					end,
+					set = function(info, val)
+						DB[i].ToolTip = val
+						SUI:SendMessage('StatusBarUpdate')
+					end,
+				},
+				colors = {
+					name = 'name',
+					type = 'group',
+					inline = true,
+					get = function(info)
+						return DB[i][info[#info]]
+					end,
+					set = function(info, val)
+						DB[i][info[#info]] = val
+						SUI:SendMessage('StatusBarUpdate')
+					end,
+					args = {
+						AutoColor = {
+							name = L['Auto color'],
+							type = 'toggle',
+							order = 3,
+							get = function(info)
+								return DB[i].AutoColor
+							end,
+							set = function(info, val)
+								DB[i].AutoColor = val
+								SUI:SendMessage('StatusBarUpdate')
+							end,
+						},
+						CustomColor = {
+							name = L['Primary custom color'],
+							type = 'color',
+							hasAlpha = true,
+							order = 4,
+							get = function(info)
+								local colors = DB[i].CustomColor
+								return colors.r, colors.g, colors.b, colors.a
+							end,
+							set = function(info, r, g, b, a)
+								local colors = DB[i].CustomColor
+								colors.r, colors.g, colors.b, colors.a = r, g, b, a
+								SUI:SendMessage('StatusBarUpdate')
+							end,
+						},
+						CustomColor2 = {
+							name = L['Secondary custom color'],
+							type = 'color',
+							hasAlpha = true,
+							order = 5,
+							get = function(info)
+								local colors = DB[i].CustomColor2
+								return colors.r, colors.g, colors.b, colors.a
+							end,
+							set = function(info, r, g, b, a)
+								local colors = DB[i].CustomColor2
+								colors.r, colors.g, colors.b, colors.a = r, g, b, a
+								SUI:SendMessage('StatusBarUpdate')
+							end,
+						},
+					},
+				},
+				alpha = {
+					name = 'Transparency',
+					type = 'range',
+					min = 0,
+					max = 1,
+					step = 0.01,
+					get = function(info)
+						return DB[i].alpha or 1
+					end,
+					set = function(info, val)
+						DB[i].alpha = val
+						SUI:SendMessage('StatusBarUpdate')
+					end,
+				},
+			},
+		}
+	end
 end
 
 function module:CreateContainerOptions(containerKey, order)
