@@ -36,9 +36,20 @@ local function Builder(frame)
 	-- UF.Elements:Build(frame, 'AuraBars', elementDB['AuraBars']) -- DECOMMISSIONED: Not maintaining if unavailable in retail
 
 	UF.Elements:Build(frame, 'AuraWatch', elementDB['AuraWatch'])
+
+	if ComboFrame then
+		ComboFrame:Hide()
+		ComboFrame:HookScript(
+			'OnShow',
+			function(self)
+				self:Hide()
+			end
+		)
+	end
 end
 
-local function Options() end
+local function Options()
+end
 
 ---@type SUI.UF.Unit.Settings
 local Settings = {
@@ -46,7 +57,7 @@ local Settings = {
 		point = 'BOTTOMLEFT',
 		relativePoint = 'BOTTOM',
 		xOfs = 60,
-		yOfs = 250,
+		yOfs = 250
 	},
 	elements = {
 		-- AuraBars = { -- DECOMMISSIONED: Not maintaining if unavailable in retail
@@ -61,62 +72,62 @@ local Settings = {
 				isHelpful = true,
 				duration = {
 					enabled = true,
-					mode = 'exclude',
-				},
+					mode = 'exclude'
+				}
 			},
 			position = {
-				anchor = 'TOPLEFT',
-			},
+				anchor = 'TOPLEFT'
+			}
 		},
 		Debuffs = {
 			enabled = true,
 			position = {
-				anchor = 'TOPRIGHT',
-			},
+				anchor = 'TOPRIGHT'
+			}
 		},
 		ThreatIndicator = {
 			enabled = true,
-			points = 'Name',
+			points = 'Name'
 		},
 		Portrait = {
-			enabled = true,
+			enabled = true
 		},
 		Castbar = {
-			enabled = true,
+			enabled = true
 		},
 		Health = {
 			position = {
 				anchor = 'TOP',
 				relativeTo = 'Castbar',
-				relativePoint = 'BOTTOM',
-			},
+				relativePoint = 'BOTTOM'
+			}
 		},
 		QuestMob = {
-			enabled = true,
+			enabled = true
 		},
 		RaidRoleIndicator = {
-			enabled = true,
+			enabled = true
 		},
 		AssistantIndicator = {
-			enabled = true,
+			enabled = true
 		},
 		ClassIcon = {
-			enabled = true,
+			enabled = true
 		},
 		PvPIndicator = {
-			enabled = true,
+			enabled = true
 		},
 		Power = {
 			text = {
 				['1'] = {
-					enabled = true,
-				},
-			},
-		},
+					enabled = true
+				}
+			}
+		}
 	},
 	config = {
-		isFriendly = true,
-	},
+		isFriendly = true
+	}
 }
 
 UF.Unit:Add('target', Builder, Settings)
