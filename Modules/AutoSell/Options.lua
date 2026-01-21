@@ -44,24 +44,30 @@ local function SetupPage()
 				AutoSell.iLVLDesc = LibAT.UI.CreateLabel(AutoSell, L['Maximum iLVL to sell'])
 				AutoSell.iLVLLabel = LibAT.UI.CreateNumericBox(AutoSell, 80, 20, 1, module.DB.MaximumiLVL)
 				AutoSell.iLVLLabel:SetValue(module.DB.MaxILVL)
-				AutoSell.iLVLLabel:SetScript('OnTextChanged', function(self)
-					local value = self:GetValue()
-					if value and AutoSell.iLVLSlider then
-						if math.floor(value) ~= math.floor(AutoSell.iLVLSlider:GetValue()) then
-							AutoSell.iLVLSlider:SetValue(math.floor(value))
+				AutoSell.iLVLLabel:SetScript(
+					'OnTextChanged',
+					function(self)
+						local value = self:GetValue()
+						if value and AutoSell.iLVLSlider then
+							if math.floor(value) ~= math.floor(AutoSell.iLVLSlider:GetValue()) then
+								AutoSell.iLVLSlider:SetValue(math.floor(value))
+							end
 						end
 					end
-				end)
+				)
 
 				AutoSell.iLVLSlider = LibAT.UI.CreateSlider(AutoSell, module.DB.MaximumiLVL, 20, 1, module.DB.MaximumiLVL, 1)
 				AutoSell.iLVLSlider:SetValue(module.DB.MaxILVL)
-				AutoSell.iLVLSlider:SetScript('OnValueChanged', function(self, value)
-					if AutoSell.iLVLLabel then
-						if math.floor(AutoSell.iLVLLabel:GetValue()) ~= math.floor(value) then
-							AutoSell.iLVLLabel:SetValue(math.floor(value))
+				AutoSell.iLVLSlider:SetScript(
+					'OnValueChanged',
+					function(self, value)
+						if AutoSell.iLVLLabel then
+							if math.floor(AutoSell.iLVLLabel:GetValue()) ~= math.floor(value) then
+								AutoSell.iLVLLabel:SetValue(math.floor(value))
+							end
 						end
 					end
-				end)
+				)
 
 				-- AutoRepair
 				AutoSell.AutoRepair = LibAT.UI.CreateCheckbox(AutoSell, L['Auto repair'])
@@ -532,14 +538,16 @@ function module:CreateMiniVendorPanels()
 		-- Create panel using native frame (StdUi:Panel replacement)
 		local OptionsPopdown = CreateFrame('Frame', nil, _G[v], 'BackdropTemplate')
 		OptionsPopdown:SetSize(panelWidth, 20)
-		OptionsPopdown:SetBackdrop({
-			bgFile = 'Interface\\Tooltips\\UI-Tooltip-Background',
-			edgeFile = 'Interface\\Tooltips\\UI-Tooltip-Border',
-			tile = true,
-			tileSize = 16,
-			edgeSize = 16,
-			insets = { left = 4, right = 4, top = 4, bottom = 4 },
-		})
+		OptionsPopdown:SetBackdrop(
+			{
+				bgFile = 'Interface\\Tooltips\\UI-Tooltip-Background',
+				edgeFile = 'Interface\\Tooltips\\UI-Tooltip-Border',
+				tile = true,
+				tileSize = 16,
+				edgeSize = 16,
+				insets = {left = 4, right = 4, top = 4, bottom = 4}
+			}
+		)
 		OptionsPopdown:SetBackdropColor(0.1, 0.1, 0.1, 0.9)
 		OptionsPopdown:SetBackdropBorderColor(0.4, 0.4, 0.4, 1)
 		OptionsPopdown:SetScale(0.95)
@@ -667,14 +675,16 @@ function module:CreateMiniVendorPanels()
 		-- Create the expanded panel with increased height to accommodate the settings button
 		local Panel = CreateFrame('Frame', nil, OptionsPopdown, 'BackdropTemplate')
 		Panel:SetSize(_G[v]:GetWidth(), 120)
-		Panel:SetBackdrop({
-			bgFile = 'Interface\\Tooltips\\UI-Tooltip-Background',
-			edgeFile = 'Interface\\Tooltips\\UI-Tooltip-Border',
-			tile = true,
-			tileSize = 16,
-			edgeSize = 16,
-			insets = { left = 4, right = 4, top = 4, bottom = 4 },
-		})
+		Panel:SetBackdrop(
+			{
+				bgFile = 'Interface\\Tooltips\\UI-Tooltip-Background',
+				edgeFile = 'Interface\\Tooltips\\UI-Tooltip-Border',
+				tile = true,
+				tileSize = 16,
+				edgeSize = 16,
+				insets = {left = 4, right = 4, top = 4, bottom = 4}
+			}
+		)
 		Panel:SetBackdropColor(0.1, 0.1, 0.1, 0.9)
 		Panel:SetBackdropBorderColor(0.4, 0.4, 0.4, 1)
 		Panel:SetPoint('TOPRIGHT', OptionsPopdown, 'BOTTOMRIGHT', 0, -10)

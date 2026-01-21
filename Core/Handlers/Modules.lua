@@ -109,15 +109,21 @@ local function CreateSetupPage()
 
 					-- Add tooltip if description exists
 					if submodule.description then
-						checkbox:SetScript('OnEnter', function(self)
-							GameTooltip:SetOwner(self, 'ANCHOR_TOP')
-							GameTooltip:SetText(Displayname)
-							GameTooltip:AddLine(submodule.description, 1, 1, 1, true)
-							GameTooltip:Show()
-						end)
-						checkbox:SetScript('OnLeave', function(self)
-							GameTooltip:Hide()
-						end)
+						checkbox:SetScript(
+							'OnEnter',
+							function(self)
+								GameTooltip:SetOwner(self, 'ANCHOR_TOP')
+								GameTooltip:SetText(Displayname)
+								GameTooltip:AddLine(submodule.description, 1, 1, 1, true)
+								GameTooltip:Show()
+							end
+						)
+						checkbox:SetScript(
+							'OnLeave',
+							function(self)
+								GameTooltip:Hide()
+							end
+						)
 					end
 
 					checkbox:HookScript(
@@ -139,16 +145,16 @@ local function CreateSetupPage()
 			end
 
 			-- Position checkboxes in 2-column layout with proper spacing
-			local col1X, col2X = -150, 50  -- X positions for each column
-			local startY = -10  -- Starting Y position
-			local ySpacing = 3  -- Vertical spacing between rows
+			local col1X, col2X = -150, 50 -- X positions for each column
+			local startY = -10 -- Starting Y position
+			local ySpacing = 3 -- Vertical spacing between rows
 
 			for i = 1, #itemsMatrix do
-				local row = math.floor((i - 1) / 2)  -- Calculate row (0-indexed)
-				local col = (i - 1) % 2  -- Calculate column (0 = left, 1 = right)
+				local row = math.floor((i - 1) / 2) -- Calculate row (0-indexed)
+				local col = (i - 1) % 2 -- Calculate column (0 = left, 1 = right)
 
 				local xPos = (col == 0) and col1X or col2X
-				local yPos = startY - (row * (20 + ySpacing))  -- 20px height + spacing
+				local yPos = startY - (row * (20 + ySpacing)) -- 20px height + spacing
 
 				itemsMatrix[i]:SetPoint('TOPLEFT', SUI_Win.ModSelection, 'TOP', xPos, yPos)
 
@@ -161,15 +167,21 @@ local function CreateSetupPage()
 
 			-- Toggle optional button at bottom
 			local btnOptional = UI.CreateButton(SUI_Win.ModSelection, 130, 18, 'Toggle optional(s)')
-			btnOptional:SetScript('OnEnter', function(self)
-				GameTooltip:SetOwner(self, 'ANCHOR_TOP')
-				GameTooltip:SetText('Toggle optional(s)')
-				GameTooltip:AddLine('Toggles optional SUI modules. Disabling Core modules may cause unintended side effects.', 1, 1, 1, true)
-				GameTooltip:Show()
-			end)
-			btnOptional:SetScript('OnLeave', function(self)
-				GameTooltip:Hide()
-			end)
+			btnOptional:SetScript(
+				'OnEnter',
+				function(self)
+					GameTooltip:SetOwner(self, 'ANCHOR_TOP')
+					GameTooltip:SetText('Toggle optional(s)')
+					GameTooltip:AddLine('Toggles optional SUI modules. Disabling Core modules may cause unintended side effects.', 1, 1, 1, true)
+					GameTooltip:Show()
+				end
+			)
+			btnOptional:SetScript(
+				'OnLeave',
+				function(self)
+					GameTooltip:Hide()
+				end
+			)
 			btnOptional:SetScript(
 				'OnClick',
 				function(this)

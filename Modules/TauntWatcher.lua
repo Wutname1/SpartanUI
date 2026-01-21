@@ -354,9 +354,9 @@ function module:SetupWizard()
 				TauntWatch.options.outdoors = LibAT.UI.CreateCheckbox(TauntWatch, L['Outdoors'])
 
 				-- Positioning - column layout with proper spacing
-				local col1X, col2X, col3X = -200, -40, 120  -- X positions for columns
-				local startY = -10  -- Starting Y position
-				local rowHeight = 25  -- Height per row
+				local col1X, col2X, col3X = -200, -40, 120 -- X positions for columns
+				local startY = -10 -- Starting Y position
+				local rowHeight = 25 -- Height per row
 
 				-- Module enabled at top
 				TauntWatch.modEnabled:SetPoint('TOPLEFT', SUI_Win, 'TOP', -60, startY)

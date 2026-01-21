@@ -1035,13 +1035,16 @@ function MoveIt:OnInitialize()
 	-- Access LibAT from global namespace (not LibStub)
 	local LibAT = _G.LibAT
 	if LibAT and LibAT.UI then
-		coordFrame = LibAT.UI.CreateWindow({
-			name = 'SUI_MoveIt_CoordFrame',
-			title = 'MoveIt',
-			width = 480,
-			height = 200,
-			hidePortrait = true,
-		})
+		coordFrame =
+			LibAT.UI.CreateWindow(
+			{
+				name = 'SUI_MoveIt_CoordFrame',
+				title = 'MoveIt',
+				width = 480,
+				height = 200,
+				hidePortrait = true
+			}
+		)
 	else
 		-- Fallback to basic frame if LibAT not available
 		coordFrame = CreateFrame('Frame', 'SUI_MoveIt_CoordFrame', UIParent, 'BasicFrameTemplateWithInset')

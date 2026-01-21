@@ -61,13 +61,19 @@ end
 
 do -- Level Skull as an SUIUF module
 	local Update = function(self, event, unit)
-		if self.unit ~= unit then return end
-		if not self.LevelSkull then return end
+		if self.unit ~= unit then
+			return
+		end
+		if not self.LevelSkull then
+			return
+		end
 		local level = UnitLevel(unit)
 		self.LevelSkull:SetTexture('Interface\\TargetingFrame\\UI-TargetingFrame-Skull')
 		if level < 0 then
 			self.LevelSkull:SetTexCoord(0, 1, 0, 1)
-			if self.Level then self.Level:SetText('') end
+			if self.Level then
+				self.Level:SetText('')
+			end
 		else
 			self.LevelSkull:SetTexCoord(0, 0.01, 0, 0.01)
 		end
@@ -83,15 +89,21 @@ do -- Level Skull as an SUIUF module
 		end
 	end
 	local Disable = function(self)
-		if self.LevelSkull then self.LevelSkull:Hide() end
+		if self.LevelSkull then
+			self.LevelSkull:Hide()
+		end
 	end
 	SUIUF:AddElement('LevelSkull', Update, Enable, Disable)
 end
 
 do -- Rare / Elite dragon graphic as an SUIUF module
 	local Update = function(self, event, unit)
-		if self.unit ~= unit then return end
-		if not self.RareElite then return end
+		if self.unit ~= unit then
+			return
+		end
+		if not self.RareElite then
+			return
+		end
 		local c = UnitClassification(unit)
 		local element = self.RareElite
 
@@ -108,8 +120,12 @@ do -- Rare / Elite dragon graphic as an SUIUF module
 			element:SetTexture('Interface\\AddOns\\SpartanUI\\Images\\elite_rare')
 			element:SetTexCoord(0, 1, 0, 1)
 			element:SetAlpha(0.75)
-			if element.short == true then element:SetTexCoord(0, 1, 0, 0.7) end
-			if element.small == true then element:SetTexCoord(0, 1, 0, 0.4) end
+			if element.short == true then
+				element:SetTexCoord(0, 1, 0, 0.7)
+			end
+			if element.small == true then
+				element:SetTexCoord(0, 1, 0, 0.4)
+			end
 		end
 		element:Show()
 	end
@@ -126,7 +142,9 @@ do -- Rare / Elite dragon graphic as an SUIUF module
 	end
 
 	local Disable = function(self)
-		if self.RareElite then self.RareElite:Hide() end
+		if self.RareElite then
+			self.RareElite:Hide()
+		end
 	end
 	SUIUF:AddElement('RareElite', Update, Enable, Disable)
 end
@@ -160,13 +178,17 @@ end
 -- AFK / DND status text, as an SUIUF module
 SUIUF.Tags.Events['afkdnd'] = 'PLAYER_FLAGS_CHANGED PLAYER_TARGET_CHANGED UNIT_TARGET'
 SUIUF.Tags.Methods['afkdnd'] = function(unit)
-	if unit then return UnitIsAFK(unit) and 'AFK' or UnitIsDND(unit) and 'DND' or '' end
+	if unit then
+		return UnitIsAFK(unit) and 'AFK' or UnitIsDND(unit) and 'DND' or ''
+	end
 end
 
 if SUI.IsRetail then
 	SUIUF.Tags.Events['title'] = 'UNIT_NAME_UPDATE INSTANCE_ENCOUNTER_ENGAGE_UNIT'
 	SUIUF.Tags.Methods['title'] = function(unit)
-		if UnitIsPlayer(unit) then return GetTitleName(GetCurrentTitle()) end
+		if UnitIsPlayer(unit) then
+			return GetTitleName(GetCurrentTitle())
+		end
 	end
 	SUIUF.Tags.Events['specialization'] = 'PLAYER_TALENT_UPDATE'
 	SUIUF.Tags.Methods['specialization'] = function(unit)
@@ -174,7 +196,9 @@ if SUI.IsRetail then
 			local currentSpec = GetSpecialization()
 			if currentSpec then
 				local _, currentSpecName = GetSpecializationInfo(currentSpec)
-				if currentSpecName then return currentSpecName end
+				if currentSpecName then
+					return currentSpecName
+				end
 			end
 		end
 	end
@@ -232,7 +256,9 @@ local function calculateResult(currentVal, maxVal, isDead, ...)
 			return ''
 		end
 	end
-	if returnVal == '' then returnVal = SUI.Font:comma_value(num) end
+	if returnVal == '' then
+		returnVal = SUI.Font:comma_value(num)
+	end
 
 	return returnVal
 end
@@ -247,7 +273,9 @@ end
 
 local function SUIPower(unit, _, ...)
 	local returnVal = ''
-	if not ... then return returnVal end
+	if not ... then
+		return returnVal
+	end
 
 	local currentVal = UnitPower(unit) or 0
 	local maxVal = UnitPowerMax(unit) or currentVal
@@ -264,15 +292,15 @@ SUIUF.Tags.Methods['SUIPower'] = SUIPower
 
 do --LEGACY Health Formatting Tags
 	local listing = {
-		['health:current-short'] = { 'short' },
-		['health:current-dynamic'] = { 'dynamic' },
+		['health:current-short'] = {'short'},
+		['health:current-dynamic'] = {'dynamic'},
 		['health:current-formatted'] = {},
-		['health:max-short'] = { 'max', 'short' },
-		['health:max-dynamic'] = { 'max', 'dynamic' },
-		['health:max-formatted'] = { 'max' },
-		['health:missing-short'] = { 'missing', 'short' },
-		['health:missing-dynamic'] = { 'missing', 'dynamic' },
-		['health:missing-formatted'] = { 'missing' },
+		['health:max-short'] = {'max', 'short'},
+		['health:max-dynamic'] = {'max', 'dynamic'},
+		['health:max-formatted'] = {'max'},
+		['health:missing-short'] = {'missing', 'short'},
+		['health:missing-dynamic'] = {'missing', 'dynamic'},
+		['health:missing-formatted'] = {'missing'}
 	}
 	for k, v in pairs(listing) do
 		SUIUF.Tags.Events[k] = 'UNIT_HEALTH UNIT_MAXHEALTH'
@@ -284,15 +312,15 @@ end
 
 do -- LEGACY Mana Formatting Tags
 	local listing = {
-		['power:current-short'] = { 'short' },
-		['power:current-dynamic'] = { 'dynamic' },
+		['power:current-short'] = {'short'},
+		['power:current-dynamic'] = {'dynamic'},
 		['power:current-formatted'] = {},
-		['power:max-short'] = { 'max', 'short' },
-		['power:max-dynamic'] = { 'max', 'dynamic' },
-		['power:max-formatted'] = { 'max' },
-		['power:missing-short'] = { 'missing', 'short' },
-		['power:missing-dynamic'] = { 'missing', 'dynamic' },
-		['power:missing-formatted'] = { 'missing' },
+		['power:max-short'] = {'max', 'short'},
+		['power:max-dynamic'] = {'max', 'dynamic'},
+		['power:max-formatted'] = {'max'},
+		['power:missing-short'] = {'missing', 'short'},
+		['power:missing-dynamic'] = {'missing', 'dynamic'},
+		['power:missing-formatted'] = {'missing'}
 	}
 	for k, v in pairs(listing) do
 		SUIUF.Tags.Events[k] = 'UNIT_MAXPOWER UNIT_DISPLAYPOWER UNIT_POWER_FREQUENT'

@@ -25,7 +25,7 @@ function module:OnInitialize()
 		['MultiCastActionBarFrame'] = 'TOP,SpartanUI,TOP,-558,0',
 		--
 		['BT4BarMicroMenu'] = 'TOP,SpartanUI,TOP,322,0',
-		['BT4BarBagBar'] = 'TOP,SpartanUI,TOP,595,0',
+		['BT4BarBagBar'] = 'TOP,SpartanUI,TOP,595,0'
 	}
 	BarHandler.BarScale.BT4.Minimal = {
 		['BT4Bar1'] = 0.78,
@@ -43,24 +43,27 @@ function module:OnInitialize()
 		['BT4BarStanceBar'] = 0.6,
 		['BT4BarPetBar'] = 0.6,
 		['MultiCastActionBarFrame'] = 0.6,
-		['BT4BarMicroMenu'] = 0.6,
+		['BT4BarMicroMenu'] = 0.6
 	}
 
 	local minimapSettings = {
 		UnderVehicleUI = false,
 		scaleWithArt = false,
 		position = 'TOPRIGHT,SUI_Art_Minimal_Base3,TOPRIGHT,-10,-10',
-		shape = 'square',
+		shape = 'square'
 	}
 	SUI.Minimap:Register('Minimal', minimapSettings)
 
 	if SUI.UF then
-		SUI.UF.Style:Register('Minimal', {
-			displayName = 'Minimal',
-			setup = {
-				image = 'Interface\\AddOns\\SpartanUI\\images\\setup\\Style_Frames_Minimal',
-			},
-		})
+		SUI.UF.Style:Register(
+			'Minimal',
+			{
+				displayName = 'Minimal',
+				setup = {
+					image = 'Interface\\AddOns\\SpartanUI\\images\\setup\\Style_Frames_Minimal'
+				}
+			}
+		)
 	end
 end
 
@@ -70,17 +73,20 @@ function module:OnEnable()
 	else
 		module:Options()
 
-		hooksecurefunc('UIParent_ManageFramePositions', function()
-			if TutorialFrameAlertButton then
-				TutorialFrameAlertButton:SetParent(Minimap)
-				TutorialFrameAlertButton:ClearAllPoints()
-				TutorialFrameAlertButton:SetPoint('CENTER', Minimap, 'TOP', -2, 30)
+		hooksecurefunc(
+			'UIParent_ManageFramePositions',
+			function()
+				if TutorialFrameAlertButton then
+					TutorialFrameAlertButton:SetParent(Minimap)
+					TutorialFrameAlertButton:ClearAllPoints()
+					TutorialFrameAlertButton:SetPoint('CENTER', Minimap, 'TOP', -2, 30)
+				end
+				if CastingBarFrame then
+					CastingBarFrame:ClearAllPoints()
+					CastingBarFrame:SetPoint('BOTTOM', SUI_Art_Minimal_Base1, 'TOP', 0, 90)
+				end
 			end
-			if CastingBarFrame then
-				CastingBarFrame:ClearAllPoints()
-				CastingBarFrame:SetPoint('BOTTOM', SUI_Art_Minimal_Base1, 'TOP', 0, 90)
-			end
-		end)
+		)
 
 		--Setup Sliding Trays
 		module:SlidingTrays()
@@ -155,7 +161,7 @@ function module:Options()
 					else
 						SUI_Art_Minimal_Base1:Show()
 					end
-				end,
+				end
 			},
 			HideTopLeft = {
 				name = L['Hide Top Left'],
@@ -171,7 +177,7 @@ function module:Options()
 					else
 						SUI_Art_Minimal_Base2:Show()
 					end
-				end,
+				end
 			},
 			HideTopRight = {
 				name = L['Hide Top Right'],
@@ -187,7 +193,7 @@ function module:Options()
 					else
 						SUI_Art_Minimal_Base3:Show()
 					end
-				end,
+				end
 			},
 			HideBottomLeft = {
 				name = L['Hide Bottom Left'],
@@ -203,7 +209,7 @@ function module:Options()
 					else
 						SUI_Art_Minimal_Base4:Show()
 					end
-				end,
+				end
 			},
 			HideBottomRight = {
 				name = L['Hide Bottom Right'],
@@ -219,7 +225,7 @@ function module:Options()
 					else
 						SUI_Art_Minimal_Base5:Show()
 					end
-				end,
+				end
 			},
 			UseClassColors = {
 				name = L['Use Class Colors'],
@@ -232,7 +238,7 @@ function module:Options()
 				set = function(info, val)
 					SUI.DB.Styles.Minimal.UseClassColors = val
 					module:SetColor()
-				end,
+				end
 			},
 			alpha = {
 				name = L['Artwork Color'],
@@ -249,11 +255,11 @@ function module:Options()
 				end,
 				set = function(info, r, g, b, a)
 					SUI.Log('Options - Artwork Color changed to r:' .. r .. ' g:' .. g .. ' b:' .. b .. ' a:' .. a, 'Style.Minimal', 'debug')
-					SUI.DB.Styles.Minimal.Color.Art = { r, g, b, a }
+					SUI.DB.Styles.Minimal.Color.Art = {r, g, b, a}
 					module:SetColor()
-				end,
-			},
-		},
+				end
+			}
+		}
 	}
 end
 
@@ -262,9 +268,7 @@ function module:OnDisable()
 end
 
 function module:SlidingTrays()
-	local Settings = {
-		-- Uses default coordinates from DefaultTraySettings
-	}
+	local Settings = {}
 
 	Artwork_Core:SlidingTrays(Settings)
 end

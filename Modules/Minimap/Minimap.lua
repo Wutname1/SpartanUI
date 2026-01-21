@@ -266,7 +266,9 @@ function module:UpdateSettings()
 	if not SUI.IsRetail and module.Settings.elements then
 		-- Convert retail structure to classic if needed
 		for key, value in pairs(module.Settings.elements) do
-			if not module.Settings[key] then module.Settings[key] = value end
+			if not module.Settings[key] then
+				module.Settings[key] = value
+			end
 		end
 	end
 end
@@ -309,26 +311,37 @@ function module:ModifyMinimapLayout()
 	else
 		-- Classic-specific modifications
 		-- Hide the toggle button
-		if MinimapToggleButton then MinimapToggleButton:Hide() end
+		if MinimapToggleButton then
+			MinimapToggleButton:Hide()
+		end
 
 		-- Enable mousewheel zoom
 		Minimap:EnableMouseWheel(true)
-		Minimap:SetScript('OnMouseWheel', function(_, delta)
-			if delta > 0 then
-				Minimap_ZoomIn()
-			else
-				Minimap_ZoomOut()
+		Minimap:SetScript(
+			'OnMouseWheel',
+			function(_, delta)
+				if delta > 0 then
+					Minimap_ZoomIn()
+				else
+					Minimap_ZoomOut()
+				end
 			end
-		end)
+		)
 
 		-- Position Minimap inside SUIMinimap holder
 		Minimap:ClearAllPoints()
 		Minimap:SetPoint('TOPLEFT', SUIMinimap, 'TOPLEFT', 0, 0)
 
 		-- Hide all border textures comprehensively
-		if MinimapBorderTop then MinimapBorderTop:Hide() end
-		if MinimapBorder then MinimapBorder:Hide() end
-		if MinimapBackdrop then MinimapBackdrop:Hide() end
+		if MinimapBorderTop then
+			MinimapBorderTop:Hide()
+		end
+		if MinimapBorder then
+			MinimapBorder:Hide()
+		end
+		if MinimapBackdrop then
+			MinimapBackdrop:Hide()
+		end
 
 		-- Hide or show north tag based on settings
 		if MinimapNorthTag then
@@ -373,9 +386,13 @@ function module:ModifyMinimapLayout()
 		end
 
 		-- Hide compass texture
-		if MinimapCompassTexture then MinimapCompassTexture:Hide() end
+		if MinimapCompassTexture then
+			MinimapCompassTexture:Hide()
+		end
 
-		if MinimapCluster.BorderTop then MinimapCluster.BorderTop:Hide() end
+		if MinimapCluster.BorderTop then
+			MinimapCluster.BorderTop:Hide()
+		end
 	end
 
 	-- Setup rotation if needed
@@ -407,7 +424,9 @@ function module:UpdateMinimapSize()
 		-- Classic: Simpler calculation
 		local extraHeight = 20
 		-- Add space for coords if enabled
-		if module.Settings.coords and module.Settings.coords.enabled then extraHeight = extraHeight + 15 end
+		if module.Settings.coords and module.Settings.coords.enabled then
+			extraHeight = extraHeight + 15
+		end
 		SUIMinimap:SetSize(Minimap:GetWidth(), Minimap:GetHeight() + extraHeight)
 	end
 
@@ -568,12 +587,16 @@ end
 
 function module:SetupZoomButtons()
 	local zoomSettings = SUI.IsRetail and module.Settings.elements and module.Settings.elements.zoomButtons or module.Settings.zoomButtons
-	if not zoomSettings then return end
+	if not zoomSettings then
+		return
+	end
 
 	-- Check for zoom buttons (different names in different versions)
 	local zoomIn = Minimap.ZoomIn or MinimapZoomIn
 	local zoomOut = Minimap.ZoomOut or MinimapZoomOut
-	if not zoomIn or not zoomOut then return end
+	if not zoomIn or not zoomOut then
+		return
+	end
 
 	if zoomSettings.enabled then
 		zoomIn:Show()
@@ -588,7 +611,9 @@ end
 
 function module:SetupZoneText()
 	local zoneSettings = SUI.IsRetail and module.Settings.elements and module.Settings.elements.ZoneText or module.Settings.ZoneText
-	if not zoneSettings then return end
+	if not zoneSettings then
+		return
+	end
 
 	if not SUI.IsRetail then
 		-- Classic: Create custom zone text display below minimap
@@ -600,10 +625,14 @@ function module:SetupZoneText()
 				Minimap.ZoneText:SetJustifyV('MIDDLE')
 			end
 
-			if zoneSettings.position then module:PositionItem(Minimap.ZoneText, zoneSettings.position) end
+			if zoneSettings.position then
+				module:PositionItem(Minimap.ZoneText, zoneSettings.position)
+			end
 
 			local color = zoneSettings.color or zoneSettings.TextColor
-			if color then Minimap.ZoneText:SetTextColor(unpack(color)) end
+			if color then
+				Minimap.ZoneText:SetTextColor(unpack(color))
+			end
 			Minimap.ZoneText:SetShadowColor(0, 0, 0, 1)
 			Minimap.ZoneText:SetScale(zoneSettings.scale or 1)
 			Minimap.ZoneText:Show()
@@ -627,14 +656,20 @@ function module:SetupZoneText()
 	else
 		-- Retail: Use standard ZoneTextButton
 		local zoneButton = MinimapCluster.ZoneTextButton
-		if not zoneButton then return end
+		if not zoneButton then
+			return
+		end
 
 		if zoneSettings.enabled then
-			if zoneSettings.position then module:PositionItem(zoneButton, zoneSettings.position) end
+			if zoneSettings.position then
+				module:PositionItem(zoneButton, zoneSettings.position)
+			end
 
 			if MinimapZoneText then
 				local color = zoneSettings.color or zoneSettings.TextColor
-				if color then MinimapZoneText:SetTextColor(unpack(color)) end
+				if color then
+					MinimapZoneText:SetTextColor(unpack(color))
+				end
 				MinimapZoneText:SetShadowColor(0, 0, 0, 1)
 				SUI.Font:Format(MinimapZoneText, 10, 'Minimap')
 				MinimapZoneText:SetJustifyH('CENTER')
@@ -649,19 +684,27 @@ function module:SetupZoneText()
 end
 
 function module:UpdateClassicZoneText()
-	if SUI.IsRetail or not Minimap.ZoneText or not Minimap.ZoneText:IsShown() then return end
+	if SUI.IsRetail or not Minimap.ZoneText or not Minimap.ZoneText:IsShown() then
+		return
+	end
 
 	-- Get zone text and update our custom display
 	local zoneText = GetMinimapZoneText()
-	if zoneText then Minimap.ZoneText:SetText(zoneText) end
+	if zoneText then
+		Minimap.ZoneText:SetText(zoneText)
+	end
 end
 
 function module:SetupCoords()
 	local coordSettings = SUI.IsRetail and module.Settings.elements and module.Settings.elements.coords or module.Settings.coords
-	if not coordSettings then return end
+	if not coordSettings then
+		return
+	end
 
 	if coordSettings.enabled then
-		if not Minimap.coords then Minimap.coords = Minimap:CreateFontString(nil, 'OVERLAY') end
+		if not Minimap.coords then
+			Minimap.coords = Minimap:CreateFontString(nil, 'OVERLAY')
+		end
 		SUI.Font:Format(Minimap.coords, 10, 'Minimap')
 
 		-- For Classic/TBC, if ZoneText exists, position relative to it instead of using the position string
@@ -673,11 +716,15 @@ function module:SetupCoords()
 		end
 
 		local color = coordSettings.color or coordSettings.TextColor
-		if color then Minimap.coords:SetTextColor(unpack(color)) end
+		if color then
+			Minimap.coords:SetTextColor(unpack(color))
+		end
 		Minimap.coords:SetShadowColor(0, 0, 0, 1)
 		Minimap.coords:SetScale(coordSettings.scale or 1)
 
-		if coordSettings.size then Minimap.coords:SetSize(unpack(coordSettings.size)) end
+		if coordSettings.size then
+			Minimap.coords:SetSize(unpack(coordSettings.size))
+		end
 		Minimap.coords:SetJustifyH('CENTER')
 		Minimap.coords:Show()
 		module:SetupCoordinatesUpdater()
@@ -715,17 +762,25 @@ end
 function module:SetupClock()
 	local clockSettings = SUI.IsRetail and module.Settings.elements and module.Settings.elements.clock or module.Settings.clock
 	if not clockSettings or not clockSettings.enabled then
-		if TimeManagerClockButton then TimeManagerClockButton:Hide() end
-		if GameTimeFrame then GameTimeFrame:Hide() end
+		if TimeManagerClockButton then
+			TimeManagerClockButton:Hide()
+		end
+		if GameTimeFrame then
+			GameTimeFrame:Hide()
+		end
 		return
 	end
 
 	if not GameTimeFrame then
 		-- Retail: TimeManagerClockButton
-		if not TimeManagerClockButton then C_AddOns.LoadAddOn('Blizzard_TimeManager') end
+		if not TimeManagerClockButton then
+			C_AddOns.LoadAddOn('Blizzard_TimeManager')
+		end
 		if TimeManagerClockButton then
 			TimeManagerClockButton:ClearAllPoints()
-			if clockSettings.position then module:PositionItem(TimeManagerClockButton, clockSettings.position) end
+			if clockSettings.position then
+				module:PositionItem(TimeManagerClockButton, clockSettings.position)
+			end
 			TimeManagerClockButton:SetScale(clockSettings.scale or 1)
 			if TimeManagerClockTicker and clockSettings.color then
 				TimeManagerClockTicker:SetTextColor(unpack(clockSettings.color))
@@ -745,7 +800,9 @@ end
 
 function module:SetupMailIcon()
 	local mailSettings = SUI.IsRetail and module.Settings.elements and module.Settings.elements.mailIcon or module.Settings.mailIcon
-	if not mailSettings then return end
+	if not mailSettings then
+		return
+	end
 
 	-- Get mail frame - different in Retail vs Classic
 	local mailFrame
@@ -755,11 +812,15 @@ function module:SetupMailIcon()
 		mailFrame = MiniMapMailFrame
 	end
 
-	if not mailFrame then return end
+	if not mailFrame then
+		return
+	end
 
 	if mailSettings.enabled then
 		mailFrame:ClearAllPoints()
-		if mailSettings.position then module:PositionItem(mailFrame, mailSettings.position) end
+		if mailSettings.position then
+			module:PositionItem(mailFrame, mailSettings.position)
+		end
 		mailFrame:SetScale(mailSettings.scale or 1)
 		mailFrame:Show()
 	else
@@ -769,7 +830,9 @@ end
 
 function module:SetupTracking()
 	local trackingSettings = SUI.IsRetail and module.Settings.elements and module.Settings.elements.tracking or module.Settings.tracking
-	if not trackingSettings then return end
+	if not trackingSettings then
+		return
+	end
 
 	-- Get tracking frame - different in Retail vs Classic
 	local tracking
@@ -779,15 +842,21 @@ function module:SetupTracking()
 		tracking = MiniMapTracking
 	end
 
-	if not tracking then return end
+	if not tracking then
+		return
+	end
 
 	if trackingSettings.enabled then
 		tracking:ClearAllPoints()
-		if trackingSettings.position then module:PositionItem(tracking, trackingSettings.position) end
+		if trackingSettings.position then
+			module:PositionItem(tracking, trackingSettings.position)
+		end
 		tracking:SetScale(trackingSettings.scale or 1)
 
 		-- Hide background if it exists (Retail)
-		if tracking.Background then tracking.Background:Hide() end
+		if tracking.Background then
+			tracking.Background:Hide()
+		end
 
 		tracking:Show()
 	else
@@ -796,14 +865,20 @@ function module:SetupTracking()
 end
 
 function module:SetupCalendarButton()
-	if not SUI.IsRetail then return end -- Calendar button is Retail-only
+	if not SUI.IsRetail then
+		return
+	end -- Calendar button is Retail-only
 
 	local calendarSettings = module.Settings.elements and module.Settings.elements.calendarButton
-	if not calendarSettings then return end
+	if not calendarSettings then
+		return
+	end
 
 	if calendarSettings.enabled and GameTimeFrame then
 		GameTimeFrame:ClearAllPoints()
-		if calendarSettings.position then module:PositionItem(GameTimeFrame, calendarSettings.position) end
+		if calendarSettings.position then
+			module:PositionItem(GameTimeFrame, calendarSettings.position)
+		end
 		GameTimeFrame:SetScale(calendarSettings.scale or 1)
 		GameTimeFrame:Show()
 	elseif GameTimeFrame then
@@ -813,7 +888,9 @@ end
 
 function module:SetupInstanceDifficulty()
 	local difficultySettings = SUI.IsRetail and module.Settings.elements and module.Settings.elements.instanceDifficulty or module.Settings.instanceDifficulty
-	if not difficultySettings then return end
+	if not difficultySettings then
+		return
+	end
 
 	-- Get instance difficulty frame - different in Retail vs Classic
 	local difficulty
@@ -823,11 +900,15 @@ function module:SetupInstanceDifficulty()
 		difficulty = MiniMapInstanceDifficulty
 	end
 
-	if not difficulty then return end
+	if not difficulty then
+		return
+	end
 
 	if difficultySettings.enabled then
 		difficulty:ClearAllPoints()
-		if difficultySettings.position then module:PositionItem(difficulty, difficultySettings.position) end
+		if difficultySettings.position then
+			module:PositionItem(difficulty, difficultySettings.position)
+		end
 		difficulty:SetScale(difficultySettings.scale or 0.8)
 		difficulty:Show()
 	else
@@ -837,7 +918,9 @@ end
 
 function module:SetupQueueStatus()
 	local queueSettings = SUI.IsRetail and module.Settings.elements and module.Settings.elements.queueStatus or module.Settings.queueStatus
-	if not queueSettings then return end
+	if not queueSettings then
+		return
+	end
 
 	-- Get queue/battlefield frame - different in Retail vs Classic
 	local queueFrame
@@ -847,18 +930,26 @@ function module:SetupQueueStatus()
 		queueFrame = MiniMapBattlefieldFrame
 	end
 
-	if not queueFrame then return end
+	if not queueFrame then
+		return
+	end
 
 	if queueSettings.enabled then
 		queueFrame:ClearAllPoints()
-		if queueSettings.position then module:PositionItem(queueFrame, queueSettings.position) end
+		if queueSettings.position then
+			module:PositionItem(queueFrame, queueSettings.position)
+		end
 		queueFrame:SetScale(queueSettings.scale or 0.85)
 	end
 end
 
 function module:SetupExpansionButton()
-	if not SUI.IsRetail then return end -- Expansion button is Retail-only
-	if not ExpansionLandingPageMinimapButton then return end
+	if not SUI.IsRetail then
+		return
+	end -- Expansion button is Retail-only
+	if not ExpansionLandingPageMinimapButton then
+		return
+	end
 
 	ExpansionLandingPageMinimapButton:SetScale(module.Settings.elements.expansionButton.scale)
 	module:PositionItem(ExpansionLandingPageMinimapButton, module.Settings.elements.expansionButton.position)
@@ -974,7 +1065,9 @@ end
 
 function module:UpdateAddonButtons()
 	local addonSettings = SUI.IsRetail and module.Settings.elements and module.Settings.elements.addonButtons or module.Settings.addonButtons
-	if not addonSettings then return end
+	if not addonSettings then
+		return
+	end
 
 	local style = addonSettings.style or 'mouseover'
 	if style == 'always' then
@@ -1094,7 +1187,9 @@ function module:Update(fullUpdate)
 	module:SetupZoomButtons()
 
 	-- Classic-specific updates
-	if not SUI.IsRetail then module:UpdateClassicZoneText() end
+	if not SUI.IsRetail then
+		module:UpdateClassicZoneText()
+	end
 
 	-- Retail-only elements
 	if SUI.IsRetail then
@@ -1173,7 +1268,9 @@ local VehicleMover
 
 -- Initialize the vehicle mover
 function module:InitializeVehicleMover()
-	if not SUI.IsRetail then return end -- Vehicle mover is Retail-only
+	if not SUI.IsRetail then
+		return
+	end -- Vehicle mover is Retail-only
 
 	-- Create the vehicle mover with our new reusable function
 	local borderHeight = 0

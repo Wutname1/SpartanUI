@@ -244,7 +244,6 @@ end
 
      See: https://warcraft.wiki.gg/wiki/Patch_12.0.0/API_changes#Secret_values
 --]]
-
 ---Formats health/power values using WoW 12.0 secret-safe APIs
 ---@param unit string Unit token
 ---@param _ any Unused realUnit parameter
@@ -279,7 +278,9 @@ local function SUIHealth(unit, _, ...)
 		for i = 1, select('#', ...) do
 			if tostring(select(i, ...)) == 'hideZero' then
 				local truncated = C_StringUtil.TruncateWhenZero(percent)
-				if not truncated then return '' end
+				if not truncated then
+					return ''
+				end
 				break
 			end
 		end
@@ -306,7 +307,9 @@ local function SUIHealth(unit, _, ...)
 	for i = 1, select('#', ...) do
 		if tostring(select(i, ...)) == 'hideZero' then
 			local truncated = C_StringUtil.TruncateWhenZero(value)
-			if not truncated then return '' end
+			if not truncated then
+				return ''
+			end
 			break
 		end
 	end
@@ -366,7 +369,9 @@ local function SUIPower(unit, _, ...)
 		for i = 1, select('#', ...) do
 			if tostring(select(i, ...)) == 'hideZero' then
 				local truncated = C_StringUtil.TruncateWhenZero(percent)
-				if not truncated then return '' end
+				if not truncated then
+					return ''
+				end
 				break
 			end
 		end
@@ -393,7 +398,9 @@ local function SUIPower(unit, _, ...)
 	for i = 1, select('#', ...) do
 		if tostring(select(i, ...)) == 'hideZero' then
 			local truncated = C_StringUtil.TruncateWhenZero(value)
-			if not truncated then return '' end
+			if not truncated then
+				return ''
+			end
 			break
 		end
 	end

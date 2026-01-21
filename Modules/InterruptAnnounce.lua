@@ -111,11 +111,14 @@ function module:OnEnable()
 	module:FirstLaunch()
 
 	-- Defer event registration to next frame to avoid taint issues during addon init
-	C_Timer.After(0, function()
-		if module:IsEnabled() then
-			module:RegisterEvent('COMBAT_LOG_EVENT_UNFILTERED', COMBAT_LOG_EVENT_UNFILTERED)
+	C_Timer.After(
+		0,
+		function()
+			if module:IsEnabled() then
+				module:RegisterEvent('COMBAT_LOG_EVENT_UNFILTERED', COMBAT_LOG_EVENT_UNFILTERED)
+			end
 		end
-	end)
+	)
 end
 
 function module:Options()

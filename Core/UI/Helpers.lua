@@ -150,7 +150,7 @@ function SUI.UI.Dialog(title, message, onAccept, onCancel)
 		timeout = 0,
 		whileDead = true,
 		hideOnEscape = true,
-		preferredIndex = 3,
+		preferredIndex = 3
 	}
 
 	StaticPopup_Show(dialogName)

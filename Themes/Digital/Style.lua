@@ -13,7 +13,7 @@ function module:OnInitialize()
 		['MultiCastActionBarFrame'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-661,191',
 		--
 		['BT4BarMicroMenu'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,310,151',
-		['BT4BarBagBar'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,661,174',
+		['BT4BarBagBar'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,661,174'
 	}
 
 	if SUI.UF then
@@ -22,28 +22,28 @@ function module:OnInitialize()
 			artwork = {
 				bg = {
 					path = 'Interface\\AddOns\\SpartanUI\\Themes\\Digital\\Images\\BarBG',
-					TexCoord = { 0.0234375, 0.9765625, 0.265625, 0.7734375 },
-					PVPAlpha = 0.4,
-				},
+					TexCoord = {0.0234375, 0.9765625, 0.265625, 0.7734375},
+					PVPAlpha = 0.4
+				}
 			},
 			displayName = 'Digital',
 			setup = {
-				image = 'Interface\\AddOns\\SpartanUI\\images\\setup\\Style_Frames_Digital',
-			},
+				image = 'Interface\\AddOns\\SpartanUI\\images\\setup\\Style_Frames_Digital'
+			}
 		}
 		SUI.UF.Style:Register('Digital', ufsettings)
 	end
 
 	---@type SUI.Style.Settings.Minimap
 	local minimapSettings = {
-		size = { 156, 156 },
+		size = {156, 156},
 		position = 'CENTER,SUI_Art_Digital,CENTER,0,54',
 		elements = {
 			background = {
 				texture = 'Interface\\AddOns\\SpartanUI\\Themes\\Digital\\Images\\Minimap',
-				position = { 'TOPLEFT,Minimap,TOPLEFT,-38,41', 'BOTTOMRIGHT,Minimap,BOTTOMRIGHT,47,-44' },
-			},
-		},
+				position = {'TOPLEFT,Minimap,TOPLEFT,-38,41', 'BOTTOMRIGHT,Minimap,BOTTOMRIGHT,47,-44'}
+			}
+		}
 	}
 	SUI.Minimap:Register('Digital', minimapSettings)
 
@@ -51,15 +51,15 @@ function module:OnInitialize()
 	---@type SUI.Style.Settings.StatusBars
 	local StatusBarsSettings = {
 		bgTexture = 'Interface\\AddOns\\SpartanUI\\Themes\\Tribal\\Images\\StatusBar',
-		size = { 370, 20 },
+		size = {370, 20},
 		tooltip = {
 			texture = 'Interface\\AddOns\\SpartanUI\\Themes\\Fel\\Images\\Fel-Box',
-			textureCoords = { 0.03125, 0.96875, 0.2578125, 0.7578125 },
+			textureCoords = {0.03125, 0.96875, 0.2578125, 0.7578125}
 		},
-		texCords = { 0.150390625, 1, 0, 1 },
-		MaxWidth = 32,
+		texCords = {0.150390625, 1, 0, 1},
+		MaxWidth = 32
 	}
-	statusBarModule:RegisterStyle('Digital', { Left = SUI:CopyTable({}, StatusBarsSettings), Right = SUI:CopyTable({}, StatusBarsSettings) })
+	statusBarModule:RegisterStyle('Digital', {Left = SUI:CopyTable({}, StatusBarsSettings), Right = SUI:CopyTable({}, StatusBarsSettings)})
 
 	module:CreateArtwork()
 end
@@ -78,11 +78,15 @@ function module:OnDisable()
 end
 
 function module:SetupVehicleUI()
-	if SUI.DB.Artwork.VehicleUI then RegisterStateDriver(SUI_Art_Digital, 'visibility', '[overridebar][vehicleui] hide; show') end
+	if SUI.DB.Artwork.VehicleUI then
+		RegisterStateDriver(SUI_Art_Digital, 'visibility', '[overridebar][vehicleui] hide; show')
+	end
 end
 
 function module:RemoveVehicleUI()
-	if SUI.DB.Artwork.VehicleUI then UnregisterStateDriver(SUI_Art_Digital, 'visibility') end
+	if SUI.DB.Artwork.VehicleUI then
+		UnregisterStateDriver(SUI_Art_Digital, 'visibility')
+	end
 end
 
 function module:CreateArtwork()

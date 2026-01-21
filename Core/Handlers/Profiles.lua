@@ -24,13 +24,16 @@ end
 
 local function CreateWindow()
 	local UI = LibAT.UI
-	window = UI.CreateWindow({
-		name = 'SUI_ProfileManager',
-		title = '',
-		width = 650,
-		height = 500,
-		hidePortrait = true,
-	})
+	window =
+		UI.CreateWindow(
+		{
+			name = 'SUI_ProfileManager',
+			title = '',
+			width = 650,
+			height = 500,
+			hidePortrait = true
+		}
+	)
 	window.mode = 'init'
 	window:SetPoint('CENTER', 0, 0)
 	window:SetFrameStrata('DIALOG')
@@ -61,13 +64,16 @@ local function CreateWindow()
 	-- Setup the Options Pane
 	local OptWidth = 194
 
-	local optionPane = UI.CreateWindow({
-		name = 'SUI_ProfileManager_Options',
-		title = '',
-		width = OptWidth + 4,
-		height = 500,
-		hidePortrait = true,
-	})
+	local optionPane =
+		UI.CreateWindow(
+		{
+			name = 'SUI_ProfileManager_Options',
+			title = '',
+			width = OptWidth + 4,
+			height = 500,
+			hidePortrait = true
+		}
+	)
 	optionPane:SetPoint('LEFT', window, 'RIGHT', 1, 0)
 	optionPane:SetFrameStrata('DIALOG')
 	window:HookScript(

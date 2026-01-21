@@ -17,7 +17,8 @@
 					<Anchors>
 						<Anchor point="BOTTOM" relativeTo="SUI_BottomAnchor" relativePoint="BOTTOM"/>
 					</Anchors>
-					<Color r="0" g="0" b="0" a="1"/>  <!-- Solid black background -->
+					<Color r="0" g="0" b="0" a="1"/>
+					<!-- Solid black background -->
 				</Texture>
 			</Layer>
 		</Layers>

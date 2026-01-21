@@ -43,7 +43,9 @@ local function GroupBuilder(holder)
 
 	local configFunc = ('self:SetWidth(%d) self:SetHeight(%d)'):format(UF.CurrentSettings.raid.width, UF:CalculateHeight('raid'))
 	UF:debug('Raid GroupBuilder - Config function: ' .. configFunc)
-	UF:debug('Raid GroupBuilder - Settings: mode=' .. UF.CurrentSettings.raid.mode .. ', maxColumns=' .. UF.CurrentSettings.raid.maxColumns .. ', unitsPerColumn=' .. UF.CurrentSettings.raid.unitsPerColumn)
+	UF:debug(
+	'Raid GroupBuilder - Settings: mode=' .. UF.CurrentSettings.raid.mode .. ', maxColumns=' .. UF.CurrentSettings.raid.maxColumns .. ', unitsPerColumn=' .. UF.CurrentSettings.raid.unitsPerColumn
+	)
 
 	if SUI.IsRetail then
 		-- Retail uses templateType

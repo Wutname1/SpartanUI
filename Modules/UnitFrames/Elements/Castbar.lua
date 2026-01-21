@@ -214,7 +214,12 @@ local function Update(frame, settings)
 		if CastingBarFrame then
 			CastingBarFrame:UnregisterAllEvents()
 			CastingBarFrame:Hide()
-			CastingBarFrame:HookScript('OnShow', function(self) self:Hide() end)
+			CastingBarFrame:HookScript(
+			'OnShow',
+				function(self)
+					self:Hide()
+				end
+			)
 		end
 	end
 end

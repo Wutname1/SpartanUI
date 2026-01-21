@@ -2,7 +2,9 @@
 local SUI = SUI
 
 -- Retail-only module (requires C_Map waypoint APIs)
-if not SUI.IsRetail then return end
+if not SUI.IsRetail then
+	return
+end
 
 local module = SUI:NewModule('MiniTom') ---@type SUI.Module
 module.DisplayName = 'MiniTom'

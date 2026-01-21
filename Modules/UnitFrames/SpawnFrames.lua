@@ -390,7 +390,9 @@ function UF:SpawnFrames()
 					local i = 1
 					while true do
 						local button = groupFrame.header:GetAttribute('child' .. i)
-						if not button then break end
+						if not button then
+							break
+						end
 
 						buttonCount = buttonCount + 1
 						local buttonName = button:GetName() or ('UnknownButton' .. i)
@@ -416,8 +418,7 @@ function UF:SpawnFrames()
 						i = i + 1
 					end
 
-					UF:debug(string.format('GroupWatcher - %s SUMMARY: %d buttons total, %d initialized, %d uninitialized',
-						frameName, buttonCount, initializedCount, buttonCount - initializedCount))
+					UF:debug(string.format('GroupWatcher - %s SUMMARY: %d buttons total, %d initialized, %d uninitialized', frameName, buttonCount, initializedCount, buttonCount - initializedCount))
 
 					if #uninitializedButtons > 0 then
 						UF:debug('GroupWatcher - WARNING: ' .. frameName .. ' has ' .. #uninitializedButtons .. ' UNINITIALIZED buttons: ' .. table.concat(uninitializedButtons, ', '))

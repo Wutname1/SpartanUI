@@ -19,7 +19,9 @@ end
 local function SizeChange(element)
 	local DB = element.DB
 	local w = (DB.number / DB.rows)
-	if w < 1.5 then w = 1.5 end
+	if w < 1.5 then
+		w = 1.5
+	end
 	element:SetSize((DB.size + DB.spacing) * w, (DB.spacing + DB.size) * DB.rows)
 end
 
@@ -95,19 +97,19 @@ local Settings = {
 	rows = 2,
 	position = {
 		anchor = 'TOPRIGHT',
-		relativePoint = 'BOTTOMRIGHT',
+		relativePoint = 'BOTTOMRIGHT'
 	},
 	rules = {
 		duration = {
 			enabled = true,
 			maxTime = 180,
-			minTime = 1,
+			minTime = 1
 		},
 		isHarmful = true,
-		isBossAura = true,
+		isBossAura = true
 	},
 	config = {
-		type = 'Auras',
-	},
+		type = 'Auras'
+	}
 }
 UF.Elements:Register('Debuffs', Build, Update, Options, Settings)
