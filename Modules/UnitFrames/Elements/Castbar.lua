@@ -7,7 +7,8 @@ local function Build(frame, DB)
 	local unitName = frame.PName or frame.unit or frame:GetName()
 
 	local function Flash(self)
-		if (self.Castbar.casting or self.Castbar.channeling) and self.Castbar.notInterruptible == false and self:IsVisible() then
+		-- WoW 12.0.0: notInterruptible can be a secret value, use truthy check instead of == false
+		if (self.Castbar.casting or self.Castbar.channeling) and not self.Castbar.notInterruptible and self:IsVisible() then
 			local _, g, b = self.Castbar:GetStatusBarColor()
 			if b ~= 0 and g ~= 0 then
 				self.Castbar:SetStatusBarColor(1, 0, 0)
@@ -25,7 +26,8 @@ local function Build(frame, DB)
 		end
 	end
 	local function PostCastStart(self, unit)
-		if self.notInterruptible == false and DB.FlashOnInterruptible and UnitIsEnemy('player', unit) then
+		-- WoW 12.0.0: notInterruptible can be a secret value, use truthy check instead of == false
+		if not self.notInterruptible and DB.FlashOnInterruptible and UnitIsEnemy('player', unit) then
 			self:SetStatusBarColor(0, 0, 0)
 			timers[unitName] = UF:ScheduleTimer(Flash, DB.InterruptSpeed, self.__owner)
 		else
