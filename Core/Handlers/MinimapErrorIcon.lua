@@ -4,15 +4,8 @@
 local addonName = select(1, ...)
 local MinimapIconName = addonName .. 'ErrorDisplay'
 
--- Verify LibAT is available
-if not LibAT or not LibAT.ErrorDisplay then
-	error('Libs-AddonTools is required but not found')
-	return
-end
-
-local LibATErrorDisplay = LibAT.ErrorDisplay
-local BugGrabber = BugGrabber
-
+local LibATErrorDisplay
+local BugGrabber
 local MinimapButton
 
 local function InitializeMinimapButton()
@@ -106,6 +99,22 @@ end
 -- Hook into LibAT's error update to update our icon
 local function OnAddonLoaded(self, event, loadedAddonName)
 	if loadedAddonName ~= addonName then
+		return
+	end
+
+	-- Initialize LibAT references
+	if not LibAT or not LibAT.ErrorDisplay then
+		print('|cffffffffSpartan|cffe21f1fUI|r: Error - Libs-AddonTools is required but not found')
+		self:UnregisterEvent('ADDON_LOADED')
+		return
+	end
+
+	LibATErrorDisplay = LibAT.ErrorDisplay
+	BugGrabber = _G.BugGrabber
+
+	if not BugGrabber then
+		print('|cffffffffSpartan|cffe21f1fUI|r: Error - BugGrabber is required but not found')
+		self:UnregisterEvent('ADDON_LOADED')
 		return
 	end
 
