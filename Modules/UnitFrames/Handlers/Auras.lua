@@ -7,27 +7,31 @@ UF.MonitoredBuffs = {}
 ---@param data UnitAuraInfo
 ---@param rules SUI.UF.Auras.Rules
 function Auras:Filter(element, unit, data, rules)
+	-- WoW 12.0.0: spellId can be a secret value, convert to string for table index
+	local spellIdKey = tostring(data.spellId)
+	local spellIdNum = tonumber(spellIdKey)
+
 	---@param msg any
 	local function debug(msg)
 		if not UF.MonitoredBuffs[unit] then
 			UF.MonitoredBuffs[unit] = {}
 		end
 
-		if SUI:IsInTable(UF.MonitoredBuffs[unit], data.spellId) then
+		if spellIdNum and SUI:IsInTable(UF.MonitoredBuffs[unit], spellIdNum) then
 			print(msg)
 		end
 	end
 	local ShouldDisplay = false
-	element.displayReasons[data.spellId] = {}
+	element.displayReasons[spellIdKey] = {}
 
 	local function AddDisplayReason(reason)
 		debug('Adding display reason ' .. reason)
-		element.displayReasons[data.spellId][reason] = true
+		element.displayReasons[spellIdKey][reason] = true
 		ShouldDisplay = true
 	end
 
 	debug('----')
-	debug(data.spellId)
+	debug(spellIdKey)
 
 	for k, v in pairs(rules) do
 		-- debug(k)
@@ -50,7 +54,8 @@ function Auras:Filter(element, unit, data, rules)
 				end
 			end
 		elseif k == 'whitelist' or k == 'blacklist' then
-			if v[data.spellId] then
+			-- WoW 12.0.0: Use string key for table lookups
+			if v[spellIdKey] then
 				if k == 'whitelist' then
 					AddDisplayReason(k)
 					return true
@@ -61,7 +66,8 @@ function Auras:Filter(element, unit, data, rules)
 			end
 		else
 			if k == 'isMount' and v then
-				if UF.MountIds[data.spellId] then
+				-- WoW 12.0.0: Use string key for table lookups
+				if UF.MountIds[spellIdKey] then
 					AddDisplayReason(k)
 					return true
 				end
@@ -94,10 +100,11 @@ function Auras:Filter(element, unit, data, rules)
 	end
 	debug('ShouldDisplay result ' .. (ShouldDisplay and 'true' or 'false'))
 	debug('----')
-	if SUI:IsInTable(UF.MonitoredBuffs[unit], data.spellId) then
+	-- WoW 12.0.0: Use numeric value for table operations
+	if spellIdNum and SUI:IsInTable(UF.MonitoredBuffs[unit], spellIdNum) then
 		for i, v in ipairs(UF.MonitoredBuffs[unit]) do
-			if v == tonumber(data.spellId) then
-				debug('Removed ' .. data.spellId .. ' from the list of monitored buffs for ' .. unit)
+			if v == spellIdNum then
+				debug('Removed ' .. spellIdKey .. ' from the list of monitored buffs for ' .. unit)
 				table.remove(UF.MonitoredBuffs[unit], i)
 				print('----')
 			end
@@ -226,9 +233,11 @@ local function CreateAddToFilterWindow(button, elementName)
 			for frameName, check in pairs(window.units) do
 				if check:GetValue() then
 					local mode = Whitelist:GetValue() and 'whitelist' or 'blacklist'
+					-- WoW 12.0.0: Use string key for table index
+					local spellKey = tostring(button.data.spellId)
 
-					UF.CurrentSettings[frameName].elements[elementName].rules[mode][button.data.spellId] = true
-					UF.DB.UserSettings[UF.DB.Style][frameName].elements[elementName].rules[mode][button.data.spellId] = true
+					UF.CurrentSettings[frameName].elements[elementName].rules[mode][spellKey] = true
+					UF.DB.UserSettings[UF.DB.Style][frameName].elements[elementName].rules[mode][spellKey] = true
 
 					UF.Unit[frameName]:ElementUpdate(elementName)
 				end
@@ -253,14 +262,17 @@ function Auras:OnClick(button, elementName)
 	local data = button.data ---@type UnitAuraInfo
 
 	if data and keyDown then
+		-- WoW 12.0.0: Use string key for table index
+		local spellKey = tostring(data.spellId)
+
 		if keyDown == 'CTRL' then
 			for k, v in pairs(data) do
 				print(k .. ' = ' .. tostring(v))
 			end
 		elseif keyDown == 'ALT' then
-			if button:GetParent().displayReasons[data.spellId] then
+			if button:GetParent().displayReasons[spellKey] then
 				print('Reasons for display:')
-				for k, _ in pairs(button:GetParent().displayReasons[data.spellId]) do
+				for k, _ in pairs(button:GetParent().displayReasons[spellKey]) do
 					print(k)
 				end
 			end

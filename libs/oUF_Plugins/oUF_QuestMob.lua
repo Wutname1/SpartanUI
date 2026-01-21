@@ -98,13 +98,9 @@ local function GetQuests(unitID)
 				local type, index, texture, _
 				if activeID then
 					index = questIcons.indexByID[activeID]
-					-- Handle API differences between retail and classic
-					if C_QuestLog and C_QuestLog.GetQuestAdditionalHighlights then
-						local highlights = C_QuestLog.GetQuestAdditionalHighlights(activeID)
-						if highlights and highlights[1] then
-							texture = highlights[1].atlasName or highlights[1].texture
-						end
-					elseif GetQuestLogSpecialItemInfo then
+					-- WoW 12.0.0: C_QuestLog.GetQuestAdditionalHighlights returns map highlight flags, not quest items
+					-- Use GetQuestLogSpecialItemInfo for quest item textures
+					if GetQuestLogSpecialItemInfo and index then
 						_, texture = GetQuestLogSpecialItemInfo(index)
 					end
 				end
