@@ -313,7 +313,7 @@ local TooltipSetItem = function(tooltip, tooltipData)
 		GameTooltip:SetBackdropColor(unpack(module.DB.Color))
 
 		if quality and tooltip.SetBorderColor then
-			local r, g, b = C_Item and C_Item.GetItemQualityColor and C_Item.GetItemQualityColor(quality) or GetItemQualityColor(quality)
+			local r, g, b = C_Item.GetItemQualityColor(quality)
 			r, g, b = (r * 0.5), (g * 0.5), (b * 0.5)
 			tooltip:SetBorderColor(r, g, b)
 		end
