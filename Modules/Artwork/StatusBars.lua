@@ -2,7 +2,7 @@ local SUI, L = SUI, SUI.L
 ---@class SUI.Module.Artwork.StatusBars : SUI.Module
 local module = SUI:NewModule('Artwork.StatusBars')
 module.bars = {}
-local DB ---@type SUI.StatusBars.DB
+local DB  ---@type SUI.StatusBars.DB
 
 local Enums = {
 	Bars = {
@@ -12,13 +12,13 @@ local Enums = {
 		Artifact = 3,
 		Experience = 4,
 		Azerite = 5,
-		HouseFavor = 6,
+		HouseFavor = 6
 	},
 	TextDisplayMode = {
 		OnMouseOver = 0,
 		Always = 1,
-		Never = 2,
-	},
+		Never = 2
+	}
 }
 
 local BarLabels = {
@@ -27,27 +27,27 @@ local BarLabels = {
 	[Enums.Bars.Honor] = 'Honor',
 	[Enums.Bars.Artifact] = 'Artifact',
 	[Enums.Bars.Experience] = 'Experience',
-	[Enums.Bars.HouseFavor] = 'Housing',
+	[Enums.Bars.HouseFavor] = 'Housing'
 }
 
 -- Colors for Classic bars
 local FACTION_BAR_COLORS = {
-	[1] = { r = 1, g = 0.2, b = 0 },
-	[2] = { r = 0.8, g = 0.3, b = 0 },
-	[3] = { r = 0.8, g = 0.2, b = 0 },
-	[4] = { r = 1, g = 0.8, b = 0 },
-	[5] = { r = 0, g = 1, b = 0.1 },
-	[6] = { r = 0, g = 1, b = 0.2 },
-	[7] = { r = 0, g = 1, b = 0.3 },
-	[8] = { r = 0, g = 0.6, b = 0.1 },
+	[1] = {r = 1, g = 0.2, b = 0},
+	[2] = {r = 0.8, g = 0.3, b = 0},
+	[3] = {r = 0.8, g = 0.2, b = 0},
+	[4] = {r = 1, g = 0.8, b = 0},
+	[5] = {r = 0, g = 1, b = 0.1},
+	[6] = {r = 0, g = 1, b = 0.2},
+	[7] = {r = 0, g = 1, b = 0.3},
+	[8] = {r = 0, g = 0.6, b = 0.1}
 }
 local COLORS = {
-	Orange = { r = 1, g = 0.2, b = 0, a = 0.7 },
-	Yellow = { r = 1, g = 0.8, b = 0, a = 0.7 },
-	Green = { r = 0, g = 1, b = 0.1, a = 0.7 },
-	Blue = { r = 0, g = 0.1, b = 1, a = 0.7 },
-	Red = { r = 1, g = 0, b = 0.08, a = 0.7 },
-	Light_Blue = { r = 0, g = 0.5, b = 1, a = 0.7 },
+	Orange = {r = 1, g = 0.2, b = 0, a = 0.7},
+	Yellow = {r = 1, g = 0.8, b = 0, a = 0.7},
+	Green = {r = 0, g = 1, b = 0.1, a = 0.7},
+	Blue = {r = 0, g = 0.1, b = 1, a = 0.7},
+	Red = {r = 1, g = 0, b = 0.08, a = 0.7},
+	Light_Blue = {r = 0, g = 0.5, b = 1, a = 0.7}
 }
 
 ---@class SUI.StatusBars.DB
@@ -64,7 +64,7 @@ local function GetDBDefaults()
 				[Enums.Bars.Honor] = 3,
 				[Enums.Bars.Azerite] = 4,
 				[Enums.Bars.Artifact] = 5,
-				[Enums.Bars.HouseFavor] = 6,
+				[Enums.Bars.HouseFavor] = 6
 			},
 			bars = {
 				['**'] = {
@@ -72,9 +72,9 @@ local function GetDBDefaults()
 					text = Enums.TextDisplayMode.OnMouseOver,
 					alpha = 1,
 					enabled = true,
-					showTooltip = true,
-				},
-			},
+					showTooltip = true
+				}
+			}
 		}
 	else
 		-- Classic database structure: indexed bars with display modes
@@ -85,8 +85,8 @@ local function GetDBDefaults()
 				ToolTip = 'hover',
 				alpha = 1,
 				AutoColor = true,
-				CustomColor = { r = 0, g = 0.1, b = 1, a = 0.7 },
-				CustomColor2 = { r = 0, g = 0.5, b = 1, a = 0.7 },
+				CustomColor = {r = 0, g = 0.1, b = 1, a = 0.7},
+				CustomColor2 = {r = 0, g = 0.5, b = 1, a = 0.7}
 			},
 			[2] = {
 				display = 'rep',
@@ -94,10 +94,10 @@ local function GetDBDefaults()
 				ToolTip = 'hover',
 				alpha = 1,
 				AutoColor = true,
-				CustomColor = { r = 0, g = 1, b = 0.3, a = 0.7 },
-				CustomColor2 = { r = 0, g = 0.5, b = 1, a = 0.7 },
+				CustomColor = {r = 0, g = 1, b = 0.3, a = 0.7},
+				CustomColor2 = {r = 0, g = 0.5, b = 1, a = 0.7}
 			},
-			default = { FontSize = 10 },
+			default = {FontSize = 10}
 		}
 	end
 end
@@ -109,16 +109,16 @@ end
 ---@class SUI.Style.Settings.StatusBars
 ---@field bgTexture? string
 local StyleSettingsBase = {
-	size = { 400, 15 },
+	size = {400, 15},
 	alpha = 1,
 	MaxWidth = 0,
-	texCords = { 0, 1, 0, 1 },
+	texCords = {0, 1, 0, 1},
 	tooltip = {
 		texture = 'Interface\\Addons\\SpartanUI\\Images\\status-tooltip',
-		textureCoords = { 0.103515625, 0.8984375, 0.1796875, 0.8203125 },
-		size = { 300, 100 },
-		textAreaSize = { 200, 60 },
-		statusBarAnchor = 'TOP',
+		textureCoords = {0.103515625, 0.8984375, 0.1796875, 0.8203125},
+		size = {300, 100},
+		textAreaSize = {200, 60},
+		statusBarAnchor = 'TOP'
 	},
 	Position = 'BOTTOMRIGHT,SUI_BottomAnchor,BOTTOM,-100,0',
 }
@@ -169,8 +169,12 @@ function module:GetExperienceTooltipText()
 		GameTooltip:AddLine(' ')
 		GameTooltip:AddDoubleLine(L['XP'], string.format('%s / %s (%.2f%%)', SUI.Font:FormatNumber(currentXP), SUI.Font:FormatNumber(maxXP), (currentXP / maxXP) * 100), 1, 1, 1)
 	end
-	if questLogXP > 0 then GameTooltip:AddDoubleLine(L['Quest Log XP:'], string.format('Quest Log XP: %s (%.2f%%)', SUI.Font:FormatNumber(questLogXP), (questLogXP / maxXP) * 100), 1, 1, 1) end
-	if restedXP > 0 then GameTooltip:AddDoubleLine(L['Rested:'], string.format('Rested: +%s (%.2f%%)', SUI.Font:FormatNumber(restedXP), (restedXP / maxXP) * 100), 1, 1, 1) end
+	if questLogXP > 0 then
+		GameTooltip:AddDoubleLine(L['Quest Log XP:'], string.format('Quest Log XP: %s (%.2f%%)', SUI.Font:FormatNumber(questLogXP), (questLogXP / maxXP) * 100), 1, 1, 1)
+	end
+	if restedXP > 0 then
+		GameTooltip:AddDoubleLine(L['Rested:'], string.format('Rested: +%s (%.2f%%)', SUI.Font:FormatNumber(restedXP), (restedXP / maxXP) * 100), 1, 1, 1)
+	end
 end
 
 function module:GetReputationTooltipText()
@@ -187,11 +191,13 @@ function module:GetReputationTooltipText()
 				factionID = factionID,
 				currentStanding = barValue,
 				currentReactionThreshold = barMin,
-				nextReactionThreshold = barMax,
+				nextReactionThreshold = barMax
 			}
 		end
 	end
-	if not data then return end
+	if not data then
+		return
+	end
 
 	GameTooltip:AddLine(data.name)
 	GameTooltip:AddLine(' ')
@@ -233,7 +239,9 @@ function module:GetReputationTooltipText()
 		local currentValue, threshold, _, hasRewardPending = C_Reputation.GetFactionParagonInfo(data.factionID)
 		local current = currentValue % threshold
 		GameTooltip:AddDoubleLine(L['Paragon'] .. ':', string.format('%d / %d (%d%%)', current, threshold, (current / threshold) * 100), 1, 1, 1)
-		if hasRewardPending then GameTooltip:AddLine(L['Reward Available'], 0, 1, 0) end
+		if hasRewardPending then
+			GameTooltip:AddLine(L['Reward Available'], 0, 1, 0)
+		end
 	end
 end
 
@@ -281,7 +289,7 @@ function module:GetHonorTooltipText()
 		[1] = L['2v2'],
 		[2] = L['3v3'],
 		[3] = L['Solo Shuffle'],
-		[4] = L['Rated Battleground'],
+		[4] = L['Rated Battleground']
 	}
 	local hasRating = false
 	local function AddPVPRatings()
@@ -303,11 +311,15 @@ end
 
 function module:GetHouseFavorTooltipText(bar)
 	-- Check if C_Housing API is available
-	if not C_Housing then return end
+	if not C_Housing then
+		return
+	end
 
 	-- Get the tracked house GUID
 	local trackedHouseGUID = C_Housing.GetTrackedHouseGuid()
-	if not trackedHouseGUID then return end
+	if not trackedHouseGUID then
+		return
+	end
 
 	-- Try to get house level from the bar's stored data first
 	local houseLevel, houseFavor, houseFavorNeeded
@@ -333,7 +345,9 @@ function module:GetHouseFavorTooltipText(bar)
 		end
 	end
 
-	if not houseLevel or not houseFavorNeeded then return end
+	if not houseLevel or not houseFavorNeeded then
+		return
+	end
 
 	-- Use Blizzard's tooltip format
 	if HOUSING_DASHBOARD_HOUSE_LEVEL then
@@ -348,19 +362,23 @@ function module:GetHouseFavorTooltipText(bar)
 		GameTooltip_AddHighlightLine(GameTooltip, string.format('%d / %d', houseFavor, houseFavorNeeded))
 	end
 
-	if HOUSING_DASHBOARD_NEIGHBORHOOD_FAVOR_TOOLTIP then GameTooltip_AddHighlightLine(GameTooltip, HOUSING_DASHBOARD_NEIGHBORHOOD_FAVOR_TOOLTIP) end
+	if HOUSING_DASHBOARD_NEIGHBORHOOD_FAVOR_TOOLTIP then
+		GameTooltip_AddHighlightLine(GameTooltip, HOUSING_DASHBOARD_NEIGHBORHOOD_FAVOR_TOOLTIP)
+	end
 end
 
 function module:OnInitialize()
 	local defaults = GetDBDefaults()
-	module.Database = SUI.SpartanUIDB:RegisterNamespace('StatusBars', { profile = defaults })
+	module.Database = SUI.SpartanUIDB:RegisterNamespace('StatusBars', {profile = defaults})
 	DB = module.Database.profile
 
 	-- Migrate old settings
 	if SUI.DB.StatusBars then
 		-- Check if old bar was set to honor
 		for i = 1, 2 do
-			if SUI.DB.StatusBars and SUI.DB.StatusBars[i] and SUI.DB.StatusBars[i].display == 'honor' then SetCVar('showHonorAsExperience', 1) end
+			if SUI.DB.StatusBars and SUI.DB.StatusBars[i] and SUI.DB.StatusBars[i].display == 'honor' then
+				SetCVar('showHonorAsExperience', 1)
+			end
 		end
 		-- Remove old settings
 		SUI.DB.StatusBars = nil
@@ -405,7 +423,9 @@ end
 function module:factory_Retail()
 	local barManager = self:CreateBarManager_Retail()
 	self:CreateBarContainers_Retail(barManager)
-	if barManager.OnLoad then barManager:OnLoad() end
+	if barManager.OnLoad then
+		barManager:OnLoad()
+	end
 end
 
 function module:UpdateBars()
@@ -419,7 +439,7 @@ function module:UpdateBars()
 		self:UpdateBarTextVisibility('Right')
 
 		-- Update container alphas and visibility
-		for _, key in ipairs({ 'Left', 'Right' }) do
+		for _, key in ipairs({'Left', 'Right'}) do
 			local barContainer = module.bars[key]
 			if barContainer then
 				if DB.bars[key].enabled then
@@ -451,7 +471,9 @@ end
 
 function module:UpdateBarTextVisibility(containerKey)
 	local barContainer = module.bars[containerKey]
-	if not barContainer then return end
+	if not barContainer then
+		return
+	end
 
 	local textMode = DB.bars[containerKey].text
 
@@ -474,7 +496,9 @@ function module:RefreshBarPriorityOptions()
 	local options = SUI.opt.args['Artwork'].args['StatusBars'].args.BarPriorities.args
 	for barIndex, priority in pairs(DB.BarPriorities) do
 		local optionKey = BarLabels[barIndex]
-		if options[optionKey] then options[optionKey].order = priority end
+		if options[optionKey] then
+			options[optionKey].order = priority
+		end
 	end
 end
 
@@ -501,7 +525,9 @@ function module:CreateBarManager_Retail()
 		-- Check if containers are enabled and hide disabled ones
 		for i, barContainer in ipairs(self.barContainers) do
 			local containerKey = i == 1 and 'Left' or 'Right'
-			if DB and DB.bars and not DB.bars[containerKey].enabled then barContainer:SetShownBar(Enums.Bars.None) end
+			if DB and DB.bars and not DB.bars[containerKey].enabled then
+				barContainer:SetShownBar(Enums.Bars.None)
+			end
 		end
 
 		-- Determine what bars should be shown
@@ -1241,12 +1267,30 @@ function module:BuildOptions_Retail()
 				name = 'Show Housing XP',
 				type = 'toggle',
 				order = 2.5,
+				hidden = function()
+					-- Only show this option if C_Housing API is available
+					return not (C_Housing and C_Housing.GetTrackedHouseGuid)
+				end,
 				get = function()
-					return GetCVarBool('trackedHouseFavor')
+					-- Check if there's actually a tracked house
+					if C_Housing and C_Housing.GetTrackedHouseGuid then return C_Housing.GetTrackedHouseGuid() ~= nil end
+					return false
 				end,
 				set = function(_, value)
-					SetCVar('trackedHouseFavor', value)
-					self:UpdateBars()
+					-- This uses the Blizzard edit mode to show/hide the housing bar
+					if C_Housing and C_Housing.SetTrackedHouseGuid then
+						if value then
+							-- Try to track the player's house if they have one
+							if C_Housing.GetPlayerHouses then
+								local houses = C_Housing.GetPlayerHouses()
+								if houses and #houses > 0 then C_Housing.SetTrackedHouseGuid(houses[1].houseGUID) end
+							end
+						else
+							-- Untrack the house
+							C_Housing.SetTrackedHouseGuid(nil)
+						end
+						self:UpdateBars()
+					end
 				end,
 			},
 			EnableReputation = {
