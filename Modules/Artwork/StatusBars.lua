@@ -1171,12 +1171,12 @@ function module:factory_Classic()
 
 		-- Status Bar Images
 		statusbar.bg = statusbar:CreateTexture(nil, 'BACKGROUND')
-		statusbar.bg:SetTexture(StyleSetting.bgImg or '')
+		statusbar.bg:SetTexture(StyleSetting.bgImg or StyleSetting.bgTexture or '')
 		statusbar.bg:SetAllPoints(statusbar)
 		statusbar.bg:SetTexCoord(unpack(StyleSetting.texCords))
 
 		statusbar.overlay = statusbar:CreateTexture(nil, 'OVERLAY')
-		statusbar.overlay:SetTexture(StyleSetting.bgImg)
+		statusbar.overlay:SetTexture(StyleSetting.bgImg or StyleSetting.bgTexture or '')
 		statusbar.overlay:SetAllPoints(statusbar.bg)
 		statusbar.overlay:SetTexCoord(unpack(StyleSetting.texCords))
 
