@@ -7,10 +7,10 @@ end
 
 -- Helper for spellbook check (retail vs classic API)
 local function IsSpellInSpellBookCompat(spellID)
-	if C_SpellBook and IsSpellInSpellBookCompat then
-		return IsSpellInSpellBookCompat(spellID)
-	elseif C_SpellBook.IsSpellInSpellBook then
-		return C_SpellBook.IsSpellInSpellBook(spellID)
+	if C_SpellBook and C_SpellBook.IsSpellKnown then
+		return C_SpellBook.IsSpellKnown(spellID)
+	elseif IsPlayerSpell then
+		return IsPlayerSpell(spellID)
 	end
 	return false
 end
