@@ -990,6 +990,24 @@ local DBdefault = {
 				collapsed = false
 			}
 		},
+		Trays = {
+			['**'] = {
+				left = {
+					enabled = true,
+					size = {width = 410, height = 45},
+					collapseDirection = 'up',
+					customFrames = '',
+					color = {r = 1, g = 1, b = 1, a = 1}
+				},
+				right = {
+					enabled = true,
+					size = {width = 410, height = 45},
+					collapseDirection = 'up',
+					customFrames = '',
+					color = {r = 1, g = 1, b = 1, a = 1}
+				}
+			}
+		},
 		Offset = {
 			Top = 0,
 			TopAuto = true,

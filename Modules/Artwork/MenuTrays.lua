@@ -460,10 +460,12 @@ function module:Options()
 								max = 150,
 								step = 1,
 								get = function(info)
-									return SUI.DB.Artwork.Trays[SUI.DB.Artwork.Style].left.size.height
+									return module:GetTraySettings('left').size.height
 								end,
 								set = function(info, val)
-									SUI.DB.Artwork.Trays[SUI.DB.Artwork.Style].left.size.height = val
+									local size = module:GetTraySettings('left').size
+									size.height = val
+									module:SetTraySettings('left', 'size', size)
 									module:UpdateTraySizes()
 									module:updateOffset()
 								end
@@ -484,10 +486,10 @@ function module:Options()
 							down = L['Down']
 						},
 						get = function(info)
-							return SUI.DB.Artwork.Trays[SUI.DB.Artwork.Style].left.collapseDirection
+							return module:GetTraySettings('left').collapseDirection
 						end,
 						set = function(info, val)
-							SUI.DB.Artwork.Trays[SUI.DB.Artwork.Style].left.collapseDirection = val
+							module:SetTraySettings('left', 'collapseDirection', val)
 							module:UpdateTextureOrientations()
 							module:UpdateArrowPositions()
 							module:UpdateBackgroundPositions()
@@ -526,7 +528,7 @@ function module:Options()
 							},
 							customFrames = {
 								name = function()
-									local frames = SUI.DB.Artwork.Trays[SUI.DB.Artwork.Style].left.customFrames
+									local frames = module:GetTraySettings('left').customFrames
 									local color = getFrameListColor(frames)
 									return color .. L['Custom Frames'] .. '|r'
 								end,
@@ -536,7 +538,7 @@ function module:Options()
 								width = 'full',
 								desc = L['Comma-separated list of additional frame names to hide/show with this tray. Frame names will be colored: |cff00ff00green if found|r, |cffff0000red if not found|r.'],
 								get = function(info)
-									return SUI.DB.Artwork.Trays[SUI.DB.Artwork.Style].left.customFrames
+									return module:GetTraySettings('left').customFrames
 								end,
 								set = function(info, val)
 									SUI.DB.Artwork.Trays[SUI.DB.Artwork.Style].left.customFrames = val
@@ -552,11 +554,11 @@ function module:Options()
 								end,
 								set = function(info, val)
 									if val and val ~= '' then
-										local current = SUI.DB.Artwork.Trays[SUI.DB.Artwork.Style].left.customFrames
+										local current = module:GetTraySettings('left').customFrames
 										if current == '' then
-											SUI.DB.Artwork.Trays[SUI.DB.Artwork.Style].left.customFrames = val
+											module:SetTraySettings('left', 'customFrames', val)
 										else
-											SUI.DB.Artwork.Trays[SUI.DB.Artwork.Style].left.customFrames = current .. ',' .. val
+											module:SetTraySettings('left', 'customFrames', current .. ',' .. val)
 										end
 									end
 								end
@@ -567,7 +569,7 @@ function module:Options()
 								order = 5,
 								desc = L['Clear all custom frames from this tray'],
 								func = function()
-									SUI.DB.Artwork.Trays[SUI.DB.Artwork.Style].left.customFrames = ''
+									module:SetTraySettings('left', 'customFrames', '')
 								end
 							}
 						}
@@ -582,11 +584,11 @@ function module:Options()
 						end,
 						desc = L['Choose the color tint for the tray textures'],
 						get = function(info)
-							local color = SUI.DB.Artwork.Trays[SUI.DB.Artwork.Style].left.color
+							local color = module:GetTraySettings('left').color
 							return color.r, color.g, color.b, color.a
 						end,
 						set = function(info, r, g, b, a)
-							SUI.DB.Artwork.Trays[SUI.DB.Artwork.Style].left.color = {r = r, g = g, b = b, a = a}
+							module:SetTraySettings('left', 'color', {r = r, g = g, b = b, a = a})
 							if module.Trays and module.Trays.left and settings then
 								local trayImage = settings.trayImage or 'Interface\\\\AddOns\\\\SpartanUI\\\\images\\\\Trays.png'
 								module:ApplyTrayCoordinates('left', trayImage)
@@ -619,10 +621,10 @@ function module:Options()
 						type = 'toggle',
 						order = 1,
 						get = function(info)
-							return SUI.DB.Artwork.Trays[SUI.DB.Artwork.Style].right.enabled
+							return module:GetTraySettings('right').enabled
 						end,
 						set = function(info, val)
-							SUI.DB.Artwork.Trays[SUI.DB.Artwork.Style].right.enabled = val
+							module:SetTraySettings('right', 'enabled', val)
 							trayWatcherEvents() -- Update visibility immediately
 						end
 					},
@@ -643,10 +645,12 @@ function module:Options()
 								max = 1300,
 								step = 5,
 								get = function(info)
-									return SUI.DB.Artwork.Trays[SUI.DB.Artwork.Style].right.size.width
+									return module:GetTraySettings('right').size.width
 								end,
 								set = function(info, val)
-									SUI.DB.Artwork.Trays[SUI.DB.Artwork.Style].right.size.width = val
+									local size = module:GetTraySettings('right').size
+									size.width = val
+									module:SetTraySettings('right', 'size', size)
 									module:UpdateTraySizes()
 									module:updateOffset()
 								end
@@ -659,10 +663,12 @@ function module:Options()
 								max = 150,
 								step = 1,
 								get = function(info)
-									return SUI.DB.Artwork.Trays[SUI.DB.Artwork.Style].right.size.height
+									return module:GetTraySettings('right').size.height
 								end,
 								set = function(info, val)
-									SUI.DB.Artwork.Trays[SUI.DB.Artwork.Style].right.size.height = val
+									local size = module:GetTraySettings('right').size
+									size.height = val
+									module:SetTraySettings('right', 'size', size)
 									module:UpdateTraySizes()
 									module:updateOffset()
 								end
@@ -683,10 +689,10 @@ function module:Options()
 							down = L['Down']
 						},
 						get = function(info)
-							return SUI.DB.Artwork.Trays[SUI.DB.Artwork.Style].right.collapseDirection
+							return module:GetTraySettings('right').collapseDirection
 						end,
 						set = function(info, val)
-							SUI.DB.Artwork.Trays[SUI.DB.Artwork.Style].right.collapseDirection = val
+							module:SetTraySettings('right', 'collapseDirection', val)
 							module:UpdateTextureOrientations()
 							module:UpdateArrowPositions()
 							module:UpdateBackgroundPositions()
@@ -725,7 +731,7 @@ function module:Options()
 							},
 							customFrames = {
 								name = function()
-									local frames = SUI.DB.Artwork.Trays[SUI.DB.Artwork.Style].right.customFrames
+									local frames = module:GetTraySettings('right').customFrames
 									local color = getFrameListColor(frames)
 									return color .. L['Custom Frames'] .. '|r'
 								end,
@@ -735,7 +741,7 @@ function module:Options()
 								width = 'full',
 								desc = L['Comma-separated list of additional frame names to hide/show with this tray. Frame names will be colored: |cff00ff00green if found|r, |cffff0000red if not found|r.'],
 								get = function(info)
-									return SUI.DB.Artwork.Trays[SUI.DB.Artwork.Style].right.customFrames
+									return module:GetTraySettings('right').customFrames
 								end,
 								set = function(info, val)
 									SUI.DB.Artwork.Trays[SUI.DB.Artwork.Style].right.customFrames = val
@@ -751,7 +757,7 @@ function module:Options()
 								end,
 								set = function(info, val)
 									if val and val ~= '' then
-										local current = SUI.DB.Artwork.Trays[SUI.DB.Artwork.Style].right.customFrames
+										local current = module:GetTraySettings('right').customFrames
 										if current == '' then
 											SUI.DB.Artwork.Trays[SUI.DB.Artwork.Style].right.customFrames = val
 										else
@@ -781,11 +787,11 @@ function module:Options()
 						end,
 						desc = L['Choose the color tint for the tray textures'],
 						get = function(info)
-							local color = SUI.DB.Artwork.Trays[SUI.DB.Artwork.Style].right.color
+							local color = module:GetTraySettings('right').color
 							return color.r, color.g, color.b, color.a
 						end,
 						set = function(info, r, g, b, a)
-							SUI.DB.Artwork.Trays[SUI.DB.Artwork.Style].right.color = {r = r, g = g, b = b, a = a}
+							module:SetTraySettings('right', 'color', {r = r, g = g, b = b, a = a})
 							if module.Trays and module.Trays.right and settings then
 								local trayImage = settings.trayImage or 'Interface\\\\AddOns\\\\SpartanUI\\\\images\\\\Trays.png'
 								module:ApplyTrayCoordinates('right', trayImage)
