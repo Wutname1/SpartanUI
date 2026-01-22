@@ -29,10 +29,7 @@
 local SUI = SUI
 
 ---@class SUI.BlizzAPI
----API Compatibility Layer for version-specific API differences
-SUI.BlizzAPI = {}
-
-local BlizzAPI = SUI.BlizzAPI
+local BlizzAPI = {}
 
 -- ============================================
 -- MERCHANT API
@@ -87,3 +84,26 @@ end
 function BlizzAPI.HasEditMode()
 	return C_EditMode ~= nil
 end
+
+function BlizzAPI.issecretvalue(value)
+	if not issecretvalue then
+		return false
+	end
+	return issecretvalue(value)
+end
+
+function BlizzAPI.canaccessvalue(value)
+	if not canaccessvalue then
+		return true
+	end
+	return canaccessvalue(value)
+end
+
+function BlizzAPI.canaccesstable(table)
+	if not canaccesstable then
+		return false
+	end
+	return canaccesstable(table)
+end
+
+SUI.BlizzAPI = BlizzAPI
