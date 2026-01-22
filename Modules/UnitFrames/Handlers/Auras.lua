@@ -8,7 +8,6 @@ UF.MonitoredBuffs = {}
 ---@param rules SUI.UF.Auras.Rules
 function Auras:Filter(element, unit, data, rules)
 	if not SUI.BlizzAPI.canaccesstable(data) then
-		print('Cannot access aura data table')
 		return true
 	end
 	---@param msg any
