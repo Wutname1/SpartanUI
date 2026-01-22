@@ -124,18 +124,33 @@ function module:OnInitialize()
 	end
 
 	local statusBarModule = SUI:GetModule('Artwork.StatusBars', true) ---@type SUI.Module.Artwork.StatusBars
-	---@type SUI.Style.Settings.StatusBars
+	---@type SUI.Style.Settings.StatusBars.Storage
 	local StatusBarsSettings = {
-		bgTexture = 'Interface\\AddOns\\SpartanUI\\Themes\\War\\Images\\StatusBar-' .. UnitFactionGroup('Player'),
-		alpha = 0.9,
-		size = {370, 20},
-		TooltipSize = {350, 100},
-		TooltipTextSize = {330, 80},
-		texCords = {0.0546875, 0.9140625, 0.5555555555555556, 0},
-		MaxWidth = 48
+		Left = {
+			bgTexture = 'Interface\\AddOns\\SpartanUI\\Themes\\War\\Images\\StatusBar-' .. UnitFactionGroup('Player'),
+			alpha = 0.9,
+			size = {370, 20},
+			TooltipSize = {350, 100},
+			TooltipTextSize = {330, 80},
+			texCords = {0.0546875, 0.9140625, 0.5555555555555556, 0},
+			GlowPoint = {x = 1, y = 0},
+			MaxWidth = 18,
+			Position = 'BOTTOMRIGHT,SUI_BottomAnchor,BOTTOM,-80,-2' -- Example: adjust position for Classic
+		},
+		Right = {
+			bgTexture = 'Interface\\AddOns\\SpartanUI\\Themes\\War\\Images\\StatusBar-' .. UnitFactionGroup('Player'),
+			alpha = 0.9,
+			size = {370, 20},
+			TooltipSize = {350, 100},
+			TooltipTextSize = {330, 80},
+			texCords = {0.0546875, 0.9140625, 0.5555555555555556, 0},
+			GlowPoint = {x = 1, y = 0},
+			MaxWidth = 18,
+			Position = 'BOTTOMLEFT,SUI_BottomAnchor,BOTTOM,100,-2'
+		}
 	}
 	if statusBarModule then
-		statusBarModule:RegisterStyle('War', {Left = SUI:CopyTable({}, StatusBarsSettings), Right = SUI:CopyTable({}, StatusBarsSettings)})
+		statusBarModule:RegisterStyle('War', StatusBarsSettings)
 	end
 
 	if Artwork_Core then
