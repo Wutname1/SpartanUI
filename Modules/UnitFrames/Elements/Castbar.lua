@@ -88,9 +88,11 @@ local function Build(frame, DB)
 	cast.SafeZone = SafeZone
 
 	-- --Interupt Flash
-	cast.PostCastStart = PostCastStart
-	cast.PostCastInterruptible = PostCastStart
-	cast.PostCastStop = PostCastStop
+	if not SUI.IsRetail then
+		cast.PostCastStart = PostCastStart
+		cast.PostCastInterruptible = PostCastStart
+		cast.PostCastStop = PostCastStop
+	end
 	cast.TextElements = {
 		['1'] = cast.Text,
 		['2'] = cast.Time

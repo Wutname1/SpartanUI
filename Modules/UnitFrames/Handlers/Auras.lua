@@ -7,10 +7,10 @@ UF.MonitoredBuffs = {}
 ---@param data UnitAuraInfo
 ---@param rules SUI.UF.Auras.Rules
 function Auras:Filter(element, unit, data, rules)
-	-- WoW 12.0.0: spellId can be a secret value, convert to string for table index
-	local spellIdKey = tostring(data.spellId)
-	local spellIdNum = tonumber(spellIdKey)
-
+	if not SUI.BlizzAPI.canaccesstable(data) then
+		print('Cannot access aura data table')
+		return true
+	end
 	---@param msg any
 	local function debug(msg)
 		if not UF.MonitoredBuffs[unit] then
@@ -22,16 +22,16 @@ function Auras:Filter(element, unit, data, rules)
 		end
 	end
 	local ShouldDisplay = false
-	element.displayReasons[spellIdKey] = {}
+	element.displayReasons[data.spellId] = {}
 
 	local function AddDisplayReason(reason)
 		debug('Adding display reason ' .. reason)
-		element.displayReasons[spellIdKey][reason] = true
+		element.displayReasons[data.spellId][reason] = true
 		ShouldDisplay = true
 	end
 
 	debug('----')
-	debug(spellIdKey)
+	debug(data.spellId)
 
 	for k, v in pairs(rules) do
 		-- debug(k)
@@ -55,7 +55,7 @@ function Auras:Filter(element, unit, data, rules)
 			end
 		elseif k == 'whitelist' or k == 'blacklist' then
 			-- WoW 12.0.0: Use string key for table lookups
-			if v[spellIdKey] then
+			if v[data.spellId] then
 				if k == 'whitelist' then
 					AddDisplayReason(k)
 					return true
@@ -67,7 +67,7 @@ function Auras:Filter(element, unit, data, rules)
 		else
 			if k == 'isMount' and v then
 				-- WoW 12.0.0: Use string key for table lookups
-				if UF.MountIds[spellIdKey] then
+				if UF.MountIds[data.spellId] then
 					AddDisplayReason(k)
 					return true
 				end
@@ -104,7 +104,7 @@ function Auras:Filter(element, unit, data, rules)
 	if spellIdNum and SUI:IsInTable(UF.MonitoredBuffs[unit], spellIdNum) then
 		for i, v in ipairs(UF.MonitoredBuffs[unit]) do
 			if v == spellIdNum then
-				debug('Removed ' .. spellIdKey .. ' from the list of monitored buffs for ' .. unit)
+				debug('Removed ' .. data.spellId .. ' from the list of monitored buffs for ' .. unit)
 				table.remove(UF.MonitoredBuffs[unit], i)
 				print('----')
 			end

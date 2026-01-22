@@ -1,5 +1,10 @@
 local UF = SUI.UF
 
+--TODO: Figure out why the ouf [group] breaks name display and target swapping.
+if SUI.IsRetail then
+	return
+end
+
 ---@param frame table
 ---@param DB table
 local function Build(frame, DB)

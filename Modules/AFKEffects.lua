@@ -287,6 +287,34 @@ function module:PLAYER_ENTERING_WORLD()
 	StopSpin()
 end
 
+-- Retail: Use PLAYER_FLAGS_CHANGED to avoid secret value issues
+function module:PLAYER_FLAGS_CHANGED()
+	if SUI:IsModuleDisabled(module) then
+		module:UnregisterEvent('PLAYER_FLAGS_CHANGED')
+		StopSpin()
+		return
+	end
+
+	-- WoW 12.0.0: Use UnitIsAFK instead of chat messages to avoid secret value issues
+	local playerIsAFK = UnitIsAFK('player')
+
+	if playerIsAFK and not isAFK then
+		-- Player just went AFK
+		isAFK = true
+		if module.DB.SpinCam.enabled then
+			StartSpin()
+		end
+		if module.DB.FilmEffects.enabled then
+			StartEffects()
+		end
+	elseif not playerIsAFK and isAFK then
+		-- Player is no longer AFK
+		isAFK = false
+		StopSpin()
+		StopEffects()
+	end
+end
+
 function module:CHAT_MSG_SYSTEM(_, ...)
 	if SUI:IsModuleDisabled(module) then
 		module:UnregisterEvent('CHAT_MSG_SYSTEM')
@@ -324,8 +352,12 @@ function module:OnEnable()
 	end
 
 	BuildFilmEffects()
-	---@diagnostic disable-next-line: missing-parameter
-	module:RegisterEvent('CHAT_MSG_SYSTEM')
+	if SUI.IsRetail then
+		module:RegisterEvent('PLAYER_FLAGS_CHANGED')
+	else
+		---@diagnostic disable-next-line: missing-parameter
+		module:RegisterEvent('CHAT_MSG_SYSTEM')
+	end
 	---@diagnostic disable-next-line: missing-parameter
 	module:RegisterEvent('PLAYER_ENTERING_WORLD')
 

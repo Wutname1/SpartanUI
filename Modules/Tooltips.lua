@@ -341,7 +341,7 @@ local TooltipSetUnit = function(self, data)
 	end
 
 	local unit = select(2, self:GetUnit())
-	if not unit then
+	if not unit or not (SUI.BlizzAPI.canaccessvalue(unit)) then
 		return
 	end
 
@@ -441,7 +441,7 @@ local TooltipSetUnit = function(self, data)
 			end
 		end
 
-		if SUI.IsRetail and (UnitIsWildBattlePet(unit) or UnitIsBattlePetCompanion(unit)) then
+		if UnitIsWildBattlePet and (UnitIsWildBattlePet(unit) or UnitIsBattlePetCompanion(unit)) then
 			unitLevel = UnitBattlePetLevel(unit) ---@type integer
 			local ab = C_PetJournal.GetPetTeamAverageLevel()
 			if ab then
@@ -477,10 +477,11 @@ local TooltipSetUnit = function(self, data)
 		self:AddDoubleLine(TARGET .. ':', format('|cff%02x%02x%02x%s|r', totColor.r * 255, totColor.g * 255, totColor.b * 255, UnitName(unitTarget)))
 	end
 
-	if IsInGroup() then
+	local inittest = IsInRaid() and 'raid1' or 'party1'
+	if IsInGroup() and (SUI.BlizzAPI.canaccesstable(inittest)) then
 		for i = 1, GetNumGroupMembers() do
 			local groupedUnit = IsInRaid() and 'raid' .. i or 'party' .. i
-			if UnitIsUnit(groupedUnit .. 'target', unit) and not UnitIsUnit(groupedUnit, 'player') then
+			if UnitIsUnit(groupedUnit .. 'target', unit) then
 				local _, classToken = UnitClass(groupedUnit)
 				_G.tinsert(targetList, format('|c%s%s|r', RAID_CLASS_COLORS[classToken].colorStr, UnitName(groupedUnit)))
 			end
