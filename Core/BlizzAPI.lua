@@ -70,7 +70,7 @@ function BlizzAPI.GetMerchantItemInfo(index)
 		hasExtendedCost = extendedCost and true or false,
 		currencyID = currencyID,
 		spellID = spellID,
-		isQuestStartItem = false -- Not available in classic
+		isQuestStartItem = false, -- Not available in classic
 	}
 end
 

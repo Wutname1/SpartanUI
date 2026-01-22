@@ -1,4 +1,13 @@
+syntax = "Lua51"
 column_width = 200
 line_endings = "Unix"
+indent_type = "Tabs"
+indent_width = 4
 quote_style = "AutoPreferSingle"
-collapse_simple_statement = "ConditionalOnly"
+call_parentheses = "Always"
+collapse_simple_statement = "Never"
+space_after_function_names = "Never"
+block_newline_gaps = "Never"
+
+[sort_requires]
+enabled = false
