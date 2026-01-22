@@ -4,7 +4,6 @@ module.description = 'SpartanUI tooltip skining'
 local unpack = unpack
 ----------------------------------------------------------------------------------------------------
 local targetList = {}
-local RuleList = {'Rule1', 'Rule2'}
 local tooltips = {
 	GameTooltip,
 	ItemRefTooltip,
@@ -190,12 +189,31 @@ end
 
 local function ApplySkin(tooltip)
 	if not tooltip.SUITip then
-		local SUITip = CreateFrame('Frame', nil, tooltip, BackdropTemplateMixin and 'BackdropTemplate')
-		SUITip:SetPoint('TOPLEFT', tooltip, 'TOPLEFT', 0, 0)
-		SUITip:SetPoint('BOTTOMRIGHT', tooltip, 'BOTTOMRIGHT', 0, 0)
+		local SUITip = CreateFrame('Frame', nil, tooltip)
+		SUITip:SetAllPoints(tooltip)
 		SUITip:SetFrameLevel(0)
 
-		SUITip.border = CreateFrame('Frame', nil, tooltip)
+		-- Create background texture manually
+		SUITip.bgTexture = SUITip:CreateTexture(nil, 'BACKGROUND')
+		SUITip.bgTexture:SetAllPoints(SUITip)
+
+		-- Apply background from LSM
+		local bgTexture = LSM:Fetch('background', module.DB.Background)
+		if bgTexture and bgTexture ~= '' then
+			SUITip.bgTexture:SetTexture(bgTexture)
+		end
+
+		-- Apply color based on settings
+		local r, g, b, a = unpack(module.DB.Color)
+		if module.DB.Background == 'none' or module.DB.ColorOverlay then
+			SUITip.bgTexture:SetVertexColor(r, g, b, a)
+		else
+			SUITip.bgTexture:SetVertexColor(0, 0, 0, 1)
+		end
+
+		-- Create border container
+		SUITip.border = CreateFrame('Frame', nil, SUITip)
+		SUITip.border:SetAllPoints(SUITip)
 		SUITip.border:SetFrameLevel(1)
 
 		--TOP
@@ -223,18 +241,16 @@ local function ApplySkin(tooltip)
 		SUITip.border[4]:SetWidth(2)
 		SUITip.border[4]:SetTexture('Interface\\AddOns\\SpartanUI\\images\\blank.tga')
 
-		SUITip:SetBackdrop({bgFile = LSM:Fetch('background', module.DB.Background), tile = false})
-
 		SUITip.ClearColors = ClearColors
 		SUITip.border:Hide()
 
 		tooltip.SUITip = SUITip
 		tooltip.SetBorderColor = SetBorderColor
-		if tooltip.SetBackdrop then
-			tooltip:SetBackdrop(nil)
-		end
-		tooltip:HookScript('OnShow', onShow)
-		tooltip:HookScript('OnHide', onHide)
+	-- if tooltip.SetBackdrop then
+	-- 	tooltip:SetBackdrop(nil)
+	-- end
+	-- tooltip:HookScript('OnShow', onShow)
+	-- tooltip:HookScript('OnHide', onHide)
 	end
 
 	local style = {
