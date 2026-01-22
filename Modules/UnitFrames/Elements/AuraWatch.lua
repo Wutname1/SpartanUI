@@ -9,8 +9,8 @@ end
 local function IsSpellInSpellBookCompat(spellID)
 	if C_SpellBook and C_SpellBook.IsSpellKnown then
 		return C_SpellBook.IsSpellKnown(spellID)
-	elseif IsPlayerSpell then
-		return IsPlayerSpell(spellID)
+	elseif C_SpellBook.IsSpellKnown then
+		return C_SpellBook.IsSpellKnown(spellID)
 	end
 	return false
 end
@@ -77,7 +77,7 @@ local function Options(unitName, OptionSet, DB)
 				end
 			end
 			return name
-		end
+		end,
 	}
 
 	local spellDelete = {
@@ -97,7 +97,7 @@ local function Options(unitName, OptionSet, DB)
 			-- Update Screen
 			buildItemList(info[#info - 2])
 			UF.Unit[unitName]:ElementUpdate('AuraWatch')
-		end
+		end,
 	}
 
 	buildItemList = function(mode)
@@ -144,23 +144,23 @@ local function Options(unitName, OptionSet, DB)
 			soon = {
 				type = 'description',
 				name = 'Options Coming soon, Right now Priest, Mage, and Druid raid buffs tracked by default IF the current character is one of those classes.',
-				order = 0.5
+				order = 0.5,
 			},
 			create = {
 				name = SUI.L['Add spell name or ID'],
 				type = 'input',
 				order = 1,
 				width = 'full',
-				set = additem
+				set = additem,
 			},
 			spells = {
 				order = 2,
 				type = 'group',
 				inline = true,
 				name = 'Auras list',
-				args = {}
-			}
-		}
+				args = {},
+			},
+		},
 	}
 
 	OptionSet.args.watched.args.create.disabled = true
@@ -182,14 +182,14 @@ local a = {}
 local Settings = {
 	size = 20,
 	watched = {
-		['**'] = {onlyIfCastable = true, anyUnit = true, onlyShowMissing = true, point = 'BOTTOM', xOffset = 0, yOffset = 0, displayInCombat = false},
+		['**'] = { onlyIfCastable = true, anyUnit = true, onlyShowMissing = true, point = 'BOTTOM', xOffset = 0, yOffset = 0, displayInCombat = false },
 		[1126] = {}, -- Mark of the wild
 		[1459] = {}, -- Arcane Intellect
-		[21562] = {} -- Power Word: Fortitude
+		[21562] = {}, -- Power Word: Fortitude
 	},
 	config = {
-		type = 'Auras'
-	}
+		type = 'Auras',
+	},
 }
 
 UF.Elements:Register('AuraWatch', Build, Update, Options, Settings)
