@@ -33,9 +33,13 @@ local function Update(frame, settings)
 	end
 
 	if
-		((reaction <= 2 and DB.VisibleOn == 'hostile') or (reaction >= 3 and DB.VisibleOn == 'friendly') or (UnitPlayerControlled(frame.unit) and DB.VisibleOn == 'PlayerControlled') or DB.VisibleOn == 'all') and
-			DB.enabled
-	 then
+		(
+			(reaction <= 2 and DB.VisibleOn == 'hostile')
+			or (reaction >= 3 and DB.VisibleOn == 'friendly')
+			or (UnitPlayerControlled(frame.unit) and DB.VisibleOn == 'PlayerControlled')
+			or DB.VisibleOn == 'all'
+		) and DB.enabled
+	then
 		element:Show()
 		element.shadow:Show()
 		element:SetSize(DB.size, DB.size)
@@ -65,14 +69,14 @@ local function Options(unitName, OptionSet)
 			all = L['Always'],
 			hostile = L['Hostile Units'],
 			friendly = L['Friendly Units'],
-			PlayerControlled = L['Player Controlled Units']
+			PlayerControlled = L['Player Controlled Units'],
 		},
 		get = function()
 			return ElementSettings.VisibleOn
 		end,
 		set = function(_, val)
 			OptUpdate('VisibleOn', val)
-		end
+		end,
 	}
 
 	OptionSet.args.shadow = {
@@ -85,7 +89,7 @@ local function Options(unitName, OptionSet)
 		end,
 		set = function(_, val)
 			OptUpdate('shadow', val)
-		end
+		end,
 	}
 end
 
@@ -96,12 +100,12 @@ local Settings = {
 	position = {
 		anchor = 'BOTTOMLEFT',
 		x = -12,
-		y = 0
+		y = 0,
 	},
 	config = {
 		type = 'Indicator',
-		DisplayName = 'Class Icon'
-	}
+		DisplayName = 'Class Icon',
+	},
 }
 
 UF.Elements:Register('ClassIcon', Build, Update, Options, Settings)

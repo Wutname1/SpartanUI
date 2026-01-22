@@ -102,7 +102,7 @@ local function Options(frameName, OptionSet)
 			header = {
 				type = 'header',
 				name = 'General',
-				order = 0.1
+				order = 0.1,
 			},
 			type = {
 				name = L['Portrait type'],
@@ -110,8 +110,8 @@ local function Options(frameName, OptionSet)
 				order = 20,
 				values = {
 					['3D'] = '3D',
-					['2D'] = '2D'
-				}
+					['2D'] = '2D',
+				},
 			},
 			rotation = {
 				name = L['Rotation'],
@@ -119,7 +119,7 @@ local function Options(frameName, OptionSet)
 				min = -1,
 				max = 1,
 				step = 0.01,
-				order = 21
+				order = 21,
 			},
 			camDistanceScale = {
 				name = L['Camera Distance Scale'],
@@ -127,7 +127,7 @@ local function Options(frameName, OptionSet)
 				min = 0.01,
 				max = 5,
 				step = 0.1,
-				order = 22
+				order = 22,
 			},
 			position = {
 				name = L['Position'],
@@ -136,7 +136,7 @@ local function Options(frameName, OptionSet)
 				values = {
 					['left'] = L['Left'],
 					['right'] = L['Right'],
-					['overlay'] = 'Overlay'
+					['overlay'] = 'Overlay',
 				},
 				set = function(info, val)
 					if val == 'overlay' then
@@ -150,9 +150,9 @@ local function Options(frameName, OptionSet)
 					UF.DB.UserSettings[UF.DB.Style][frameName].elements.Portrait.position = val
 					--Update the screen
 					UF.Unit[frameName]:ElementUpdate('Portrait')
-				end
-			}
-		}
+				end,
+			},
+		},
 	}
 end
 
@@ -169,8 +169,8 @@ local Settings = {
 	position = 'left',
 	config = {
 		NoBulkUpdate = true,
-		type = 'General'
-	}
+		type = 'General',
+	},
 }
 
 UF.Elements:Register('Portrait', Build, Update, Options, Settings)

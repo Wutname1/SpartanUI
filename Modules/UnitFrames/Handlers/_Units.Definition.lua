@@ -14,7 +14,7 @@ local UFrameSettings = {
 	enabled = true,
 	width = 180,
 	scale = 1,
-	moved = false
+	moved = false,
 }
 
 ---@class SUI.UF.Unit.Config
@@ -22,7 +22,7 @@ local UFrameSettings = {
 local config = {
 	IsGroup = false,
 	isChild = false,
-	isFriendly = false
+	isFriendly = false,
 }
 
 ---@class UFrameVisibility
@@ -33,7 +33,7 @@ local visibility = {
 	showInCombat = true,
 	showWithTarget = false,
 	showInRaid = false,
-	showInParty = false
+	showInParty = false,
 }
 
 ---@alias UnitFrameName

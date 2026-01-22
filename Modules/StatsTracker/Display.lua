@@ -22,13 +22,11 @@ local function CreateProgressBar(parent, width, height)
 	bar:SetSize(width, height)
 
 	-- Background
-	bar:SetBackdrop(
-		{
-			bgFile = 'Interface\\AddOns\\SpartanUI\\images\\blank.tga',
-			edgeFile = 'Interface\\AddOns\\SpartanUI\\images\\blank.tga',
-			edgeSize = 1
-		}
-	)
+	bar:SetBackdrop({
+		bgFile = 'Interface\\AddOns\\SpartanUI\\images\\blank.tga',
+		edgeFile = 'Interface\\AddOns\\SpartanUI\\images\\blank.tga',
+		edgeSize = 1,
+	})
 	bar:SetBackdropColor(0.1, 0.1, 0.1, 0.8)
 	bar:SetBackdropBorderColor(0.3, 0.3, 0.3, 1)
 
@@ -36,11 +34,9 @@ local function CreateProgressBar(parent, width, height)
 	bar.fill = CreateFrame('Frame', nil, bar, 'BackdropTemplate')
 	bar.fill:SetPoint('LEFT')
 	bar.fill:SetHeight(height)
-	bar.fill:SetBackdrop(
-		{
-			bgFile = 'Interface\\AddOns\\SpartanUI\\images\\blank.tga'
-		}
-	)
+	bar.fill:SetBackdrop({
+		bgFile = 'Interface\\AddOns\\SpartanUI\\images\\blank.tga',
+	})
 	bar.fill:SetBackdropColor(0, 0.8, 0, 0.8)
 
 	-- Update function
@@ -196,16 +192,14 @@ local function CreateMouseoverContainer(parent, config)
 
 	-- Background (slightly different from main frame)
 	if StatsTracker.DB.backgroundColor then
-		container:SetBackdrop(
-			{
-				bgFile = 'Interface\\AddOns\\SpartanUI\\images\\blank.tga',
-				edgeFile = 'Interface\\AddOns\\SpartanUI\\images\\blank.tga',
-				edgeSize = 1
-			}
-		)
+		container:SetBackdrop({
+			bgFile = 'Interface\\AddOns\\SpartanUI\\images\\blank.tga',
+			edgeFile = 'Interface\\AddOns\\SpartanUI\\images\\blank.tga',
+			edgeSize = 1,
+		})
 		local bg = StatsTracker.DB.backgroundColor
 		container:SetBackdropColor(bg[1], bg[2], bg[3], (bg[4] or 0.7) * 0.9) -- Slightly more transparent
-		local border = StatsTracker.DB.borderColor or {0.3, 0.3, 0.3, 1}
+		local border = StatsTracker.DB.borderColor or { 0.3, 0.3, 0.3, 1 }
 		container:SetBackdropBorderColor(unpack(border))
 	end
 
@@ -280,15 +274,13 @@ function StatsTracker:CreateDisplayFrame(frameKey)
 
 	-- Background
 	if StatsTracker.DB.backgroundColor then
-		frame:SetBackdrop(
-			{
-				bgFile = 'Interface\\AddOns\\SpartanUI\\images\\blank.tga',
-				edgeFile = 'Interface\\AddOns\\SpartanUI\\images\\blank.tga',
-				edgeSize = 1
-			}
-		)
+		frame:SetBackdrop({
+			bgFile = 'Interface\\AddOns\\SpartanUI\\images\\blank.tga',
+			edgeFile = 'Interface\\AddOns\\SpartanUI\\images\\blank.tga',
+			edgeSize = 1,
+		})
 		frame:SetBackdropColor(unpack(StatsTracker.DB.backgroundColor))
-		frame:SetBackdropBorderColor(unpack(StatsTracker.DB.borderColor or {0.3, 0.3, 0.3, 1}))
+		frame:SetBackdropBorderColor(unpack(StatsTracker.DB.borderColor or { 0.3, 0.3, 0.3, 1 }))
 	end
 
 	-- Parse position
@@ -379,84 +371,60 @@ function StatsTracker:CreateDisplayFrame(frameKey)
 	end
 
 	-- Mouseover handling
-	frame:SetScript(
-		'OnEnter',
-		function(self)
-			self.isMouseOver = true
-			if next(self.mouseoverElements) then
-				self.mouseoverContainer:Show()
-				-- Show all mouseover elements that have been updated with data
-				for statKey, element in pairs(self.mouseoverElements) do
-					local currentStats = StatsTracker.GetCurrentStats()
-					if currentStats[statKey] then
-						element.frame:Show()
-					end
+	frame:SetScript('OnEnter', function(self)
+		self.isMouseOver = true
+		if next(self.mouseoverElements) then
+			self.mouseoverContainer:Show()
+			-- Show all mouseover elements that have been updated with data
+			for statKey, element in pairs(self.mouseoverElements) do
+				local currentStats = StatsTracker.GetCurrentStats()
+				if currentStats[statKey] then
+					element.frame:Show()
 				end
-				-- Update positioning
-				UpdateContainerSize(self.mouseoverContainer, self.mouseoverElements, config.layout, config.spacing)
-				PositionElements(self.mouseoverElements, self.mouseoverContainer, config.layout, config.spacing, config.growDirection)
 			end
+			-- Update positioning
+			UpdateContainerSize(self.mouseoverContainer, self.mouseoverElements, config.layout, config.spacing)
+			PositionElements(self.mouseoverElements, self.mouseoverContainer, config.layout, config.spacing, config.growDirection)
 		end
-	)
+	end)
 
-	frame:SetScript(
-		'OnLeave',
-		function(self)
-			self.isMouseOver = false
-			-- Delay hiding to prevent flickering when moving between frame and mouseover container
-			C_Timer.After(
-				0.1,
-				function()
-					if not self.isMouseOver and not self.mouseoverContainer.isMouseOver then
-						self.mouseoverContainer:Hide()
-						for _, element in pairs(self.mouseoverElements) do
-							element.frame:Hide()
-						end
-					end
+	frame:SetScript('OnLeave', function(self)
+		self.isMouseOver = false
+		-- Delay hiding to prevent flickering when moving between frame and mouseover container
+		C_Timer.After(0.1, function()
+			if not self.isMouseOver and not self.mouseoverContainer.isMouseOver then
+				self.mouseoverContainer:Hide()
+				for _, element in pairs(self.mouseoverElements) do
+					element.frame:Hide()
 				end
-			)
-		end
-	)
+			end
+		end)
+	end)
 
 	-- Mouseover container handling
-	frame.mouseoverContainer:SetScript(
-		'OnEnter',
-		function(self)
-			self.isMouseOver = true
-		end
-	)
+	frame.mouseoverContainer:SetScript('OnEnter', function(self)
+		self.isMouseOver = true
+	end)
 
-	frame.mouseoverContainer:SetScript(
-		'OnLeave',
-		function(self)
-			self.isMouseOver = false
-			C_Timer.After(
-				0.1,
-				function()
-					if not frame.isMouseOver and not self.isMouseOver then
-						self:Hide()
-						for _, element in pairs(frame.mouseoverElements) do
-							element.frame:Hide()
-						end
-					end
+	frame.mouseoverContainer:SetScript('OnLeave', function(self)
+		self.isMouseOver = false
+		C_Timer.After(0.1, function()
+			if not frame.isMouseOver and not self.isMouseOver then
+				self:Hide()
+				for _, element in pairs(frame.mouseoverElements) do
+					element.frame:Hide()
 				end
-			)
-		end
-	)
+			end
+		end)
+	end)
 
 	-- Create mover if MoveIt is available
 	if MoveIt then
-		MoveIt:CreateMover(
-			frame,
-			'StatsTracker_' .. frameKey,
-			'Stats: ' .. frameKey,
-			function()
-				-- Post-drag callback
-				local point, anchor, secondaryPoint, x, y = frame:GetPoint()
-				StatsTracker.DB.frames[frameKey].position = string.format('%s,%s,%s,%d,%d', point, anchor:GetName(), secondaryPoint, x, y)
-			end,
-			'Stats & Tracking'
-		)
+		MoveIt:CreateMover(frame, 'StatsTracker_' .. frameKey, 'Stats: ' .. frameKey, function()
+			-- Post-drag callback
+			local point, anchor, secondaryPoint, x, y = frame:GetPoint()
+			StatsTracker.DB.frames[frameKey].position = string.format('%s,%s,%s,%d,%d', point, anchor:GetName(), secondaryPoint, x, y)
+		end, 'Stats & Tracking')
 	end
 
 	return frame
@@ -575,7 +543,7 @@ function StatsTracker:GetAvailableStats()
 		-- Combat
 		kills = L['Kills'],
 		deaths = L['Deaths'],
-		kdr = L['K/D Ratio']
+		kdr = L['K/D Ratio'],
 	}
 
 	-- Add detected currencies
@@ -600,7 +568,7 @@ StatsTracker.InitializeDisplay = function(self)
 			width = 600,
 			height = 25,
 			scale = 1.0,
-			stats = {'fps', 'latency', 'bags', 'durability', 'gold', 'sessionTime'},
+			stats = { 'fps', 'latency', 'bags', 'durability', 'gold', 'sessionTime' },
 			layout = 'vertical',
 			spacing = 0,
 			growDirection = 'down',
@@ -617,8 +585,8 @@ StatsTracker.InitializeDisplay = function(self)
 				xp = 'mouseover',
 				xpPerHour = 'mouseover',
 				kills = 'mouseover',
-				deaths = 'mouseover'
-			}
+				deaths = 'mouseover',
+			},
 		}
 	end
 end

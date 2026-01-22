@@ -6,11 +6,11 @@ MoveIt.Core = true
 SUI.MoveIt = MoveIt
 local MoverList = {}
 local colors = {
-	bg = {0.0588, 0.0588, 0, 0.85},
-	active = {0.1, 0.1, 0.1, 0.7},
-	border = {0.00, 0.00, 0.00, 1},
-	text = {1, 1, 1, 1},
-	disabled = {0.55, 0.55, 0.55, 1}
+	bg = { 0.0588, 0.0588, 0, 0.85 },
+	active = { 0.1, 0.1, 0.1, 0.7 },
+	border = { 0.00, 0.00, 0.00, 1 },
+	text = { 1, 1, 1, 1 },
+	disabled = { 0.55, 0.55, 0.55, 1 },
 }
 local MoverWatcher = CreateFrame('Frame', nil, UIParent)
 local MoveEnabled = false
@@ -24,13 +24,13 @@ local anchorPoints = {
 	['LEFT'] = 'LEFT',
 	['BOTTOMLEFT'] = 'BOTTOM LEFT',
 	['BOTTOM'] = 'BOTTOM',
-	['BOTTOMRIGHT'] = 'BOTTOM RIGHT'
+	['BOTTOMRIGHT'] = 'BOTTOM RIGHT',
 }
 local dynamicAnchorPoints = {
 	['UIParent'] = 'Blizzard UI',
 	['SpartanUI'] = 'Spartan UI',
 	['SUI_BottomAnchor'] = 'SpartanUI Bottom Anchor',
-	['SUI_TopAnchor'] = 'SpartanUI Top Anchor'
+	['SUI_TopAnchor'] = 'SpartanUI Top Anchor',
 }
 
 local function GetPoints(obj)
@@ -50,7 +50,7 @@ local function CreateGroup(groupName)
 	SUI.opt.args.Movers.args[groupName] = {
 		name = groupName,
 		type = 'group',
-		args = {}
+		args = {},
 	}
 end
 
@@ -81,7 +81,7 @@ local function AddToOptions(MoverName, DisplayName, groupName, MoverFrame)
 							-- Move the frame and update the DB
 							MoverFrame.parent:position(point, anchor, secondaryPoint, tonumber(val), y, true)
 							MoveIt.DB.movers[MoverName].MovedPoints = format('%s,%s,%s,%s,%s', point, anchor, secondaryPoint, val, y)
-						end
+						end,
 					},
 					y = {
 						name = L['Y Offset'],
@@ -97,7 +97,7 @@ local function AddToOptions(MoverName, DisplayName, groupName, MoverFrame)
 							-- Move the frame and update the DB
 							MoverFrame.parent:position(point, anchor, secondaryPoint, x, tonumber(val), true)
 							MoveIt.DB.movers[MoverName].MovedPoints = format('%s,%s,%s,%s,%s', point, anchor, secondaryPoint, x, val)
-						end
+						end,
 					},
 					MyAnchorPoint = {
 						order = 3,
@@ -113,7 +113,7 @@ local function AddToOptions(MoverName, DisplayName, groupName, MoverFrame)
 							-- Move the frame and update the DB
 							MoverFrame.parent:position(val, anchor, val, x, y, true)
 							MoveIt.DB.movers[MoverName].MovedPoints = format('%s,%s,%s,%s,%s', val, anchor, secondaryPoint, x, y)
-						end
+						end,
 					},
 					AnchorTo = {
 						order = 4,
@@ -133,7 +133,7 @@ local function AddToOptions(MoverName, DisplayName, groupName, MoverFrame)
 							-- Move the frame and update the DB
 							MoverFrame.parent:position(point, (_G[val] or UIParent), secondaryPoint, x, y, true)
 							MoveIt.DB.movers[MoverName].MovedPoints = format('%s,%s,%s,%s,%s', point, (_G[val] or UIParent):GetName(), secondaryPoint, x, y)
-						end
+						end,
 					},
 					ItsAnchorPoint = {
 						order = 5,
@@ -149,9 +149,9 @@ local function AddToOptions(MoverName, DisplayName, groupName, MoverFrame)
 							-- Move the frame and update the DB
 							MoverFrame.parent:position(point, anchor, val, x, y, true)
 							MoveIt.DB.movers[MoverName].MovedPoints = format('%s,%s,%s,%s,%s', point, anchor, val, x, y)
-						end
-					}
-				}
+						end,
+					},
+				},
 			},
 			ResetPosition = {
 				name = L['Reset position'],
@@ -159,7 +159,7 @@ local function AddToOptions(MoverName, DisplayName, groupName, MoverFrame)
 				order = 3,
 				func = function()
 					MoveIt:Reset(MoverName, true)
-				end
+				end,
 			},
 			scale = {
 				name = '',
@@ -181,7 +181,7 @@ local function AddToOptions(MoverName, DisplayName, groupName, MoverFrame)
 						set = function(info, val)
 							MoveIt.DB.movers[MoverName].AdjustedScale = val
 							MoverFrame.parent:scale(val, false, true)
-						end
+						end,
 					},
 					ResetScale = {
 						name = L['Reset Scale'],
@@ -190,11 +190,11 @@ local function AddToOptions(MoverName, DisplayName, groupName, MoverFrame)
 						func = function()
 							MoverFrame.parent:scale()
 							MoveIt.DB.movers[MoverName].AdjustedScale = nil
-						end
-					}
-				}
-			}
-		}
+						end,
+					},
+				},
+			},
+		},
 	}
 end
 
@@ -399,13 +399,11 @@ function MoveIt:CreateMover(parent, name, DisplayName, postdrag, groupName)
 	f:SetMovable(true)
 	f:SetSize(width, height)
 
-	f:SetBackdrop(
-		{
-			bgFile = 'Interface\\AddOns\\SpartanUI\\images\\blank.tga',
-			edgeFile = 'Interface\\AddOns\\SpartanUI\\images\\blank.tga',
-			edgeSize = 1
-		}
-	)
+	f:SetBackdrop({
+		bgFile = 'Interface\\AddOns\\SpartanUI\\images\\blank.tga',
+		edgeFile = 'Interface\\AddOns\\SpartanUI\\images\\blank.tga',
+		edgeSize = 1,
+	})
 	f:SetBackdropColor(unpack(colors.bg))
 	f:SetBackdropBorderColor(unpack(colors.border))
 
@@ -561,11 +559,11 @@ function MoveIt:CreateMover(parent, name, DisplayName, postdrag, groupName)
 
 	local function OnMouseDown(self, button)
 		if button == 'LeftButton' and not isDragging then
-		-- if NudgeWindow:IsShown() then
-		-- 	NudgeWindow:Hide()
-		-- else
-		-- 	NudgeWindow:Show()
-		-- end
+			-- if NudgeWindow:IsShown() then
+			-- 	NudgeWindow:Hide()
+			-- else
+			-- 	NudgeWindow:Show()
+			-- end
 		end
 
 		if IsAltKeyDown() then -- Reset anchor
@@ -701,7 +699,7 @@ function MoveIt:CreateMover(parent, name, DisplayName, postdrag, groupName)
 		position = position,
 		mover = f,
 		dirtyWidth = 0,
-		dirtyHeight = 0
+		dirtyHeight = 0,
 	}
 	for k, v in pairs(parentMixin) do
 		parent[k] = v
@@ -742,14 +740,14 @@ function MoveIt:CreateCustomMover(displayName, defaultPosition, config)
 		width = 180,
 		height = 180,
 		colors = {
-			bg = {0.2, 0.0, 0.0, 0.85}, -- Reddish background to distinguish from regular movers
-			active = {0.3, 0.1, 0.1, 0.7},
-			border = {0.5, 0.0, 0.0, 1},
-			text = {1, 1, 1, 1}
+			bg = { 0.2, 0.0, 0.0, 0.85 }, -- Reddish background to distinguish from regular movers
+			active = { 0.3, 0.1, 0.1, 0.7 },
+			border = { 0.5, 0.0, 0.0, 1 },
+			text = { 1, 1, 1, 1 },
 		},
 		onPositionChanged = nil, -- Callback function
 		savePosition = nil, -- Function to handle position saving
-		onHide = nil -- Function called when mover is hidden
+		onHide = nil, -- Function called when mover is hidden
 	}
 
 	-- Override defaults with any provided config
@@ -767,13 +765,11 @@ function MoveIt:CreateCustomMover(displayName, defaultPosition, config)
 	mover:SetMovable(true)
 	mover:SetSize(cfg.width, cfg.height)
 
-	mover:SetBackdrop(
-		{
-			bgFile = 'Interface\\AddOns\\SpartanUI\\images\\blank.tga',
-			edgeFile = 'Interface\\AddOns\\SpartanUI\\images\\blank.tga',
-			edgeSize = 1
-		}
-	)
+	mover:SetBackdrop({
+		bgFile = 'Interface\\AddOns\\SpartanUI\\images\\blank.tga',
+		edgeFile = 'Interface\\AddOns\\SpartanUI\\images\\blank.tga',
+		edgeSize = 1,
+	})
 	mover:SetBackdropColor(unpack(cfg.colors.bg))
 	mover:SetBackdropBorderColor(unpack(cfg.colors.border))
 
@@ -807,14 +803,12 @@ function MoveIt:CreateCustomMover(displayName, defaultPosition, config)
 	local coordFrame = CreateFrame('Frame', name .. '_CoordFrame', mover, BackdropTemplateMixin and 'BackdropTemplate')
 	coordFrame:SetSize(150, 40)
 	coordFrame:SetPoint('TOP', mover.DisplayName, 'BOTTOM', 0, -5)
-	coordFrame:SetBackdrop(
-		{
-			bgFile = 'Interface\\DialogFrame\\UI-DialogBox-Background',
-			edgeFile = 'Interface\\DialogFrame\\UI-DialogBox-Border',
-			edgeSize = 16,
-			insets = {left = 4, right = 4, top = 4, bottom = 4}
-		}
-	)
+	coordFrame:SetBackdrop({
+		bgFile = 'Interface\\DialogFrame\\UI-DialogBox-Background',
+		edgeFile = 'Interface\\DialogFrame\\UI-DialogBox-Border',
+		edgeSize = 16,
+		insets = { left = 4, right = 4, top = 4, bottom = 4 },
+	})
 	coordFrame:SetBackdropColor(0, 0, 0, 0.9)
 	coordFrame:SetFrameLevel(mover:GetFrameLevel() + 1)
 
@@ -835,163 +829,139 @@ function MoveIt:CreateCustomMover(displayName, defaultPosition, config)
 	-- Script handlers for dragging
 	local isDragging = false
 
-	mover:SetScript(
-		'OnDragStart',
-		function(self)
-			if InCombatLockdown() then
-				SUI:Print(ERR_NOT_IN_COMBAT)
-				return
-			end
-
-			self:StartMoving()
-			coordFrame:Show()
-			isDragging = true
+	mover:SetScript('OnDragStart', function(self)
+		if InCombatLockdown() then
+			SUI:Print(ERR_NOT_IN_COMBAT)
+			return
 		end
-	)
 
-	mover:SetScript(
-		'OnDragStop',
-		function(self)
-			if InCombatLockdown() then
-				SUI:Print(ERR_NOT_IN_COMBAT)
-				return
+		self:StartMoving()
+		coordFrame:Show()
+		isDragging = true
+	end)
+
+	mover:SetScript('OnDragStop', function(self)
+		if InCombatLockdown() then
+			SUI:Print(ERR_NOT_IN_COMBAT)
+			return
+		end
+
+		isDragging = false
+		self:StopMovingOrSizing()
+
+		-- Save the position
+		local point, anchor, secondaryPoint, x, y = self:GetPoint()
+		if not anchor then
+			anchor = UIParent
+		end
+
+		local anchorName = anchor:GetName() or 'UIParent'
+		self.savedPosition = format('%s,%s,%s,%d,%d', point, anchorName, secondaryPoint, Round(x), Round(y))
+
+		-- Call custom save function if provided
+		if cfg.savePosition then
+			cfg.savePosition(self.savedPosition)
+		end
+
+		-- Callback for position change
+		if cfg.onPositionChanged then
+			cfg.onPositionChanged(self)
+		end
+
+		coordFrame:Hide()
+		self:SetUserPlaced(false)
+	end)
+
+	mover:SetScript('OnEnter', function(self)
+		if isDragging then
+			return
+		end
+		self:SetBackdropColor(unpack(cfg.colors.active))
+	end)
+
+	mover:SetScript('OnLeave', function(self)
+		if isDragging then
+			return
+		end
+		self:SetBackdropColor(unpack(cfg.colors.bg))
+	end)
+
+	mover:SetScript('OnMouseDown', function(self, button)
+		if InCombatLockdown() then
+			SUI:Print(ERR_NOT_IN_COMBAT)
+			return
+		elseif IsAltKeyDown() then
+			self:Hide()
+			if cfg.onHide then
+				cfg.onHide()
+			end
+			return
+		end
+
+		if button == 'RightButton' then
+			-- Reset to default position
+			local point, anchor, secondaryPoint, x, y = strsplit(',', self.defaultPoint)
+			self:ClearAllPoints()
+			self:SetPoint(point, _G[anchor], secondaryPoint, x, y)
+
+			self.savedPosition = nil
+
+			if cfg.savePosition then
+				cfg.savePosition(self.defaultPoint)
 			end
 
-			isDragging = false
-			self:StopMovingOrSizing()
+			SUI:Print(L['Position reset to default'])
+		end
+	end)
 
-			-- Save the position
+	mover:SetScript('OnMouseWheel', function(self, delta)
+		if IsShiftKeyDown() then
+			-- Vertical nudge
 			local point, anchor, secondaryPoint, x, y = self:GetPoint()
 			if not anchor then
 				anchor = UIParent
 			end
 
-			local anchorName = anchor:GetName() or 'UIParent'
-			self.savedPosition = format('%s,%s,%s,%d,%d', point, anchorName, secondaryPoint, Round(x), Round(y))
+			y = y + delta
 
-			-- Call custom save function if provided
-			if cfg.savePosition then
-				cfg.savePosition(self.savedPosition)
+			self:ClearAllPoints()
+			self:SetPoint(point, anchor, secondaryPoint, x, y)
+		else
+			-- Horizontal nudge
+			local point, anchor, secondaryPoint, x, y = self:GetPoint()
+			if not anchor then
+				anchor = UIParent
 			end
 
-			-- Callback for position change
-			if cfg.onPositionChanged then
-				cfg.onPositionChanged(self)
-			end
+			x = x + delta
 
-			coordFrame:Hide()
-			self:SetUserPlaced(false)
+			self:ClearAllPoints()
+			self:SetPoint(point, anchor, secondaryPoint, x, y)
 		end
-	)
-
-	mover:SetScript(
-		'OnEnter',
-		function(self)
-			if isDragging then
-				return
-			end
-			self:SetBackdropColor(unpack(cfg.colors.active))
-		end
-	)
-
-	mover:SetScript(
-		'OnLeave',
-		function(self)
-			if isDragging then
-				return
-			end
-			self:SetBackdropColor(unpack(cfg.colors.bg))
-		end
-	)
-
-	mover:SetScript(
-		'OnMouseDown',
-		function(self, button)
-			if InCombatLockdown() then
-				SUI:Print(ERR_NOT_IN_COMBAT)
-				return
-			elseif IsAltKeyDown() then
-				self:Hide()
-				if cfg.onHide then
-					cfg.onHide()
-				end
-				return
-			end
-
-			if button == 'RightButton' then
-				-- Reset to default position
-				local point, anchor, secondaryPoint, x, y = strsplit(',', self.defaultPoint)
-				self:ClearAllPoints()
-				self:SetPoint(point, _G[anchor], secondaryPoint, x, y)
-
-				self.savedPosition = nil
-
-				if cfg.savePosition then
-					cfg.savePosition(self.defaultPoint)
-				end
-
-				SUI:Print(L['Position reset to default'])
-			end
-		end
-	)
-
-	mover:SetScript(
-		'OnMouseWheel',
-		function(self, delta)
-			if IsShiftKeyDown() then
-				-- Vertical nudge
-				local point, anchor, secondaryPoint, x, y = self:GetPoint()
-				if not anchor then
-					anchor = UIParent
-				end
-
-				y = y + delta
-
-				self:ClearAllPoints()
-				self:SetPoint(point, anchor, secondaryPoint, x, y)
-			else
-				-- Horizontal nudge
-				local point, anchor, secondaryPoint, x, y = self:GetPoint()
-				if not anchor then
-					anchor = UIParent
-				end
-
-				x = x + delta
-
-				self:ClearAllPoints()
-				self:SetPoint(point, anchor, secondaryPoint, x, y)
-			end
-		end
-	)
+	end)
 
 	-- Update coordinate text when the frame moves
-	mover:SetScript(
-		'OnUpdate',
-		function(self)
-			if isDragging then
-				local scale = self:GetEffectiveScale()
-				local x, y = self:GetCenter()
-				x = x * scale
-				y = y * scale
+	mover:SetScript('OnUpdate', function(self)
+		if isDragging then
+			local scale = self:GetEffectiveScale()
+			local x, y = self:GetCenter()
+			x = x * scale
+			y = y * scale
 
-				coordFrame.Text:SetText(format('X: %d, Y: %d', Round(x), Round(y)))
-			end
+			coordFrame.Text:SetText(format('X: %d, Y: %d', Round(x), Round(y)))
 		end
-	)
+	end)
 
 	-- Add Escape key handling
-	mover:SetScript(
-		'OnKeyDown',
-		function(self, key)
-			if key == 'ESCAPE' then
-				self:Hide()
-				if cfg.onHide then
-					cfg.onHide()
-				end
-				return
+	mover:SetScript('OnKeyDown', function(self, key)
+		if key == 'ESCAPE' then
+			self:Hide()
+			if cfg.onHide then
+				cfg.onHide()
 			end
+			return
 		end
-	)
+	end)
 	mover:EnableKeyboard(true)
 
 	-- Register with UISpecialFrames for Escape handling
@@ -1012,10 +982,10 @@ function MoveIt:OnInitialize()
 			movers = {
 				['**'] = {
 					defaultPoint = false,
-					MovedPoints = false
-				}
-			}
-		}
+					MovedPoints = false,
+				},
+			},
+		},
 	}
 	---@type MoveItDB
 	MoveIt.Database = SUI.SpartanUIDB:RegisterNamespace('MoveIt', defaults)
@@ -1035,16 +1005,13 @@ function MoveIt:OnInitialize()
 	-- Access LibAT from global namespace (not LibStub)
 	local LibAT = _G.LibAT
 	if LibAT and LibAT.UI then
-		coordFrame =
-			LibAT.UI.CreateWindow(
-			{
-				name = 'SUI_MoveIt_CoordFrame',
-				title = 'MoveIt',
-				width = 480,
-				height = 200,
-				hidePortrait = true
-			}
-		)
+		coordFrame = LibAT.UI.CreateWindow({
+			name = 'SUI_MoveIt_CoordFrame',
+			title = 'MoveIt',
+			width = 480,
+			height = 200,
+			hidePortrait = true,
+		})
 	else
 		-- Fallback to basic frame if LibAT not available
 		coordFrame = CreateFrame('Frame', 'SUI_MoveIt_CoordFrame', UIParent, 'BasicFrameTemplateWithInset')
@@ -1066,18 +1033,12 @@ function MoveIt:OnInitialize()
 	coordFrame.Title:SetAlpha(0.8)
 
 	if EditModeManagerFrame then
-		EventRegistry:RegisterCallback(
-			'EditMode.Enter',
-			function()
-				self:UnlockAll()
-			end
-		)
-		EventRegistry:RegisterCallback(
-			'EditMode.Exit',
-			function()
-				self:LockAll()
-			end
-		)
+		EventRegistry:RegisterCallback('EditMode.Enter', function()
+			self:UnlockAll()
+		end)
+		EventRegistry:RegisterCallback('EditMode.Exit', function()
+			self:LockAll()
+		end)
 	end
 end
 
@@ -1122,16 +1083,10 @@ function MoveIt:OnEnable()
 			end
 		end
 	end
-	SUI:AddChatCommand(
-		'move',
-		ChatCommand,
-		"|cffffffffSpartan|cffe21f1fUI|r's movement system",
-		{
-			reset = 'Reset all moved objects',
-			tips = 'Disable tips from being displayed in chat when movement system is activated'
-		},
-		true
-	)
+	SUI:AddChatCommand('move', ChatCommand, "|cffffffffSpartan|cffe21f1fUI|r's movement system", {
+		reset = 'Reset all moved objects',
+		tips = 'Disable tips from being displayed in chat when movement system is activated',
+	}, true)
 
 	local function OnKeyDown(self, key)
 		if MoveEnabled and key == 'ESCAPE' then
@@ -1169,7 +1124,7 @@ function MoveIt:Options()
 				order = 1,
 				func = function()
 					MoveIt:MoveIt()
-				end
+				end,
 			},
 			AltKey = {
 				name = L['Allow Alt+Dragging to move frames'],
@@ -1181,7 +1136,7 @@ function MoveIt:Options()
 				end,
 				set = function(info, val)
 					MoveIt.DB.AltKey = val
-				end
+				end,
 			},
 			ResetIt = {
 				name = L['Reset moved frames'],
@@ -1189,66 +1144,66 @@ function MoveIt:Options()
 				order = 3,
 				func = function()
 					MoveIt:Reset()
-				end
+				end,
 			},
-			line1 = {name = '', type = 'header', order = 49},
+			line1 = { name = '', type = 'header', order = 49 },
 			line2 = {
 				name = L['Movement can also be initated with the chat command:'],
 				type = 'description',
 				order = 50,
-				fontSize = 'large'
+				fontSize = 'large',
 			},
-			line3 = {name = '/sui move', type = 'description', order = 51, fontSize = 'medium'},
-			line22 = {name = '', type = 'header', order = 51.1},
+			line3 = { name = '/sui move', type = 'description', order = 51, fontSize = 'medium' },
+			line22 = { name = '', type = 'header', order = 51.1 },
 			line4 = {
 				name = '',
 				type = 'description',
 				order = 52,
-				fontSize = 'large'
+				fontSize = 'large',
 			},
 			line5 = {
 				name = L['When the movement system is enabled you can:'],
 				type = 'description',
 				order = 53,
-				fontSize = 'large'
+				fontSize = 'large',
 			},
-			line6 = {name = '- ' .. L['Alt+Click a mover to reset it'], type = 'description', order = 53.5, fontSize = 'medium'},
+			line6 = { name = '- ' .. L['Alt+Click a mover to reset it'], type = 'description', order = 53.5, fontSize = 'medium' },
 			line7 = {
 				name = '- ' .. L['Shift+Click a mover to temporarily hide it'],
 				type = 'description',
 				order = 54,
-				fontSize = 'medium'
+				fontSize = 'medium',
 			},
 			line7a = {
 				name = "- Control+Click a mover to reset it's scale",
 				type = 'description',
 				order = 54.2,
-				fontSize = 'medium'
+				fontSize = 'medium',
 			},
-			line7b = {name = '', type = 'description', order = 54.99, fontSize = 'medium'},
+			line7b = { name = '', type = 'description', order = 54.99, fontSize = 'medium' },
 			line8 = {
 				name = '- ' .. L['Use the scroll wheel to move left and right 1 coord at a time'],
 				type = 'description',
 				order = 55,
-				fontSize = 'medium'
+				fontSize = 'medium',
 			},
 			line9 = {
 				name = '- ' .. L['Hold Shift + use the scroll wheel to move up and down 1 coord at a time'],
 				type = 'description',
 				order = 56,
-				fontSize = 'medium'
+				fontSize = 'medium',
 			},
 			line9a = {
 				name = '- ' .. L['Hold Alt + use the scroll wheel to scale the frame'],
 				type = 'description',
 				order = 56.5,
-				fontSize = 'medium'
+				fontSize = 'medium',
 			},
 			line10 = {
 				name = '- ' .. L['Press ESCAPE to exit the movement system quickly.'],
 				type = 'description',
 				order = 57,
-				fontSize = 'medium'
+				fontSize = 'medium',
 			},
 			tips = {
 				name = L['Display tips when using /sui move'],
@@ -1260,9 +1215,9 @@ function MoveIt:Options()
 				end,
 				set = function(info, val)
 					MoveIt.DB.tips = val
-				end
-			}
-		}
+				end,
+			},
+		},
 	}
 end
 

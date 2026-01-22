@@ -23,9 +23,9 @@ function module:OnInitialize()
 		currentBlacklistPage = 1,
 		currentWhitelistPage = 1,
 		searchBlacklist = '',
-		searchWhitelist = ''
+		searchWhitelist = '',
 	}
-	module.Database = SUI.SpartanUIDB:RegisterNamespace('StopTalking', {profile = defaults, global = defaults})
+	module.Database = SUI.SpartanUIDB:RegisterNamespace('StopTalking', { profile = defaults, global = defaults })
 	module.DB = module.Database.profile ---@type SUI.Module.StopTalking.DB
 	module.DBGlobal = module.Database.global ---@type SUI.Module.StopTalking.DB
 end
@@ -104,7 +104,7 @@ local OptionTable = {
 		return SUI:IsModuleDisabled(module)
 	end,
 	childGroups = 'tab',
-	args = {}
+	args = {},
 }
 
 function module:BuildOptions()
@@ -127,17 +127,14 @@ function module:BuildOptions()
 		for itemId, entry in pairs(sourceList) do
 			-- Skip any non-string entries
 			if type(entry) == 'string' and (searchText == '' or string.find(string.lower(entry), searchText)) then
-				table.insert(filteredItems, {id = itemId, text = entry})
+				table.insert(filteredItems, { id = itemId, text = entry })
 			end
 		end
 
 		-- Sort the filtered items to ensure consistent ordering
-		table.sort(
-			filteredItems,
-			function(a, b)
-				return a.text < b.text
-			end
-		)
+		table.sort(filteredItems, function(a, b)
+			return a.text < b.text
+		end)
 
 		-- Pagination variables
 		local pageSize = module.DB.pageSize or 20
@@ -164,7 +161,7 @@ function module:BuildOptions()
 			width = 'full',
 			fontSize = 'medium',
 			order = 1,
-			name = L['Page'] .. ' ' .. currentPage .. '/' .. (totalPages == 0 and 1 or totalPages) .. ' (' .. totalItems .. ' ' .. (totalItems == 1 and L['item'] or L['items']) .. ')'
+			name = L['Page'] .. ' ' .. currentPage .. '/' .. (totalPages == 0 and 1 or totalPages) .. ' (' .. totalItems .. ' ' .. (totalItems == 1 and L['item'] or L['items']) .. ')',
 		}
 
 		-- Search box
@@ -185,7 +182,7 @@ function module:BuildOptions()
 					module.DB.currentWhitelistPage = 1
 				end
 				buildItemList(listType, mode)
-			end
+			end,
 		}
 
 		-- Previous page button
@@ -202,7 +199,7 @@ function module:BuildOptions()
 					module.DB.currentWhitelistPage = module.DB.currentWhitelistPage - 1
 				end
 				buildItemList(listType, mode)
-			end
+			end,
 		}
 
 		-- Next page button
@@ -219,7 +216,7 @@ function module:BuildOptions()
 					module.DB.currentWhitelistPage = module.DB.currentWhitelistPage + 1
 				end
 				buildItemList(listType, mode)
-			end
+			end,
 		}
 
 		-- Separator
@@ -227,7 +224,7 @@ function module:BuildOptions()
 			type = 'header',
 			name = '',
 			width = 'full',
-			order = 5
+			order = 5,
 		}
 
 		-- Calculate which items to show on the current page
@@ -254,7 +251,7 @@ function module:BuildOptions()
 						width = 'double',
 						fontSize = 'medium',
 						order = count * 3 + 10,
-						name = displayText
+						name = displayText,
 					}
 
 					-- Create the delete button
@@ -278,7 +275,7 @@ function module:BuildOptions()
 								end
 							end
 							buildItemList(listType, mode)
-						end
+						end,
 					}
 
 					-- Create the move button
@@ -308,7 +305,7 @@ function module:BuildOptions()
 							-- Rebuild both lists
 							buildItemList(listType, 'Blacklist')
 							buildItemList(listType, 'Whitelist')
-						end
+						end,
 					}
 				end
 			end
@@ -317,7 +314,7 @@ function module:BuildOptions()
 				type = 'description',
 				width = 'full',
 				order = 10,
-				name = L['No items found']
+				name = L['No items found'],
 			}
 		end
 	end
@@ -335,26 +332,26 @@ function module:BuildOptions()
 				module.DBGlobal.global = val
 				buildItemList('history', 'Blacklist')
 				buildItemList('whitelist', 'Whitelist')
-			end
+			end,
 		},
 		persist = {
 			name = L['Keep track of voice lines forever'],
 			type = 'toggle',
 			order = 1,
-			width = 'full'
+			width = 'full',
 		},
 		stopAll = {
 			name = L['Stop ALL voice lines'],
 			desc = L['Immediately close all talking head voice lines, ignoring blacklist/whitelist settings'],
 			type = 'toggle',
 			order = 1.5,
-			width = 'full'
+			width = 'full',
 		},
 		chatOutput = {
 			name = L['Display heard voice lines in the chat.'],
 			type = 'toggle',
 			order = 2,
-			width = 'full'
+			width = 'full',
 		},
 		cleanDatabase = {
 			name = L['Clean Database'],
@@ -366,7 +363,7 @@ function module:BuildOptions()
 				buildItemList('history', 'Blacklist')
 				buildItemList('whitelist', 'Whitelist')
 				SUI:Print('StopTalking database cleaned')
-			end
+			end,
 		},
 		pageSize = {
 			name = L['Items per page'],
@@ -382,7 +379,7 @@ function module:BuildOptions()
 				module.DB.currentWhitelistPage = 1
 				buildItemList('history', 'Blacklist')
 				buildItemList('whitelist', 'Whitelist')
-			end
+			end,
 		},
 		Blacklist = {
 			type = 'group',
@@ -403,16 +400,16 @@ function module:BuildOptions()
 							end
 							buildItemList('history', 'Blacklist')
 						end
-					end
+					end,
 				},
 				list = {
 					order = 3,
 					type = 'group',
 					inline = true,
 					name = 'Voice lines',
-					args = {}
-				}
-			}
+					args = {},
+				},
+			},
 		},
 		Whitelist = {
 			type = 'group',
@@ -433,17 +430,17 @@ function module:BuildOptions()
 							end
 							buildItemList('whitelist', 'Whitelist')
 						end
-					end
+					end,
 				},
 				list = {
 					order = 3,
 					type = 'group',
 					inline = true,
 					name = 'Voice lines',
-					args = {}
-				}
-			}
-		}
+					args = {},
+				},
+			},
+		},
 	}
 
 	SUI.Options:AddOptions(OptionTable, 'Stop Talking', 'Module')

@@ -25,7 +25,7 @@ local SUIMinimap = CreateFrame('Frame', 'SUI_Minimap')
 local BaseSettings = {
 	-- Top-level settings
 	shape = 'circle',
-	size = {180, 180},
+	size = { 180, 180 },
 	scaleWithArt = true,
 	UnderVehicleUI = true,
 	useVehicleMover = true,
@@ -38,31 +38,31 @@ local BaseSettings = {
 		background = {
 			enabled = true,
 			texture = 'Interface\\AddOns\\SpartanUI\\images\\minimap\\round',
-			size = {220, 220},
-			color = {1, 1, 1, 1},
+			size = { 220, 220 },
+			color = { 1, 1, 1, 1 },
 			BlendMode = 'ADD',
-			alpha = 1
+			alpha = 1,
 		},
 		-- Zone Text
 		ZoneText = {
 			enabled = true,
 			scale = 1,
 			position = 'TOPLEFT,BorderTop,TOPLEFT,4,-4',
-			color = {1, 0.82, 0, 1}
+			color = { 1, 0.82, 0, 1 },
 		},
 		-- Coordinates
 		coords = {
 			enabled = true,
 			scale = 1,
-			size = {80, 12},
+			size = { 80, 12 },
 			position = 'BOTTOM,BorderTop,BOTTOM,-5,3',
-			color = {1, 1, 1, 1},
-			format = '%.1f, %.1f'
+			color = { 1, 1, 1, 1 },
+			format = '%.1f, %.1f',
 		},
 		-- Zoom Buttons
 		zoomButtons = {
 			enabled = false,
-			scale = 1
+			scale = 1,
 		},
 		-- Clock
 		clock = {
@@ -70,55 +70,55 @@ local BaseSettings = {
 			position = 'BOTTOMRIGHT,BorderTop,BOTTOMRIGHT,-10,0',
 			scale = 1,
 			format = '%I:%M %p',
-			color = {1, 1, 1, 1}
+			color = { 1, 1, 1, 1 },
 		},
 		-- Tracking Icon
 		tracking = {
 			enabled = true,
 			position = 'BOTTOMLEFT,BorderTop,BOTTOMLEFT,2,1',
-			scale = 1
+			scale = 1,
 		},
 		-- Calendar Button
 		calendarButton = {
 			enabled = true,
 			position = 'TOPRIGHT,BorderTop,TOPRIGHT,2,2',
-			scale = 1
+			scale = 1,
 		},
 		-- Mail Icon
 		mailIcon = {
 			enabled = true,
 			position = 'LEFT,Tracking,RIGHT,2,0',
-			scale = 1
+			scale = 1,
 		},
 		-- Instance Difficulty
 		instanceDifficulty = {
 			enabled = true,
 			position = 'RIGHT,BorderTop,LEFT,2,0',
-			scale = 0.8
+			scale = 0.8,
 		},
 		-- Queue Status (LFG eye)
 		queueStatus = {
 			enabled = true,
 			position = 'BOTTOMLEFT,Minimap,BOTTOMLEFT,-15,45',
-			scale = 0.85
+			scale = 0.85,
 		},
 		--Expansion Button
 		expansionButton = {
 			position = 'BOTTOMLEFT,Minimap,BOTTOMLEFT,0,0',
-			scale = 0.6
+			scale = 0.6,
 		},
 		-- Addon Buttons
 		addonButtons = {
-			style = 'mouseover' -- 'always', 'mouseover', or 'never'
-		}
-	}
+			style = 'mouseover', -- 'always', 'mouseover', or 'never'
+		},
+	},
 }
 
 ---@class SUI.Style.Settings.IMinimap : SUI.Style.Settings.Minimap
 local BaseSettingsClassic = {
 	-- Top-level settings
 	shape = 'circle',
-	size = {140, 140},
+	size = { 140, 140 },
 	scaleWithArt = true,
 	UnderVehicleUI = true,
 	position = 'TOPRIGHT,UIParent,TOPRIGHT,-20,-20',
@@ -127,60 +127,61 @@ local BaseSettingsClassic = {
 	background = {
 		enabled = true,
 		BlendMode = 'ADD',
-		alpha = 1
+		alpha = 1,
 	},
 	ZoneText = {
 		enabled = true,
 		scale = 1,
 		position = 'TOP,Minimap,BOTTOM,0,-4',
-		color = {1, 0.82, 0, 1}
+		color = { 1, 0.82, 0, 1 },
 	},
 	coords = {
 		enabled = true,
 		scale = 1,
-		size = {80, 12},
+		size = { 80, 12 },
 		position = 'TOP,Minimap,BOTTOM,0,-20',
-		color = {1, 1, 1, 1},
-		format = '%.1f, %.1f'
+		color = { 1, 1, 1, 1 },
+		format = '%.1f, %.1f',
 	},
 	zoomButtons = {
 		enabled = false,
-		scale = 1
+		scale = 1,
 	},
 	clock = {
 		enabled = false,
 		scale = 0.7,
 		position = 'TOP,Minimap,BOTTOM,0,-36',
 		format = '%I:%M %p',
-		color = {1, 1, 1, 1}
+		color = { 1, 1, 1, 1 },
 	},
 	tracking = {
 		enabled = true,
-		scale = 1
+		scale = 1,
 	},
 	mailIcon = {
 		enabled = true,
-		scale = 1
+		scale = 1,
 	},
 	instanceDifficulty = {
 		enabled = true,
-		scale = 0.8
+		scale = 0.8,
 	},
 	queueStatus = {
 		enabled = true,
-		scale = 0.85
+		scale = 0.85,
 	},
 	addonButtons = {
-		style = 'mouseover' -- 'always', 'mouseover', or 'never'
-	}
+		style = 'mouseover', -- 'always', 'mouseover', or 'never'
+	},
 }
 
 local function IsMouseOver()
 	for _, MouseFocus in ipairs(GetMouseFoci()) do
 		if
-			MouseFocus and not MouseFocus:IsForbidden() and
-				((MouseFocus:GetName() == 'Minimap') or (MouseFocus:GetParent() and MouseFocus:GetParent():GetName() and MouseFocus:GetParent():GetName():find('Mini[Mm]ap')))
-		 then
+			MouseFocus
+			and not MouseFocus:IsForbidden()
+			and ((MouseFocus:GetName() == 'Minimap') or (MouseFocus:GetParent() and MouseFocus:GetParent():GetName() and MouseFocus:GetParent():GetName():find('Mini[Mm]ap')))
+		then
 			return true
 		end
 	end
@@ -217,29 +218,23 @@ end
 -- Setup vehicle UI monitoring using the secure watcher frame
 local function SetupVehicleUIMonitoring()
 	-- Hook the watcher frame's visibility changes
-	VehicleUIWatcher:HookScript(
-		'OnHide',
-		function()
-			-- Vehicle UI is now active (frame is hidden when vehicle UI shows)
-			if module.Settings and module.Settings.UnderVehicleUI and module.Settings.useVehicleMover ~= false then
-				module:SwitchMinimapPosition(true)
-			end
+	VehicleUIWatcher:HookScript('OnHide', function()
+		-- Vehicle UI is now active (frame is hidden when vehicle UI shows)
+		if module.Settings and module.Settings.UnderVehicleUI and module.Settings.useVehicleMover ~= false then
+			module:SwitchMinimapPosition(true)
 		end
-	)
+	end)
 
-	VehicleUIWatcher:HookScript(
-		'OnShow',
-		function()
-			-- Vehicle UI is no longer active (frame is shown when vehicle UI hides)
-			if module.Settings and module.Settings.UnderVehicleUI and module.Settings.useVehicleMover ~= false then
-				module:SwitchMinimapPosition(false)
-			end
+	VehicleUIWatcher:HookScript('OnShow', function()
+		-- Vehicle UI is no longer active (frame is shown when vehicle UI hides)
+		if module.Settings and module.Settings.UnderVehicleUI and module.Settings.useVehicleMover ~= false then
+			module:SwitchMinimapPosition(false)
 		end
-	)
+	end)
 end
 
 function module:Register(name, settings)
-	Registry[name] = {settings = settings}
+	Registry[name] = { settings = settings }
 end
 
 function module:UpdateSettings()
@@ -317,16 +312,13 @@ function module:ModifyMinimapLayout()
 
 		-- Enable mousewheel zoom
 		Minimap:EnableMouseWheel(true)
-		Minimap:SetScript(
-			'OnMouseWheel',
-			function(_, delta)
-				if delta > 0 then
-					Minimap_ZoomIn()
-				else
-					Minimap_ZoomOut()
-				end
+		Minimap:SetScript('OnMouseWheel', function(_, delta)
+			if delta > 0 then
+				Minimap_ZoomIn()
+			else
+				Minimap_ZoomOut()
 			end
-		)
+		end)
 
 		-- Position Minimap inside SUIMinimap holder
 		Minimap:ClearAllPoints()
@@ -437,47 +429,38 @@ function module:UpdateMinimapSize()
 
 	-- Force minimap to refresh and re-render after size changes
 	-- We delay this slightly to ensure the size changes have taken effect
-	C_Timer.After(
-		0.1,
-		function()
-			module:UpdateMinimapShape()
+	C_Timer.After(0.1, function()
+		module:UpdateMinimapShape()
 
-			-- Force minimap refresh by triggering various update methods
-			if Minimap.RefreshAll then
-				Minimap:RefreshAll()
-			end
-
-			-- Force a zoom update to refresh the display
-			local currentZoom = Minimap:GetZoom()
-			if currentZoom > 0 then
-				Minimap:SetZoom(currentZoom - 1)
-				C_Timer.After(
-					0.05,
-					function()
-						Minimap:SetZoom(currentZoom)
-					end
-				)
-			end
-
-			-- Trigger minimap update events if available
-			if MinimapCluster.UpdateBlips then
-				MinimapCluster:UpdateBlips()
-			end
-
-			-- Force texture coordinate refresh
-			if GetCVar('rotateMinimap') == '1' then
-				-- Temporarily toggle rotation to force refresh
-				local rotate = module.Settings.rotate
-				C_CVar.SetCVar('rotateMinimap', rotate and '0' or '1')
-				C_Timer.After(
-					0.05,
-					function()
-						C_CVar.SetCVar('rotateMinimap', rotate and '1' or '0')
-					end
-				)
-			end
+		-- Force minimap refresh by triggering various update methods
+		if Minimap.RefreshAll then
+			Minimap:RefreshAll()
 		end
-	)
+
+		-- Force a zoom update to refresh the display
+		local currentZoom = Minimap:GetZoom()
+		if currentZoom > 0 then
+			Minimap:SetZoom(currentZoom - 1)
+			C_Timer.After(0.05, function()
+				Minimap:SetZoom(currentZoom)
+			end)
+		end
+
+		-- Trigger minimap update events if available
+		if MinimapCluster.UpdateBlips then
+			MinimapCluster:UpdateBlips()
+		end
+
+		-- Force texture coordinate refresh
+		if GetCVar('rotateMinimap') == '1' then
+			-- Temporarily toggle rotation to force refresh
+			local rotate = module.Settings.rotate
+			C_CVar.SetCVar('rotateMinimap', rotate and '0' or '1')
+			C_Timer.After(0.05, function()
+				C_CVar.SetCVar('rotateMinimap', rotate and '1' or '0')
+			end)
+		end
+	end)
 end
 
 function module:UpdateMinimapShape()
@@ -754,25 +737,21 @@ function module:SetupCoordinatesUpdater()
 		return
 	end
 
-	self.coordsTimer =
-		self:ScheduleRepeatingTimer(
-		function()
-			local mapID = C_Map.GetBestMapForUnit('player')
-			if not mapID then
-				return
-			end
-			local pos = C_Map.GetPlayerMapPosition(mapID, 'player')
-			if not pos then
-				return
-			end
-			if pos.x and pos.y then
-				local coordSettings = SUI.IsRetail and module.Settings.elements and module.Settings.elements.coords or module.Settings.coords
-				local format = coordSettings and coordSettings.format or '%.1f, %.1f'
-				Minimap.coords:SetText(string.format(format, pos.x * 100, pos.y * 100))
-			end
-		end,
-		0.5
-	)
+	self.coordsTimer = self:ScheduleRepeatingTimer(function()
+		local mapID = C_Map.GetBestMapForUnit('player')
+		if not mapID then
+			return
+		end
+		local pos = C_Map.GetPlayerMapPosition(mapID, 'player')
+		if not pos then
+			return
+		end
+		if pos.x and pos.y then
+			local coordSettings = SUI.IsRetail and module.Settings.elements and module.Settings.elements.coords or module.Settings.coords
+			local format = coordSettings and coordSettings.format or '%.1f, %.1f'
+			Minimap.coords:SetText(string.format(format, pos.x * 100, pos.y * 100))
+		end
+	end, 0.5)
 end
 
 function module:SetupClock()
@@ -974,8 +953,8 @@ function module:SetupExpansionButton()
 end
 
 local isFrameIgnored = function(item)
-	local ignored = {'HybridMinimap', 'AAP-Classic', 'HandyNotes'}
-	local WildcardIgnore = {'Questie', 'HandyNotes', 'TTMinimap'}
+	local ignored = { 'HybridMinimap', 'AAP-Classic', 'HandyNotes' }
+	local WildcardIgnore = { 'Questie', 'HandyNotes', 'TTMinimap' }
 	if not item or not item.GetName then
 		return false
 	end
@@ -1025,7 +1004,7 @@ function module:SetupAddonButtons()
 	end
 
 	local function showAllButtons()
-		for _, child in ipairs({Minimap:GetChildren()}) do
+		for _, child in ipairs({ Minimap:GetChildren() }) do
 			if child:IsObjectType('Button') and child.fadeInAnim then
 				child.fadeInAnim:Stop()
 				child.fadeOutAnim:Stop()
@@ -1035,7 +1014,7 @@ function module:SetupAddonButtons()
 	end
 
 	local function hideAllButtons()
-		for _, child in ipairs({Minimap:GetChildren()}) do
+		for _, child in ipairs({ Minimap:GetChildren() }) do
 			if child:IsObjectType('Button') and child.fadeOutAnim then
 				child.fadeInAnim:Stop()
 				child.fadeOutAnim:Play()
@@ -1044,7 +1023,7 @@ function module:SetupAddonButtons()
 	end
 
 	-- Set up fading for existing buttons
-	for _, child in ipairs({Minimap:GetChildren()}) do
+	for _, child in ipairs({ Minimap:GetChildren() }) do
 		if child:IsObjectType('Button') then
 			setupButtonFading(child)
 			child:HookScript('OnEnter', showAllButtons)
@@ -1053,25 +1032,19 @@ function module:SetupAddonButtons()
 	end
 
 	-- Hook the Minimap to catch newly added buttons
-	Minimap:HookScript(
-		'OnEvent',
-		function(self, event, ...)
-			if event == 'ADDON_LOADED' then
-				C_Timer.After(
-					0.1,
-					function()
-						for _, child in ipairs({self:GetChildren()}) do
-							if child:IsObjectType('Button') and not child.fadeInAnim and not isFrameIgnored(child) then
-								setupButtonFading(child)
-								child:HookScript('OnEnter', showAllButtons)
-								child:HookScript('OnLeave', hideAllButtons)
-							end
-						end
+	Minimap:HookScript('OnEvent', function(self, event, ...)
+		if event == 'ADDON_LOADED' then
+			C_Timer.After(0.1, function()
+				for _, child in ipairs({ self:GetChildren() }) do
+					if child:IsObjectType('Button') and not child.fadeInAnim and not isFrameIgnored(child) then
+						setupButtonFading(child)
+						child:HookScript('OnEnter', showAllButtons)
+						child:HookScript('OnLeave', hideAllButtons)
 					end
-				)
-			end
+				end
+			end)
 		end
-	)
+	end)
 	Minimap:RegisterEvent('ADDON_LOADED')
 
 	-- Hook the Minimap itself for mouse events
@@ -1087,20 +1060,20 @@ function module:UpdateAddonButtons()
 
 	local style = addonSettings.style or 'mouseover'
 	if style == 'always' then
-		for _, child in ipairs({Minimap:GetChildren()}) do
+		for _, child in ipairs({ Minimap:GetChildren() }) do
 			if child:IsObjectType('Button') and not isFrameIgnored(child) then
 				child:SetAlpha(1)
 			end
 		end
 	elseif style == 'never' then
-		for _, child in ipairs({Minimap:GetChildren()}) do
+		for _, child in ipairs({ Minimap:GetChildren() }) do
 			if child:IsObjectType('Button') and not isFrameIgnored(child) then
 				child:SetAlpha(0)
 			end
 		end
 	else -- "mouseover"
 		-- The showing/hiding is handled by the OnEnter/OnLeave scripts
-		for _, child in ipairs({Minimap:GetChildren()}) do
+		for _, child in ipairs({ Minimap:GetChildren() }) do
 			if child:IsObjectType('Button') and not isFrameIgnored(child) then
 				child:SetAlpha(0) -- Start hidden
 			end
@@ -1129,47 +1102,32 @@ function module:SwitchMinimapPosition(inVehicle)
 end
 
 function module:SetupHooks()
-	Minimap:HookScript(
-		'OnShow',
-		function()
-			SUIMinimap:Show()
-		end
-	)
-	Minimap:HookScript(
-		'OnHide',
-		function()
-			SUIMinimap:Hide()
-		end
-	)
+	Minimap:HookScript('OnShow', function()
+		SUIMinimap:Show()
+	end)
+	Minimap:HookScript('OnHide', function()
+		SUIMinimap:Hide()
+	end)
 
-	SUIMinimap:HookScript(
-		'OnEnter',
-		function()
-			IsMouseOver()
-		end
-	)
-	SUIMinimap:HookScript(
-		'OnLeave',
-		function()
-			IsMouseOver()
-		end
-	)
+	SUIMinimap:HookScript('OnEnter', function()
+		IsMouseOver()
+	end)
+	SUIMinimap:HookScript('OnLeave', function()
+		IsMouseOver()
+	end)
 end
 
 function module:RegisterEvents()
-	MinimapUpdater:SetScript(
-		'OnEvent',
-		function(self, event)
-			if not InCombatLockdown() then
-				module:ScheduleTimer(module.Update, 2, module, true)
-			end
-
-			-- Update zone text on zone changes for Classic
-			if not SUI.IsRetail and (event == 'ZONE_CHANGED' or event == 'ZONE_CHANGED_INDOORS' or event == 'ZONE_CHANGED_NEW_AREA') then
-				module:UpdateClassicZoneText()
-			end
+	MinimapUpdater:SetScript('OnEvent', function(self, event)
+		if not InCombatLockdown() then
+			module:ScheduleTimer(module.Update, 2, module, true)
 		end
-	)
+
+		-- Update zone text on zone changes for Classic
+		if not SUI.IsRetail and (event == 'ZONE_CHANGED' or event == 'ZONE_CHANGED_INDOORS' or event == 'ZONE_CHANGED_NEW_AREA') then
+			module:UpdateClassicZoneText()
+		end
+	end)
 	MinimapUpdater:RegisterEvent('ADDON_LOADED')
 	MinimapUpdater:RegisterEvent('ZONE_CHANGED')
 	MinimapUpdater:RegisterEvent('ZONE_CHANGED_INDOORS')
@@ -1294,25 +1252,20 @@ function module:InitializeVehicleMover()
 		borderHeight = MinimapCluster.BorderTop:GetHeight()
 	end
 
-	VehicleMover =
-		SUI.MoveIt:CreateCustomMover(
-		'Vehicle Minimap Position',
-		module.Settings.vehiclePosition,
-		{
-			width = Minimap:GetWidth(),
-			height = (Minimap:GetHeight() + borderHeight + 15),
-			savePosition = function(position)
-				module.Settings.vehiclePosition = position
+	VehicleMover = SUI.MoveIt:CreateCustomMover('Vehicle Minimap Position', module.Settings.vehiclePosition, {
+		width = Minimap:GetWidth(),
+		height = (Minimap:GetHeight() + borderHeight + 15),
+		savePosition = function(position)
+			module.Settings.vehiclePosition = position
 
-				-- Save to user settings
-				local currentStyle = SUI.DB.Artwork.Style
-				if not module.DB.customSettings[currentStyle] then
-					module.DB.customSettings[currentStyle] = {}
-				end
-				module.DB.customSettings[currentStyle].vehiclePosition = position
+			-- Save to user settings
+			local currentStyle = SUI.DB.Artwork.Style
+			if not module.DB.customSettings[currentStyle] then
+				module.DB.customSettings[currentStyle] = {}
 			end
-		}
-	)
+			module.DB.customSettings[currentStyle].vehiclePosition = position
+		end,
+	})
 
 	VehicleMover.target = SUIMinimap
 
@@ -1321,12 +1274,9 @@ function module:InitializeVehicleMover()
 	module:RegisterEvent('UNIT_EXITED_VEHICLE', 'OnVehicleChange')
 	module:RegisterEvent('PLAYER_ENTERING_WORLD', 'CheckVehicleStatus')
 	-- OnZone change
-	module:RegisterEvent(
-		'ZONE_CHANGED_NEW_AREA',
-		function()
-			module:ScheduleTimer(module.CheckOverrideActionBar, 0.2)
-		end
-	)
+	module:RegisterEvent('ZONE_CHANGED_NEW_AREA', function()
+		module:ScheduleTimer(module.CheckOverrideActionBar, 0.2)
+	end)
 
 	-- Check if OverrideActionBar exists and is visible
 	module:RegisterEvent('UPDATE_OVERRIDE_ACTIONBAR', 'CheckOverrideActionBar')
@@ -1418,40 +1368,37 @@ end
 
 -- Check for OverrideActionBar visibility changes
 function module:CheckOverrideActionBar()
-	C_Timer.After(
-		0.5,
-		function()
-			if IsVehicleUIActive() then
-				if not module.Settings.firstVehicleDetected and module.Settings.UnderVehicleUI and module.Settings.useVehicleMover ~= false then
-					module.Settings.firstVehicleDetected = true
-					module.DB.customSettings[SUI.DB.Artwork.Style].firstVehicleDetected = true
+	C_Timer.After(0.5, function()
+		if IsVehicleUIActive() then
+			if not module.Settings.firstVehicleDetected and module.Settings.UnderVehicleUI and module.Settings.useVehicleMover ~= false then
+				module.Settings.firstVehicleDetected = true
+				module.DB.customSettings[SUI.DB.Artwork.Style].firstVehicleDetected = true
 
-					StaticPopupDialogs['SUI_MINIMAP_VEHICLE_POSITION'] = {
-						text = L['Would you like to set a custom position for your minimap when in a vehicle?'],
-						button1 = L['Yes'],
-						button2 = L['No'],
-						OnAccept = function()
-							module:VehicleUIMoverShow()
-						end,
-						timeout = 0,
-						whileDead = true,
-						hideOnEscape = true,
-						preferredIndex = 3
-					}
+				StaticPopupDialogs['SUI_MINIMAP_VEHICLE_POSITION'] = {
+					text = L['Would you like to set a custom position for your minimap when in a vehicle?'],
+					button1 = L['Yes'],
+					button2 = L['No'],
+					OnAccept = function()
+						module:VehicleUIMoverShow()
+					end,
+					timeout = 0,
+					whileDead = true,
+					hideOnEscape = true,
+					preferredIndex = 3,
+				}
 
-					StaticPopup_Show('SUI_MINIMAP_VEHICLE_POSITION')
-				end
+				StaticPopup_Show('SUI_MINIMAP_VEHICLE_POSITION')
+			end
 
-				if module.Settings.UnderVehicleUI and module.Settings.useVehicleMover ~= false then
-					module:SwitchMinimapPosition(true)
-				end
-			else
-				if module.Settings.UnderVehicleUI and module.Settings.useVehicleMover ~= false then
-					module:SwitchMinimapPosition(false)
-				end
+			if module.Settings.UnderVehicleUI and module.Settings.useVehicleMover ~= false then
+				module:SwitchMinimapPosition(true)
+			end
+		else
+			if module.Settings.UnderVehicleUI and module.Settings.useVehicleMover ~= false then
+				module:SwitchMinimapPosition(false)
 			end
 		end
-	)
+	end)
 end
 
 function module:OnInitialize()
@@ -1462,15 +1409,15 @@ function module:OnInitialize()
 		customSettings = {
 			['**'] = {
 				['**'] = {
-					['**'] = {}
-				}
-			}
+					['**'] = {},
+				},
+			},
 		},
 		AutoDetectAllowUse = true,
-		ManualAllowUse = false
+		ManualAllowUse = false,
 	}
 
-	module.Database = SUI.SpartanUIDB:RegisterNamespace('Minimap', {profile = defaults})
+	module.Database = SUI.SpartanUIDB:RegisterNamespace('Minimap', { profile = defaults })
 	module.DB = module.Database.profile ---@type SUI.Minimap.Database
 
 	-- Initialize the settings
@@ -1487,7 +1434,7 @@ end
 function module:DetectMinimapAddons()
 	local conflictingAddons = {
 		['SexyMap'] = 'SexyMap',
-		['Carbonite'] = NXTITLELOW
+		['Carbonite'] = NXTITLELOW,
 		-- Add other known conflicting addons here
 	}
 
@@ -1535,17 +1482,13 @@ function module:OnEnable()
 	if SUI.IsRetail then
 		module:InitializeVehicleMover()
 
-		SUI:AddChatCommand(
-			'vehicleminimap',
-			function()
-				if VehicleMover:IsShown() then
-					module:VehicleUIMoverHide()
-				else
-					module:VehicleUIMoverShow()
-				end
-			end,
-			L['Toggle vehicle minimap mover']
-		)
+		SUI:AddChatCommand('vehicleminimap', function()
+			if VehicleMover:IsShown() then
+				module:VehicleUIMoverHide()
+			else
+				module:VehicleUIMoverShow()
+			end
+		end, L['Toggle vehicle minimap mover'])
 	end
 
 	-- Setup Options
@@ -1567,7 +1510,7 @@ StaticPopupDialogs['MiniMapNotice'] = {
 	end,
 	timeout = 0,
 	whileDead = true,
-	hideOnEscape = false
+	hideOnEscape = false,
 }
 
 SUI.Minimap = module

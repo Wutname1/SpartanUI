@@ -89,13 +89,13 @@ local function CacheOriginalPosition(moverName, frame)
 			relativeTo = relativeTo and relativeTo:GetName() or 'UIParent',
 			relativePoint = relativePoint,
 			xOfs = xOfs,
-			yOfs = yOfs
+			yOfs = yOfs,
 		}
 	end
 
 	module.BlizzMoverCache[moverName].originalPos = {
 		points = points,
-		parent = frame:GetParent() and frame:GetParent():GetName() or 'UIParent'
+		parent = frame:GetParent() and frame:GetParent():GetName() or 'UIParent',
 	}
 	module.BlizzMoverCache[moverName].frame = frame
 
@@ -206,13 +206,10 @@ local function TalkingHead()
 		frame.ignoreFramePositionManager = true
 		THUIHolder:SetSize(frame:GetSize())
 		MoveIt:CreateMover(THUIHolder, 'THUIHolder', 'Talking Head Frame', nil, 'Blizzard UI')
-		frame:HookScript(
-			'OnShow',
-			function()
-				frame:ClearAllPoints()
-				frame:SetPoint('CENTER', THUIHolder, 'CENTER', 0, 0)
-			end
-		)
+		frame:HookScript('OnShow', function()
+			frame:ClearAllPoints()
+			frame:SetPoint('CENTER', THUIHolder, 'CENTER', 0, 0)
+		end)
 
 		-- Store holder reference
 		if module.BlizzMoverCache[moverName] then
@@ -228,14 +225,11 @@ local function TalkingHead()
 		--We want the mover to be available immediately, so we load it ourselves
 		local f = CreateFrame('Frame')
 		f:RegisterEvent('PLAYER_ENTERING_WORLD')
-		f:SetScript(
-			'OnEvent',
-			function(frame, event)
-				frame:UnregisterEvent(event)
-				C_AddOns.LoadAddOn('Blizzard_TalkingHeadUI')
-				SetupTalkingHead()
-			end
-		)
+		f:SetScript('OnEvent', function(frame, event)
+			frame:UnregisterEvent(event)
+			C_AddOns.LoadAddOn('Blizzard_TalkingHeadUI')
+			SetupTalkingHead()
+		end)
 	end
 end
 
@@ -331,29 +325,21 @@ local function AbilityBars()
 
 	-- Hook functions to prevent movement
 	if extraActionEnabled then
-		hooksecurefunc(
-			ExtraActionBarFrame,
-			'SetPoint',
-			function(self)
-				if self:GetParent() ~= ExtraActionBarHolder then
-					self:ClearAllPoints()
-					self:SetPoint('CENTER', ExtraActionBarHolder, 'CENTER')
-				end
+		hooksecurefunc(ExtraActionBarFrame, 'SetPoint', function(self)
+			if self:GetParent() ~= ExtraActionBarHolder then
+				self:ClearAllPoints()
+				self:SetPoint('CENTER', ExtraActionBarHolder, 'CENTER')
 			end
-		)
+		end)
 	end
 
 	if zoneAbilityEnabled and ZoneAbilityFrame then
-		hooksecurefunc(
-			ZoneAbilityFrame,
-			'SetPoint',
-			function(self)
-				if self:GetParent() ~= ZoneAbilityHolder then
-					self:ClearAllPoints()
-					self:SetPoint('CENTER', ZoneAbilityHolder, 'CENTER')
-				end
+		hooksecurefunc(ZoneAbilityFrame, 'SetPoint', function(self)
+			if self:GetParent() ~= ZoneAbilityHolder then
+				self:ClearAllPoints()
+				self:SetPoint('CENTER', ZoneAbilityHolder, 'CENTER')
 			end
-		)
+		end)
 	end
 
 	-- Create movers
@@ -379,36 +365,24 @@ local function AbilityBars()
 
 	-- Update the layout when new frames are added
 	if ExtraAbilityContainer then
-		hooksecurefunc(
-			ExtraAbilityContainer,
-			'AddFrame',
-			function()
-				ExtraAB.Reparent()
-			end
-		)
+		hooksecurefunc(ExtraAbilityContainer, 'AddFrame', function()
+			ExtraAB.Reparent()
+		end)
 	end
 
 	if ZoneAbilityFrame then
-		hooksecurefunc(
-			ZoneAbilityFrame,
-			'SetParent',
-			function(_, parent)
-				if parent ~= ZoneAbilityHolder and not NeedsReparent then
-					ExtraAB.Reparent()
-				end
-			end
-		)
-	end
-
-	hooksecurefunc(
-		ExtraActionBarFrame,
-		'SetParent',
-		function(_, parent)
-			if parent ~= ExtraActionBarHolder and not NeedsReparent then
+		hooksecurefunc(ZoneAbilityFrame, 'SetParent', function(_, parent)
+			if parent ~= ZoneAbilityHolder and not NeedsReparent then
 				ExtraAB.Reparent()
 			end
+		end)
+	end
+
+	hooksecurefunc(ExtraActionBarFrame, 'SetParent', function(_, parent)
+		if parent ~= ExtraActionBarHolder and not NeedsReparent then
+			ExtraAB.Reparent()
 		end
-	)
+	end)
 end
 
 ---Disable the ExtraActionBar mover
@@ -551,17 +525,13 @@ local function VehicleLeaveButton()
 
 		frame:ClearAllPoints()
 		frame:SetPoint('CENTER', VehicleBtnHolder, 'CENTER')
-		hooksecurefunc(
-			frame,
-			'SetPoint',
-			function(_, _, parent)
-				if parent ~= VehicleBtnHolder then
-					frame:ClearAllPoints()
-					frame:SetParent(UIParent)
-					frame:SetPoint('CENTER', VehicleBtnHolder, 'CENTER')
-				end
+		hooksecurefunc(frame, 'SetPoint', function(_, _, parent)
+			if parent ~= VehicleBtnHolder then
+				frame:ClearAllPoints()
+				frame:SetParent(UIParent)
+				frame:SetPoint('CENTER', VehicleBtnHolder, 'CENTER')
 			end
-		)
+		end)
 
 		-- Store holder reference
 		if module.BlizzMoverCache[moverName] then

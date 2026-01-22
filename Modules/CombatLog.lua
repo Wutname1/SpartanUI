@@ -21,8 +21,8 @@ function module:OnInitialize()
 			normaldungeon = false,
 			loggingActive = false,
 			FirstLaunch = true,
-			debug = false
-		}
+			debug = false,
+		},
 	}
 	module.Database = SUI.SpartanUIDB:RegisterNamespace('CombatLog', defaults)
 	module.DB = module.Database.profile
@@ -77,43 +77,34 @@ function module:OnEnable()
 	module:Options()
 	module:FirstLaunch()
 
-	CombatLog_Watcher:SetScript(
-		'OnEvent',
-		function(_, event)
-			if SUI:IsModuleDisabled('CombatLog') then
-				return
-			end
-
-			if module[event] then
-				module[event]()
-			end
+	CombatLog_Watcher:SetScript('OnEvent', function(_, event)
+		if SUI:IsModuleDisabled('CombatLog') then
+			return
 		end
-	)
+
+		if module[event] then
+			module[event]()
+		end
+	end)
 
 	if SUI.IsRetail then
 		CombatLog_Watcher:RegisterEvent('CHALLENGE_MODE_START')
 	end
 	CombatLog_Watcher:RegisterEvent('ZONE_CHANGED_NEW_AREA')
 	CombatLog_Watcher:RegisterEvent('PLAYER_ENTERING_WORLD')
-	SUI:AddChatCommand(
-		'logging',
-		function(arg)
-			if (not arg) or (arg == 'start' and LoggingCombat()) or (arg == 'stop' and not LoggingCombat()) then
-				if LoggingCombat() then
-					SUI:Print('Currently logging combat')
-				else
-					SUI:Print('NOT Currently logging combat')
-				end
-			elseif arg == 'start' then
-				setLogging(true, 'manual command')
-			elseif arg == 'stop' then
-				setLogging(false, 'disabled')
+	SUI:AddChatCommand('logging', function(arg)
+		if (not arg) or (arg == 'start' and LoggingCombat()) or (arg == 'stop' and not LoggingCombat()) then
+			if LoggingCombat() then
+				SUI:Print('Currently logging combat')
+			else
+				SUI:Print('NOT Currently logging combat')
 			end
-		end,
-		'Toggles combat logging',
-		nil,
-		true
-	)
+		elseif arg == 'start' then
+			setLogging(true, 'manual command')
+		elseif arg == 'stop' then
+			setLogging(false, 'disabled')
+		end
+	end, 'Toggles combat logging', nil, true)
 end
 
 function module:OnDisable()
@@ -124,8 +115,7 @@ function module:OnDisable()
 	CombatLog_Watcher:UnregisterEvent('PLAYER_ENTERING_WORLD')
 end
 
-function module:announce(msg)
-end
+function module:announce(msg) end
 
 function module:LogCheck(event)
 	local _, type, difficulty, _, maxPlayers = GetInstanceInfo()
@@ -194,18 +184,18 @@ function module:Options()
 			alwayson = {
 				name = L['Always on'],
 				type = 'toggle',
-				order = 1
+				order = 1,
 			},
 			announce = {
 				name = L['Announce logging in chat'],
 				type = 'toggle',
 				width = 'double',
-				order = 5
+				order = 5,
 			},
 			debug = {
 				name = L['Debug mode'],
 				type = 'toggle',
-				order = 500
+				order = 500,
 			},
 			raid = {
 				name = L['Raid settings'],
@@ -224,29 +214,29 @@ function module:Options()
 					raidlegacy = {
 						name = L['Legacy raids'],
 						type = 'toggle',
-						order = 0
+						order = 0,
 					},
 					raidlfr = {
 						name = L['Looking for raid'],
 						type = 'toggle',
-						order = 2
+						order = 2,
 					},
 					raidnormal = {
 						name = L['Normal'],
 						type = 'toggle',
-						order = 4
+						order = 4,
 					},
 					raidheroic = {
 						name = L['Heroic'],
 						type = 'toggle',
-						order = 6
+						order = 6,
 					},
 					raidmythic = {
 						name = L['Mythic'],
 						type = 'toggle',
-						order = 8
-					}
-				}
+						order = 8,
+					},
+				},
 			},
 			dungeons = {
 				name = L['Dungeon settings'],
@@ -265,26 +255,26 @@ function module:Options()
 					normaldungeon = {
 						name = L['Normal'],
 						type = 'toggle',
-						order = 0
+						order = 0,
 					},
 					heroicdungeon = {
 						name = L['Heroic'],
 						type = 'toggle',
-						order = 2
+						order = 2,
 					},
 					mythicdungeon = {
 						name = L['Mythic'],
 						type = 'toggle',
-						order = 4
+						order = 4,
 					},
 					mythicplus = {
 						name = L['Mythic+'],
 						type = 'toggle',
-						order = 6
-					}
-				}
-			}
-		}
+						order = 6,
+					},
+				},
+			},
+		},
 	}
 end
 
@@ -369,18 +359,15 @@ function module:FirstLaunch()
 					object:SetChecked(module.DB[key])
 				end
 
-				cLog.modEnabled:HookScript(
-					'OnClick',
-					function()
-						for _, object in pairs(cLog.options) do
-							if cLog.modEnabled:GetChecked() then
-								object:Enable()
-							else
-								object:Disable()
-							end
+				cLog.modEnabled:HookScript('OnClick', function()
+					for _, object in pairs(cLog.options) do
+						if cLog.modEnabled:GetChecked() then
+							object:Enable()
+						else
+							object:Disable()
 						end
 					end
-				)
+				end)
 			end
 
 			SUI_Win.cLog = cLog
@@ -401,7 +388,7 @@ function module:FirstLaunch()
 		end,
 		Skip = function()
 			module.DB.FirstLaunch = false
-		end
+		end,
 	}
 	SUI.Setup:AddPage(PageData)
 end

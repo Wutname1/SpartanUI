@@ -20,55 +20,46 @@ local function InitializeMinimapButton()
 	MinimapButton:SetPushedTexture('Interface\\AddOns\\SpartanUI\\images\\old_error.png')
 
 	-- Tooltip using LibAT's error data
-	MinimapButton:SetScript(
-		'OnEnter',
-		function(self)
-			GameTooltip:SetOwner(self, 'TOP')
+	MinimapButton:SetScript('OnEnter', function(self)
+		GameTooltip:SetOwner(self, 'TOP')
 
-			local errorsCurrent = LibATErrorDisplay.ErrorHandler:GetErrors(BugGrabber:GetSessionId())
-			local errorsTotal = #LibATErrorDisplay.ErrorHandler:GetErrors()
+		local errorsCurrent = LibATErrorDisplay.ErrorHandler:GetErrors(BugGrabber:GetSessionId())
+		local errorsTotal = #LibATErrorDisplay.ErrorHandler:GetErrors()
 
-			if #errorsCurrent == 0 then
-				if errorsTotal ~= 0 then
-					GameTooltip:AddLine('You have no new bugs, but you have ' .. errorsTotal .. ' saved bugs.')
-				else
-					GameTooltip:AddLine('You have no bugs, yay!')
-				end
+		if #errorsCurrent == 0 then
+			if errorsTotal ~= 0 then
+				GameTooltip:AddLine('You have no new bugs, but you have ' .. errorsTotal .. ' saved bugs.')
 			else
-				GameTooltip:AddLine('|cffffffffSpartan|cffe21f1fUI|r error handler')
-				local line = '%d. %s (x%d)'
-				for i, err in next, errorsCurrent do
-					GameTooltip:AddLine(line:format(i, LibATErrorDisplay.ErrorHandler:ColorText(err.message), err.counter), 0.5, 0.5, 0.5)
-					if i > 8 then
-						break
-					end
+				GameTooltip:AddLine('You have no bugs, yay!')
+			end
+		else
+			GameTooltip:AddLine('|cffffffffSpartan|cffe21f1fUI|r error handler')
+			local line = '%d. %s (x%d)'
+			for i, err in next, errorsCurrent do
+				GameTooltip:AddLine(line:format(i, LibATErrorDisplay.ErrorHandler:ColorText(err.message), err.counter), 0.5, 0.5, 0.5)
+				if i > 8 then
+					break
 				end
 			end
-			GameTooltip:AddLine(' ')
-			GameTooltip:AddLine('|cffeda55fClick|r to open bug window.\n|cffeda55fAlt-Click|r to clear all saved errors.', 0.2, 1, 0.2, 1)
-			GameTooltip:Show()
 		end
-	)
+		GameTooltip:AddLine(' ')
+		GameTooltip:AddLine('|cffeda55fClick|r to open bug window.\n|cffeda55fAlt-Click|r to clear all saved errors.', 0.2, 1, 0.2, 1)
+		GameTooltip:Show()
+	end)
 
-	MinimapButton:SetScript(
-		'OnLeave',
-		function()
-			GameTooltip:Hide()
-		end
-	)
+	MinimapButton:SetScript('OnLeave', function()
+		GameTooltip:Hide()
+	end)
 
 	-- Click handler - use LibAT's functions
 	MinimapButton:RegisterForClicks('AnyUp')
-	MinimapButton:SetScript(
-		'OnClick',
-		function(self, button)
-			if IsAltKeyDown() then
-				LibATErrorDisplay.Reset()
-			else
-				LibATErrorDisplay.BugWindow:OpenErrorWindow()
-			end
+	MinimapButton:SetScript('OnClick', function(self, button)
+		if IsAltKeyDown() then
+			LibATErrorDisplay.Reset()
+		else
+			LibATErrorDisplay.BugWindow:OpenErrorWindow()
 		end
-	)
+	end)
 
 	MinimapButton:Hide()
 end
@@ -159,5 +150,5 @@ _G.SUIErrorDisplay = {
 	Reset = function()
 		LibATErrorDisplay.Reset()
 	end,
-	UpdateIcon = UpdateMinimapIcon
+	UpdateIcon = UpdateMinimapIcon,
 }

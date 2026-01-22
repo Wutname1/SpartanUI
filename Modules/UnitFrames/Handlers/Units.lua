@@ -8,7 +8,7 @@ local Unit = {
 	UnitsLoaded = {}, ---@type table<UnitFrameName, SUI.UF.Unit.Config>
 	UnitsBuilt = {}, ---@type table<UnitFrameName, SUI.UF.Unit.Config>
 	GroupsLoaded = {}, ---@type table<UnitFrameName, SUI.UF.Unit.Config>
-	defaultConfigs = {} ---@type table<string, SUI.UF.Unit.Settings>
+	defaultConfigs = {}, ---@type table<string, SUI.UF.Unit.Settings>
 }
 
 ---@param frameName string
@@ -31,19 +31,19 @@ function Unit:Add(frameName, builder, settings, options, groupbuilder, updater)
 			showInCombat = true,
 			showWithTarget = false,
 			showInRaid = false,
-			showInParty = false
+			showInParty = false,
 		},
 		position = {
 			point = 'BOTTOM',
 			relativeTo = 'Frame',
 			relativePoint = 'BOTTOM',
 			xOfs = 0,
-			yOfs = 0
+			yOfs = 0,
 		},
 		elements = {},
 		config = {
-			IsGroup = false
-		}
+			IsGroup = false,
+		},
 	}
 	local ElementList = UF.Elements.List
 
@@ -52,7 +52,7 @@ function Unit:Add(frameName, builder, settings, options, groupbuilder, updater)
 		updater = updater,
 		settings = settings,
 		options = options,
-		groupbuilder = groupbuilder
+		groupbuilder = groupbuilder,
 	}
 
 	for elementName, elementData in pairs(ElementList) do

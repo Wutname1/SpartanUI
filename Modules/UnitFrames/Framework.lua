@@ -23,7 +23,7 @@ local UFPositionDefaults = {
 	['partypet'] = 'BOTTOMRIGHT,frame,BOTTOMLEFT,-2,0',
 	['partytarget'] = 'LEFT,frame,RIGHT,2,0',
 	['raid'] = 'TOPLEFT,UIParent,TOPLEFT,20,-40',
-	['arena'] = 'RIGHT,UIParent,RIGHT,-366,191'
+	['arena'] = 'RIGHT,UIParent,RIGHT,-366,191',
 }
 UF.Artwork = {}
 UF.MountIds = {}
@@ -54,7 +54,7 @@ function UF:IsFriendlyFrame(frameName)
 		'party',
 		'partypet',
 		'target',
-		'targettarget'
+		'targettarget',
 	}
 	if SUI:IsInTable(FriendlyFrame, frameName) or frameName:match('party') or frameName:match('raid') then
 		return true
@@ -143,9 +143,9 @@ function UF:OnInitialize()
 		profile = {
 			Style = 'War',
 			UserSettings = {
-				['**'] = {['**'] = {['**'] = {['**'] = {['**'] = {['**'] = {}}}}}}
-			}
-		}
+				['**'] = { ['**'] = { ['**'] = { ['**'] = { ['**'] = { ['**'] = {} } } } } },
+			},
+		},
 	}
 	UF.Database = SUI.SpartanUIDB:RegisterNamespace('UnitFrames', defaults)
 	UF.DB = UF.Database.profile
@@ -194,62 +194,52 @@ function UF:OnEnable()
 	-- Edit Mode integration (Retail and TBC+)
 	if EditModeManagerFrame and (SUI.IsRetail or SUI.IsTBC) then
 		local CheckedItems = {}
-		local frames = {['boss'] = 'Boss', ['raid'] = 'Raid', ['arena'] = 'Arena', ['party'] = 'Party'}
+		local frames = { ['boss'] = 'Boss', ['raid'] = 'Raid', ['arena'] = 'Arena', ['party'] = 'Party' }
 		for k, v in pairs(frames) do
-			EditModeManagerFrame.AccountSettings.SettingsContainer[v .. 'Frames'].Button:HookScript(
-				'OnClick',
-				function(...)
-					if EditModeManagerFrame.AccountSettings.SettingsContainer[v .. 'Frames']:IsControlChecked() then
-						CheckedItems[k] = v
-					else
-						CheckedItems[k] = nil
-					end
-
-					SUI.MoveIt:MoveIt(k)
+			EditModeManagerFrame.AccountSettings.SettingsContainer[v .. 'Frames'].Button:HookScript('OnClick', function(...)
+				if EditModeManagerFrame.AccountSettings.SettingsContainer[v .. 'Frames']:IsControlChecked() then
+					CheckedItems[k] = v
+				else
+					CheckedItems[k] = nil
 				end
-			)
+
+				SUI.MoveIt:MoveIt(k)
+			end)
 		end
 
-		EditModeManagerFrame:HookScript(
-			'OnHide',
-			function()
-				for k, v in pairs(CheckedItems) do
-					EditModeManagerFrame.AccountSettings.SettingsContainer[v .. 'Frames']:SetControlChecked(false)
-					SUI.MoveIt:MoveIt(k)
-				end
-				MoveIt.MoverWatcher:Hide()
-				MoveIt.MoveEnabled = false
+		EditModeManagerFrame:HookScript('OnHide', function()
+			for k, v in pairs(CheckedItems) do
+				EditModeManagerFrame.AccountSettings.SettingsContainer[v .. 'Frames']:SetControlChecked(false)
+				SUI.MoveIt:MoveIt(k)
 			end
-		)
+			MoveIt.MoverWatcher:Hide()
+			MoveIt.MoveEnabled = false
+		end)
 	end
 
-	SUI:AddChatCommand(
-		'BuffDebug',
-		function(args)
-			local unit, spellId = strsplit(' ', args)
+	SUI:AddChatCommand('BuffDebug', function(args)
+		local unit, spellId = strsplit(' ', args)
 
-			if not spellId then
-				print('Please specify a SpellID')
+		if not spellId then
+			print('Please specify a SpellID')
+			return
+		end
+
+		if not SUI.UF.MonitoredBuffs[unit] then
+			SUI.UF.MonitoredBuffs[unit] = {}
+		end
+
+		for i, v in ipairs(SUI.UF.MonitoredBuffs[unit]) do
+			if v == tonumber(spellId) then
+				print('Removed ' .. spellId .. ' from the list of monitored buffs')
+				table.remove(SUI.UF.MonitoredBuffs[unit], i)
 				return
 			end
+		end
 
-			if not SUI.UF.MonitoredBuffs[unit] then
-				SUI.UF.MonitoredBuffs[unit] = {}
-			end
-
-			for i, v in ipairs(SUI.UF.MonitoredBuffs[unit]) do
-				if v == tonumber(spellId) then
-					print('Removed ' .. spellId .. ' from the list of monitored buffs')
-					table.remove(SUI.UF.MonitoredBuffs[unit], i)
-					return
-				end
-			end
-
-			table.insert(SUI.UF.MonitoredBuffs[unit], tonumber(spellId))
-			print('Added ' .. spellId .. ' to the list of monitored buffs')
-		end,
-		'Add/Remove a spellID to the list of spells to debug'
-	)
+		table.insert(SUI.UF.MonitoredBuffs[unit], tonumber(spellId))
+		print('Added ' .. spellId .. ' to the list of monitored buffs')
+	end, 'Add/Remove a spellID to the list of spells to debug')
 end
 
 function UF:Update()

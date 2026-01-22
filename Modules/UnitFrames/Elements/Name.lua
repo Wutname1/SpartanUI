@@ -73,11 +73,11 @@ local Settings = {
 	position = {
 		anchor = 'TOP',
 		x = 0,
-		y = 15
+		y = 15,
 	},
 	config = {
-		type = 'Indicator'
-	}
+		type = 'Indicator',
+	},
 }
 
 UF.Elements:Register('Name', Build, Update, Options, Settings)

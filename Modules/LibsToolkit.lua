@@ -49,36 +49,27 @@ local function SetupTweaks()
 					DisableTutorials:SetChecked(true)
 				end
 
-				Nameplate:HookScript(
-					'OnClick',
-					function()
-						if Nameplate:GetChecked() or false then
-							SetCVar('nameplateShowSelf', 0)
-						else
-							SetCVar('nameplateShowSelf', 1)
-						end
+				Nameplate:HookScript('OnClick', function()
+					if Nameplate:GetChecked() or false then
+						SetCVar('nameplateShowSelf', 0)
+					else
+						SetCVar('nameplateShowSelf', 1)
 					end
-				)
-				AutoLoot:HookScript(
-					'OnClick',
-					function()
-						if AutoLoot:GetChecked() or false then
-							SetCVar('autoLootDefault', 1)
-						else
-							SetCVar('autoLootDefault', 0)
-						end
+				end)
+				AutoLoot:HookScript('OnClick', function()
+					if AutoLoot:GetChecked() or false then
+						SetCVar('autoLootDefault', 1)
+					else
+						SetCVar('autoLootDefault', 0)
 					end
-				)
-				ShowNameplates:HookScript(
-					'OnClick',
-					function()
-						if ShowNameplates:GetChecked() or false then
-							SetCVar('nameplateShowAll', 1)
-						else
-							SetCVar('nameplateShowAll', 0)
-						end
+				end)
+				ShowNameplates:HookScript('OnClick', function()
+					if ShowNameplates:GetChecked() or false then
+						SetCVar('nameplateShowAll', 1)
+					else
+						SetCVar('nameplateShowAll', 0)
 					end
-				)
+				end)
 
 				CheckboxItem['tut'] = DisableTutorials
 				CheckboxItem['prd'] = Nameplate
@@ -89,17 +80,14 @@ local function SetupTweaks()
 					DBM_MinimapIcon.hide = true
 					local DBMMinimap = LibAT.UI.CreateCheckbox(LibsToolkit, 'Hide DBM Minimap Icon')
 					DBMMinimap:SetChecked(true)
-					DBMMinimap:HookScript(
-						'OnClick',
-						function()
-							DBM_MinimapIcon.hide = (not DBMMinimap:GetChecked() or false)
-							if DBMMinimap:GetChecked() or false then
-								LDBIcon:Hide('DBM')
-							else
-								LDBIcon:Show('DBM')
-							end
+					DBMMinimap:HookScript('OnClick', function()
+						DBM_MinimapIcon.hide = (not DBMMinimap:GetChecked() or false)
+						if DBMMinimap:GetChecked() or false then
+							LDBIcon:Hide('DBM')
+						else
+							LDBIcon:Show('DBM')
 						end
-					)
+					end)
 					CheckboxItem['dbm'] = DBMMinimap
 				end
 
@@ -109,17 +97,14 @@ local function SetupTweaks()
 
 					local BT4MiniMap = LibAT.UI.CreateCheckbox(LibsToolkit, 'Hide Bartender4 Minimap Icon')
 					BT4MiniMap:SetChecked(true)
-					BT4MiniMap:HookScript(
-						'OnClick',
-						function()
-							Bartender4.db.profile.minimapIcon.hide = (not BT4MiniMap:GetChecked() or false)
-							if BT4MiniMap:GetChecked() or false then
-								LDBIcon:Hide('Bartender4')
-							else
-								LDBIcon:Show('Bartender4')
-							end
+					BT4MiniMap:HookScript('OnClick', function()
+						Bartender4.db.profile.minimapIcon.hide = (not BT4MiniMap:GetChecked() or false)
+						if BT4MiniMap:GetChecked() or false then
+							LDBIcon:Hide('Bartender4')
+						else
+							LDBIcon:Show('Bartender4')
 						end
-					)
+					end)
 					CheckboxItem['bt4'] = BT4MiniMap
 				end
 
@@ -129,17 +114,14 @@ local function SetupTweaks()
 
 					local WAMiniMap = LibAT.UI.CreateCheckbox(LibsToolkit, 'Hide WeakAuras Minimap Icon')
 					WAMiniMap:SetChecked(true)
-					WAMiniMap:HookScript(
-						'OnClick',
-						function()
-							Bartender4.db.profile.minimapIcon.hide = (not WAMiniMap:GetChecked() or false)
-							if WAMiniMap:GetChecked() or false then
-								LDBIcon:Hide('WeakAuras')
-							else
-								LDBIcon:Show('WeakAuras')
-							end
+					WAMiniMap:HookScript('OnClick', function()
+						Bartender4.db.profile.minimapIcon.hide = (not WAMiniMap:GetChecked() or false)
+						if WAMiniMap:GetChecked() or false then
+							LDBIcon:Hide('WeakAuras')
+						else
+							LDBIcon:Show('WeakAuras')
 						end
-					)
+					end)
 					CheckboxItem['wa'] = WAMiniMap
 				end
 
@@ -230,7 +212,7 @@ local function SetupTweaks()
 						LE_FRAME_TUTORIAL_CLUB_FINDER_NEW_GUILD_LEADER,
 						LE_FRAME_TUTORIAL_CLUB_FINDER_NEW_COMMUNITY_LEADER,
 						LE_FRAME_TUTORIAL_CLUB_FINDER_NEW_APPLICANTS_GUILD_LEADER,
-						LE_FRAME_TUTORIAL_CLUB_FINDER_LINKING
+						LE_FRAME_TUTORIAL_CLUB_FINDER_LINKING,
 					}
 					for i, v in ipairs(bitfieldListing) do
 						if v then
@@ -240,7 +222,7 @@ local function SetupTweaks()
 					SetCVar('showTutorials', 0)
 				end
 			end
-		end
+		end,
 	}
 	SUI.Setup:AddPage(LibsToolkit)
 end
@@ -249,8 +231,6 @@ function module:OnInitialize()
 	SetupTweaks()
 end
 
-function module:OnEnable()
-end
+function module:OnEnable() end
 
-function module:Options()
-end
+function module:Options() end

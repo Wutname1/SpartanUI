@@ -116,12 +116,9 @@ end
 ---@param elementName string
 ---@param button any
 function Auras:PostCreateButton(elementName, button)
-	button:SetScript(
-		'OnClick',
-		function()
-			Auras:OnClick(button, elementName)
-		end
-	)
+	button:SetScript('OnClick', function()
+		Auras:OnClick(button, elementName)
+	end)
 	--Remove game cooldown text
 	button.Cooldown:SetHideCountdownNumbers(true)
 
@@ -180,20 +177,14 @@ local function CreateAddToFilterWindow(button, elementName)
 	group:AddChild(Blacklist)
 
 	--Set Callbacks
-	Whitelist:SetCallback(
-		'OnValueChanged',
-		function(_, _, value)
-			Whitelist:SetValue(value)
-			Blacklist:SetValue(not value)
-		end
-	)
-	Blacklist:SetCallback(
-		'OnValueChanged',
-		function(_, _, value)
-			Blacklist:SetValue(value)
-			Whitelist:SetValue(not value)
-		end
-	)
+	Whitelist:SetCallback('OnValueChanged', function(_, _, value)
+		Whitelist:SetValue(value)
+		Blacklist:SetValue(not value)
+	end)
+	Blacklist:SetCallback('OnValueChanged', function(_, _, value)
+		Blacklist:SetValue(value)
+		Whitelist:SetValue(not value)
+	end)
 
 	--UnitFrameListing to add buff to
 	local scrollcontainer = AceGUI:Create('SimpleGroup') ---@type AceGUISimpleGroup
@@ -226,25 +217,22 @@ local function CreateAddToFilterWindow(button, elementName)
 	local Save = AceGUI:Create('Button') ---@type AceGUIButton
 	Save:SetText('Save')
 	Save:SetParent(window)
-	Save.frame:HookScript(
-		'OnClick',
-		function()
-			for frameName, check in pairs(window.units) do
-				if check:GetValue() then
-					local mode = Whitelist:GetValue() and 'whitelist' or 'blacklist'
-					-- WoW 12.0.0: Use string key for table index
-					local spellKey = tostring(button.data.spellId)
+	Save.frame:HookScript('OnClick', function()
+		for frameName, check in pairs(window.units) do
+			if check:GetValue() then
+				local mode = Whitelist:GetValue() and 'whitelist' or 'blacklist'
+				-- WoW 12.0.0: Use string key for table index
+				local spellKey = tostring(button.data.spellId)
 
-					UF.CurrentSettings[frameName].elements[elementName].rules[mode][spellKey] = true
-					UF.DB.UserSettings[UF.DB.Style][frameName].elements[elementName].rules[mode][spellKey] = true
+				UF.CurrentSettings[frameName].elements[elementName].rules[mode][spellKey] = true
+				UF.DB.UserSettings[UF.DB.Style][frameName].elements[elementName].rules[mode][spellKey] = true
 
-					UF.Unit[frameName]:ElementUpdate(elementName)
-				end
+				UF.Unit[frameName]:ElementUpdate(elementName)
 			end
-
-			window:Hide()
 		end
-	)
+
+		window:Hide()
+	end)
 	Save.frame:Show()
 	Save.frame:SetPoint('TOP', scrollcontainer.frame, 'BOTTOM', 0, -10)
 	window.content.Save = Save

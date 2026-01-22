@@ -148,9 +148,9 @@ SUI.opt = {
 	type = 'group',
 	childGroups = 'tree',
 	args = {
-		General = {name = SUI.L['General'], type = 'group', order = 0, args = {}},
-		Artwork = {name = SUI.L['Artwork'], type = 'group', order = 1, args = {}}
-	}
+		General = { name = SUI.L['General'], type = 'group', order = 0, args = {} },
+		Artwork = { name = SUI.L['Artwork'], type = 'group', order = 1, args = {} },
+	},
 }
 ---------------  Database  ---------------
 local scale = 0.88
@@ -166,18 +166,18 @@ local DBdefault = {
 	ActionBars = {
 		Allalpha = 100,
 		Allenable = true,
-		popup1 = {anim = true, alpha = 100, enable = true},
-		popup2 = {anim = true, alpha = 100, enable = true},
-		bar1 = {alpha = 100, enable = true},
-		bar2 = {alpha = 100, enable = true},
-		bar3 = {alpha = 100, enable = true},
-		bar4 = {alpha = 100, enable = true},
-		bar5 = {alpha = 100, enable = true},
-		bar6 = {alpha = 100, enable = true}
+		popup1 = { anim = true, alpha = 100, enable = true },
+		popup2 = { anim = true, alpha = 100, enable = true },
+		bar1 = { alpha = 100, enable = true },
+		bar2 = { alpha = 100, enable = true },
+		bar3 = { alpha = 100, enable = true },
+		bar4 = { alpha = 100, enable = true },
+		bar5 = { alpha = 100, enable = true },
+		bar6 = { alpha = 100, enable = true },
 	},
 	DisabledModules = {},
 	SetupWizard = {
-		FirstLaunch = true
+		FirstLaunch = true,
 	},
 	Styles = {
 		['**'] = {
@@ -186,7 +186,7 @@ local DBdefault = {
 				barBG = {
 					['**'] = {
 						enabled = true,
-						alpha = 1
+						alpha = 1,
 					},
 					['1'] = {},
 					['2'] = {},
@@ -199,8 +199,8 @@ local DBdefault = {
 					['9'] = {},
 					['10'] = {},
 					Stance = {},
-					MenuBar = {}
-				}
+					MenuBar = {},
+				},
 			},
 			Movers = {},
 			BlizzMovers = {
@@ -214,14 +214,14 @@ local DBdefault = {
 				['BossButton'] = 'BOTTOM,SpartanUI,BOTTOM,0,210',
 				['AlertFrame'] = 'BOTTOM,SpartanUI,BOTTOM,0,215',
 				['VehicleLeaveButton'] = 'BOTTOM,SpartanUI,BOTTOM,0,180',
-				['FramerateFrame'] = 'BOTTOM,SpartanUI,BOTTOM,0,210'
+				['FramerateFrame'] = 'BOTTOM,SpartanUI,BOTTOM,0,210',
 			},
 			Color = {
 				Art = false,
 				PlayerFrames = false,
 				PartyFrames = false,
-				RaidFrames = false
-			}
+				RaidFrames = false,
+			},
 		},
 		Arcane = {
 			Frames = {
@@ -233,24 +233,24 @@ local DBdefault = {
 							position = {
 								anchor = 'BOTTOM',
 								x = 0,
-								y = -16
-							}
+								y = -16,
+							},
 						},
 						SpartanArt = {
 							top = {
 								enabled = true,
-								graphic = 'Arcane'
+								graphic = 'Arcane',
 							},
 							bg = {
 								enabled = true,
-								graphic = 'Arcane'
+								graphic = 'Arcane',
 							},
 							bottom = {
 								enabled = true,
-								graphic = 'Arcane'
-							}
-						}
-					}
+								graphic = 'Arcane',
+							},
+						},
+					},
 				},
 				target = {
 					elements = {
@@ -260,44 +260,44 @@ local DBdefault = {
 							position = {
 								anchor = 'BOTTOM',
 								x = 0,
-								y = -16
-							}
+								y = -16,
+							},
 						},
 						SpartanArt = {
 							top = {
 								enabled = true,
-								graphic = 'Arcane'
+								graphic = 'Arcane',
 							},
 							bg = {
 								enabled = true,
-								graphic = 'Arcane'
+								graphic = 'Arcane',
 							},
 							bottom = {
 								enabled = true,
-								graphic = 'Arcane'
-							}
-						}
-					}
-				}
+								graphic = 'Arcane',
+							},
+						},
+					},
+				},
 			},
 			Color = {
 				Art = {
 					0.4784313725490196,
 					0.9137254901960784,
 					1,
-					0.9
-				}
+					0.9,
+				},
 			},
 			SlidingTrays = {
 				left = {
 					enabled = true,
-					collapsed = false
+					collapsed = false,
 				},
 				right = {
 					enabled = true,
-					collapsed = false
-				}
-			}
+					collapsed = false,
+				},
+			},
 		},
 		ArcaneRed = {
 			Frames = {
@@ -306,16 +306,16 @@ local DBdefault = {
 						SpartanArt = {
 							top = {
 								enabled = true,
-								graphic = 'ArcaneRed'
+								graphic = 'ArcaneRed',
 							},
 							bg = {
 								enabled = true,
-								graphic = 'ArcaneRed'
+								graphic = 'ArcaneRed',
 							},
 							bottom = {
 								enabled = true,
-								graphic = 'ArcaneRed'
-							}
+								graphic = 'ArcaneRed',
+							},
 						},
 						Name = {
 							enabled = true,
@@ -323,26 +323,26 @@ local DBdefault = {
 							position = {
 								anchor = 'BOTTOM',
 								x = 0,
-								y = -16
-							}
-						}
-					}
+								y = -16,
+							},
+						},
+					},
 				},
 				target = {
 					elements = {
 						SpartanArt = {
 							top = {
 								enabled = true,
-								graphic = 'ArcaneRed'
+								graphic = 'ArcaneRed',
 							},
 							bg = {
 								enabled = true,
-								graphic = 'ArcaneRed'
+								graphic = 'ArcaneRed',
 							},
 							bottom = {
 								enabled = true,
-								graphic = 'ArcaneRed'
-							}
+								graphic = 'ArcaneRed',
+							},
 						},
 						Name = {
 							enabled = true,
@@ -350,12 +350,12 @@ local DBdefault = {
 							position = {
 								anchor = 'BOTTOM',
 								x = 0,
-								y = -16
-							}
-						}
-					}
-				}
-			}
+								y = -16,
+							},
+						},
+					},
+				},
+			},
 		},
 		Classic = {
 			Frames = {
@@ -371,8 +371,8 @@ local DBdefault = {
 								relativeTo = 'Name',
 								relativePoint = 'TOPLEFT',
 								anchor = 'BOTTOMLEFT',
-								x = -23
-							}
+								x = -23,
+							},
 						},
 						Debuffs = {
 							rows = 4,
@@ -381,11 +381,11 @@ local DBdefault = {
 								y = 8,
 								relativeTo = 'Name',
 								anchor = 'BOTTOMRIGHT',
-								relativePoint = 'TOPRIGHT'
-							}
+								relativePoint = 'TOPRIGHT',
+							},
 						},
 						Castbar = {
-							height = 15
+							height = 15,
 						},
 						Health = {
 							offset = 2,
@@ -397,10 +397,10 @@ local DBdefault = {
 									position = {
 										anchor = 'LEFT',
 										x = -35,
-										y = 0
-									}
-								}
-							}
+										y = 0,
+									},
+								},
+							},
 						},
 						Power = {
 							offset = 2,
@@ -412,61 +412,61 @@ local DBdefault = {
 									position = {
 										anchor = 'LEFT',
 										x = -35,
-										y = 0
-									}
-								}
+										y = 0,
+									},
+								},
 							},
 							position = {
-								y = -3
-							}
+								y = -3,
+							},
 						},
 						Portrait = {
-							position = 'right'
+							position = 'right',
 						},
 						RestingIndicator = {
 							position = {
 								anchor = 'TOPRIGHT',
 								x = 102,
-								y = 10
-							}
+								y = 10,
+							},
 						},
 						ClassIcon = {
 							size = 18,
 							position = {
 								anchor = 'TOPRIGHT',
 								x = 20,
-								y = 16
-							}
+								y = 16,
+							},
 						},
 						PvPIndicator = {
 							position = {
 								anchor = 'BOTTOMRIGHT',
 								x = 80,
-								y = 0
-							}
+								y = 0,
+							},
 						},
 						RaidRoleIndicator = {
 							position = {
 								anchor = 'BOTTOMRIGHT',
 								x = 22,
-								y = 0
-							}
+								y = 0,
+							},
 						},
 						SpartanArt = {
 							full = {
 								enabled = true,
-								graphic = 'Classic'
-							}
+								graphic = 'Classic',
+							},
 						},
 						CombatIndicator = {
 							enabled = true,
 							position = {
 								anchor = 'TOPRIGHT',
 								x = 102,
-								y = 10
-							}
-						}
-					}
+								y = 10,
+							},
+						},
+					},
 				},
 				target = {
 					width = 153,
@@ -480,8 +480,8 @@ local DBdefault = {
 								relativeTo = 'Name',
 								relativePoint = 'TOPLEFT',
 								anchor = 'BOTTOMLEFT',
-								x = -23
-							}
+								x = -23,
+							},
 						},
 						Debuffs = {
 							rows = 4,
@@ -490,8 +490,8 @@ local DBdefault = {
 								y = 8,
 								relativeTo = 'Name',
 								anchor = 'BOTTOMRIGHT',
-								relativePoint = 'TOPRIGHT'
-							}
+								relativePoint = 'TOPRIGHT',
+							},
 						},
 						Health = {
 							offset = 2,
@@ -502,10 +502,10 @@ local DBdefault = {
 									text = '[perhp]%',
 									position = {
 										anchor = 'RIGHT',
-										x = 40
-									}
-								}
-							}
+										x = 40,
+									},
+								},
+							},
 						},
 						Power = {
 							offset = 2,
@@ -516,54 +516,54 @@ local DBdefault = {
 									text = '[perpp]%',
 									position = {
 										anchor = 'RIGHT',
-										x = 40
-									}
-								}
+										x = 40,
+									},
+								},
 							},
 							position = {
-								y = -3
-							}
+								y = -3,
+							},
 						},
 						Castbar = {
-							height = 15
+							height = 15,
 						},
 						ClassIcon = {
 							size = 18,
 							position = {
 								anchor = 'TOPLEFT',
 								x = -22,
-								y = 16
-							}
+								y = 16,
+							},
 						},
 						PvPIndicator = {
 							position = {
 								anchor = 'BOTTOMLEFT',
 								x = -80,
-								y = 0
-							}
+								y = 0,
+							},
 						},
 						RaidRoleIndicator = {
 							position = {
 								anchor = 'BOTTOMLEFT',
 								x = -22,
-								y = 0
-							}
+								y = 0,
+							},
 						},
 						SpartanArt = {
 							full = {
 								enabled = true,
-								graphic = 'Classic'
-							}
-						}
-					}
+								graphic = 'Classic',
+							},
+						},
+					},
 				},
 				pet = {
 					elements = {
 						Buffs = {
 							enabled = false,
 							position = {
-								y = 22
-							}
+								y = 22,
+							},
 						},
 						Debuffs = {
 							rows = 4,
@@ -572,8 +572,8 @@ local DBdefault = {
 								y = 8,
 								relativeTo = 'Name',
 								anchor = 'BOTTOMRIGHT',
-								relativePoint = 'TOPRIGHT'
-							}
+								relativePoint = 'TOPRIGHT',
+							},
 						},
 						Health = {
 							offset = 2,
@@ -585,10 +585,10 @@ local DBdefault = {
 									position = {
 										anchor = 'LEFT',
 										x = -35,
-										y = 0
-									}
-								}
-							}
+										y = 0,
+									},
+								},
+							},
 						},
 						Power = {
 							offset = 2,
@@ -600,34 +600,34 @@ local DBdefault = {
 									position = {
 										anchor = 'LEFT',
 										x = -35,
-										y = 0
-									}
-								}
-							}
+										y = 0,
+									},
+								},
+							},
 						},
 						Castbar = {
-							height = 15
+							height = 15,
 						},
 						Name = {
 							position = {
-								y = 5
-							}
+								y = 5,
+							},
 						},
 						SpartanArt = {
 							full = {
 								enabled = true,
-								graphic = 'Classic'
-							}
-						}
-					}
+								graphic = 'Classic',
+							},
+						},
+					},
 				},
 				targettarget = {
 					elements = {
 						Buffs = {
-							enabled = false
+							enabled = false,
 						},
 						Debuffs = {
-							enabled = false
+							enabled = false,
 						},
 						Health = {
 							offset = 2,
@@ -638,10 +638,10 @@ local DBdefault = {
 									text = '[perhp]%',
 									position = {
 										anchor = 'RIGHT',
-										x = 40
-									}
-								}
-							}
+										x = 40,
+									},
+								},
+							},
 						},
 						Power = {
 							offset = 1,
@@ -652,26 +652,26 @@ local DBdefault = {
 									text = '[perpp]%',
 									position = {
 										anchor = 'RIGHT',
-										x = 40
-									}
-								}
-							}
+										x = 40,
+									},
+								},
+							},
 						},
 						Castbar = {
-							height = 14
+							height = 14,
 						},
 						SpartanArt = {
 							full = {
 								enabled = true,
-								graphic = 'Classic'
-							}
-						}
-					}
-				}
+								graphic = 'Classic',
+							},
+						},
+					},
+				},
 			},
 			BlizzMovers = {
-				['VehicleLeaveButton'] = 'BOTTOM,SpartanUI,BOTTOM,0,195'
-			}
+				['VehicleLeaveButton'] = 'BOTTOM,SpartanUI,BOTTOM,0,195',
+			},
 		},
 		Transparent = {
 			Frames = {
@@ -680,39 +680,39 @@ local DBdefault = {
 						SpartanArt = {
 							top = {
 								enabled = true,
-								graphic = 'Transparent'
+								graphic = 'Transparent',
 							},
 							bg = {
 								enabled = true,
-								graphic = 'Transparent'
-							}
+								graphic = 'Transparent',
+							},
 						},
 						Portrait = {
-							position = 'right'
-						}
-					}
+							position = 'right',
+						},
+					},
 				},
 				target = {
 					elements = {
 						SpartanArt = {
 							top = {
 								enabled = true,
-								graphic = 'Transparent'
+								graphic = 'Transparent',
 							},
 							bg = {
 								enabled = true,
-								graphic = 'Transparent'
-							}
-						}
-					}
-				}
+								graphic = 'Transparent',
+							},
+						},
+					},
+				},
 			},
 			Color = {
-				Art = {0, 0.8, 0.9, 0.7},
-				PlayerFrames = {0, 0.8, 0.9, 0.7},
-				PartyFrames = {0, 0.8, 0.9, 0.7},
-				RaidFrames = {0, 0.8, 0.9, 0.7}
-			}
+				Art = { 0, 0.8, 0.9, 0.7 },
+				PlayerFrames = { 0, 0.8, 0.9, 0.7 },
+				PartyFrames = { 0, 0.8, 0.9, 0.7 },
+				RaidFrames = { 0, 0.8, 0.9, 0.7 },
+			},
 		},
 		Minimal = {
 			Color = {
@@ -720,14 +720,14 @@ local DBdefault = {
 					0.6156862745098039,
 					0.1215686274509804,
 					0.1215686274509804,
-					0.9
-				}
+					0.9,
+				},
 			},
 			HideCenterGraphic = false,
 			HideBottomRight = false,
 			HideBottomLeft = false,
 			HideTopRight = false,
-			HideTopLeft = false
+			HideTopLeft = false,
 		},
 		Fel = {
 			Artwork = {},
@@ -737,16 +737,16 @@ local DBdefault = {
 						SpartanArt = {
 							top = {
 								enabled = true,
-								graphic = 'Fel'
+								graphic = 'Fel',
 							},
 							bg = {
 								enabled = true,
-								graphic = 'Fel'
+								graphic = 'Fel',
 							},
 							bottom = {
 								enabled = true,
-								graphic = 'Fel'
-							}
+								graphic = 'Fel',
+							},
 						},
 						Name = {
 							enabled = true,
@@ -754,26 +754,26 @@ local DBdefault = {
 							position = {
 								anchor = 'BOTTOM',
 								x = 0,
-								y = -16
-							}
-						}
-					}
+								y = -16,
+							},
+						},
+					},
 				},
 				target = {
 					elements = {
 						SpartanArt = {
 							top = {
 								enabled = true,
-								graphic = 'Fel'
+								graphic = 'Fel',
 							},
 							bg = {
 								enabled = true,
-								graphic = 'Fel'
+								graphic = 'Fel',
 							},
 							bottom = {
 								enabled = true,
-								graphic = 'Fel'
-							}
+								graphic = 'Fel',
+							},
 						},
 						Name = {
 							enabled = true,
@@ -781,12 +781,12 @@ local DBdefault = {
 							position = {
 								anchor = 'BOTTOM',
 								x = 0,
-								y = -16
-							}
-						}
-					}
-				}
-			}
+								y = -16,
+							},
+						},
+					},
+				},
+			},
 		},
 		Digital = {
 			Artwork = {},
@@ -796,22 +796,22 @@ local DBdefault = {
 						SpartanArt = {
 							bg = {
 								enabled = true,
-								graphic = 'Digital'
-							}
-						}
-					}
+								graphic = 'Digital',
+							},
+						},
+					},
 				},
 				target = {
 					elements = {
 						SpartanArt = {
 							bg = {
 								enabled = true,
-								graphic = 'Digital'
-							}
-						}
-					}
-				}
-			}
+								graphic = 'Digital',
+							},
+						},
+					},
+				},
+			},
 		},
 		War = {
 			Artwork = {},
@@ -821,16 +821,16 @@ local DBdefault = {
 						SpartanArt = {
 							top = {
 								enabled = true,
-								graphic = 'War'
+								graphic = 'War',
 							},
 							bg = {
 								enabled = true,
-								graphic = 'War'
+								graphic = 'War',
 							},
 							bottom = {
 								enabled = true,
-								graphic = 'War'
-							}
+								graphic = 'War',
+							},
 						},
 						Name = {
 							enabled = true,
@@ -838,38 +838,38 @@ local DBdefault = {
 							position = {
 								anchor = 'BOTTOM',
 								x = 0,
-								y = -16
-							}
+								y = -16,
+							},
 						},
 						Buffs = {
 							position = {
 								relativeTo = 'Name',
-								y = -15
-							}
+								y = -15,
+							},
 						},
 						Debuffs = {
 							position = {
 								relativeTo = 'Name',
-								y = -15
-							}
-						}
-					}
+								y = -15,
+							},
+						},
+					},
 				},
 				target = {
 					elements = {
 						SpartanArt = {
 							top = {
 								enabled = true,
-								graphic = 'War'
+								graphic = 'War',
 							},
 							bg = {
 								enabled = true,
-								graphic = 'War'
+								graphic = 'War',
 							},
 							bottom = {
 								enabled = true,
-								graphic = 'War'
-							}
+								graphic = 'War',
+							},
 						},
 						Name = {
 							enabled = true,
@@ -877,34 +877,34 @@ local DBdefault = {
 							position = {
 								anchor = 'BOTTOM',
 								x = 0,
-								y = -16
-							}
+								y = -16,
+							},
 						},
 						Buffs = {
 							position = {
 								relativeTo = 'Name',
-								y = -5
-							}
+								y = -5,
+							},
 						},
 						Debuffs = {
 							position = {
 								relativeTo = 'Name',
-								y = -5
-							}
-						}
-					}
-				}
+								y = -5,
+							},
+						},
+					},
+				},
 			},
 			SlidingTrays = {
 				left = {
 					enabled = true,
-					collapsed = false
+					collapsed = false,
 				},
 				right = {
 					enabled = true,
-					collapsed = false
-				}
-			}
+					collapsed = false,
+				},
+			},
 		},
 		Tribal = {
 			Artwork = {},
@@ -914,16 +914,16 @@ local DBdefault = {
 						SpartanArt = {
 							top = {
 								enabled = true,
-								graphic = 'Tribal'
+								graphic = 'Tribal',
 							},
 							bg = {
 								enabled = true,
-								graphic = 'Tribal'
+								graphic = 'Tribal',
 							},
 							bottom = {
 								enabled = true,
-								graphic = 'Tribal'
-							}
+								graphic = 'Tribal',
+							},
 						},
 						Name = {
 							enabled = true,
@@ -931,26 +931,26 @@ local DBdefault = {
 							position = {
 								anchor = 'BOTTOM',
 								x = 0,
-								y = -16
-							}
-						}
-					}
+								y = -16,
+							},
+						},
+					},
 				},
 				target = {
 					elements = {
 						SpartanArt = {
 							top = {
 								enabled = true,
-								graphic = 'Tribal'
+								graphic = 'Tribal',
 							},
 							bg = {
 								enabled = true,
-								graphic = 'Tribal'
+								graphic = 'Tribal',
 							},
 							bottom = {
 								enabled = true,
-								graphic = 'Tribal'
-							}
+								graphic = 'Tribal',
+							},
 						},
 						Name = {
 							enabled = true,
@@ -958,23 +958,23 @@ local DBdefault = {
 							position = {
 								anchor = 'BOTTOM',
 								x = 0,
-								y = -16
-							}
-						}
-					}
-				}
+								y = -16,
+							},
+						},
+					},
+				},
 			},
 			SlidingTrays = {
 				left = {
 					enabled = true,
-					collapsed = false
+					collapsed = false,
 				},
 				right = {
 					enabled = true,
-					collapsed = false
-				}
-			}
-		}
+					collapsed = false,
+				},
+			},
+		},
 	},
 	Artwork = {
 		Style = 'War',
@@ -983,30 +983,30 @@ local DBdefault = {
 		VehicleUI = true,
 		Viewport = {
 			enabled = false,
-			offset = {top = 0, bottom = 0, left = 0, right = 0}
+			offset = { top = 0, bottom = 0, left = 0, right = 0 },
 		},
 		SlidingTrays = {
 			['**'] = {
-				collapsed = false
-			}
+				collapsed = false,
+			},
 		},
 		Trays = {
 			['**'] = {
 				left = {
 					enabled = true,
-					size = {width = 410, height = 45},
+					size = { width = 410, height = 45 },
 					collapseDirection = 'up',
 					customFrames = '',
-					color = {r = 1, g = 1, b = 1, a = 1}
+					color = { r = 1, g = 1, b = 1, a = 1 },
 				},
 				right = {
 					enabled = true,
-					size = {width = 410, height = 45},
+					size = { width = 410, height = 45 },
 					collapseDirection = 'up',
 					customFrames = '',
-					color = {r = 1, g = 1, b = 1, a = 1}
-				}
-			}
+					color = { r = 1, g = 1, b = 1, a = 1 },
+				},
+			},
 		},
 		Offset = {
 			Top = 0,
@@ -1015,27 +1015,27 @@ local DBdefault = {
 			BottomAuto = true,
 			Horizontal = {
 				Bottom = 0,
-				Top = 0
-			}
+				Top = 0,
+			},
 		},
 		BlizzMoverStates = {
 			['**'] = {
-				enabled = true
-			}
-		}
-	}
+				enabled = true,
+			},
+		},
+	},
 }
 
 SUI.DBdefault = DBdefault
 local GlobalDefaults = {
 	ChatLevelLog = {},
 	ErrorHandler = {
-		SUIErrorIcon = {}
-	}
+		SUIErrorIcon = {},
+	},
 }
 
 ---@class SUIDBObject
-local DBdefaults = {global = GlobalDefaults, profile = DBdefault}
+local DBdefaults = { global = GlobalDefaults, profile = DBdefault }
 ---@class SUIDB : SUIDBObject, AceDBObject-3.0
 ---@field RegisterCallback function
 SUI.SpartanUIDB = SUI.Lib.AceDB:New('SpartanUIDB', DBdefaults)
@@ -1056,16 +1056,13 @@ end
 
 local function reloaduiWindow()
 	local UI = LibAT.UI
-	local popup =
-		UI.CreateWindow(
-		{
-			name = 'SUI_ReloadUI',
-			title = 'SpartanUI',
-			width = 400,
-			height = 140,
-			hidePortrait = true
-		}
-	)
+	local popup = UI.CreateWindow({
+		name = 'SUI_ReloadUI',
+		title = 'SpartanUI',
+		width = 400,
+		height = 140,
+		hidePortrait = true,
+	})
 	popup:SetPoint('TOP', UIParent, 'TOP', 0, -20)
 	popup:SetFrameStrata('DIALOG')
 
@@ -1082,28 +1079,22 @@ local function reloaduiWindow()
 	message:SetPoint('TOP', popup, 'TOP', 0, -85)
 
 	-- Buttons
-	UI.CreateActionButtons(
-		popup,
+	UI.CreateActionButtons(popup, {
 		{
-			{
-				text = 'CLOSE',
-				width = 80,
-				onClick = function()
-					popup:Hide()
-				end
-			},
-			{
-				text = 'RELOAD UI',
-				width = 180,
-				onClick = function()
-					SUI:SafeReloadUI()
-				end
-			}
+			text = 'CLOSE',
+			width = 80,
+			onClick = function()
+				popup:Hide()
+			end,
 		},
-		5,
-		4,
-		-3
-	)
+		{
+			text = 'RELOAD UI',
+			width = 180,
+			onClick = function()
+				SUI:SafeReloadUI()
+			end,
+		},
+	}, 5, 4, -3)
 
 	popup:Hide()
 	SUI.reloaduiWindow = popup
@@ -1135,24 +1126,18 @@ function SUI:OnInitialize()
 		SUI5Indicator:SetFrameStrata('DIALOG')
 		SUI5Indicator:SetPoint('TOPRIGHT', UIParent, 'TOPRIGHT', 0, 0)
 		SUI5Indicator:SetSize(20, 20)
-		SUI5Indicator:SetBackdrop(
-			{
-				bgFile = 'Interface\\AddOns\\SpartanUI\\images\\blank.tga',
-				edgeFile = 'Interface\\AddOns\\SpartanUI\\images\\blank.tga',
-				edgeSize = 1
-			}
-		)
+		SUI5Indicator:SetBackdrop({
+			bgFile = 'Interface\\AddOns\\SpartanUI\\images\\blank.tga',
+			edgeFile = 'Interface\\AddOns\\SpartanUI\\images\\blank.tga',
+			edgeSize = 1,
+		})
 		SUI5Indicator:SetBackdropColor(1, 0, 0, 0.5)
 		SUI5Indicator:SetBackdropBorderColor(0.00, 0.00, 0.00, 1)
-		SUI5Indicator:HookScript(
-			'OnEnter',
-			function()
-				SUI.print('---------------', true)
-				SUI:Print('SpartanUI has detected an unsupported SUI5 profile is being used. Please reset your profile via /suihelp')
-				SUI.print('---------------', true)
-			end,
-			'LE_SCRIPT_BINDING_TYPE_EXTRINSIC'
-		)
+		SUI5Indicator:HookScript('OnEnter', function()
+			SUI.print('---------------', true)
+			SUI:Print('SpartanUI has detected an unsupported SUI5 profile is being used. Please reset your profile via /suihelp')
+			SUI.print('---------------', true)
+		end, 'LE_SCRIPT_BINDING_TYPE_EXTRINSIC')
 	end
 
 	-- Initialize Logger
@@ -1259,7 +1244,7 @@ function SUI:OnInitialize()
 		end
 		local desc = 'Display SUI Error handler'
 		local args = {
-			reset = 'Clear all saved errors'
+			reset = 'Clear all saved errors',
 		}
 		SUI:AddChatCommand('error', ErrHandler, desc, args)
 		SUI:AddChatCommand('errors', ErrHandler, desc, args)
@@ -1406,7 +1391,7 @@ function SUI:CopyData(dest, source)
 						SUI:CopyData(tbl, v)
 						rawset(t, k, tbl)
 						return tbl
-					end
+					end,
 				}
 				setmetatable(dest, mt)
 				-- handle already existing tables in the SV
@@ -1420,7 +1405,7 @@ function SUI:CopyData(dest, source)
 				local mt = {
 					__index = function(t, k)
 						return k ~= nil and v or nil
-					end
+					end,
 				}
 				setmetatable(dest, mt)
 			end
@@ -1533,7 +1518,7 @@ function SUI:CopyDefaults(dest, src)
 						SUI:CopyDefaults(tbl, v)
 						rawset(t, k, tbl)
 						return tbl
-					end
+					end,
 				}
 				setmetatable(dest, mt)
 				-- handle already existing tables in the SV
@@ -1547,7 +1532,7 @@ function SUI:CopyDefaults(dest, src)
 				local mt = {
 					__index = function(t, k)
 						return k ~= nil and v or nil
-					end
+					end,
 				}
 				setmetatable(dest, mt)
 			end
@@ -1703,7 +1688,7 @@ function SUI:round(num, pos)
 	if num then
 		local mult = 10 ^ (pos or 2)
 		return floor(num * mult + 0.5) / mult
-	-- return floor((num * 10 ^ 2) + 0.5) / (10 ^ 2)
+		-- return floor((num * 10 ^ 2) + 0.5) / (10 ^ 2)
 	end
 end
 
@@ -1813,93 +1798,77 @@ function SUI:OnEnable()
 	local AceC = SUI.Lib.AceC
 	local AceCD = SUI.Lib.AceCD
 
-	AceC:RegisterOptionsTable(
-		'SpartanUIBliz',
-		{
-			name = 'SpartanUI',
-			type = 'group',
-			args = {
-				n3 = {
-					type = 'description',
-					fontSize = 'medium',
-					order = 3,
-					width = 'full',
-					name = SUI.L['Options can be accessed by the button below or by typing /sui']
-				},
-				Close = {
-					name = SUI.L['Launch Options'],
-					width = 'full',
-					type = 'execute',
-					order = 50,
-					func = function()
-						while CloseWindows() do
-						end
-						AceCD:SetDefaultSize('SpartanUI', 850, 600)
-						AceCD:Open('SpartanUI')
+	AceC:RegisterOptionsTable('SpartanUIBliz', {
+		name = 'SpartanUI',
+		type = 'group',
+		args = {
+			n3 = {
+				type = 'description',
+				fontSize = 'medium',
+				order = 3,
+				width = 'full',
+				name = SUI.L['Options can be accessed by the button below or by typing /sui'],
+			},
+			Close = {
+				name = SUI.L['Launch Options'],
+				width = 'full',
+				type = 'execute',
+				order = 50,
+				func = function()
+					while CloseWindows() do
 					end
-				}
-			}
-		}
-	)
+					AceCD:SetDefaultSize('SpartanUI', 850, 600)
+					AceCD:Open('SpartanUI')
+				end,
+			},
+		},
+	})
 	AceC:RegisterOptionsTable('SpartanUI', SUI.opt)
 
 	AceCD:AddToBlizOptions('SpartanUIBliz', 'SpartanUI')
 	AceCD:SetDefaultSize('SpartanUI', 1000, 700)
 
 	SUI:RegisterChatCommand('sui', 'ChatCommand')
-	SUI:RegisterChatCommand(
-		'suihelp',
-		function()
-			SUI.Lib.AceCD:Open('SpartanUI', 'Help')
-		end
-	)
+	SUI:RegisterChatCommand('suihelp', function()
+		SUI.Lib.AceCD:Open('SpartanUI', 'Help')
+	end)
 	SUI:RegisterChatCommand('spartanui', 'ChatCommand')
 
 	--Reopen options screen if flagged to do so after a reloadui
-	SUI:RegisterEvent(
-		'PLAYER_ENTERING_WORLD',
-		function()
-			if SUI.DB.OpenOptions then
-				SUI:ChatCommand()
-				SUI.DB.OpenOptions = false
-			end
+	SUI:RegisterEvent('PLAYER_ENTERING_WORLD', function()
+		if SUI.DB.OpenOptions then
+			SUI:ChatCommand()
+			SUI.DB.OpenOptions = false
 		end
-	)
+	end)
 
 	local GameMenuButtonsStore = {} --Table to hold data for buttons to be added to GameMenu
 
-	tinsert(
-		GameMenuButtonsStore,
-		{
-			text = '|cffffffffSpartan|cffe21f1fUI|r',
-			callback = function()
-				SUI.Options:ToggleOptions()
-				if not InCombatLockdown() then
-					HideUIPanel(GameMenuFrame)
-				end
-			end,
-			isDisabled = false, --If set to true will make button disabled. Can be set as a fucn to return true/false dynamically if needed
-			disabledText = 'This button is somehow disabled. Probably someone was messing around with the code.' --this text will show up in tooltip when the button is disabled
-		}
-	)
+	tinsert(GameMenuButtonsStore, {
+		text = '|cffffffffSpartan|cffe21f1fUI|r',
+		callback = function()
+			SUI.Options:ToggleOptions()
+			if not InCombatLockdown() then
+				HideUIPanel(GameMenuFrame)
+			end
+		end,
+		isDisabled = false, --If set to true will make button disabled. Can be set as a fucn to return true/false dynamically if needed
+		disabledText = 'This button is somehow disabled. Probably someone was messing around with the code.', --this text will show up in tooltip when the button is disabled
+	})
 
 	--hooking to blizz button add function for game menu, since the list of those is reset every time menu is opened
 	if GameMenuFrame.AddButton then
-		hooksecurefunc(
-			GameMenuFrame,
-			'AddButton',
-			function(text, callback, isDisabled)
-				if text == MACROS then --check for text "Macros". That button is the last before logout in default so we insert our stuff in between
-					for i, data in next, GameMenuButtonsStore do --Go through buttons in the tabe and adding them based on data provided
-						if i == 1 then
-							GameMenuFrame:AddSection() --spacer off first button
-						end
-
-						GameMenuFrame:AddButton(data.text, data.callback, data.isDisabled, data.disabledText)
+		hooksecurefunc(GameMenuFrame, 'AddButton', function(text, callback, isDisabled)
+			if text == MACROS then --check for text "Macros". That button is the last before logout in default so we insert our stuff in between
+				for i, data in next, GameMenuButtonsStore do --Go through buttons in the tabe and adding them based on data provided
+					if i == 1 then
+						GameMenuFrame:AddSection() --spacer off first button
 					end
+
+					GameMenuFrame:AddButton(data.text, data.callback, data.isDisabled, data.disabledText)
 				end
 			end
-		)
+		end)
 	end
 end
 
@@ -1919,5 +1888,4 @@ function SUI:SetActiveStyle(skin)
 	artModule:SetActiveStyle(skin)
 end
 
-SUI.noop = function()
-end
+SUI.noop = function() end

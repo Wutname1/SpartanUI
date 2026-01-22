@@ -24,9 +24,9 @@ local function Options()
 				set = function(info, val)
 					module.DB.minimap.engulfed = not val or false
 					module:MiniMap()
-				end
-			}
-		}
+				end,
+			},
+		},
 	}
 end
 
@@ -34,10 +34,10 @@ function module:OnInitialize()
 	---@class SUI.Skins.Fel.Settings
 	local defaults = {
 		minimap = {
-			engulfed = false
-		}
+			engulfed = false,
+		},
 	}
-	module.Database = SUI.SpartanUIDB:RegisterNamespace('SkinsFel', {profile = defaults})
+	module.Database = SUI.SpartanUIDB:RegisterNamespace('SkinsFel', { profile = defaults })
 	module.DB = module.Database.profile ---@type SUI.Skins.Fel.Settings
 	-- BarHandler
 	local BarHandler = SUI.Handlers.BarSystem
@@ -47,7 +47,7 @@ function module:OnInitialize()
 		['MultiCastActionBarFrame'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-661,191',
 		--
 		['BT4BarMicroMenu'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,250,151',
-		['BT4BarBagBar'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,661,174'
+		['BT4BarBagBar'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,661,174',
 	}
 
 	-- Unitframes
@@ -57,57 +57,57 @@ function module:OnInitialize()
 			artwork = {
 				top = {
 					path = 'Interface\\AddOns\\SpartanUI\\Themes\\Fel\\Images\\UnitFrames',
-					TexCoord = {0.1796875, 0.736328125, 0, 0.099609375},
+					TexCoord = { 0.1796875, 0.736328125, 0, 0.099609375 },
 					heightScale = 0.25,
 					yScale = -0.05,
-					alpha = 0.8
+					alpha = 0.8,
 				},
 				bg = {
 					path = 'Interface\\AddOns\\SpartanUI\\Themes\\Fel\\Images\\UnitFrames',
-					TexCoord = {0.02, 0.385, 0.45, 0.575},
-					PVPAlpha = 0.4
+					TexCoord = { 0.02, 0.385, 0.45, 0.575 },
+					PVPAlpha = 0.4,
 				},
 				bottom = {
 					path = 'Interface\\AddOns\\SpartanUI\\Themes\\Fel\\Images\\UnitFrames',
 					heightScale = 0.115,
 					yScale = 0.0158,
-					TexCoord = {0.1796875, 0.736328125, 0.197265625, 0.244140625},
-					PVPAlpha = 0.8
-				}
+					TexCoord = { 0.1796875, 0.736328125, 0.197265625, 0.244140625 },
+					PVPAlpha = 0.8,
+				},
 			},
 			displayName = 'Fel',
 			setup = {
-				image = 'Interface\\AddOns\\SpartanUI\\images\\setup\\Style_Frames_Fel'
-			}
+				image = 'Interface\\AddOns\\SpartanUI\\images\\setup\\Style_Frames_Fel',
+			},
 		}
 		SUI.UF.Style:Register('Fel', ufsettings)
 	end
 
 	---@type SUI.Style.Settings.Minimap
 	local minimapSettings = {
-		size = {156, 156},
+		size = { 156, 156 },
 		position = 'CENTER,SUI_Art_Fel_Left,RIGHT,0,-10',
 		engulfed = true,
 		elements = {
 			background = {
 				texture = 'Interface\\AddOns\\SpartanUI\\Themes\\Fel\\Images\\Minimap-Engulfed',
-				size = {220, 220},
-				position = 'CENTER,Minimap,CENTER,5,25'
-			}
-		}
+				size = { 220, 220 },
+				position = 'CENTER,Minimap,CENTER,5,25',
+			},
+		},
 	}
 	SUI.Minimap:Register('Fel', minimapSettings)
 	local minimapSettingsCalmed = {
-		size = {156, 156},
+		size = { 156, 156 },
 		position = 'CENTER,SUI_Art_Fel_Left,RIGHT,0,-10',
 		engulfed = false,
 		elements = {
 			background = {
 				texture = 'Interface\\AddOns\\SpartanUI\\Themes\\Fel\\Images\\Minimap-Calmed',
-				size = {162, 162},
-				position = 'CENTER,Minimap,CENTER,3,-1'
-			}
-		}
+				size = { 162, 162 },
+				position = 'CENTER,Minimap,CENTER,3,-1',
+			},
+		},
 	}
 	SUI.Minimap:Register('FelCalmed', minimapSettingsCalmed)
 
@@ -116,11 +116,11 @@ function module:OnInitialize()
 	local StatusBarsSettings = {
 		bgTexture = 'Interface\\AddOns\\SpartanUI\\Themes\\Fel\\Images\\StatusBar.png',
 		alpha = 0.9,
-		size = {370, 20},
-		texCords = {0.0546875, 0.9140625, 0.5555555555555556, 0},
-		MaxWidth = 48
+		size = { 370, 20 },
+		texCords = { 0.0546875, 0.9140625, 0.5555555555555556, 0 },
+		MaxWidth = 48,
 	}
-	statusBarModule:RegisterStyle('Fel', {Left = SUI:CopyTable({}, StatusBarsSettings), Right = SUI:CopyTable({}, StatusBarsSettings)})
+	statusBarModule:RegisterStyle('Fel', { Left = SUI:CopyTable({}, StatusBarsSettings), Right = SUI:CopyTable({}, StatusBarsSettings) })
 
 	module:CreateArtwork()
 	Options()
@@ -175,20 +175,17 @@ function module:CreateArtwork()
 end
 
 function module:EnableArtwork()
-	hooksecurefunc(
-		'UIParent_ManageFramePositions',
-		function()
-			if TutorialFrameAlertButton then
-				TutorialFrameAlertButton:SetParent(Minimap)
-				TutorialFrameAlertButton:ClearAllPoints()
-				TutorialFrameAlertButton:SetPoint('CENTER', Minimap, 'TOP', -2, 30)
-			end
-			if CastingBarFrame then
-				CastingBarFrame:ClearAllPoints()
-				CastingBarFrame:SetPoint('BOTTOM', SUI_Art_Fel, 'TOP', 0, 90)
-			end
+	hooksecurefunc('UIParent_ManageFramePositions', function()
+		if TutorialFrameAlertButton then
+			TutorialFrameAlertButton:SetParent(Minimap)
+			TutorialFrameAlertButton:ClearAllPoints()
+			TutorialFrameAlertButton:SetPoint('CENTER', Minimap, 'TOP', -2, 30)
 		end
-	)
+		if CastingBarFrame then
+			CastingBarFrame:ClearAllPoints()
+			CastingBarFrame:SetPoint('BOTTOM', SUI_Art_Fel, 'TOP', 0, 90)
+		end
+	end)
 
 	module:SetupVehicleUI()
 

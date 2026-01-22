@@ -1,6 +1,8 @@
 local UF = SUI.UF
 local L = SUI.L
-if SUI.IsRetail then return end
+if SUI.IsRetail then
+	return
+end
 -- Helper for spell info (uses unified C_Spell API available in all current versions)
 local function GetSpellInfoCompat(spellInput)
 	return C_Spell.GetSpellInfo(spellInput)
@@ -91,7 +93,7 @@ local HealingSpells = {
 	[1459] = true, -- Arcane Intellect
 	[21562] = true, -- Power Word: Fortitude
 	[6673] = true, -- Battle Shout
-	[1126] = true -- Mark of the Wild
+	[1126] = true, -- Mark of the Wild
 }
 
 -- DoT spells for DPS tracking
@@ -131,7 +133,7 @@ local DamageOverTimeSpells = {
 	[22959] = true, -- Fire Vulnerability
 	[31661] = true, -- Dragon's Breath
 	[413841] = true, -- Frostfire Bolt
-	[205708] = true -- Chilled to the Bone
+	[205708] = true, -- Chilled to the Bone
 }
 
 ---@param frame table
@@ -239,7 +241,7 @@ local function Build(frame, DB)
 			duration = auraData.duration,
 			name = auraData.name,
 			isHelpful = not auraData.isHarmful,
-			isHarmful = auraData.isHarmful
+			isHarmful = auraData.isHarmful,
 		}
 		return element:CustomAuraFilter(unit, data)
 	end
@@ -302,14 +304,14 @@ local function Options(unitName, OptionSet)
 					healer = L['Healer (HoTs & Defensive)'],
 					dps = L['DPS (DoTs & Offensive)'],
 					tank = L['Tank (Defensive & Short Buffs)'],
-					custom = L['Custom (Use Advanced Filters)']
+					custom = L['Custom (Use Advanced Filters)'],
 				},
 				get = function()
 					return ElementSettings.filterMode
 				end,
 				set = function(_, val)
 					OptUpdate('filterMode', val)
-				end
+				end,
 			},
 			raiderMode = {
 				name = L['Raider Mode'],
@@ -321,7 +323,7 @@ local function Options(unitName, OptionSet)
 				end,
 				set = function(_, val)
 					OptUpdate('raiderMode', val)
-				end
+				end,
 			},
 			useLegacyFilter = {
 				name = L['Use Legacy Filtering'],
@@ -333,7 +335,7 @@ local function Options(unitName, OptionSet)
 				end,
 				set = function(_, val)
 					OptUpdate('useLegacyFilter', val)
-				end
+				end,
 			},
 			maxDuration = {
 				name = L['Maximum Duration'],
@@ -348,9 +350,9 @@ local function Options(unitName, OptionSet)
 				end,
 				set = function(_, val)
 					OptUpdate('maxDuration', val)
-				end
-			}
-		}
+				end,
+			},
+		},
 	}
 
 	-- Add standard filtering options using the shared system
@@ -421,14 +423,14 @@ local function Options(unitName, OptionSet)
 				order = 1,
 				values = {
 					UP = L['Up'],
-					DOWN = L['Down']
+					DOWN = L['Down'],
 				},
 				get = function()
 					return ElementSettings.growth
 				end,
 				set = function(_, val)
 					OptUpdate('growth', val)
-				end
+				end,
 			},
 			maxBars = {
 				name = L['Maximum Bars'],
@@ -443,7 +445,7 @@ local function Options(unitName, OptionSet)
 				end,
 				set = function(_, val)
 					OptUpdate('maxBars', val)
-				end
+				end,
 			},
 			barSpacing = {
 				name = L['Bar Spacing'],
@@ -458,9 +460,9 @@ local function Options(unitName, OptionSet)
 				end,
 				set = function(_, val)
 					OptUpdate('barSpacing', val)
-				end
-			}
-		}
+				end,
+			},
+		},
 	}
 
 	OptionSet.args.Appearance = {
@@ -482,7 +484,7 @@ local function Options(unitName, OptionSet)
 				end,
 				set = function(_, val)
 					OptUpdate('fgalpha', val)
-				end
+				end,
 			},
 			bgalpha = {
 				name = L['Background Alpha'],
@@ -497,7 +499,7 @@ local function Options(unitName, OptionSet)
 				end,
 				set = function(_, val)
 					OptUpdate('bgalpha', val)
-				end
+				end,
 			},
 			spellNameSize = {
 				name = L['Spell Name Font Size'],
@@ -512,7 +514,7 @@ local function Options(unitName, OptionSet)
 				end,
 				set = function(_, val)
 					OptUpdate('spellNameSize', val)
-				end
+				end,
 			},
 			spellTimeSize = {
 				name = L['Spell Time Font Size'],
@@ -527,9 +529,9 @@ local function Options(unitName, OptionSet)
 				end,
 				set = function(_, val)
 					OptUpdate('spellTimeSize', val)
-				end
-			}
-		}
+				end,
+			},
+		},
 	}
 end
 
@@ -558,24 +560,24 @@ local Settings = {
 		anchor = 'BOTTOMLEFT',
 		relativePoint = 'TOPLEFT',
 		x = 7,
-		y = 20
+		y = 20,
 	},
 	rules = {
 		duration = {
 			enabled = false,
 			mode = 'exclude',
 			maxTime = 900,
-			minTime = 1
+			minTime = 1,
 		},
 		showPlayers = true,
 		isBossAura = true,
 		whitelist = {},
-		blacklist = {}
+		blacklist = {},
 	},
 	config = {
 		type = 'Auras',
-		DisplayName = 'Aura Bars'
-	}
+		DisplayName = 'Aura Bars',
+	},
 }
 
 UF.Elements:Register('AuraBars', Build, Update, Options, Settings)

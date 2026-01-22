@@ -28,9 +28,9 @@ module.BarPosition = {
 			--
 			['BT4BarMicroMenu'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,340,191',
 			['BT4BarBagBar'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,707,193',
-			['BT4BarQueueStatus'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-107,132'
-		}
-	}
+			['BT4BarQueueStatus'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-107,132',
+		},
+	},
 }
 module.BarScale = {
 	BT4 = {
@@ -52,9 +52,9 @@ module.BarScale = {
 			['BT4BarPetBar'] = 0.6,
 			['MultiCastActionBarFrame'] = 0.6,
 			['BT4BarMicroMenu'] = 0.6,
-			['BT4BarQueueStatus'] = 0.58
-		}
-	}
+			['BT4BarQueueStatus'] = 0.58,
+		},
+	},
 }
 
 ------------------------------------------------------------
@@ -66,7 +66,7 @@ function module:AddBarSystem(name, OnInitialize, OnEnable, OnDisable, Unlocker, 
 		enable = OnEnable,
 		disable = OnDisable,
 		move = Unlocker,
-		refresh = RefreshConfig
+		refresh = RefreshConfig,
 	}
 end
 
@@ -101,9 +101,9 @@ local function Options()
 				set = function(_, val)
 					DB.ActiveSystem = val
 					SUI:reloadui()
-				end
-			}
-		}
+				end,
+			},
+		},
 	}
 
 	-- for name, settings in pairs(module.Registry) do
@@ -134,11 +134,11 @@ function module:OnInitialize()
 		ActiveSystem = 'Bartender4',
 		custom = {
 			scale = {
-				BT4 = {}
-			}
-		}
+				BT4 = {},
+			},
+		},
 	}
-	module.Database = SUI.SpartanUIDB:RegisterNamespace('BarHandler', {profile = defaults})
+	module.Database = SUI.SpartanUIDB:RegisterNamespace('BarHandler', { profile = defaults })
 	module.DB = module.Database.profile ---@type SUI.BarHandler.DB
 	DB = module.DB
 

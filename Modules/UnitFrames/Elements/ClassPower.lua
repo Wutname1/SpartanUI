@@ -66,7 +66,7 @@ local function Options(unitName, OptionSet)
 		end,
 		set = function(_, val)
 			OptUpdate('texture', val)
-		end
+		end,
 	}
 
 	OptionSet.args.display.args.height = {
@@ -82,7 +82,7 @@ local function Options(unitName, OptionSet)
 		end,
 		set = function(_, val)
 			OptUpdate('height', val)
-		end
+		end,
 	}
 
 	OptionSet.args.display.args.width = {
@@ -98,7 +98,7 @@ local function Options(unitName, OptionSet)
 		end,
 		set = function(_, val)
 			OptUpdate('width', val)
-		end
+		end,
 	}
 
 	OptionSet.args.display.args.spacing = {
@@ -114,7 +114,7 @@ local function Options(unitName, OptionSet)
 		end,
 		set = function(_, val)
 			OptUpdate('spacing', val)
-		end
+		end,
 	}
 
 	OptionSet.args.colors = {
@@ -133,7 +133,7 @@ local function Options(unitName, OptionSet)
 				end,
 				set = function(_, val)
 					OptUpdate('useClassColors', val)
-				end
+				end,
 			},
 			customColor = {
 				type = 'color',
@@ -144,13 +144,13 @@ local function Options(unitName, OptionSet)
 					return ElementSettings.useClassColors
 				end,
 				get = function()
-					return unpack(ElementSettings.customColor or {1, 1, 1})
+					return unpack(ElementSettings.customColor or { 1, 1, 1 })
 				end,
 				set = function(_, r, g, b)
-					OptUpdate('customColor', {r, g, b})
-				end
-			}
-		}
+					OptUpdate('customColor', { r, g, b })
+				end,
+			},
+		},
 	}
 end
 
@@ -163,14 +163,14 @@ local Settings = {
 		anchor = 'TOPLEFT',
 		relativeTo = 'Name',
 		relativePoint = 'BOTTOMLEFT',
-		y = -5
+		y = -5,
 	},
 	config = {
 		NoBulkUpdate = true,
 		type = 'Indicator',
 		DisplayName = 'Class Power',
-		Description = 'Controls the display of Combo Points, Arcane Charges, Chi Orbs, Holy Power, and Soul Shards'
-	}
+		Description = 'Controls the display of Combo Points, Arcane Charges, Chi Orbs, Holy Power, and Soul Shards',
+	},
 }
 
 UF.Elements:Register('ClassPower', Build, Update, Options, Settings)

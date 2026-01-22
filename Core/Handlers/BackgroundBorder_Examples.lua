@@ -128,13 +128,12 @@ end
 ---This shows how to use the convenience preset methods
 local function ExamplePresets()
 	-- Simple dark background
-	local darkBg = BackgroundBorder:CreateColorBackground({0.1, 0.1, 0.1, 0.8})
+	local darkBg = BackgroundBorder:CreateColorBackground({ 0.1, 0.1, 0.1, 0.8 })
 
 	-- Background with white border
-	local bgWithBorder =
-		BackgroundBorder:CreateBackgroundWithBorder(
-		{0.2, 0.2, 0.2, 0.9}, -- background color
-		{1, 1, 1, 1}, -- border color
+	local bgWithBorder = BackgroundBorder:CreateBackgroundWithBorder(
+		{ 0.2, 0.2, 0.2, 0.9 }, -- background color
+		{ 1, 1, 1, 1 }, -- border color
 		2 -- border size
 	)
 
@@ -170,15 +169,15 @@ local function MigrateArtworkSystem()
 					type = 'texture', -- artwork typically uses textures
 					texture = barFrame.skinSettings.TexturePath,
 					alpha = userSettings.alpha or 1,
-					classColor = userSettings.classColorBG or false
+					classColor = userSettings.classColorBG or false,
 				},
 				border = {
 					enabled = userSettings.borderEnabled or false,
-					sides = userSettings.borderSides or {top = true, bottom = true, left = true, right = true},
+					sides = userSettings.borderSides or { top = true, bottom = true, left = true, right = true },
 					size = userSettings.borderSize or 1,
 					colors = userSettings.borderColors or {},
-					classColors = userSettings.classColorBorders or {}
-				}
+					classColors = userSettings.classColorBorders or {},
+				},
 			}
 
 			-- Create new unified instance
@@ -192,35 +191,29 @@ end
 ---This shows how to dynamically update backgrounds/borders
 local function ExampleDynamicUpdates()
 	-- Update single instance
-	BackgroundBorder:Update(
-		'UnitFrame_player',
-		{
-			background = {
-				enabled = true,
-				type = 'color',
-				classColor = true,
-				alpha = 0.5
-			}
-		}
-	)
+	BackgroundBorder:Update('UnitFrame_player', {
+		background = {
+			enabled = true,
+			type = 'color',
+			classColor = true,
+			alpha = 0.5,
+		},
+	})
 
 	-- Update multiple instances at once
 	local unitFrameIds = BackgroundBorder:GetInstancesByPrefix('UnitFrame_')
-	BackgroundBorder:UpdateMultiple(
-		unitFrameIds,
-		{
-			border = {
-				enabled = true,
-				size = 3,
-				colors = {
-					top = {1, 0, 0, 1}, -- red top
-					bottom = {0, 1, 0, 1}, -- green bottom
-					left = {0, 0, 1, 1}, -- blue left
-					right = {1, 1, 0, 1} -- yellow right
-				}
-			}
-		}
-	)
+	BackgroundBorder:UpdateMultiple(unitFrameIds, {
+		border = {
+			enabled = true,
+			size = 3,
+			colors = {
+				top = { 1, 0, 0, 1 }, -- red top
+				bottom = { 0, 1, 0, 1 }, -- green bottom
+				left = { 0, 0, 1, 1 }, -- blue left
+				right = { 1, 1, 0, 1 }, -- yellow right
+			},
+		},
+	})
 end
 
 -- Export examples for documentation
@@ -231,5 +224,5 @@ return {
 	SetupNameplateBackgroundBorder = SetupNameplateBackgroundBorder,
 	ExamplePresets = ExamplePresets,
 	MigrateArtworkSystem = MigrateArtworkSystem,
-	ExampleDynamicUpdates = ExampleDynamicUpdates
+	ExampleDynamicUpdates = ExampleDynamicUpdates,
 }

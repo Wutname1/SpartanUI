@@ -11,8 +11,8 @@ function module:OnInitialize()
 		profile = {
 			FirstLaunch = true,
 			Silent = false,
-			FreeSpace = 0
-		}
+			FreeSpace = 0,
+		},
 	}
 	module.Database = SUI.SpartanUIDB:RegisterNamespace('MailOpenAll', defaults)
 	module.DB = module.Database.profile
@@ -90,8 +90,7 @@ function module:Disable()
 	OpenButton:Hide()
 end
 
-function module:MAIL_SHOW()
-end
+function module:MAIL_SHOW() end
 
 function module:FormatMoney(money)
 	local gold = floor(money / 10000)
@@ -124,7 +123,7 @@ function module:BuildOptions()
 				end,
 				set = function(info, val)
 					module.DB.Silent = val
-				end
+				end,
 			},
 			FreeSpace = {
 				name = L['Bag free space to maintain'],
@@ -139,8 +138,8 @@ function module:BuildOptions()
 				end,
 				get = function(info)
 					return module.DB.FreeSpace
-				end
-			}
-		}
+				end,
+			},
+		},
 	}
 end

@@ -29,7 +29,7 @@ function module:OnInitialize()
 		['MultiCastActionBarFrame'] = 'BOTTOM,BT4Bar1,TOP,0,5',
 		--
 		['BT4BarMicroMenu'] = 'TOP,SpartanUI,TOP,322,0',
-		['BT4BarBagBar'] = 'TOP,SpartanUI,TOP,595,0'
+		['BT4BarBagBar'] = 'TOP,SpartanUI,TOP,595,0',
 	}
 	-- All bars scaled to 1.1 with Pet Bar increased to match
 	BarHandler.BarScale.BT4.Gale = {
@@ -48,7 +48,7 @@ function module:OnInitialize()
 		['BT4BarStanceBar'] = 0.6,
 		['BT4BarPetBar'] = 1.1, -- Increased to match action bars
 		['MultiCastActionBarFrame'] = 1.1,
-		['BT4BarMicroMenu'] = 0.6
+		['BT4BarMicroMenu'] = 0.6,
 	}
 
 	-- Minimap in top right, 1.3 times larger than normal with dark border and class color glow
@@ -57,21 +57,18 @@ function module:OnInitialize()
 		scaleWithArt = false,
 		position = 'TOPRIGHT,SpartanUI,TOPRIGHT,-20,-20',
 		shape = 'square',
-		scale = 1.3
+		scale = 1.3,
 	}
 	SUI.Minimap:Register('Gale', minimapSettings)
 
 	-- Register UnitFrame style for Gale
 	if SUI.UF then
-		SUI.UF.Style:Register(
-			'Gale',
-			{
-				displayName = 'Gale',
-				setup = {
-					image = 'Interface\\AddOns\\SpartanUI\\images\\setup\\Style_Frames_Gale'
-				}
-			}
-		)
+		SUI.UF.Style:Register('Gale', {
+			displayName = 'Gale',
+			setup = {
+				image = 'Interface\\AddOns\\SpartanUI\\images\\setup\\Style_Frames_Gale',
+			},
+		})
 	end
 end
 
@@ -86,20 +83,17 @@ function module:OnEnable()
 			BT4BarBar5:SetAttribute('state-visibility', 'hide')
 		end
 
-		hooksecurefunc(
-			'UIParent_ManageFramePositions',
-			function()
-				if TutorialFrameAlertButton then
-					TutorialFrameAlertButton:SetParent(Minimap)
-					TutorialFrameAlertButton:ClearAllPoints()
-					TutorialFrameAlertButton:SetPoint('CENTER', Minimap, 'TOP', -2, 30)
-				end
-				if CastingBarFrame then
-					CastingBarFrame:ClearAllPoints()
-					CastingBarFrame:SetPoint('BOTTOM', BT4Bar1, 'TOP', 0, 5)
-				end
+		hooksecurefunc('UIParent_ManageFramePositions', function()
+			if TutorialFrameAlertButton then
+				TutorialFrameAlertButton:SetParent(Minimap)
+				TutorialFrameAlertButton:ClearAllPoints()
+				TutorialFrameAlertButton:SetPoint('CENTER', Minimap, 'TOP', -2, 30)
 			end
-		)
+			if CastingBarFrame then
+				CastingBarFrame:ClearAllPoints()
+				CastingBarFrame:SetPoint('BOTTOM', BT4Bar1, 'TOP', 0, 5)
+			end
+		end)
 
 		--Setup Sliding Trays
 		module:SlidingTrays()
@@ -130,10 +124,10 @@ function module:ConfigureUnitFrames()
 			db.party.health.height = 40
 			db.party.power.height = 10
 			db.party.name.position = 'CENTER'
-			db.party.health.backgroundColor = {0, 0, 0, 1} -- Solid black
-			db.party.power.backgroundColor = {0, 0, 0, 1} -- Solid black
-			db.party.health.border = {1, 1, 1, 1} -- 1px white border
-			db.party.power.border = {1, 1, 1, 1} -- 1px white border
+			db.party.health.backgroundColor = { 0, 0, 0, 1 } -- Solid black
+			db.party.power.backgroundColor = { 0, 0, 0, 1 } -- Solid black
+			db.party.health.border = { 1, 1, 1, 1 } -- 1px white border
+			db.party.power.border = { 1, 1, 1, 1 } -- 1px white border
 		end
 
 		-- Raid Frame configuration
@@ -142,10 +136,10 @@ function module:ConfigureUnitFrames()
 			db.raid.health.height = 40
 			db.raid.power.height = 10
 			db.raid.name.position = 'CENTER'
-			db.raid.health.backgroundColor = {0, 0, 0, 1} -- Solid black
-			db.raid.power.backgroundColor = {0, 0, 0, 1} -- Solid black
-			db.raid.health.border = {1, 1, 1, 1} -- 1px white border
-			db.raid.power.border = {1, 1, 1, 1} -- 1px white border
+			db.raid.health.backgroundColor = { 0, 0, 0, 1 } -- Solid black
+			db.raid.power.backgroundColor = { 0, 0, 0, 1 } -- Solid black
+			db.raid.health.border = { 1, 1, 1, 1 } -- 1px white border
+			db.raid.power.border = { 1, 1, 1, 1 } -- 1px white border
 		end
 
 		-- Player Frame configuration
@@ -158,8 +152,8 @@ function module:ConfigureUnitFrames()
 			db.player.name.position = 'LEFT'
 			db.player.health.text.position = 'RIGHT'
 			db.player.health.text.format = '[health:current]' -- No abbreviation
-			db.player.health.backgroundColor = {0, 0, 0, 1} -- Solid black
-			db.player.power.backgroundColor = {0, 0, 0, 1} -- Solid black
+			db.player.health.backgroundColor = { 0, 0, 0, 1 } -- Solid black
+			db.player.power.backgroundColor = { 0, 0, 0, 1 } -- Solid black
 			db.player.threatglow.enabled = true -- Enable threat glow
 			-- Inverted order: power on top, health below, castbar bottom
 			db.player.power.position = 'TOP'
@@ -176,8 +170,8 @@ function module:ConfigureUnitFrames()
 			db.target.name.position = 'RIGHT' -- Opposite of player
 			db.target.health.text.position = 'LEFT' -- Opposite of player
 			db.target.health.text.format = '[health:current]' -- No abbreviation
-			db.target.health.backgroundColor = {0, 0, 0, 1} -- Solid black
-			db.target.power.backgroundColor = {0, 0, 0, 1} -- Solid black
+			db.target.health.backgroundColor = { 0, 0, 0, 1 } -- Solid black
+			db.target.power.backgroundColor = { 0, 0, 0, 1 } -- Solid black
 			db.target.threatglow.enabled = true -- Enable threat glow
 			-- Inverted order: power on top, health below, castbar bottom
 			db.target.power.position = 'TOP'
@@ -211,7 +205,7 @@ function module:Options()
 				set = function(info, val)
 					SUI.DB.Styles.Gale.UseClassColors = val
 					module:SetColor()
-				end
+				end,
 			},
 			alpha = {
 				name = L['Artwork Color'],
@@ -227,11 +221,11 @@ function module:Options()
 					return unpack(SUI.DB.Styles.Gale.Color.Art)
 				end,
 				set = function(info, r, g, b, a)
-					SUI.DB.Styles.Gale.Color.Art = {r, g, b, a}
+					SUI.DB.Styles.Gale.Color.Art = { r, g, b, a }
 					module:SetColor()
-				end
-			}
-		}
+				end,
+			},
+		},
 	}
 end
 
@@ -241,7 +235,7 @@ end
 
 function module:SlidingTrays()
 	local Settings = {
-		trayImage = 'Interface\\AddOns\\SpartanUI\\Themes\\Gale\\Images\\tray-bg'
+		trayImage = 'Interface\\AddOns\\SpartanUI\\Themes\\Gale\\Images\\tray-bg',
 		-- Uses default coordinates from DefaultTraySettings
 	}
 
@@ -259,11 +253,11 @@ function module:SetColor()
 			r, g, b, a = classColor.r, classColor.g, classColor.b, 1
 		else
 			-- Fallback to default if class color not found
-			r, g, b, a = unpack(SUI.DB.Styles.Gale.Color.Art or {0, 0, 0, 1})
+			r, g, b, a = unpack(SUI.DB.Styles.Gale.Color.Art or { 0, 0, 0, 1 })
 		end
 	else
 		-- Use custom colors - Gale uses solid black backgrounds with class-colored elements
-		r, g, b, a = unpack(SUI.DB.Styles.Gale.Color.Art or {0, 0, 0, 1})
+		r, g, b, a = unpack(SUI.DB.Styles.Gale.Color.Art or { 0, 0, 0, 1 })
 	end
 
 	-- Apply coloring to main artwork elements

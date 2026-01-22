@@ -16,7 +16,7 @@ local totalValue = 0
 local blacklistLookup = {
 	items = {},
 	types = {},
-	valid = false
+	valid = false,
 }
 
 ---@class SUI.Module.AutoSell.DB
@@ -100,16 +100,16 @@ local DbDefaults = {
 			2730,
 			--End Shredder Operating Manual pages
 			63207, -- Wrap of unity
-			63206 -- Wrap of unity
+			63206, -- Wrap of unity
 		},
 		Types = {
 			'Container',
 			'Companions',
 			'Holiday',
 			'Mounts',
-			'Quest'
-		}
-	}
+			'Quest',
+		},
+	},
 }
 
 ---@class SUI.Module.AutoSell.CharDB
@@ -175,22 +175,19 @@ local function IsInGearset(bag, slot)
 		return false
 	end
 
-	local success, result =
-		pcall(
-		function()
-			local line
-			Tooltip:SetOwner(UIParent, 'ANCHOR_NONE')
-			Tooltip:SetBagItem(bag, slot)
+	local success, result = pcall(function()
+		local line
+		Tooltip:SetOwner(UIParent, 'ANCHOR_NONE')
+		Tooltip:SetBagItem(bag, slot)
 
-			for i = 1, Tooltip:NumLines() do
-				line = _G['AutoSellTooltipTextLeft' .. i]
-				if line and line:GetText() and line:GetText():find(EQUIPMENT_SETS:format('.*')) then
-					return true
-				end
+		for i = 1, Tooltip:NumLines() do
+			line = _G['AutoSellTooltipTextLeft' .. i]
+			if line and line:GetText() and line:GetText():find(EQUIPMENT_SETS:format('.*')) then
+				return true
 			end
-			return false
 		end
-	)
+		return false
+	end)
 
 	if not success then
 		debugMsg('IsInGearset error: ' .. tostring(result), 'error')
@@ -252,10 +249,13 @@ function module:IsSellable(item, ilink, bag, slot)
 
 	-- Quality check
 	if
-		(quality == 0 and not module.DB.Gray) or (quality == 1 and not module.DB.White) or (quality == 2 and not module.DB.Green) or (quality == 3 and not module.DB.Blue) or
-			(quality == 4 and not module.DB.Purple) or
-			(iLevel and iLevel > module.DB.MaxILVL)
-	 then
+		(quality == 0 and not module.DB.Gray)
+		or (quality == 1 and not module.DB.White)
+		or (quality == 2 and not module.DB.Green)
+		or (quality == 3 and not module.DB.Blue)
+		or (quality == 4 and not module.DB.Purple)
+		or (iLevel and iLevel > module.DB.MaxILVL)
+	then
 		return false
 	end
 
@@ -270,11 +270,13 @@ function module:IsSellable(item, ilink, bag, slot)
 
 	--Crafting Items
 	if
-		((itemType == 'Gem' or itemType == 'Reagent' or itemType == 'Recipes' or itemType == 'Trade Goods' or itemType == 'Tradeskill') or (itemType == 'Miscellaneous' and itemSubType == 'Reagent') or
-			(itemType == 'Item Enhancement') or
-			isCraftingReagent) and
-			module.DB.NotCrafting
-	 then
+		(
+			(itemType == 'Gem' or itemType == 'Reagent' or itemType == 'Recipes' or itemType == 'Trade Goods' or itemType == 'Tradeskill')
+			or (itemType == 'Miscellaneous' and itemSubType == 'Reagent')
+			or (itemType == 'Item Enhancement')
+			or isCraftingReagent
+		) and module.DB.NotCrafting
+	then
 		return false
 	end
 
@@ -294,26 +296,23 @@ function module:IsSellable(item, ilink, bag, slot)
 
 	-- Check for items with "Use:" in tooltip (profession enhancement items, etc.)
 	if bag and slot then
-		local success, hasUseText =
-			pcall(
-			function()
-				Tooltip:SetOwner(UIParent, 'ANCHOR_NONE')
-				Tooltip:SetBagItem(bag, slot)
+		local success, hasUseText = pcall(function()
+			Tooltip:SetOwner(UIParent, 'ANCHOR_NONE')
+			Tooltip:SetBagItem(bag, slot)
 
-				for i = 1, Tooltip:NumLines() do
-					local line = _G['AutoSellTooltipTextLeft' .. i]
-					if line and line:GetText() then
-						local text = line:GetText():lower()
-						if text:find('^use:') or text:find('^%s*use:') then
-							Tooltip:Hide()
-							return true
-						end
+			for i = 1, Tooltip:NumLines() do
+				local line = _G['AutoSellTooltipTextLeft' .. i]
+				if line and line:GetText() then
+					local text = line:GetText():lower()
+					if text:find('^use:') or text:find('^%s*use:') then
+						Tooltip:Hide()
+						return true
 					end
 				end
-				Tooltip:Hide()
-				return false
 			end
-		)
+			Tooltip:Hide()
+			return false
+		end)
 
 		if success and hasUseText then
 			debugMsg('Item has "Use:" text in tooltip - skipping', 'debug')
@@ -368,10 +367,10 @@ function module:SellTrash()
 			if grayItemCount > 0 then
 				debugMsg('Using Blizzard SellAllJunkItems for ' .. grayItemCount .. ' gray items', 'info')
 				C_MerchantFrame.SellAllJunkItems()
-			-- blizzardSoldItems = true
-			-- Schedule our additional selling after a delay to let Blizzard's sell complete
-			-- module:ScheduleTimer('SellAdditionalItems', 1.0)
-			-- return
+				-- blizzardSoldItems = true
+				-- Schedule our additional selling after a delay to let Blizzard's sell complete
+				-- module:ScheduleTimer('SellAdditionalItems', 1.0)
+				-- return
 			end
 		end
 	end
@@ -389,7 +388,7 @@ function module:SellTrash()
 				end
 				local sellable = module:IsSellable(itemInfo.itemID, itemInfo.hyperlink, bag, slot)
 				if sellable then
-					ItemToSell[#ItemToSell + 1] = {bag, slot}
+					ItemToSell[#ItemToSell + 1] = { bag, slot }
 					totalValue = totalValue + (select(11, C_Item.GetItemInfo(itemInfo.itemID)) * itemInfo.stackCount)
 				end
 			end
@@ -431,7 +430,7 @@ function module:SellAdditionalItems()
 				-- Skip gray items as they were already handled by Blizzard
 				local _, _, quality = C_Item.GetItemInfo(itemInfo.itemID)
 				if quality ~= 0 and module:IsSellable(itemInfo.itemID, itemInfo.hyperlink, bag, slot) then
-					ItemToSell[#ItemToSell + 1] = {bag, slot}
+					ItemToSell[#ItemToSell + 1] = { bag, slot }
 					totalValue = totalValue + (select(11, C_Item.GetItemInfo(itemInfo.itemID)) * itemInfo.stackCount)
 				end
 			end
@@ -617,27 +616,24 @@ function module:DebugItemSellability(link)
 	-- Tooltip Analysis
 	print('|cffFFFF00--- Tooltip Analysis ------|r')
 	if actualBag and actualSlot then
-		local success, tooltipText =
-			pcall(
-			function()
-				Tooltip:SetOwner(UIParent, 'ANCHOR_NONE')
-				Tooltip:SetBagItem(actualBag, actualSlot)
+		local success, tooltipText = pcall(function()
+			Tooltip:SetOwner(UIParent, 'ANCHOR_NONE')
+			Tooltip:SetBagItem(actualBag, actualSlot)
 
-				local lines = {}
-				for i = 1, Tooltip:NumLines() do
-					local leftText = _G['AutoSellTooltipTextLeft' .. i]
-					local rightText = _G['AutoSellTooltipTextRight' .. i]
-					if leftText and leftText:GetText() then
-						local lineText = leftText:GetText()
-						if rightText and rightText:GetText() then
-							lineText = lineText .. ' | ' .. rightText:GetText()
-						end
-						table.insert(lines, lineText)
+			local lines = {}
+			for i = 1, Tooltip:NumLines() do
+				local leftText = _G['AutoSellTooltipTextLeft' .. i]
+				local rightText = _G['AutoSellTooltipTextRight' .. i]
+				if leftText and leftText:GetText() then
+					local lineText = leftText:GetText()
+					if rightText and rightText:GetText() then
+						lineText = lineText .. ' | ' .. rightText:GetText()
 					end
+					table.insert(lines, lineText)
 				end
-				return table.concat(lines, '\n')
 			end
-		)
+			return table.concat(lines, '\n')
+		end)
 
 		if success and tooltipText then
 			print('Tooltip Content:')
@@ -732,10 +728,10 @@ function module:DebugItemSellability(link)
 	end
 
 	-- Crafting check
-	local isCraftingItem =
-		(itemType == 'Gem' or itemType == 'Reagent' or itemType == 'Recipes' or itemType == 'Trade Goods' or itemType == 'Tradeskill') or (itemType == 'Miscellaneous' and itemSubType == 'Reagent') or
-		(itemType == 'Item Enhancement') or
-		isCraftingReagent
+	local isCraftingItem = (itemType == 'Gem' or itemType == 'Reagent' or itemType == 'Recipes' or itemType == 'Trade Goods' or itemType == 'Tradeskill')
+		or (itemType == 'Miscellaneous' and itemSubType == 'Reagent')
+		or (itemType == 'Item Enhancement')
+		or isCraftingReagent
 
 	if isCraftingItem and module.DB.NotCrafting then
 		print('|cffFF0000BLOCKED:|r Crafting items disabled (NotCrafting = ' .. tostring(module.DB.NotCrafting) .. ')')
@@ -770,26 +766,23 @@ function module:DebugItemSellability(link)
 
 	-- Use text check
 	if actualBag and actualSlot then
-		local success, hasUseText =
-			pcall(
-			function()
-				Tooltip:SetOwner(UIParent, 'ANCHOR_NONE')
-				Tooltip:SetBagItem(actualBag, actualSlot)
+		local success, hasUseText = pcall(function()
+			Tooltip:SetOwner(UIParent, 'ANCHOR_NONE')
+			Tooltip:SetBagItem(actualBag, actualSlot)
 
-				for i = 1, Tooltip:NumLines() do
-					local line = _G['AutoSellTooltipTextLeft' .. i]
-					if line and line:GetText() then
-						local text = line:GetText():lower()
-						if text:find('^use:') or text:find('^%s*use:') then
-							Tooltip:Hide()
-							return true
-						end
+			for i = 1, Tooltip:NumLines() do
+				local line = _G['AutoSellTooltipTextLeft' .. i]
+				if line and line:GetText() then
+					local text = line:GetText():lower()
+					if text:find('^use:') or text:find('^%s*use:') then
+						Tooltip:Hide()
+						return true
 					end
 				end
-				Tooltip:Hide()
-				return false
 			end
-		)
+			Tooltip:Hide()
+			return false
+		end)
 
 		if success and hasUseText then
 			print('|cffFF0000BLOCKED:|r Item has "Use:" text in tooltip (profession enhancement protection)')
@@ -904,21 +897,18 @@ end
 ---Set up click handler for Alt+Right Click functionality
 function module:SetupClickHandler()
 	-- Hook the global modified item click handler
-	hooksecurefunc(
-		'HandleModifiedItemClick',
-		function(link)
-			module:HandleItemClick(link)
-		end
-	)
+	hooksecurefunc('HandleModifiedItemClick', function(link)
+		module:HandleItemClick(link)
+	end)
 end
 
 function module:OnInitialize()
 	local CharDbDefaults = {
 		Whitelist = {},
-		Blacklist = {}
+		Blacklist = {},
 	}
 
-	module.Database = SUI.SpartanUIDB:RegisterNamespace('AutoSell', {profile = DbDefaults, char = CharDbDefaults})
+	module.Database = SUI.SpartanUIDB:RegisterNamespace('AutoSell', { profile = DbDefaults, char = CharDbDefaults })
 	module.DB = module.Database.profile ---@type SUI.Module.AutoSell.DB
 	module.CharDB = module.Database.char ---@type SUI.Module.AutoSell.CharDB
 

@@ -22,11 +22,11 @@ local function Options()
 					return unpack(SUI.DB.Styles.Transparent.Color.Art)
 				end,
 				set = function(info, r, g, b, a)
-					SUI.DB.Styles.Transparent.Color.Art = {r, g, b, a}
+					SUI.DB.Styles.Transparent.Color.Art = { r, g, b, a }
 					module:SetColor()
-				end
-			}
-		}
+				end,
+			},
+		},
 	}
 end
 
@@ -36,29 +36,28 @@ function module:OnInitialize()
 	SUI.opt.args['General'].args['style'].args['Artwork'].args['Transparent'].disabled = false
 
 	local BarHandler = SUI.Handlers.BarSystem
-	BarHandler.BarPosition.BT4.Transparent =
-		SUI.IsRetail and
-		{
-			['BT4Bar1'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-445,104',
-			['BT4Bar2'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-445,47',
-			--
-			['BT4Bar3'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,445,104',
-			['BT4Bar4'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,445,47',
-			--
-			['BT4Bar5'] = 'BOTTOMRIGHT,SUI_BottomAnchor,BOTTOMLEFT,-5,7',
-			['BT4Bar6'] = 'BOTTOMLEFT,SUI_BottomAnchor,BOTTOMRIGHT,5,7',
-			--
-			['BT4BarExtraActionBar'] = 'BOTTOM,SUI_BottomAnchor,TOP,0,130',
-			['BT4BarZoneAbilityBar'] = 'BOTTOM,SUI_BottomAnchor,TOP,0,130',
-			--
-			['BT4BarStanceBar'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-240,165',
-			['BT4BarPetBar'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-570,165',
-			['MultiCastActionBarFrame'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-570,165',
-			--
-			['BT4BarMicroMenu'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,294,165',
-			['BT4BarBagBar'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,628,180'
-		} or
-		{
+	BarHandler.BarPosition.BT4.Transparent = SUI.IsRetail
+			and {
+				['BT4Bar1'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-445,104',
+				['BT4Bar2'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-445,47',
+				--
+				['BT4Bar3'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,445,104',
+				['BT4Bar4'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,445,47',
+				--
+				['BT4Bar5'] = 'BOTTOMRIGHT,SUI_BottomAnchor,BOTTOMLEFT,-5,7',
+				['BT4Bar6'] = 'BOTTOMLEFT,SUI_BottomAnchor,BOTTOMRIGHT,5,7',
+				--
+				['BT4BarExtraActionBar'] = 'BOTTOM,SUI_BottomAnchor,TOP,0,130',
+				['BT4BarZoneAbilityBar'] = 'BOTTOM,SUI_BottomAnchor,TOP,0,130',
+				--
+				['BT4BarStanceBar'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-240,165',
+				['BT4BarPetBar'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-570,165',
+				['MultiCastActionBarFrame'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-570,165',
+				--
+				['BT4BarMicroMenu'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,294,165',
+				['BT4BarBagBar'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,628,180',
+			}
+		or {
 			['BT4Bar1'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-347,80',
 			['BT4Bar2'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-347,25',
 			['BT4Bar3'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,344,80',
@@ -74,7 +73,7 @@ function module:OnInitialize()
 			['BT4BarBagBar'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,611,188',
 			--
 			['BT4BarExtraActionBar'] = 'BOTTOM,SUI_BottomAnchor,TOP,0,15',
-			['BT4BarZoneAbilityBar'] = 'BOTTOM,SUI_BottomAnchor,TOP,0,15'
+			['BT4BarZoneAbilityBar'] = 'BOTTOM,SUI_BottomAnchor,TOP,0,15',
 		}
 
 	BarHandler.BarScale.BT4.Transparent = {
@@ -87,17 +86,17 @@ function module:OnInitialize()
 		['BT4Bar7'] = SUI.IsRetail and 0.62 or 0.77,
 		['BT4Bar8'] = SUI.IsRetail and 0.62 or 0.77,
 		['BT4Bar9'] = SUI.IsRetail and 0.62 or 0.77,
-		['BT4BarMicroMenu'] = SUI.IsRetail and nil or 0.65
+		['BT4BarMicroMenu'] = SUI.IsRetail and nil or 0.65,
 	}
 
 	local minimapSettings = {
 		shape = 'square',
-		size = {135, 135},
+		size = { 135, 135 },
 		position = 'CENTER,SUI_Art_Transparent,CENTER,-10,-5',
 		ZoneText = {
-			size = {130, 12},
-			position = 'BOTTOM,Minimap,TOP,0,2'
-		}
+			size = { 130, 12 },
+			position = 'BOTTOM,Minimap,TOP,0,2',
+		},
 	}
 	SUI:GetModule('Minimap'):Register('Transparent', minimapSettings)
 
@@ -108,23 +107,23 @@ function module:OnInitialize()
 			artwork = {
 				top = {
 					path = 'Interface\\AddOns\\SpartanUI\\Themes\\Transparent\\Images\\base_plate1',
-					TexCoord = {0.03125, 0.458984375, 0, 0.2109375}
+					TexCoord = { 0.03125, 0.458984375, 0, 0.2109375 },
 				},
 				bg = {
 					path = 'Interface\\AddOns\\SpartanUI\\Themes\\Transparent\\Images\\base_plate1',
-					TexCoord = {0, 0.458984375, 0.74609375, 1}
-				}
+					TexCoord = { 0, 0.458984375, 0.74609375, 1 },
+				},
 			},
 			positions = {
 				['player'] = 'BOTTOMRIGHT,UIParent,BOTTOM,-123,138',
 				['pet'] = 'BOTTOMRIGHT,SUI_UF_player,BOTTOMLEFT,20,0',
 				['target'] = 'LEFT,SUI_UF_player,RIGHT,244,0',
-				['targettarget'] = 'BOTTOMLEFT,SUI_UF_target,BOTTOMRIGHT,50,0'
+				['targettarget'] = 'BOTTOMLEFT,SUI_UF_target,BOTTOMRIGHT,50,0',
 			},
 			displayName = 'Transparent',
 			setup = {
-				image = 'Interface\\AddOns\\SpartanUI\\images\\setup\\Style_Frames_Transparent'
-			}
+				image = 'Interface\\AddOns\\SpartanUI\\images\\setup\\Style_Frames_Transparent',
+			},
 		}
 		SUI.UF.Style:Register('Transparent', ufsettings)
 	end
@@ -133,15 +132,15 @@ function module:OnInitialize()
 	---@type SUI.Style.Settings.StatusBars.Storage
 	local StatusBarsSettings = {
 		Left = {
-			size = {400, 15},
-			Position = 'BOTTOMRIGHT,SUI_BottomAnchor,BOTTOM,-90,2'
+			size = { 400, 15 },
+			Position = 'BOTTOMRIGHT,SUI_BottomAnchor,BOTTOM,-90,2',
 		},
 		Right = {
-			size = {400, 15},
-			Position = 'BOTTOMLEFT,SUI_BottomAnchor,BOTTOM,90,2'
-		}
+			size = { 400, 15 },
+			Position = 'BOTTOMLEFT,SUI_BottomAnchor,BOTTOM,90,2',
+		},
 	}
-	statusBarModule:RegisterStyle('Transparent', {Left = SUI:CopyTable({}, StatusBarsSettings), Right = SUI:CopyTable({}, StatusBarsSettings)})
+	statusBarModule:RegisterStyle('Transparent', { Left = SUI:CopyTable({}, StatusBarsSettings), Right = SUI:CopyTable({}, StatusBarsSettings) })
 end
 
 function module:OnEnable()
@@ -159,8 +158,8 @@ function module:OnEnable()
 			-- width = 400,
 			height = 37,
 			TexturePath = 'Interface\\AddOns\\SpartanUI\\Themes\\Transparent\\Images\\bar-backdrop1',
-			TexCoord = {0.107421875, 0.896484375, 0.25, 0.765625},
-			alpha = 0.1
+			TexCoord = { 0.107421875, 0.896484375, 0.25, 0.765625 },
+			alpha = 0.1,
 		}
 
 		local BarBGSettings2 = {
@@ -169,7 +168,7 @@ function module:OnEnable()
 			height = 110,
 			TexturePath = 'Interface\\AddOns\\SpartanUI\\Themes\\Transparent\\Images\\bar-backdrop3',
 			alpha = 0.5,
-			TexCoord = {0.23828125, 0.76171875, 0.09375, 0.8828125}
+			TexCoord = { 0.23828125, 0.76171875, 0.09375, 0.8828125 },
 		}
 
 		for i = 1, 4 do
@@ -240,8 +239,7 @@ function module:TooltipLoc(tooltip, parent)
 	end
 end
 
-function module:SetupVehicleUI()
-end
+function module:SetupVehicleUI() end
 
 function module:RemoveVehicleUI()
 	if SUI.DB.Artwork.VehicleUI then

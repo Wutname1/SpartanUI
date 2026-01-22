@@ -47,17 +47,17 @@ local function Options(unitName, OptionSet)
 		args = {
 			ShowTank = {
 				name = 'Show tank',
-				type = 'toggle'
+				type = 'toggle',
 			},
 			ShowHealer = {
 				name = 'Show healer',
-				type = 'toggle'
+				type = 'toggle',
 			},
 			ShowDPS = {
 				name = 'Show DPS',
-				type = 'toggle'
-			}
-		}
+				type = 'toggle',
+			},
+		},
 	}
 end
 
@@ -72,12 +72,12 @@ local Settings = {
 	position = {
 		anchor = 'TOPRIGHT',
 		x = 0,
-		y = 10
+		y = 10,
 	},
 	config = {
 		type = 'Indicator',
-		DisplayName = 'Group Role'
-	}
+		DisplayName = 'Group Role',
+	},
 }
 
 UF.Elements:Register('GroupRoleIndicator', Build, nil, Options, Settings)

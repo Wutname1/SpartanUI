@@ -10,8 +10,8 @@ local Defaults = {
 	positions = {},
 	artwork = {},
 	setup = {
-		image = 'Interface\\AddOns\\SpartanUI\\Media\\Textures\\UI-StatusBar'
-	}
+		image = 'Interface\\AddOns\\SpartanUI\\Media\\Textures\\UI-StatusBar',
+	},
 }
 
 ---Register a style within the registry
@@ -21,7 +21,7 @@ local Defaults = {
 function Style:Register(styleName, settings, update)
 	registry[styleName] = {
 		settings = SUI:CopyData(settings, Defaults),
-		update = update
+		update = update,
 	}
 
 	if not registry[styleName].setup then

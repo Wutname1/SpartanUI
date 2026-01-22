@@ -15,25 +15,25 @@ function SUI:HotsListing()
 			48438, -- Wild Growth
 			155777, -- Germination
 			102351, -- Cenarion Ward
-			102342 -- Ironbark
+			102342, -- Ironbark
 		}
 	elseif classFileName == 'PRIEST' then
 		if SUI.IsClassic then
 			return {
 				139, -- Renew
-				17 -- sheild
+				17, -- sheild
 			}
 		else
 			return {
 				139, -- Renew
 				17, -- sheild
-				33076 -- Prayer of Mending
+				33076, -- Prayer of Mending
 			}
 		end
 	elseif classFileName == 'MONK' then
 		return {
 			119611, -- Renewing Mist
-			227345 -- Enveloping Mist
+			227345, -- Enveloping Mist
 		}
 	end
 	return {}
@@ -430,15 +430,15 @@ SUIUF.Tags.Methods['SUIPower'] = SUIPower
 
 do --LEGACY Health Formatting Tags (for backwards compatibility)
 	local listing = {
-		['health:current-short'] = {'short'},
-		['health:current-dynamic'] = {'dynamic'},
+		['health:current-short'] = { 'short' },
+		['health:current-dynamic'] = { 'dynamic' },
 		['health:current-formatted'] = {},
-		['health:max-short'] = {'max', 'short'},
-		['health:max-dynamic'] = {'max', 'dynamic'},
-		['health:max-formatted'] = {'max'},
-		['health:missing-short'] = {'missing', 'short'},
-		['health:missing-dynamic'] = {'missing', 'dynamic'},
-		['health:missing-formatted'] = {'missing'}
+		['health:max-short'] = { 'max', 'short' },
+		['health:max-dynamic'] = { 'max', 'dynamic' },
+		['health:max-formatted'] = { 'max' },
+		['health:missing-short'] = { 'missing', 'short' },
+		['health:missing-dynamic'] = { 'missing', 'dynamic' },
+		['health:missing-formatted'] = { 'missing' },
 	}
 	for k, v in pairs(listing) do
 		SUIUF.Tags.Events[k] = 'UNIT_HEALTH UNIT_MAXHEALTH'
@@ -450,15 +450,15 @@ end
 
 do -- LEGACY Power Formatting Tags (for backwards compatibility)
 	local listing = {
-		['power:current-short'] = {'short'},
-		['power:current-dynamic'] = {'dynamic'},
+		['power:current-short'] = { 'short' },
+		['power:current-dynamic'] = { 'dynamic' },
 		['power:current-formatted'] = {},
-		['power:max-short'] = {'max', 'short'},
-		['power:max-dynamic'] = {'max', 'dynamic'},
-		['power:max-formatted'] = {'max'},
-		['power:missing-short'] = {'missing', 'short'},
-		['power:missing-dynamic'] = {'missing', 'dynamic'},
-		['power:missing-formatted'] = {'missing'}
+		['power:max-short'] = { 'max', 'short' },
+		['power:max-dynamic'] = { 'max', 'dynamic' },
+		['power:max-formatted'] = { 'max' },
+		['power:missing-short'] = { 'missing', 'short' },
+		['power:missing-dynamic'] = { 'missing', 'dynamic' },
+		['power:missing-formatted'] = { 'missing' },
 	}
 	for k, v in pairs(listing) do
 		SUIUF.Tags.Events[k] = 'UNIT_MAXPOWER UNIT_DISPLAYPOWER UNIT_POWER_FREQUENT'

@@ -7,8 +7,8 @@ local module = SUI:NewModule('Handler.Skins')
 local DBDefaults = {
 	Blizzard = {
 		GameMenu = {
-			Scale = 0.8
-		}
+			Scale = 0.8,
+		},
 	},
 	components = {
 		['**'] = {
@@ -16,10 +16,10 @@ local DBDefaults = {
 			colors = {
 				primary = 'CLASS',
 				secondary = 'CLASS',
-				background = 'dark'
-			}
-		}
-	}
+				background = 'dark',
+			},
+		},
+	},
 }
 ---@type AceConfig.OptionsTable
 local OptTable
@@ -60,29 +60,29 @@ local BlizzardRegionList = {
 	'BottomRightTex',
 	'RightTex',
 	'MiddleTex',
-	'Center'
+	'Center',
 }
 
 local Settings = {
-	BackdropColor = {0.05, 0.05, 0.05, 0.85},
-	BackdropColorDark = {0, 0, 0, 0.95},
-	BackdropColorLight = {0.17, 0.17, 0.17, 0.9},
-	BaseBorderColor = {1, 1, 1, 0.3},
-	ObjBorderColor = {1, 1, 1, 0.5},
+	BackdropColor = { 0.05, 0.05, 0.05, 0.85 },
+	BackdropColorDark = { 0, 0, 0, 0.95 },
+	BackdropColorLight = { 0.17, 0.17, 0.17, 0.9 },
+	BaseBorderColor = { 1, 1, 1, 0.3 },
+	ObjBorderColor = { 1, 1, 1, 0.5 },
 	factionColor = {
-		Alliance = {0, 0.6, 1, 0.5},
-		Horde = {1, 0.2, 0.2, 0.5}
+		Alliance = { 0, 0.6, 1, 0.5 },
+		Horde = { 1, 0.2, 0.2, 0.5 },
 	},
 	TxBlank = 'Interface\\Addons\\SpartanUI\\images\\blank',
 	bgFile = 'Interface\\DialogFrame\\UI-DialogBox-Background',
-	edgeFile = 'Interface\\BUTTONS\\WHITE8X8'
+	edgeFile = 'Interface\\BUTTONS\\WHITE8X8',
 }
 ---@class AppearanceMode
 local AppearanceMode = {
 	Default = 'Default',
 	Dark = 'Dark',
 	Light = 'Light',
-	NoBackdrop = 'NoBackdrop'
+	NoBackdrop = 'NoBackdrop',
 }
 
 local function GetBaseBorderColor()
@@ -189,9 +189,9 @@ function module.colors.GetColorTable(data)
 	end
 
 	if data.a then
-		return {data.r, data.g, data.b, data.a}
+		return { data.r, data.g, data.b, data.a }
 	else
-		return {data.r, data.g, data.b}
+		return { data.r, data.g, data.b }
 	end
 end
 
@@ -300,19 +300,15 @@ function module.SetTemplate(frame, appearanceMode)
 	if frame.appearanceMode == AppearanceMode.NoBackdrop then
 		frame:SetBackdrop(nil)
 	elseif frame.appearanceMode == AppearanceMode.NoBorder then
-		frame:SetBackdrop(
-			{
-				bgFile = Settings.edgeFile
-			}
-		)
+		frame:SetBackdrop({
+			bgFile = Settings.edgeFile,
+		})
 	else
-		frame:SetBackdrop(
-			{
-				bgFile = Settings.edgeFile,
-				edgeFile = Settings.edgeFile,
-				edgeSize = edgeSize
-			}
-		)
+		frame:SetBackdrop({
+			bgFile = Settings.edgeFile,
+			edgeFile = Settings.edgeFile,
+			edgeSize = edgeSize,
+		})
 	end
 
 	if frame.appearanceMode == AppearanceMode.Dark then
@@ -333,19 +329,15 @@ module.Objects = {}
 ---@param widget any|AceGUITabGroupTab
 ---@param mode? AppearanceMode
 function module.Objects.Tab(widget, mode, NormalTex, regionsToFade)
-	hooksecurefunc(
-		widget,
-		'SetPoint',
-		function(self, left, parent, right, x, y)
-			if y == -7 then
-				self:ClearAllPoints()
-				self:SetPoint(left, parent, right, 0, -4)
-			elseif x == -10 then
-				self:ClearAllPoints()
-				self:SetPoint(left, parent, right, 0, 0)
-			end
+	hooksecurefunc(widget, 'SetPoint', function(self, left, parent, right, x, y)
+		if y == -7 then
+			self:ClearAllPoints()
+			self:SetPoint(left, parent, right, 0, -4)
+		elseif x == -10 then
+			self:ClearAllPoints()
+			self:SetPoint(left, parent, right, 0, 0)
 		end
-	)
+	end)
 
 	widget.Left:SetTexture('Interface\\AddOns\\SpartanUI\\images\\UI-Tab')
 	widget.Left:SetTexCoord(0.1, 0.15, 0, 1)
@@ -467,21 +459,17 @@ function module.Objects.StatusBar(statusBarFrame)
 
 	-- Set up the background frame
 	module.SetTemplate(bgFrame, 'NoBackdrop')
-	bgFrame:SetBackdrop(
-		{
-			bgFile = Settings.edgeFile
-		}
-	)
+	bgFrame:SetBackdrop({
+		bgFile = Settings.edgeFile,
+	})
 	bgFrame:SetBackdropColor(unpack(Settings.BackdropColor))
 
 	-- Set up the border frame
 	module.SetTemplate(borderFrame, 'NoBorder')
-	borderFrame:SetBackdrop(
-		{
-			edgeFile = Settings.edgeFile,
-			edgeSize = 1
-		}
-	)
+	borderFrame:SetBackdrop({
+		edgeFile = Settings.edgeFile,
+		edgeSize = 1,
+	})
 	borderFrame:SetBackdropBorderColor(unpack(Settings.MutedClassColor))
 
 	-- Hide default textures
@@ -527,14 +515,12 @@ function module.SkinObj(ObjType, object, mode, component)
 		Mixin(object, BackdropTemplateMixin)
 	end
 
-	object:SetBackdrop(
-		{
-			bgFile = 'Interface\\DialogFrame\\UI-DialogBox-Background',
-			edgeFile = 'Interface\\BUTTONS\\WHITE8X8',
-			edgeSize = 1,
-			TileSize = 20
-		}
-	)
+	object:SetBackdrop({
+		bgFile = 'Interface\\DialogFrame\\UI-DialogBox-Background',
+		edgeFile = 'Interface\\BUTTONS\\WHITE8X8',
+		edgeSize = 1,
+		TileSize = 20,
+	})
 	if mode and mode == AppearanceMode.Dark then
 		object:SetBackdropColor(unpack(Settings.BackdropColorDark))
 	elseif mode and mode == AppearanceMode.Light then
@@ -576,7 +562,7 @@ local function functionAddToOptions(name, settings)
 	OptTable.args.enabledState.args[name] = {
 		name = name,
 		type = 'toggle',
-		order = 1
+		order = 1,
 	}
 
 	local colors = {
@@ -594,7 +580,7 @@ local function functionAddToOptions(name, settings)
 		['DEATHKNIGHT'] = '|cffC41E3ADeath Knight (Red)',
 		['MONK'] = '|cff00FF98Monk (Spring Green)',
 		['DEMONHUNTER'] = '|cffA330C9Demon Hunter (Dark Magenta)',
-		['EVOKER'] = '|cff33937FEvoker (Dark Emerald)'
+		['EVOKER'] = '|cff33937FEvoker (Dark Emerald)',
 	}
 
 	local OptionsTab = {
@@ -617,17 +603,17 @@ local function functionAddToOptions(name, settings)
 						name = 'Primary',
 						type = 'select',
 						order = 1,
-						values = colors
+						values = colors,
 					},
 					secondary = {
 						name = 'Secondary',
 						type = 'select',
 						order = 2,
-						values = colors
-					}
-				}
-			}
-		}
+						values = colors,
+					},
+				},
+			},
+		},
 	}
 	if settings.Options then
 		settings.Options(OptionsTab)
@@ -645,7 +631,7 @@ function module:Register(Name, OnEnable, OnInitialize, Options, Settings)
 		OnEnable = OnEnable,
 		OnInitialize = OnInitialize,
 		Options = Options,
-		Settings = Settings
+		Settings = Settings,
 	}
 
 	if OptTable and not OptTable.args[Name] then
@@ -671,9 +657,9 @@ local function Options()
 					DB.components[info[#info]].enabled = val
 					SUI:reloadui()
 				end,
-				args = {}
-			}
-		}
+				args = {},
+			},
+		},
 	}
 
 	for name, settings in pairs(module.Registry) do
@@ -684,7 +670,7 @@ local function Options()
 end
 
 function module:OnInitialize()
-	module.Database = SUI.SpartanUIDB:RegisterNamespace('Skins', {profile = DBDefaults})
+	module.Database = SUI.SpartanUIDB:RegisterNamespace('Skins', { profile = DBDefaults })
 
 	module.DB = module.Database.profile
 	DB = module.Database.profile

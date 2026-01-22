@@ -39,92 +39,92 @@ _G.DETECTED_CURRENCIES = DETECTED_CURRENCIES
 -- Default thresholds and colors
 local STAT_CONFIG = {
 	fps = {
-		thresholds = {excellent = 70, good = 40, poor = 25},
-		colors = {excellent = {0, 1, 0}, good = {1, 1, 0}, poor = {1, 0, 0}},
+		thresholds = { excellent = 70, good = 40, poor = 25 },
+		colors = { excellent = { 0, 1, 0 }, good = { 1, 1, 0 }, poor = { 1, 0, 0 } },
 		maxValue = 144,
 		unit = ' fps',
 		progress = true,
 		label = 'FPS',
-		icon = 'atlas:ui-hud-minimap-zoom-in'
+		icon = 'atlas:ui-hud-minimap-zoom-in',
 	},
 	latency = {
-		thresholds = {excellent = 50, good = 100, poor = 200},
-		colors = {excellent = {0, 1, 0}, good = {1, 1, 0}, poor = {1, 0, 0}},
+		thresholds = { excellent = 50, good = 100, poor = 200 },
+		colors = { excellent = { 0, 1, 0 }, good = { 1, 1, 0 }, poor = { 1, 0, 0 } },
 		maxValue = 300,
 		unit = 'ms',
 		progress = true,
 		invert = true, -- Lower is better
 		label = 'Latency',
-		icon = 'Interface\\Icons\\Spell_Shadow_Web'
+		icon = 'Interface\\Icons\\Spell_Shadow_Web',
 	},
 	memory = {
-		thresholds = {excellent = 100, good = 200, poor = 400},
-		colors = {excellent = {0, 1, 0}, good = {1, 1, 0}, poor = {1, 0, 0}},
+		thresholds = { excellent = 100, good = 200, poor = 400 },
+		colors = { excellent = { 0, 1, 0 }, good = { 1, 1, 0 }, poor = { 1, 0, 0 } },
 		maxValue = 500,
 		unit = 'MB',
 		progress = true,
 		label = 'Memory',
-		icon = 'Interface\\Icons\\Trade_Engineering'
+		icon = 'Interface\\Icons\\Trade_Engineering',
 	},
 	bags = {
-		thresholds = {excellent = 60, good = 80, poor = 95}, -- Percentage full
-		colors = {excellent = {0, 1, 0}, good = {1, 1, 0}, poor = {1, 0, 0}},
+		thresholds = { excellent = 60, good = 80, poor = 95 }, -- Percentage full
+		colors = { excellent = { 0, 1, 0 }, good = { 1, 1, 0 }, poor = { 1, 0, 0 } },
 		maxValue = 100,
 		unit = '%',
 		progress = true,
 		label = 'Bags',
-		icon = 'Interface\\Icons\\INV_Misc_Bag_08'
+		icon = 'Interface\\Icons\\INV_Misc_Bag_08',
 	},
 	durability = {
-		thresholds = {excellent = 80, good = 50, poor = 25},
-		colors = {excellent = {0, 1, 0}, good = {1, 1, 0}, poor = {1, 0, 0}},
+		thresholds = { excellent = 80, good = 50, poor = 25 },
+		colors = { excellent = { 0, 1, 0 }, good = { 1, 1, 0 }, poor = { 1, 0, 0 } },
 		maxValue = 100,
 		unit = '%',
 		progress = true,
 		invert = true,
 		label = 'Durability',
-		icon = 'Interface\\Icons\\Trade_BlackSmithing'
+		icon = 'Interface\\Icons\\Trade_BlackSmithing',
 	},
 	gold = {
 		label = 'Gold',
-		icon = 'Interface\\Icons\\INV_Misc_Coin_01'
+		icon = 'Interface\\Icons\\INV_Misc_Coin_01',
 	},
 	sessionTime = {
 		label = 'Session',
-		icon = 'Interface\\Icons\\Spell_Holy_BorrowedTime'
+		icon = 'Interface\\Icons\\Spell_Holy_BorrowedTime',
 	},
 	totalTime = {
 		label = 'Total Time',
-		icon = 'Interface\\Icons\\Spell_Holy_BorrowedTime'
+		icon = 'Interface\\Icons\\Spell_Holy_BorrowedTime',
 	},
 	xp = {
 		label = 'XP',
-		icon = 'Interface\\Icons\\Spell_ChargePositive'
+		icon = 'Interface\\Icons\\Spell_ChargePositive',
 	},
 	xpPerHour = {
 		label = 'XP/Hr',
-		icon = 'Interface\\Icons\\Spell_ChargePositive'
+		icon = 'Interface\\Icons\\Spell_ChargePositive',
 	},
 	recentXpRate = {
 		label = 'Recent XP/Hr',
-		icon = 'Interface\\Icons\\Spell_ChargePositive'
+		icon = 'Interface\\Icons\\Spell_ChargePositive',
 	},
 	restedXP = {
 		label = 'Rested',
-		icon = 'Interface\\Icons\\Spell_Nature_Regeneration'
+		icon = 'Interface\\Icons\\Spell_Nature_Regeneration',
 	},
 	kills = {
 		label = 'Kills',
-		icon = 'Interface\\Icons\\Ability_Warrior_Decisivestrike'
+		icon = 'Interface\\Icons\\Ability_Warrior_Decisivestrike',
 	},
 	deaths = {
 		label = 'Deaths',
-		icon = 'Interface\\Icons\\Ability_Rogue_FeignDeath'
+		icon = 'Interface\\Icons\\Ability_Rogue_FeignDeath',
 	},
 	kdr = {
 		label = 'K/D Ratio',
-		icon = 'Interface\\Icons\\Achievement_PVP_A_A'
-	}
+		icon = 'Interface\\Icons\\Achievement_PVP_A_A',
+	},
 }
 
 ---Format time duration
@@ -172,7 +172,7 @@ end
 local function GetStatColor(statType, value)
 	local config = STAT_CONFIG[statType]
 	if not config or not StatsTracker.DB.adaptiveColors then
-		return StatsTracker.DB.textColor or {1, 1, 1}
+		return StatsTracker.DB.textColor or { 1, 1, 1 }
 	end
 
 	local thresholds = config.thresholds
@@ -309,7 +309,7 @@ local function CollectPerformanceStats()
 		rawDisplayValue = fpsDisplay,
 		color = GetStatColor('fps', fps),
 		progress = GetStatProgress('fps', fps),
-		type = 'performance'
+		type = 'performance',
 	}
 
 	-- Latency
@@ -321,7 +321,7 @@ local function CollectPerformanceStats()
 		displayValue = FormatStatDisplay('latency', latencyDisplay),
 		color = GetStatColor('latency', latency),
 		progress = GetStatProgress('latency', latency),
-		type = 'performance'
+		type = 'performance',
 	}
 
 	-- Memory usage
@@ -338,7 +338,7 @@ local function CollectPerformanceStats()
 		displayValue = FormatStatDisplay('memory', memoryDisplay),
 		color = GetStatColor('memory', memoryUsage),
 		progress = GetStatProgress('memory', memoryUsage),
-		type = 'performance'
+		type = 'performance',
 	}
 end
 
@@ -366,7 +366,7 @@ local function CollectCharacterStats()
 		rawDisplayValue = bagsDisplay,
 		color = GetStatColor('bags', bagPercent),
 		progress = GetStatProgress('bags', bagPercent),
-		type = 'character'
+		type = 'character',
 	}
 
 	-- Durability
@@ -394,7 +394,7 @@ local function CollectCharacterStats()
 		displayValue = FormatStatDisplay('durability', durabilityDisplay),
 		color = GetStatColor('durability', durabilityPercent),
 		progress = GetStatProgress('durability', durabilityPercent),
-		type = 'character'
+		type = 'character',
 	}
 
 	-- Gold
@@ -407,8 +407,8 @@ local function CollectCharacterStats()
 		displayValue = FormatStatDisplay('gold', goldDisplay),
 		sessionGain = goldDiff,
 		sessionGainDisplay = GetMoneyString(math.abs(goldDiff), goldDiff < 0),
-		color = StatsTracker.DB.textColor or {1, 1, 1},
-		type = 'character'
+		color = StatsTracker.DB.textColor or { 1, 1, 1 },
+		type = 'character',
 	}
 end
 
@@ -420,8 +420,8 @@ local function CollectGameplayStats()
 	currentStats.sessionTime = {
 		value = sessionTime,
 		displayValue = FormatStatDisplay('sessionTime', sessionTimeDisplay),
-		color = StatsTracker.DB.textColor or {1, 1, 1},
-		type = 'session'
+		color = StatsTracker.DB.textColor or { 1, 1, 1 },
+		type = 'session',
 	}
 
 	-- Total playtime
@@ -430,8 +430,8 @@ local function CollectGameplayStats()
 	currentStats.totalTime = {
 		value = totalTime,
 		displayValue = FormatStatDisplay('totalTime', totalTimeDisplay),
-		color = StatsTracker.DB.textColor or {1, 1, 1},
-		type = 'session'
+		color = StatsTracker.DB.textColor or { 1, 1, 1 },
+		type = 'session',
 	}
 
 	-- XP tracking (only for characters that can gain XP)
@@ -451,7 +451,7 @@ local function CollectGameplayStats()
 		end
 
 		-- Track XP history for trend calculation
-		table.insert(xpHistory, {time = GetTime(), xp = currentXP})
+		table.insert(xpHistory, { time = GetTime(), xp = currentXP })
 		if #xpHistory > XP_HISTORY_SIZE then
 			table.remove(xpHistory, 1)
 		end
@@ -472,32 +472,32 @@ local function CollectGameplayStats()
 			value = currentXP,
 			displayValue = FormatStatDisplay('xp', xpDisplay),
 			progress = currentXP / maxXP,
-			color = StatsTracker.DB.textColor or {1, 1, 1},
-			type = 'gameplay'
+			color = StatsTracker.DB.textColor or { 1, 1, 1 },
+			type = 'gameplay',
 		}
 
 		local xpPerHourDisplay = FormatNumber(xpPerHour) .. ' XP/hr'
 		currentStats.xpPerHour = {
 			value = xpPerHour,
 			displayValue = FormatStatDisplay('xpPerHour', xpPerHourDisplay),
-			color = StatsTracker.DB.textColor or {1, 1, 1},
-			type = 'gameplay'
+			color = StatsTracker.DB.textColor or { 1, 1, 1 },
+			type = 'gameplay',
 		}
 
 		local recentXpRateDisplay = FormatNumber(recentXpRate) .. ' XP/hr (recent)'
 		currentStats.recentXpRate = {
 			value = recentXpRate,
 			displayValue = FormatStatDisplay('recentXpRate', recentXpRateDisplay),
-			color = StatsTracker.DB.textColor or {1, 1, 1},
-			type = 'gameplay'
+			color = StatsTracker.DB.textColor or { 1, 1, 1 },
+			type = 'gameplay',
 		}
 
 		local restedXPDisplay = FormatNumber(restedXP) .. ' rested'
 		currentStats.restedXP = {
 			value = restedXP,
 			displayValue = FormatStatDisplay('restedXP', restedXPDisplay),
-			color = restedXP > 0 and {0, 0.8, 1} or StatsTracker.DB.textColor or {1, 1, 1},
-			type = 'gameplay'
+			color = restedXP > 0 and { 0, 0.8, 1 } or StatsTracker.DB.textColor or { 1, 1, 1 },
+			type = 'gameplay',
 		}
 	end
 
@@ -506,16 +506,16 @@ local function CollectGameplayStats()
 	currentStats.kills = {
 		value = sessionData.kills,
 		displayValue = FormatStatDisplay('kills', killsDisplay),
-		color = StatsTracker.DB.textColor or {1, 1, 1},
-		type = 'combat'
+		color = StatsTracker.DB.textColor or { 1, 1, 1 },
+		type = 'combat',
 	}
 
 	local deathsDisplay = string.format('%d', sessionData.deaths)
 	currentStats.deaths = {
 		value = sessionData.deaths,
 		displayValue = FormatStatDisplay('deaths', deathsDisplay),
-		color = sessionData.deaths > 0 and {1, 0.5, 0.5} or StatsTracker.DB.textColor or {1, 1, 1},
-		type = 'combat'
+		color = sessionData.deaths > 0 and { 1, 0.5, 0.5 } or StatsTracker.DB.textColor or { 1, 1, 1 },
+		type = 'combat',
 	}
 
 	local kdr = sessionData.deaths > 0 and (sessionData.kills / sessionData.deaths) or sessionData.kills
@@ -523,8 +523,8 @@ local function CollectGameplayStats()
 	currentStats.kdr = {
 		value = kdr,
 		displayValue = FormatStatDisplay('kdr', kdrDisplay),
-		color = kdr >= 2 and {0, 1, 0} or kdr >= 1 and {1, 1, 0} or {1, 0.5, 0.5},
-		type = 'combat'
+		color = kdr >= 2 and { 0, 1, 0 } or kdr >= 1 and { 1, 1, 0 } or { 1, 0.5, 0.5 },
+		type = 'combat',
 	}
 end
 
@@ -577,7 +577,7 @@ function StatsTracker:DiscoverCurrencies()
 						name = name,
 						icon = iconFileID,
 						id = currencyID,
-						quantity = quantity
+						quantity = quantity,
 					}
 				end
 			end
@@ -623,7 +623,7 @@ local function CollectCurrencyStats()
 					if not STAT_CONFIG[statKey] then
 						STAT_CONFIG[statKey] = {
 							label = name,
-							icon = iconFileID and ('Interface\\Icons\\' .. iconFileID) or 'Interface\\Icons\\INV_Misc_Coin_01'
+							icon = iconFileID and ('Interface\\Icons\\' .. iconFileID) or 'Interface\\Icons\\INV_Misc_Coin_01',
 						}
 					end
 
@@ -632,10 +632,10 @@ local function CollectCurrencyStats()
 						value = quantity,
 						displayValue = FormatStatDisplay(statKey, displayValue),
 						rawDisplayValue = displayValue,
-						color = StatsTracker.DB.textColor or {1, 1, 1},
+						color = StatsTracker.DB.textColor or { 1, 1, 1 },
 						type = 'currency',
 						currencyID = currencyID,
-						currencyName = name
+						currencyName = name,
 					}
 				end
 			end
@@ -653,7 +653,7 @@ local function CollectCurrencyStats()
 		2245, -- Flightstones
 		1792, -- Honor
 		1602, -- Conquest
-		1166 -- Timewarped Badge
+		1166, -- Timewarped Badge
 	}
 
 	for _, currencyID in ipairs(importantCurrencies) do
@@ -670,7 +670,7 @@ local function CollectCurrencyStats()
 					name = name,
 					icon = iconFileID,
 					id = currencyID,
-					quantity = quantity
+					quantity = quantity,
 				}
 			end
 
@@ -679,7 +679,7 @@ local function CollectCurrencyStats()
 				if not STAT_CONFIG[statKey] then
 					STAT_CONFIG[statKey] = {
 						label = name,
-						icon = iconFileID and ('Interface\\Icons\\' .. iconFileID) or 'Interface\\Icons\\INV_Misc_Coin_01'
+						icon = iconFileID and ('Interface\\Icons\\' .. iconFileID) or 'Interface\\Icons\\INV_Misc_Coin_01',
 					}
 				end
 
@@ -696,12 +696,12 @@ local function CollectCurrencyStats()
 					value = quantity,
 					displayValue = FormatStatDisplay(statKey, displayValue),
 					rawDisplayValue = displayValue,
-					color = StatsTracker.DB.textColor or {1, 1, 1},
+					color = StatsTracker.DB.textColor or { 1, 1, 1 },
 					type = 'currency',
 					currencyID = currencyID,
 					currencyName = name,
 					progress = progress,
-					goal = goal
+					goal = goal,
 				}
 			end
 		end
@@ -731,7 +731,7 @@ function StatsTracker:InitializeSession()
 		startGold = GetMoney(),
 		kills = 0,
 		deaths = 0,
-		characterCreated = time() - (GetTime() / time()) -- Approximate character creation time
+		characterCreated = time() - (GetTime() / time()), -- Approximate character creation time
 	}
 
 	-- Clear XP history for new session
@@ -781,12 +781,12 @@ function StatsTracker:OnInitialize()
 			enabled = true,
 			updateInterval = 1.0,
 			adaptiveColors = true,
-			textColor = {1, 1, 1},
+			textColor = { 1, 1, 1 },
 			-- Display options
 			showProgressBars = true,
 			progressBarHeight = 3,
-			backgroundColor = {0, 0, 0, 0.7},
-			borderColor = {0.3, 0.3, 0.3, 1},
+			backgroundColor = { 0, 0, 0, 0.7 },
+			borderColor = { 0.3, 0.3, 0.3, 1 },
 			showLabels = true,
 			showIcons = false,
 			elementWidth = 150,
@@ -807,11 +807,11 @@ function StatsTracker:OnInitialize()
 				restedXP = true,
 				kills = true,
 				deaths = true,
-				kdr = true
+				kdr = true,
 			},
 			-- Currency goals for progress tracking
 			currencyGoals = {
-				['**'] = 0 -- Default no goal
+				['**'] = 0, -- Default no goal
 			},
 			-- Display frames
 			frames = {
@@ -821,18 +821,18 @@ function StatsTracker:OnInitialize()
 					width = 200,
 					height = 20,
 					scale = 1.0,
-					stats = {'fps', 'latency'},
+					stats = { 'fps', 'latency' },
 					layout = 'vertical', -- 'horizontal' or 'vertical'
 					spacing = 0,
 					growDirection = 'right', -- 'up', 'down', 'left', 'right'
 					mouseoverPosition = 'above', -- 'above', 'below', 'left', 'right'
 					mouseoverSpacing = 0,
 					statVisibility = {
-						['**'] = 'always' -- 'always' or 'mouseover'
-					}
-				}
-			}
-		}
+						['**'] = 'always', -- 'always' or 'mouseover'
+					},
+				},
+			},
+		},
 	}
 
 	StatsTracker.Database = SUI.SpartanUIDB:RegisterNamespace('StatsTracker', defaults)

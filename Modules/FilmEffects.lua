@@ -4,7 +4,7 @@ local module = SUI:NewModule('FilmEffects') ---@type SUI.Module
 module.DisplayName = L['Film effects']
 module.description = 'Adds a film effect to the screen when AFK'
 local Container
-local EffectList = {'vignette', 'blur', 'crisp'}
+local EffectList = { 'vignette', 'blur', 'crisp' }
 
 local FilmEffectEvent = function(self, event, ...)
 	for _, v in ipairs(EffectList) do
@@ -44,11 +44,11 @@ function module:OnInitialize()
 			animationInterval = 0,
 			anim = '',
 			Effects = {
-				vignette = {always = false, afk = true},
-				blur = {always = false, afk = false},
-				crisp = {always = false, afk = true}
-			}
-		}
+				vignette = { always = false, afk = true },
+				blur = { always = false, afk = false },
+				crisp = { always = false, afk = true },
+			},
+		},
 	}
 	module.Database = SUI.SpartanUIDB:RegisterNamespace('FilmEffects', defaults)
 	module.DB = module.Database.profile
@@ -68,12 +68,9 @@ function module:OnEnable()
 	Container:RegisterEvent('CHAT_MSG_SYSTEM')
 	Container:RegisterEvent('PLAYER_ENTERING_WORLD')
 	Container:SetScript('OnEvent', FilmEffectEvent)
-	Container:SetScript(
-		'OnUpdate',
-		function(self, elapsed)
-			module:UpdateStatus(elapsed)
-		end
-	)
+	Container:SetScript('OnUpdate', function(self, elapsed)
+		module:UpdateStatus(elapsed)
+	end)
 
 	Container.vignette = Container:CreateTexture('FE_Vignette', 'OVERLAY')
 	Container.vignette:SetAllPoints(UIParent)
@@ -187,9 +184,9 @@ function module:Options()
 					module.DB.profile.enable = val
 					FilmEffectEvent(nil, nil, nil)
 					updateopts()
-				end
-			}
-		}
+				end,
+			},
+		},
 	}
 
 	for k, v in ipairs(EffectList) do
@@ -197,7 +194,7 @@ function module:Options()
 			name = v,
 			type = 'header',
 			order = k + 1,
-			width = 'full'
+			width = 'full',
 		}
 		SUI.opt.args['Modules'].args['FilmEffects'].args[v .. 'always'] = {
 			name = L['Always show'],
@@ -213,7 +210,7 @@ function module:Options()
 				end
 				module.DB.profile.Effects[v].always = val
 				FilmEffectEvent(nil, nil, nil)
-			end
+			end,
 		}
 		SUI.opt.args['Modules'].args['FilmEffects'].args[v .. 'AFK'] = {
 			name = L['Show if AFK'],
@@ -228,7 +225,7 @@ function module:Options()
 			end,
 			set = function(info, val)
 				module.DB.profile.Effects[v].afk = val
-			end
+			end,
 		}
 	end
 end

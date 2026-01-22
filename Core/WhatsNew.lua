@@ -5,16 +5,13 @@ local db = 'DB'
 
 function SUI:WhatsNew()
 	local UI = LibAT.UI
-	module.window =
-		UI.CreateWindow(
-		{
-			name = 'SUI_WhatsNew',
-			title = "What's New",
-			width = 650,
-			height = 500,
-			hidePortrait = true
-		}
-	)
+	module.window = UI.CreateWindow({
+		name = 'SUI_WhatsNew',
+		title = "What's New",
+		width = 650,
+		height = 500,
+		hidePortrait = true,
+	})
 	module.window:SetPoint('CENTER', 0, 0)
 	module.window:SetFrameStrata('DIALOG')
 
@@ -45,25 +42,22 @@ function SUI:WhatsNew()
 	desc2:SetJustifyH('CENTER')
 
 	-- Action buttons
-	UI.CreateActionButtons(
-		module.window,
+	UI.CreateActionButtons(module.window, {
 		{
-			{
-				text = 'SKIP',
-				width = 150,
-				onClick = function()
-					module.window:Hide()
-				end
-			},
-			{
-				text = 'CONTINUE',
-				width = 150,
-				onClick = function()
-					module.window:Hide()
-				end
-			}
-		}
-	)
+			text = 'SKIP',
+			width = 150,
+			onClick = function()
+				module.window:Hide()
+			end,
+		},
+		{
+			text = 'CONTINUE',
+			width = 150,
+			onClick = function()
+				module.window:Hide()
+			end,
+		},
+	})
 
 	-- Store references for external updates
 	module.window.SubTitle = subtitle

@@ -26,14 +26,13 @@ local elementList = {
 	'SummonIndicator',
 	'StatusText',
 	'SUI_RaidGroup',
-	'AuraWatch'
+	'AuraWatch',
 }
 
 local function GroupBuilder(holder)
 	if SUI.IsRetail then
 		-- Retail uses templateType
-		holder.header =
-			SUIUF:SpawnHeader(
+		holder.header = SUIUF:SpawnHeader(
 			'SUI_UF_party_Header',
 			nil,
 			'showRaid',
@@ -63,8 +62,7 @@ local function GroupBuilder(holder)
 		)
 	else
 		-- Classic versions use unit string and template
-		holder.header =
-			SUIUF:SpawnHeader(
+		holder.header = SUIUF:SpawnHeader(
 			'SUI_UF_party_Header',
 			nil,
 			'party',
@@ -153,26 +151,26 @@ local Settings = {
 		background = {
 			enabled = false,
 			type = 'color',
-			color = {0.1, 0.1, 0.1, 0.8},
+			color = { 0.1, 0.1, 0.1, 0.8 },
 			alpha = 0.8,
-			classColor = false
+			classColor = false,
 		},
 		border = {
 			enabled = false,
-			sides = {top = true, bottom = true, left = true, right = true},
+			sides = { top = true, bottom = true, left = true, right = true },
 			size = 1,
 			colors = {
-				top = {1, 1, 1, 1},
-				bottom = {1, 1, 1, 1},
-				left = {1, 1, 1, 1},
-				right = {1, 1, 1, 1}
+				top = { 1, 1, 1, 1 },
+				bottom = { 1, 1, 1, 1 },
+				left = { 1, 1, 1, 1 },
+				right = { 1, 1, 1, 1 },
 			},
-			classColors = {top = false, bottom = false, left = false, right = false}
-		}
+			classColors = { top = false, bottom = false, left = false, right = false },
+		},
 	},
 	elements = {
 		AuraWatch = {
-			enabled = true
+			enabled = true,
 		},
 		Buffs = {
 			enabled = true,
@@ -181,8 +179,8 @@ local Settings = {
 			position = {
 				relativePoint = 'BOTTOMRIGHT',
 				anchor = 'BOTTOMLEFT',
-				x = -2
-			}
+				x = -2,
+			},
 		},
 		Debuffs = {
 			enabled = true,
@@ -192,44 +190,44 @@ local Settings = {
 				relativePoint = 'BOTTOMLEFT',
 				anchor = 'BOTTOMRIGHT',
 				x = 15,
-				y = 47
-			}
+				y = 47,
+			},
 		},
 		Castbar = {
-			enabled = true
+			enabled = true,
 		},
 		ThreatIndicator = {
 			enabled = true,
-			points = 'Name'
+			points = 'Name',
 		},
 		Health = {
 			text = {
 				['1'] = {
-					text = '[SUIHealth(displayDead)] [($>SUIHealth<$)(percentage,hideDead)]'
-				}
+					text = '[SUIHealth(displayDead)] [($>SUIHealth<$)(percentage,hideDead)]',
+				},
 			},
 			position = {
 				anchor = 'TOP',
 				relativeTo = 'Castbar',
-				relativePoint = 'BOTTOM'
-			}
+				relativePoint = 'BOTTOM',
+			},
 		},
 		ResurrectIndicator = {
-			enabled = true
+			enabled = true,
 		},
 		SummonIndicator = {
-			enabled = true
+			enabled = true,
 		},
 		GroupRoleIndicator = {
 			enabled = true,
 			position = {
 				anchor = 'TOPRIGHT',
 				x = 0,
-				y = 0
-			}
+				y = 0,
+			},
 		},
 		AssistantIndicator = {
-			enabled = true
+			enabled = true,
 		},
 		RaidTargetIndicator = {
 			enabled = true,
@@ -237,8 +235,8 @@ local Settings = {
 			position = {
 				anchor = 'RIGHT',
 				x = 5,
-				y = 0
-			}
+				y = 0,
+			},
 		},
 		ClassIcon = {
 			enabled = false,
@@ -246,21 +244,21 @@ local Settings = {
 			position = {
 				anchor = 'TOPLEFT',
 				x = 0,
-				y = 0
-			}
+				y = 0,
+			},
 		},
 		name = {
 			position = {
-				y = 12
-			}
+				y = 12,
+			},
 		},
 		Power = {
-			height = 5
-		}
+			height = 5,
+		},
 	},
 	config = {
-		IsGroup = true
-	}
+		IsGroup = true,
+	},
 }
 
 UF.Unit:Add('party', Builder, Settings, Options, GroupBuilder, Update)

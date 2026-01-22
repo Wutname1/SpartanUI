@@ -15,128 +15,128 @@ local SUIBT4Settings = {
 				buttons = 12,
 				rows = 1,
 				padding = 3,
-				position = {scale = 0.85},
-				skin = {Zoom = true}
+				position = { scale = 0.85 },
+				skin = { Zoom = true },
 			}, -- 1
 			{
 				enabled = true,
 				buttons = 12,
 				rows = 1,
 				padding = 3,
-				position = {scale = 0.85},
-				skin = {Zoom = true}
+				position = { scale = 0.85 },
+				skin = { Zoom = true },
 			}, -- 2
 			{
 				enabled = true,
 				buttons = 12,
 				rows = 1,
 				padding = 3,
-				position = {scale = 0.85},
-				skin = {Zoom = true}
+				position = { scale = 0.85 },
+				skin = { Zoom = true },
 			}, -- 3
 			{
 				enabled = true,
 				buttons = 12,
 				rows = 1,
 				padding = 3,
-				position = {scale = 0.85},
-				skin = {Zoom = true}
+				position = { scale = 0.85 },
+				skin = { Zoom = true },
 			}, -- 4
 			{
 				enabled = true,
 				buttons = 12,
 				rows = 3,
 				padding = 4,
-				position = {scale = 0.85},
-				skin = {Zoom = true}
+				position = { scale = 0.85 },
+				skin = { Zoom = true },
 			}, -- 5
 			{
 				enabled = true,
 				buttons = 12,
 				rows = 3,
 				padding = 4,
-				position = {scale = 0.85},
-				skin = {Zoom = true}
+				position = { scale = 0.85 },
+				skin = { Zoom = true },
 			}, -- 6
 			{
 				enabled = false,
 				buttons = 12,
 				rows = 1,
 				padding = 3,
-				position = {scale = 0.85},
-				skin = {Zoom = true}
+				position = { scale = 0.85 },
+				skin = { Zoom = true },
 			}, -- 7
 			{
 				enabled = false,
 				buttons = 12,
 				rows = 1,
 				padding = 3,
-				position = {scale = 0.85},
-				skin = {Zoom = true}
+				position = { scale = 0.85 },
+				skin = { Zoom = true },
 			}, -- 8
 			{
 				enabled = false,
 				buttons = 12,
 				rows = 1,
 				padding = 3,
-				position = {scale = 0.85},
-				skin = {Zoom = true}
+				position = { scale = 0.85 },
+				skin = { Zoom = true },
 			}, -- 9
 			{
 				enabled = false,
 				buttons = 12,
 				rows = 1,
 				padding = 3,
-				position = {scale = 0.85},
-				skin = {Zoom = true}
-			} -- 10
-		}
+				position = { scale = 0.85 },
+				skin = { Zoom = true },
+			}, -- 10
+		},
 	},
 	BagBar = {
 		enabled = true,
 		padding = 0,
 		onebag = false,
 		keyring = true,
-		position = {scale = 0.6},
-		skin = {Zoom = true}
+		position = { scale = 0.6 },
+		skin = { Zoom = true },
 	},
 	MicroMenu = {
 		enabled = true,
 		padding = -7,
-		position = {scale = 0.6}
+		position = { scale = 0.6 },
 	},
 	QueueStatus = {
-		position = {scale = 0.58}
+		position = { scale = 0.58 },
 	},
 	PetBar = {
 		enabled = true,
-		position = {scale = 0.6},
-		skin = {Zoom = true}
+		position = { scale = 0.6 },
+		skin = { Zoom = true },
 	},
 	StanceBar = {
 		enabled = true,
 		padding = 1,
-		position = {scale = 0.6},
-		skin = {Zoom = true}
+		position = { scale = 0.6 },
+		skin = { Zoom = true },
 	},
 	Vehicle = {
-		enabled = false
+		enabled = false,
 	},
 	ExtraActionBar = {
-		enabled = false
+		enabled = false,
 	},
 	ZoneAbilityBar = {
-		enabled = false
+		enabled = false,
 	},
 	XPBar = {
-		enabled = false
+		enabled = false,
 	},
 	RepBar = {
-		enabled = false
+		enabled = false,
 	},
-	BlizzardArt = {enabled = false},
-	StatusTrackingBar = {enabled = false},
-	blizzardVehicle = true
+	BlizzardArt = { enabled = false },
+	StatusTrackingBar = { enabled = false },
+	blizzardVehicle = true,
 }
 
 local FrameList = {
@@ -155,7 +155,7 @@ local FrameList = {
 	'BT4BarPetBar',
 	'MultiCastActionBarFrame',
 	'BT4BarMicroMenu',
-	'BT4BarQueueStatus'
+	'BT4BarQueueStatus',
 }
 ------------------------------------------------------------
 
@@ -248,8 +248,7 @@ local function BTMover(BarName, DisplayName)
 	end
 	local bar = _G[BarName]
 	if bar then
-		function bar:LoadPosition()
-		end
+		function bar:LoadPosition() end
 		function bar:GetConfigScale()
 			return scaleData[BarName]
 		end
@@ -281,8 +280,7 @@ local function AddMovers()
 		local bar = _G[BarName]
 		if bar then
 			local barLabel = bt4ActionBars:GetBarName(i)
-			function bar:LoadPosition()
-			end
+			function bar:LoadPosition() end
 			function bar:GetConfigScale()
 				return scaleData[BarName]
 			end
@@ -345,7 +343,7 @@ local function Options()
 				order = 1,
 				func = function()
 					Unlock()
-				end
+				end,
 			},
 			ResetActionBars = {
 				name = L['Reset ActionBars'],
@@ -365,9 +363,9 @@ local function Options()
 
 					--Force refresh
 					RefreshConfig()
-				end
+				end,
 			},
-			line1 = {name = '', type = 'header', order = 2.5},
+			line1 = { name = '', type = 'header', order = 2.5 },
 			LockButtons = {
 				name = L['Lock Buttons'],
 				type = 'toggle',
@@ -383,7 +381,7 @@ local function Options()
 				set = function(info, value)
 					Bartender4.db.profile.buttonlock = value
 					Bartender4.Bar:ForAll('ForAll', 'SetAttribute', 'buttonlock', value)
-				end
+				end,
 			},
 			kb = {
 				order = 4,
@@ -392,9 +390,9 @@ local function Options()
 				func = function()
 					LibStub('LibKeyBound-1.0'):Toggle()
 					AceConfigDialog:Close('Bartender4')
-				end
+				end,
 			},
-			line2 = {name = '', type = 'header', order = 5.5},
+			line2 = { name = '', type = 'header', order = 5.5 },
 			VehicleUI = {
 				name = L['Use Blizzard Vehicle UI'],
 				type = 'toggle',
@@ -423,7 +421,7 @@ local function Options()
 							SUI:GetModule('Style.' .. SUI.DB.Artwork.Style):RemoveVehicleUI()
 						end
 					end
-				end
+				end,
 			},
 			minimapIcon = {
 				order = 7,
@@ -438,9 +436,9 @@ local function Options()
 				end,
 				disabled = function()
 					return not LDBIcon
-				end
-			}
-		}
+				end,
+			},
+		},
 	}
 
 	if Bartender4.options then
@@ -464,17 +462,24 @@ local function OnEnable()
 		-- TODO: Convert this away from Static popup
 		-- Minimum version warning.
 		StaticPopupDialogs['BartenderVerWarning'] = {
-			text = '|cff33ff99SpartanUI v' ..
-				SUI.Version ..
-					'|n|r|n|n' ..
-						L['Warning'] .. ': ' .. L['Your bartender version may be out of date. We detected Version'] .. ' ' .. SUI.Bartender4Version .. '|n|nSpartanUI requires ' .. BartenderMin .. ' or higher.',
+			text = '|cff33ff99SpartanUI v'
+				.. SUI.Version
+				.. '|n|r|n|n'
+				.. L['Warning']
+				.. ': '
+				.. L['Your bartender version may be out of date. We detected Version']
+				.. ' '
+				.. SUI.Bartender4Version
+				.. '|n|nSpartanUI requires '
+				.. BartenderMin
+				.. ' or higher.',
 			button1 = 'Ok',
 			OnAccept = function()
 				SUI.DBG.BartenderVerWarning = SUI.Version
 			end,
 			timeout = 0,
 			whileDead = true,
-			hideOnEscape = false
+			hideOnEscape = false,
 		}
 		StaticPopup_Show('BartenderVerWarning')
 	end
@@ -502,17 +507,14 @@ local function OnEnable()
 	if SUI:IsAddonDisabled('Bartender4') and not SUI.DB.BT4Warned then
 		local cnt = 1
 		local BT4Warning = CreateFrame('Frame')
-		BT4Warning:SetScript(
-			'OnEvent',
-			function()
-				if cnt <= 10 then
-					SUI.UI.Dialog(L['Warning'], L['Bartender4 not detected! Please download and install Bartender4.'] .. ' Warning ' .. cnt .. ' of 10')
-				else
-					SUI.DB.BT4Warned = true
-				end
-				cnt = cnt + 1
+		BT4Warning:SetScript('OnEvent', function()
+			if cnt <= 10 then
+				SUI.UI.Dialog(L['Warning'], L['Bartender4 not detected! Please download and install Bartender4.'] .. ' Warning ' .. cnt .. ' of 10')
+			else
+				SUI.DB.BT4Warned = true
 			end
-		)
+			cnt = cnt + 1
+		end)
 		BT4Warning:RegisterEvent('PLAYER_LOGIN')
 		BT4Warning:RegisterEvent('PLAYER_ENTERING_WORLD')
 		BT4Warning:RegisterEvent('ZONE_CHANGED')
@@ -526,8 +528,7 @@ local function OnEnable()
 		Unlock()
 	end
 
-	function Bartender4:Lock()
-	end
+	function Bartender4:Lock() end
 
 	-- Do what Bartender isn't - Make the Bag buttons the same size
 	do -- modify CharacterBag(0-3) Scale

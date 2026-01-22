@@ -3,7 +3,7 @@ local SUI = SUI
 
 local gameMenuLastButtons = {
 	[_G['GAMEMENU_OPTIONS']] = 1,
-	[_G['BLIZZARD_STORE']] = 2
+	[_G['BLIZZARD_STORE']] = 2,
 }
 
 local function SUI_PositionGameMenuButton()
@@ -34,7 +34,7 @@ local function OnEnable()
 	GameMenuFrame.MenuButtons = GameMenuFrame.MenuButtons or {}
 	if not SUI.Skins.DB.Blizzard then
 		SUI.Skins.DB.Blizzard = {
-			GameMenu = {}
+			GameMenu = {},
 		}
 	end
 	if not SUI.Skins.DB.Blizzard.GameMenu then
@@ -50,15 +50,12 @@ local function OnEnable()
 		end
 
 		local button = CreateFrame('Button', 'SUI_GameMenuButton', GameMenuFrame, 'MainMenuFrameButtonTemplate')
-		button:SetScript(
-			'OnClick',
-			function()
-				SUI.Options:ToggleOptions()
-				if not InCombatLockdown() then
-					HideUIPanel(GameMenuFrame)
-				end
+		button:SetScript('OnClick', function()
+			SUI.Options:ToggleOptions()
+			if not InCombatLockdown() then
+				HideUIPanel(GameMenuFrame)
 			end
-		)
+		end)
 		button:SetSize(200, 35)
 
 		GameMenuFrame.SUI = button
@@ -99,9 +96,9 @@ local function Options(optTable)
 						GameMenuFrame:SetScale(value)
 					end
 				end,
-				order = 10
-			}
-		}
+				order = 10,
+			},
+		},
 	}
 end
 

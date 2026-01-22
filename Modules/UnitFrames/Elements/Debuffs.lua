@@ -99,19 +99,19 @@ local Settings = {
 	rows = 2,
 	position = {
 		anchor = 'TOPRIGHT',
-		relativePoint = 'BOTTOMRIGHT'
+		relativePoint = 'BOTTOMRIGHT',
 	},
 	rules = {
 		duration = {
 			enabled = true,
 			maxTime = 180,
-			minTime = 1
+			minTime = 1,
 		},
 		isHarmful = true,
-		isBossAura = true
+		isBossAura = true,
 	},
 	config = {
-		type = 'Auras'
-	}
+		type = 'Auras',
+	},
 }
 UF.Elements:Register('Debuffs', Build, Update, Options, Settings)

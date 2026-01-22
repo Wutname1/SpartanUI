@@ -19,14 +19,14 @@ local function Options()
 				order = 0.5,
 				get = function(info)
 					if not SUI.DB.Styles.Arcane.Color.Art then
-						return {1, 1, 1, 1}
+						return { 1, 1, 1, 1 }
 					end
 					return unpack(SUI.DB.Styles.Arcane.Color.Art)
 				end,
 				set = function(info, r, g, b, a)
-					SUI.DB.Styles.Arcane.Color.Art = {r, g, b, a}
+					SUI.DB.Styles.Arcane.Color.Art = { r, g, b, a }
 					module:SetColor()
-				end
+				end,
 			},
 			ColorEnabled = {
 				name = L['Color enabled'],
@@ -41,15 +41,15 @@ local function Options()
 				end,
 				set = function(info, val)
 					if val then
-						SUI.DB.Styles.Arcane.Color.Art = {1, 1, 1, 1}
+						SUI.DB.Styles.Arcane.Color.Art = { 1, 1, 1, 1 }
 						module:SetColor()
 					else
 						SUI.DB.Styles.Arcane.Color.Art = false
 						module:SetColor()
 					end
-				end
-			}
-		}
+				end,
+			},
+		},
 	}
 end
 
@@ -62,7 +62,7 @@ function module:OnInitialize()
 		['MultiCastActionBarFrame'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-661,191',
 		--
 		['BT4BarMicroMenu'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,310,151',
-		['BT4BarBagBar'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,661,174'
+		['BT4BarBagBar'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,661,174',
 	}
 
 	-- Unitframes Settings
@@ -71,26 +71,26 @@ function module:OnInitialize()
 		local RedUFSettings = {
 			displayName = 'Arcane red',
 			setup = {
-				image = 'Interface\\AddOns\\SpartanUI\\images\\setup\\Style_Frames_ArcaneRed'
+				image = 'Interface\\AddOns\\SpartanUI\\images\\setup\\Style_Frames_ArcaneRed',
 			},
 			artwork = {
 				top = {
 					heightScale = 0.225,
 					yScale = -0.09,
 					path = 'Interface\\AddOns\\SpartanUI\\Themes\\Arcane\\Images\\UnitFrames',
-					TexCoord = {0.533203125, 1, 0, 0.19921875}
+					TexCoord = { 0.533203125, 1, 0, 0.19921875 },
 				},
 				bg = {
 					path = 'Interface\\AddOns\\SpartanUI\\Themes\\Arcane\\Images\\UnitFrames',
-					TexCoord = {0.533203125, 1, 0.46484375, 0.75}
+					TexCoord = { 0.533203125, 1, 0.46484375, 0.75 },
 				},
 				bottom = {
 					heightScale = 0.075,
 					-- yScale = 0.0223,
 					path = 'Interface\\AddOns\\SpartanUI\\Themes\\Arcane\\Images\\UnitFrames',
-					TexCoord = {0.533203125, 1, 0.374, 0.403}
-				}
-			}
+					TexCoord = { 0.533203125, 1, 0.374, 0.403 },
+				},
+			},
 		}
 		SUI.UF.Style:Register('ArcaneRed', RedUFSettings)
 
@@ -98,39 +98,39 @@ function module:OnInitialize()
 		local BlueUFSettings = {
 			displayName = 'Arcane blue',
 			setup = {
-				image = 'Interface\\AddOns\\SpartanUI\\images\\setup\\Style_Frames_Arcane'
+				image = 'Interface\\AddOns\\SpartanUI\\images\\setup\\Style_Frames_Arcane',
 			},
 			artwork = {
 				top = {
 					heightScale = 0.225,
 					yScale = -0.09,
 					path = 'Interface\\AddOns\\SpartanUI\\Themes\\Arcane\\Images\\UnitFrames',
-					TexCoord = {0, 0.458984375, 0, 0.19921875}
+					TexCoord = { 0, 0.458984375, 0, 0.19921875 },
 				},
 				bg = {
 					path = 'Interface\\AddOns\\SpartanUI\\Themes\\Arcane\\Images\\UnitFrames',
-					TexCoord = {0, 0.458984375, 0.46484375, 0.75}
+					TexCoord = { 0, 0.458984375, 0.46484375, 0.75 },
 				},
 				bottom = {
 					heightScale = 0.075,
 					-- yScale = 0,
 					path = 'Interface\\AddOns\\SpartanUI\\Themes\\Arcane\\Images\\UnitFrames',
-					TexCoord = {0, 0.458984375, 0.374, 0.403}
-				}
-			}
+					TexCoord = { 0, 0.458984375, 0.374, 0.403 },
+				},
+			},
 		}
 		SUI.UF.Style:Register('Arcane', BlueUFSettings)
 	end
 
 	---@type SUI.Style.Settings.Minimap
 	local minimapSettings = {
-		size = {156, 156},
+		size = { 156, 156 },
 		position = 'CENTER,SUI_Art_Arcane_Left,RIGHT,0,20',
 		elements = {
 			background = {
-				texture = 'Interface\\AddOns\\SpartanUI\\Themes\\Arcane\\Images\\minimap'
-			}
-		}
+				texture = 'Interface\\AddOns\\SpartanUI\\Themes\\Arcane\\Images\\minimap',
+			},
+		},
 	}
 	SUI.Minimap:Register('Arcane', minimapSettings)
 
@@ -139,11 +139,11 @@ function module:OnInitialize()
 	local StatusBarsSettings = {
 		bgTexture = 'Interface\\AddOns\\SpartanUI\\Themes\\Arcane\\Images\\StatusBar',
 		alpha = 0.9,
-		size = {370, 20},
-		texCords = {0.0546875, 0.9140625, 0.5555555555555556, 0},
-		MaxWidth = 48
+		size = { 370, 20 },
+		texCords = { 0.0546875, 0.9140625, 0.5555555555555556, 0 },
+		MaxWidth = 48,
 	}
-	statusBarModule:RegisterStyle('Arcane', {Left = SUI:CopyTable({}, StatusBarsSettings), Right = SUI:CopyTable({}, StatusBarsSettings)})
+	statusBarModule:RegisterStyle('Arcane', { Left = SUI:CopyTable({}, StatusBarsSettings), Right = SUI:CopyTable({}, StatusBarsSettings) })
 
 	module:CreateArtwork()
 end
@@ -152,20 +152,17 @@ function module:OnEnable()
 	if SUI.DB.Artwork.Style ~= 'Arcane' then
 		module:Disable()
 	else
-		hooksecurefunc(
-			'UIParent_ManageFramePositions',
-			function()
-				if TutorialFrameAlertButton then
-					TutorialFrameAlertButton:SetParent(Minimap)
-					TutorialFrameAlertButton:ClearAllPoints()
-					TutorialFrameAlertButton:SetPoint('CENTER', Minimap, 'TOP', -2, 30)
-				end
-				if CastingBarFrame then
-					CastingBarFrame:ClearAllPoints()
-					CastingBarFrame:SetPoint('BOTTOM', SUI_Art_Arcane, 'TOP', 0, 90)
-				end
+		hooksecurefunc('UIParent_ManageFramePositions', function()
+			if TutorialFrameAlertButton then
+				TutorialFrameAlertButton:SetParent(Minimap)
+				TutorialFrameAlertButton:ClearAllPoints()
+				TutorialFrameAlertButton:SetPoint('CENTER', Minimap, 'TOP', -2, 30)
 			end
-		)
+			if CastingBarFrame then
+				CastingBarFrame:ClearAllPoints()
+				CastingBarFrame:SetPoint('BOTTOM', SUI_Art_Arcane, 'TOP', 0, 90)
+			end
+		end)
 
 		if SUI.DB.Styles.Arcane.Color.Art then
 			module:SetColor()
@@ -219,8 +216,8 @@ function module:CreateArtwork()
 	local BarBGSettings = {
 		name = 'Arcane',
 		TexturePath = 'Interface\\AddOns\\SpartanUI\\Themes\\Arcane\\Images\\Barbg',
-		TexCoord = {0.07421875, 0.92578125, 0.359375, 0.6796875},
-		alpha = 0.5
+		TexCoord = { 0.07421875, 0.92578125, 0.359375, 0.6796875 },
+		alpha = 0.5,
 	}
 
 	local plate = CreateFrame('Frame', 'Arcane_ActionBarPlate', SUI_Art_Arcane)

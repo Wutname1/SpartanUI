@@ -2,7 +2,7 @@ local SUI, L = SUI, SUI.L
 ---@class SUI.Module.Artwork.StatusBars : SUI.Module
 local module = SUI:NewModule('Artwork.StatusBars')
 module.bars = {}
-local DB  ---@type SUI.StatusBars.DB
+local DB ---@type SUI.StatusBars.DB
 
 local Enums = {
 	Bars = {
@@ -12,13 +12,13 @@ local Enums = {
 		Artifact = 3,
 		Experience = 4,
 		Azerite = 5,
-		HouseFavor = 6
+		HouseFavor = 6,
 	},
 	TextDisplayMode = {
 		OnMouseOver = 0,
 		Always = 1,
-		Never = 2
-	}
+		Never = 2,
+	},
 }
 
 local BarLabels = {
@@ -27,27 +27,27 @@ local BarLabels = {
 	[Enums.Bars.Honor] = 'Honor',
 	[Enums.Bars.Artifact] = 'Artifact',
 	[Enums.Bars.Experience] = 'Experience',
-	[Enums.Bars.HouseFavor] = 'Housing'
+	[Enums.Bars.HouseFavor] = 'Housing',
 }
 
 -- Colors for Classic bars
 local FACTION_BAR_COLORS = {
-	[1] = {r = 1, g = 0.2, b = 0},
-	[2] = {r = 0.8, g = 0.3, b = 0},
-	[3] = {r = 0.8, g = 0.2, b = 0},
-	[4] = {r = 1, g = 0.8, b = 0},
-	[5] = {r = 0, g = 1, b = 0.1},
-	[6] = {r = 0, g = 1, b = 0.2},
-	[7] = {r = 0, g = 1, b = 0.3},
-	[8] = {r = 0, g = 0.6, b = 0.1}
+	[1] = { r = 1, g = 0.2, b = 0 },
+	[2] = { r = 0.8, g = 0.3, b = 0 },
+	[3] = { r = 0.8, g = 0.2, b = 0 },
+	[4] = { r = 1, g = 0.8, b = 0 },
+	[5] = { r = 0, g = 1, b = 0.1 },
+	[6] = { r = 0, g = 1, b = 0.2 },
+	[7] = { r = 0, g = 1, b = 0.3 },
+	[8] = { r = 0, g = 0.6, b = 0.1 },
 }
 local COLORS = {
-	Orange = {r = 1, g = 0.2, b = 0, a = 0.7},
-	Yellow = {r = 1, g = 0.8, b = 0, a = 0.7},
-	Green = {r = 0, g = 1, b = 0.1, a = 0.7},
-	Blue = {r = 0, g = 0.1, b = 1, a = 0.7},
-	Red = {r = 1, g = 0, b = 0.08, a = 0.7},
-	Light_Blue = {r = 0, g = 0.5, b = 1, a = 0.7}
+	Orange = { r = 1, g = 0.2, b = 0, a = 0.7 },
+	Yellow = { r = 1, g = 0.8, b = 0, a = 0.7 },
+	Green = { r = 0, g = 1, b = 0.1, a = 0.7 },
+	Blue = { r = 0, g = 0.1, b = 1, a = 0.7 },
+	Red = { r = 1, g = 0, b = 0.08, a = 0.7 },
+	Light_Blue = { r = 0, g = 0.5, b = 1, a = 0.7 },
 }
 
 ---@class SUI.StatusBars.DB
@@ -64,7 +64,7 @@ local function GetDBDefaults()
 				[Enums.Bars.Honor] = 3,
 				[Enums.Bars.Azerite] = 4,
 				[Enums.Bars.Artifact] = 5,
-				[Enums.Bars.HouseFavor] = 6
+				[Enums.Bars.HouseFavor] = 6,
 			},
 			bars = {
 				['**'] = {
@@ -72,9 +72,9 @@ local function GetDBDefaults()
 					text = Enums.TextDisplayMode.OnMouseOver,
 					alpha = 1,
 					enabled = true,
-					showTooltip = true
-				}
-			}
+					showTooltip = true,
+				},
+			},
 		}
 	else
 		-- Classic database structure: indexed bars with display modes
@@ -85,8 +85,8 @@ local function GetDBDefaults()
 				ToolTip = 'hover',
 				alpha = 1,
 				AutoColor = true,
-				CustomColor = {r = 0, g = 0.1, b = 1, a = 0.7},
-				CustomColor2 = {r = 0, g = 0.5, b = 1, a = 0.7}
+				CustomColor = { r = 0, g = 0.1, b = 1, a = 0.7 },
+				CustomColor2 = { r = 0, g = 0.5, b = 1, a = 0.7 },
 			},
 			[2] = {
 				display = 'rep',
@@ -94,10 +94,10 @@ local function GetDBDefaults()
 				ToolTip = 'hover',
 				alpha = 1,
 				AutoColor = true,
-				CustomColor = {r = 0, g = 1, b = 0.3, a = 0.7},
-				CustomColor2 = {r = 0, g = 0.5, b = 1, a = 0.7}
+				CustomColor = { r = 0, g = 1, b = 0.3, a = 0.7 },
+				CustomColor2 = { r = 0, g = 0.5, b = 1, a = 0.7 },
 			},
-			default = {FontSize = 10}
+			default = { FontSize = 10 },
 		}
 	end
 end
@@ -109,45 +109,45 @@ end
 ---@class SUI.Style.Settings.StatusBars
 ---@field bgTexture? string
 local StyleSettingsBase = {
-	size = {400, 15},
+	size = { 400, 15 },
 	alpha = 1,
 	MaxWidth = 0,
-	texCords = {0, 1, 0, 1},
+	texCords = { 0, 1, 0, 1 },
 	tooltip = {
 		texture = 'Interface\\Addons\\SpartanUI\\Images\\status-tooltip',
-		textureCoords = {0.103515625, 0.8984375, 0.1796875, 0.8203125},
-		size = {300, 100},
-		textAreaSize = {200, 60},
-		statusBarAnchor = 'TOP'
+		textureCoords = { 0.103515625, 0.8984375, 0.1796875, 0.8203125 },
+		size = { 300, 100 },
+		textAreaSize = { 200, 60 },
+		statusBarAnchor = 'TOP',
 	},
 	Position = 'BOTTOMRIGHT,SUI_BottomAnchor,BOTTOM,-100,0',
 	-- Classic-specific fields
 	GlowImage = 'Interface\\AddOns\\SpartanUI\\Images\\status-glow',
 	GlowHeight = 20,
-	GlowPoint = {x = 0, y = 0},
+	GlowPoint = { x = 0, y = 0 },
 	Grow = 'LEFT',
-	TooltipSize = {300, 100},
+	TooltipSize = { 300, 100 },
 	bgTooltip = 'Interface\\Addons\\SpartanUI\\Images\\status-tooltip',
-	texCordsTooltip = {0.103515625, 0.8984375, 0.1796875, 0.8203125},
-	TooltipTextSize = {230, 60},
+	texCordsTooltip = { 0.103515625, 0.8984375, 0.1796875, 0.8203125 },
+	TooltipTextSize = { 230, 60 },
 	TooltipTextWidth = 300,
 	tooltipAnchor = 'TOP',
-	TextColor = {1, 1, 1, 1},
-	FontSize = 9
+	TextColor = { 1, 1, 1, 1 },
+	FontSize = 9,
 }
 
 local StyleSetting = {
 	base = {
 		Left = {
 			Position = 'BOTTOMRIGHT,SUI_BottomAnchor,BOTTOM,-100,0',
-			Grow = 'LEFT'
+			Grow = 'LEFT',
 		},
 		Right = {
 			Position = 'BOTTOMLEFT,SUI_BottomAnchor,BOTTOM,100,0',
-			Grow = 'RIGHT'
-		}
+			Grow = 'RIGHT',
+		},
 	},
-	skinsettings = {}
+	skinsettings = {},
 }
 ---Copy Base into left and right
 for k, v in pairs(StyleSetting.base) do
@@ -206,7 +206,7 @@ function module:GetReputationTooltipText()
 				factionID = factionID,
 				currentStanding = barValue,
 				currentReactionThreshold = barMin,
-				nextReactionThreshold = barMax
+				nextReactionThreshold = barMax,
 			}
 		end
 	end
@@ -304,7 +304,7 @@ function module:GetHonorTooltipText()
 		[1] = L['2v2'],
 		[2] = L['3v3'],
 		[3] = L['Solo Shuffle'],
-		[4] = L['Rated Battleground']
+		[4] = L['Rated Battleground'],
 	}
 	local hasRating = false
 	local function AddPVPRatings()
@@ -384,7 +384,7 @@ end
 
 function module:OnInitialize()
 	local defaults = GetDBDefaults()
-	module.Database = SUI.SpartanUIDB:RegisterNamespace('StatusBars', {profile = defaults})
+	module.Database = SUI.SpartanUIDB:RegisterNamespace('StatusBars', { profile = defaults })
 	DB = module.Database.profile
 
 	-- Migrate old settings
@@ -454,7 +454,7 @@ function module:UpdateBars()
 		self:UpdateBarTextVisibility('Right')
 
 		-- Update container alphas and visibility
-		for _, key in ipairs({'Left', 'Right'}) do
+		for _, key in ipairs({ 'Left', 'Right' }) do
 			local barContainer = module.bars[key]
 			if barContainer then
 				if DB.bars[key].enabled then
@@ -554,19 +554,16 @@ function module:CreateBarManager_Retail()
 		end
 
 		-- Sort based on priority
-		table.sort(
-			newBarIndicesToShow,
-			function(left, right)
-				return self:GetBarPriority(left) < self:GetBarPriority(right)
-			end
-		)
+		table.sort(newBarIndicesToShow, function(left, right)
+			return self:GetBarPriority(left) < self:GetBarPriority(right)
+		end)
 
 		-- Filter out containers that are disabled
 		local enabledContainers = {}
 		for i, barContainer in ipairs(self.barContainers) do
 			local containerKey = i == 1 and 'Left' or 'Right'
 			if containerKey ~= nil and DB.bars[containerKey] ~= nil and DB.bars[containerKey].enabled then
-				table.insert(enabledContainers, {container = barContainer, index = i})
+				table.insert(enabledContainers, { container = barContainer, index = i })
 			end
 		end
 
@@ -626,7 +623,7 @@ function module:CreateBarManager_Retail()
 end
 
 function module:CreateBarContainers_Retail(barManager)
-	for i, key in ipairs({'Left', 'Right'}) do
+	for i, key in ipairs({ 'Left', 'Right' }) do
 		local barContainer = self:CreateBarContainer_Retail(barManager, key, i)
 		self:SetupBarContainerBehavior(barContainer, i)
 		module.bars[key] = barContainer
@@ -643,18 +640,12 @@ function module:CreateBarContainer_Retail(barManager, key, index)
 	barContainer:SetFrameLevel(20)
 
 	-- Hide with SpartanUI
-	SpartanUI:HookScript(
-		'OnHide',
-		function()
-			barContainer:Hide()
-		end
-	)
-	SpartanUI:HookScript(
-		'OnShow',
-		function()
-			barContainer:Show()
-		end
-	)
+	SpartanUI:HookScript('OnHide', function()
+		barContainer:Hide()
+	end)
+	SpartanUI:HookScript('OnShow', function()
+		barContainer:Show()
+	end)
 
 	self:SetupBarContainerVisuals(barContainer, barStyle)
 	self:SetupBarContainerPosition(barContainer, barStyle, index)
@@ -765,30 +756,24 @@ function module:SetupBarContainerMouseEvents(barContainer, index)
 	barContainer:EnableMouse(true)
 	local containerKey = index == 1 and 'Left' or 'Right'
 
-	barContainer:SetScript(
-		'OnEnter',
-		function(self)
-			-- Find the active bar in this container and trigger its tooltip
-			for _, bar in pairs(self.bars) do
-				if bar:IsShown() and bar.barIndex and bar.barIndex ~= Enums.Bars.None then
-					module:HandleBarOnEnter(bar, containerKey)
-					break -- Only handle the first active bar
-				end
+	barContainer:SetScript('OnEnter', function(self)
+		-- Find the active bar in this container and trigger its tooltip
+		for _, bar in pairs(self.bars) do
+			if bar:IsShown() and bar.barIndex and bar.barIndex ~= Enums.Bars.None then
+				module:HandleBarOnEnter(bar, containerKey)
+				break -- Only handle the first active bar
 			end
 		end
-	)
+	end)
 
-	barContainer:SetScript(
-		'OnLeave',
-		function(self)
-			-- Hide text and tooltip for all bars in this container
-			for _, bar in pairs(self.bars) do
-				if bar:IsShown() and bar.barIndex and bar.barIndex ~= Enums.Bars.None then
-					module:HandleBarOnLeave(bar, containerKey)
-				end
+	barContainer:SetScript('OnLeave', function(self)
+		-- Hide text and tooltip for all bars in this container
+		for _, bar in pairs(self.bars) do
+			if bar:IsShown() and bar.barIndex and bar.barIndex ~= Enums.Bars.None then
+				module:HandleBarOnLeave(bar, containerKey)
 			end
 		end
-	)
+	end)
 end
 
 function module:SetupBarContainerBehavior(barContainer, index)
@@ -797,18 +782,12 @@ function module:SetupBarContainerBehavior(barContainer, index)
 		self:SetupBar(bar, barContainer, width, height, index)
 	end
 
-	SpartanUI:HookScript(
-		'OnHide',
-		function()
-			barContainer:Hide()
-		end
-	)
-	SpartanUI:HookScript(
-		'OnShow',
-		function()
-			barContainer:Show()
-		end
-	)
+	SpartanUI:HookScript('OnHide', function()
+		barContainer:Hide()
+	end)
+	SpartanUI:HookScript('OnShow', function()
+		barContainer:Show()
+	end)
 end
 
 function module:SetupBar(bar, barContainer, width, height, index)
@@ -824,21 +803,15 @@ function module:SetupBar(bar, barContainer, width, height, index)
 
 	self:SetupBarText(bar, barContainer.settings, index)
 
-	bar:HookScript(
-		'OnEnter',
-		function(self)
-			local containerKey = index == 1 and 'Left' or 'Right'
-			module:HandleBarOnEnter(self, containerKey)
-		end
-	)
+	bar:HookScript('OnEnter', function(self)
+		local containerKey = index == 1 and 'Left' or 'Right'
+		module:HandleBarOnEnter(self, containerKey)
+	end)
 
-	bar:HookScript(
-		'OnLeave',
-		function(self)
-			local containerKey = index == 1 and 'Left' or 'Right'
-			module:HandleBarOnLeave(self, containerKey)
-		end
-	)
+	bar:HookScript('OnLeave', function(self)
+		local containerKey = index == 1 and 'Left' or 'Right'
+		module:HandleBarOnLeave(self, containerKey)
+	end)
 end
 
 function module:SetActiveStyle(style)
@@ -848,7 +821,7 @@ function module:SetActiveStyle(style)
 	end
 
 	-- Update the style for each container (Left and Right)
-	for _, key in ipairs({'Left', 'Right'}) do
+	for _, key in ipairs({ 'Left', 'Right' }) do
 		local barContainer = module.bars[key]
 		if barContainer then
 			local newStyle = GetStyleSettings(key)
@@ -979,12 +952,11 @@ local function updateText_Classic(statusbar)
 			rested = (rested / goal) * statusbar:GetWidth()
 
 			if
-				(rested + (now / goal) * (statusbar:GetWidth() - (statusbar.settings.MaxWidth - math.abs(statusbar.settings.GlowPoint.x)))) >
-					(statusbar:GetWidth() - (statusbar.settings.MaxWidth - math.abs(statusbar.settings.GlowPoint.x)))
-			 then
-				rested =
-					(statusbar:GetWidth() - (statusbar.settings.MaxWidth - math.abs(statusbar.settings.GlowPoint.x))) -
-					(now / goal) * (statusbar:GetWidth() - (statusbar.settings.MaxWidth - math.abs(statusbar.settings.GlowPoint.x)))
+				(rested + (now / goal) * (statusbar:GetWidth() - (statusbar.settings.MaxWidth - math.abs(statusbar.settings.GlowPoint.x))))
+				> (statusbar:GetWidth() - (statusbar.settings.MaxWidth - math.abs(statusbar.settings.GlowPoint.x)))
+			then
+				rested = (statusbar:GetWidth() - (statusbar.settings.MaxWidth - math.abs(statusbar.settings.GlowPoint.x)))
+					- (now / goal) * (statusbar:GetWidth() - (statusbar.settings.MaxWidth - math.abs(statusbar.settings.GlowPoint.x)))
 			end
 
 			if rested == 0 then
@@ -1168,7 +1140,7 @@ local function showAzeriteTooltip_Classic(statusbar)
 end
 
 function module:factory_Classic()
-	for i, key in ipairs({'Left', 'Right'}) do
+	for i, key in ipairs({ 'Left', 'Right' }) do
 		local StyleSetting = GetStyleSettings(key)
 
 		-- Status Bar
@@ -1302,87 +1274,63 @@ function module:factory_Classic()
 		end
 
 		-- Statusbar Update event
-		statusbar:SetScript(
-			'OnEvent',
-			function(self)
-				if DB[i].display ~= 'disabled' then
-					self:Show()
-					updateText_Classic(self)
-				else
-					self:Hide()
-				end
+		statusbar:SetScript('OnEvent', function(self)
+			if DB[i].display ~= 'disabled' then
+				self:Show()
+				updateText_Classic(self)
+			else
+				self:Hide()
 			end
-		)
+		end)
 
 		-- Tooltip Display Events
-		statusbar:SetScript(
-			'OnEnter',
-			function()
-				if DB[i].display == 'rep' and DB[i].ToolTip == 'hover' then
-					showRepTooltip_Classic(statusbar)
-				end
-				if DB[i].display == 'xp' and DB[i].ToolTip == 'hover' then
-					showXPTooltip_Classic(statusbar)
-				end
-				if DB[i].display == 'az' and DB[i].ToolTip == 'hover' then
-					showAzeriteTooltip_Classic(statusbar)
-				end
-				if DB[i].display == 'honor' and DB[i].ToolTip == 'hover' then
-					showHonorTooltip_Classic(statusbar)
-				end
+		statusbar:SetScript('OnEnter', function()
+			if DB[i].display == 'rep' and DB[i].ToolTip == 'hover' then
+				showRepTooltip_Classic(statusbar)
 			end
-		)
-		statusbar:SetScript(
-			'OnMouseDown',
-			function()
-				if DB[i].display == 'rep' and DB[i].ToolTip == 'click' then
-					showRepTooltip_Classic(statusbar)
-				end
-				if DB[i].display == 'xp' and DB[i].ToolTip == 'click' then
-					showXPTooltip_Classic(statusbar)
-				end
-				if DB[i].display == 'az' and DB[i].ToolTip == 'click' then
-					showAzeriteTooltip_Classic(statusbar)
-				end
-				if DB[i].display == 'honor' and DB[i].ToolTip == 'click' then
-					showHonorTooltip_Classic(statusbar)
-				end
+			if DB[i].display == 'xp' and DB[i].ToolTip == 'hover' then
+				showXPTooltip_Classic(statusbar)
 			end
-		)
-		statusbar:SetScript(
-			'OnLeave',
-			function()
-				statusbar.tooltip:Hide()
+			if DB[i].display == 'az' and DB[i].ToolTip == 'hover' then
+				showAzeriteTooltip_Classic(statusbar)
 			end
-		)
+			if DB[i].display == 'honor' and DB[i].ToolTip == 'hover' then
+				showHonorTooltip_Classic(statusbar)
+			end
+		end)
+		statusbar:SetScript('OnMouseDown', function()
+			if DB[i].display == 'rep' and DB[i].ToolTip == 'click' then
+				showRepTooltip_Classic(statusbar)
+			end
+			if DB[i].display == 'xp' and DB[i].ToolTip == 'click' then
+				showXPTooltip_Classic(statusbar)
+			end
+			if DB[i].display == 'az' and DB[i].ToolTip == 'click' then
+				showAzeriteTooltip_Classic(statusbar)
+			end
+			if DB[i].display == 'honor' and DB[i].ToolTip == 'click' then
+				showHonorTooltip_Classic(statusbar)
+			end
+		end)
+		statusbar:SetScript('OnLeave', function()
+			statusbar.tooltip:Hide()
+		end)
 
 		-- Hide with SpartanUI
-		SpartanUI:HookScript(
-			'OnHide',
-			function()
-				statusbar:Hide()
-			end
-		)
-		SpartanUI:HookScript(
-			'OnShow',
-			function()
-				statusbar:Show()
-			end
-		)
+		SpartanUI:HookScript('OnHide', function()
+			statusbar:Hide()
+		end)
+		SpartanUI:HookScript('OnShow', function()
+			statusbar:Show()
+		end)
 
 		-- Hook the visibility of the tooltip to the text
-		tooltip:HookScript(
-			'OnHide',
-			function()
-				tooltip.TextFrame:Hide()
-			end
-		)
-		tooltip:HookScript(
-			'OnShow',
-			function()
-				tooltip.TextFrame:Show()
-			end
-		)
+		tooltip:HookScript('OnHide', function()
+			tooltip.TextFrame:Hide()
+		end)
+		tooltip:HookScript('OnShow', function()
+			tooltip.TextFrame:Show()
+		end)
 		-- Hide the new tooltip
 		tooltip:Hide()
 
@@ -1392,20 +1340,17 @@ function module:factory_Classic()
 		end
 	end
 
-	SUI:RegisterMessage(
-		'StatusBarUpdate',
-		function()
-			for i, key in ipairs({'Left', 'Right'}) do
-				if DB[i].display ~= 'disabled' then
-					module.bars[key]:Show()
-					updateText_Classic(module.bars[key])
-				else
-					module.bars[key]:Hide()
-				end
-				module.bars[key]:SetAlpha(DB[i].alpha or 1)
+	SUI:RegisterMessage('StatusBarUpdate', function()
+		for i, key in ipairs({ 'Left', 'Right' }) do
+			if DB[i].display ~= 'disabled' then
+				module.bars[key]:Show()
+				updateText_Classic(module.bars[key])
+			else
+				module.bars[key]:Hide()
 			end
+			module.bars[key]:SetAlpha(DB[i].alpha or 1)
 		end
-	)
+	end)
 end
 
 ----------------------------------------------------------------------------------------------------
@@ -1434,7 +1379,7 @@ function module:BuildOptions_Retail()
 				end,
 				set = function(_, value)
 					SetCVar('showHonorAsExperience', value)
-				end
+				end,
 			},
 			ShowHousingXP = {
 				name = 'Show Housing XP',
@@ -1486,7 +1431,7 @@ function module:BuildOptions_Retail()
 					end
 
 					self:UpdateBars()
-				end
+				end,
 			},
 			EnableReputation = {
 				name = 'Enable Reputation',
@@ -1498,7 +1443,7 @@ function module:BuildOptions_Retail()
 				set = function(_, value)
 					DB.AllowRep = value
 					self:UpdateBars()
-				end
+				end,
 			},
 			PriorityDirection = {
 				name = 'Priority Direction',
@@ -1506,7 +1451,7 @@ function module:BuildOptions_Retail()
 				order = 4,
 				values = {
 					['ltr'] = 'Left to Right',
-					['rtl'] = 'Right to Left'
+					['rtl'] = 'Right to Left',
 				},
 				get = function()
 					return DB.PriorityDirection
@@ -1514,13 +1459,13 @@ function module:BuildOptions_Retail()
 				set = function(_, value)
 					DB.PriorityDirection = value
 					self:UpdateBars()
-				end
+				end,
 			},
 			BarPriorities = self:CreateBarPrioritiesOptions(),
 			Font = self:CreateFontOptions(),
 			Left = self:CreateContainerOptions('Left', 110),
-			Right = self:CreateContainerOptions('Right', 120)
-		}
+			Right = self:CreateContainerOptions('Right', 120),
+		},
 	}
 end
 
@@ -1529,7 +1474,7 @@ function module:BuildOptions_Classic()
 		['xp'] = L['Experiance'],
 		['rep'] = L['Reputation'],
 		['honor'] = L['Honor'],
-		['disabled'] = L['Disabled']
+		['disabled'] = L['Disabled'],
 	}
 
 	-- Add Azerite for versions that support it (BFA Classic)
@@ -1539,18 +1484,18 @@ function module:BuildOptions_Classic()
 
 	local ids = {
 		[1] = 'one',
-		[2] = 'two'
+		[2] = 'two',
 	}
 
 	-- Build Holder
 	SUI.opt.args['Artwork'].args['StatusBars'] = {
 		name = L['Status bars'],
 		type = 'group',
-		args = {}
+		args = {},
 	}
 
 	-- Bar Display dropdowns
-	for i, _ in ipairs({'Left', 'Right'}) do
+	for i, _ in ipairs({ 'Left', 'Right' }) do
 		SUI.opt.args['Artwork'].args['StatusBars'].args[ids[i]] = {
 			name = L['Status bar'] .. ' ' .. i,
 			order = i,
@@ -1568,7 +1513,7 @@ function module:BuildOptions_Classic()
 					set = function(info, val)
 						DB[i].display = val
 						SUI:SendMessage('StatusBarUpdate')
-					end
+					end,
 				},
 				text = {
 					name = L['Display statusbar text'],
@@ -1580,7 +1525,7 @@ function module:BuildOptions_Classic()
 					set = function(info, val)
 						DB[i].text = val
 						SUI:SendMessage('StatusBarUpdate')
-					end
+					end,
 				},
 				TooltipDisplay = {
 					name = L['Tooltip display mode'],
@@ -1589,7 +1534,7 @@ function module:BuildOptions_Classic()
 					values = {
 						['hover'] = L['On mouse over'],
 						['click'] = L['On click'],
-						['off'] = L['Disabled']
+						['off'] = L['Disabled'],
 					},
 					get = function(info)
 						return DB[i].ToolTip
@@ -1597,7 +1542,7 @@ function module:BuildOptions_Classic()
 					set = function(info, val)
 						DB[i].ToolTip = val
 						SUI:SendMessage('StatusBarUpdate')
-					end
+					end,
 				},
 				colors = {
 					name = 'name',
@@ -1621,7 +1566,7 @@ function module:BuildOptions_Classic()
 							set = function(info, val)
 								DB[i].AutoColor = val
 								SUI:SendMessage('StatusBarUpdate')
-							end
+							end,
 						},
 						CustomColor = {
 							name = L['Primary custom color'],
@@ -1636,7 +1581,7 @@ function module:BuildOptions_Classic()
 								local colors = DB[i].CustomColor
 								colors.r, colors.g, colors.b, colors.a = r, g, b, a
 								SUI:SendMessage('StatusBarUpdate')
-							end
+							end,
 						},
 						CustomColor2 = {
 							name = L['Secondary custom color'],
@@ -1651,9 +1596,9 @@ function module:BuildOptions_Classic()
 								local colors = DB[i].CustomColor2
 								colors.r, colors.g, colors.b, colors.a = r, g, b, a
 								SUI:SendMessage('StatusBarUpdate')
-							end
-						}
-					}
+							end,
+						},
+					},
 				},
 				alpha = {
 					name = 'Transparency',
@@ -1667,9 +1612,9 @@ function module:BuildOptions_Classic()
 					set = function(info, val)
 						DB[i].alpha = val
 						SUI:SendMessage('StatusBarUpdate')
-					end
-				}
-			}
+					end,
+				},
+			},
 		}
 	end
 end
@@ -1691,7 +1636,7 @@ function module:CreateContainerOptions(containerKey, order)
 				set = function(_, value)
 					DB.bars[containerKey].enabled = value
 					self:UpdateBars()
-				end
+				end,
 			},
 			text = {
 				name = 'Text Display',
@@ -1703,7 +1648,7 @@ function module:CreateContainerOptions(containerKey, order)
 				values = {
 					[Enums.TextDisplayMode.OnMouseOver] = 'On Mouse Over',
 					[Enums.TextDisplayMode.Always] = 'Always',
-					[Enums.TextDisplayMode.Never] = 'Never'
+					[Enums.TextDisplayMode.Never] = 'Never',
 				},
 				get = function()
 					return DB.bars[containerKey].text
@@ -1711,7 +1656,7 @@ function module:CreateContainerOptions(containerKey, order)
 				set = function(_, value)
 					DB.bars[containerKey].text = value
 					self:UpdateBars()
-				end
+				end,
 			},
 			alpha = {
 				name = 'Alpha',
@@ -1729,7 +1674,7 @@ function module:CreateContainerOptions(containerKey, order)
 				set = function(_, value)
 					DB.bars[containerKey].alpha = value
 					self:UpdateBars()
-				end
+				end,
 			},
 			showTooltip = {
 				name = 'Show Tooltip on Mouseover',
@@ -1743,9 +1688,9 @@ function module:CreateContainerOptions(containerKey, order)
 				end,
 				set = function(_, value)
 					DB.bars[containerKey].showTooltip = value
-				end
-			}
-		}
+				end,
+			},
+		},
 	}
 end
 
@@ -1768,7 +1713,7 @@ function module:CreateFontOptions()
 				name = L['Font face'],
 				order = 1,
 				dialogControl = 'LSM30_Font',
-				values = SUI.Lib.LSM:HashTable('font')
+				values = SUI.Lib.LSM:HashTable('font'),
 			},
 			Type = {
 				name = L['Font style'],
@@ -1778,8 +1723,8 @@ function module:CreateFontOptions()
 					['normal'] = L['Normal'],
 					['monochrome'] = L['Monochrome'],
 					['outline'] = L['Outline'],
-					['thickoutline'] = L['Thick outline']
-				}
+					['thickoutline'] = L['Thick outline'],
+				},
 			},
 			Size = {
 				name = L['Adjust font size'],
@@ -1788,9 +1733,9 @@ function module:CreateFontOptions()
 				width = 'double',
 				min = -15,
 				max = 15,
-				step = 1
-			}
-		}
+				step = 1,
+			},
+		},
 	}
 end
 
@@ -1800,7 +1745,7 @@ function module:CreateBarPrioritiesOptions()
 		type = 'group',
 		order = 50,
 		inline = true,
-		args = {}
+		args = {},
 	}
 
 	local function isBarAtTop(barIndex)
@@ -1843,7 +1788,7 @@ function module:CreateBarPrioritiesOptions()
 					width = 'double',
 					fontSize = 'medium',
 					order = 1,
-					name = BarLabels[i]
+					name = BarLabels[i],
 				},
 				up = {
 					type = 'execute',
@@ -1855,7 +1800,7 @@ function module:CreateBarPrioritiesOptions()
 					end,
 					func = function()
 						moveBar(i, 'up')
-					end
+					end,
 				},
 				down = {
 					type = 'execute',
@@ -1867,9 +1812,9 @@ function module:CreateBarPrioritiesOptions()
 					end,
 					func = function()
 						moveBar(i, 'down')
-					end
-				}
-			}
+					end,
+				},
+			},
 		}
 	end
 

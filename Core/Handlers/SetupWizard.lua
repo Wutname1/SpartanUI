@@ -33,7 +33,7 @@ local FinishedPage = {
 	end,
 	Next = function()
 		module.window:Hide()
-	end
+	end,
 }
 
 ---@class SUI.SetupWizard.PageData
@@ -88,7 +88,7 @@ function module:AddPage(PageData)
 	PageID[TotalPageCount] = {
 		ID = PageData.ID,
 		DisplayOrder = nil,
-		Required = PageData.RequireDisplay
+		Required = PageData.RequireDisplay,
 	}
 end
 
@@ -234,16 +234,13 @@ end
 
 function module:SetupWizard(RequiredPagesOnly)
 	local UI = LibAT.UI
-	module.window =
-		UI.CreateWindow(
-		{
-			name = 'SUI_SetupWizard',
-			title = 'Setup Wizard',
-			width = 650,
-			height = 500,
-			hidePortrait = true
-		}
-	)
+	module.window = UI.CreateWindow({
+		name = 'SUI_SetupWizard',
+		title = 'Setup Wizard',
+		width = 650,
+		height = 500,
+		hidePortrait = true,
+	})
 	module.window:SetPoint('CENTER', 0, 0)
 	module.window:SetFrameStrata('DIALOG')
 
@@ -291,27 +288,18 @@ function module:SetupWizard(RequiredPagesOnly)
 		module.window.ProgressBar = progressBar
 
 		-- Create buttons above progress bar
-		local buttons =
-			UI.CreateActionButtons(
-			module.window,
+		local buttons = UI.CreateActionButtons(module.window, {
 			{
-				{
-					text = 'SKIP',
-					width = 150,
-					onClick = function()
-					end
-				}, -- Set script below
-				{
-					text = 'CONTINUE',
-					width = 150,
-					onClick = function()
-					end
-				} -- Set script below
-			},
-			5,
-			28,
-			-2
-		)
+				text = 'SKIP',
+				width = 150,
+				onClick = function() end,
+			}, -- Set script below
+			{
+				text = 'CONTINUE',
+				width = 150,
+				onClick = function() end,
+			}, -- Set script below
+		}, 5, 28, -2)
 
 		-- Store button references
 		module.window.Skip = buttons[1]
@@ -329,24 +317,18 @@ function module:SetupWizard(RequiredPagesOnly)
 		module.window.content:SetPoint('BOTTOMRIGHT', module.window.Next, 'TOPRIGHT', 0, 2)
 	else
 		-- Create buttons at bottom (no progress bar)
-		local buttons =
-			UI.CreateActionButtons(
-			module.window,
+		local buttons = UI.CreateActionButtons(module.window, {
 			{
-				{
-					text = 'SKIP',
-					width = 150,
-					onClick = function()
-					end
-				}, -- Set script below
-				{
-					text = 'CONTINUE',
-					width = 150,
-					onClick = function()
-					end
-				} -- Set script below
-			}
-		)
+				text = 'SKIP',
+				width = 150,
+				onClick = function() end,
+			}, -- Set script below
+			{
+				text = 'CONTINUE',
+				width = 150,
+				onClick = function() end,
+			}, -- Set script below
+		})
 
 		-- Store button references
 		module.window.Skip = buttons[1]
@@ -372,7 +354,7 @@ function module:SetupWizard(RequiredPagesOnly)
 
 	local function LoadNextPage()
 		--Hide anything attached to the Content frame
-		for _, child in ipairs({module.window.content:GetChildren()}) do
+		for _, child in ipairs({ module.window.content:GetChildren() }) do
 			---@diagnostic disable-next-line: undefined-field
 			child:Hide()
 		end
@@ -381,41 +363,32 @@ function module:SetupWizard(RequiredPagesOnly)
 		module:FindNextPage(RequiredPagesOnly)
 	end
 
-	module.window.Skip:SetScript(
-		'OnClick',
-		function()
-			-- Perform the Page's Custom Skip action
-			if CurrentDisplay.Skip then
-				CurrentDisplay.Skip()
-			end
-
-			LoadNextPage()
+	module.window.Skip:SetScript('OnClick', function()
+		-- Perform the Page's Custom Skip action
+		if CurrentDisplay.Skip then
+			CurrentDisplay.Skip()
 		end
-	)
 
-	module.window.Next:SetScript(
-		'OnClick',
-		function()
-			-- Perform the Page's Custom Next action
-			if CurrentDisplay.Next then
-				CurrentDisplay.Next()
-			end
+		LoadNextPage()
+	end)
 
-			LoadNextPage()
+	module.window.Next:SetScript('OnClick', function()
+		-- Perform the Page's Custom Next action
+		if CurrentDisplay.Next then
+			CurrentDisplay.Next()
 		end
-	)
+
+		LoadNextPage()
+	end)
 
 	-- Display first page
 	module.window.closeBtn:Hide()
 	module.window:Show()
-	module.window:HookScript(
-		'OnShow',
-		function()
-			if PageDisplayed > (TotalPageCount + 1) then
-				module.window:Hide()
-			end
+	module.window:HookScript('OnShow', function()
+		if PageDisplayed > (TotalPageCount + 1) then
+			module.window:Hide()
 		end
-	)
+	end)
 	module:FindNextPage(RequiredPagesOnly)
 end
 
@@ -427,19 +400,15 @@ function module:OnEnable()
 		LoadWatcher:RegisterEvent('PLAYER_LOGIN')
 		LoadWatcher:RegisterEvent('PLAYER_ENTERING_WORLD')
 	end
-	SUI:AddChatCommand(
-		'setup',
-		function()
-			if module.window then
-				module.window:Hide()
-			end
+	SUI:AddChatCommand('setup', function()
+		if module.window then
+			module.window:Hide()
+		end
 
-			PageDisplayOrder = 1
-			PageDisplayed = 0
-			module:SetupWizard()
-		end,
-		'Re-run the setup wizard'
-	)
+		PageDisplayOrder = 1
+		PageDisplayed = 0
+		module:SetupWizard()
+	end, 'Re-run the setup wizard')
 end
 
 local function WelcomePage()
@@ -458,7 +427,7 @@ local function WelcomePage()
 			local currentProfile = SUI.SpartanUIDB:GetCurrentProfile()
 			for _, v in pairs(SUI.SpartanUIDB:GetProfiles()) do
 				if v ~= currentProfile then
-					profiles[#profiles + 1] = {text = v, value = v}
+					profiles[#profiles + 1] = { text = v, value = v }
 				end
 			end
 
@@ -489,52 +458,39 @@ local function WelcomePage()
 			IntroPage.ProfileCopyLabel:SetPoint('TOP', IntroPage.Helm, 'BOTTOM', 0, -15)
 
 			IntroPage.ProfileList = UI.CreateDropdown(IntroPage, '', 200, 20)
-			IntroPage.ProfileList:SetupMenu(
-				function(dropdown, rootDescription)
-					for _, profile in ipairs(profiles) do
-						rootDescription:CreateButton(
-							profile.text,
-							function()
-								dropdown:SetSelectionText(
-									function()
-										return profile.text
-									end
-								)
-								dropdown.selectedValue = profile.value
-							end
-						)
-					end
+			IntroPage.ProfileList:SetupMenu(function(dropdown, rootDescription)
+				for _, profile in ipairs(profiles) do
+					rootDescription:CreateButton(profile.text, function()
+						dropdown:SetSelectionText(function()
+							return profile.text
+						end)
+						dropdown.selectedValue = profile.value
+					end)
 				end
-			)
+			end)
 			IntroPage.ProfileList:SetPoint('TOP', IntroPage.ProfileCopyLabel, 'BOTTOM', 0, -10)
 			IntroPage.ProfileList:SetPoint('CENTER', IntroPage, 'CENTER', -33, 0)
 
 			IntroPage.CopyProfileButton = UI.CreateButton(IntroPage, 60, 20, 'COPY')
-			IntroPage.CopyProfileButton:SetScript(
-				'OnClick',
-				function()
-					local dropdown = module.window.content.WelcomePage.ProfileList
-					local ProfileSelection = dropdown.selectedValue
-					if not ProfileSelection or ProfileSelection == '' then
-						return
-					end
-					-- Copy profile
-					SUI.SpartanUIDB:CopyProfile(ProfileSelection)
-					-- Reload the UI
-					SUI:SafeReloadUI()
+			IntroPage.CopyProfileButton:SetScript('OnClick', function()
+				local dropdown = module.window.content.WelcomePage.ProfileList
+				local ProfileSelection = dropdown.selectedValue
+				if not ProfileSelection or ProfileSelection == '' then
+					return
 				end
-			)
+				-- Copy profile
+				SUI.SpartanUIDB:CopyProfile(ProfileSelection)
+				-- Reload the UI
+				SUI:SafeReloadUI()
+			end)
 			IntroPage.CopyProfileButton:SetPoint('LEFT', IntroPage.ProfileList, 'RIGHT', 4, 0)
 
 			-- Import button (create before conditional check)
 			IntroPage.Import = UI.CreateButton(IntroPage, 200, 20, 'IMPORT SETTINGS')
-			IntroPage.Import:SetScript(
-				'OnClick',
-				function()
-					local Profiles = SUI:GetModule('Handler.Profiles') ---@type SUI.Handler.Profiles
-					Profiles:ImportUI()
-				end
-			)
+			IntroPage.Import:SetScript('OnClick', function()
+				local Profiles = SUI:GetModule('Handler.Profiles') ---@type SUI.Handler.Profiles
+				Profiles:ImportUI()
+			end)
 			IntroPage.Import:SetPoint('TOP', IntroPage.ProfileList, 'BOTTOM', 0, -15)
 			IntroPage.Import:SetPoint('LEFT', IntroPage, 'CENTER', -100, 0)
 
@@ -551,23 +507,20 @@ local function WelcomePage()
 
 			-- Skip setup button
 			IntroPage.SkipAllButton = UI.CreateButton(IntroPage, 150, 20, 'SKIP SETUP')
-			IntroPage.SkipAllButton:SetScript(
-				'OnClick',
-				function()
-					module.window:Hide()
-					for _, ID in pairs(FinalPageList) do
-						if PriorityPageList[ID] then
-							PriorityPageList[ID].Display()
-							PriorityPageList[ID].Next()
-						elseif StandardPageList[ID] then
-							StandardPageList[ID].Display()
-							StandardPageList[ID].Next()
-						end
+			IntroPage.SkipAllButton:SetScript('OnClick', function()
+				module.window:Hide()
+				for _, ID in pairs(FinalPageList) do
+					if PriorityPageList[ID] then
+						PriorityPageList[ID].Display()
+						PriorityPageList[ID].Next()
+					elseif StandardPageList[ID] then
+						StandardPageList[ID].Display()
+						StandardPageList[ID].Next()
 					end
-					DisplayRequired = false
-					module.window:Hide()
 				end
-			)
+				DisplayRequired = false
+				module.window:Hide()
+			end)
 
 			-- Hide progress bar and reposition buttons for welcome page
 			module.window.ProgressBar:Hide()
@@ -589,7 +542,7 @@ local function WelcomePage()
 			module.window.Next:SetPoint('BOTTOMRIGHT', module.window.ProgressBar, 'TOPRIGHT', 0, 2)
 		end,
 		RequireDisplay = SUI.DB.SetupWizard.FirstLaunch,
-		Priority = true
+		Priority = true,
 	}
 
 	module:AddPage(PageData)

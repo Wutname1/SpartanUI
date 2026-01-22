@@ -68,7 +68,9 @@ function module:OnInitialize()
 end
 
 local function COMBAT_LOG_EVENT_UNFILTERED()
-	if SUI:IsModuleDisabled('InterruptAnnouncer') then return end
+	if SUI:IsModuleDisabled('InterruptAnnouncer') then
+		return
+	end
 
 	local continue = false
 	local inInstance, instanceType = IsInInstance()
@@ -88,7 +90,9 @@ local function COMBAT_LOG_EVENT_UNFILTERED()
 
 	-- Check if time and ID was same as last
 	-- Note: This is to prevent flooding announcements on AoE taunts.
-	if timeStamp == lastTime and spellID == lastSpellID then return end
+	if timeStamp == lastTime and spellID == lastSpellID then
+		return
+	end
 
 	-- Update last time and ID
 	lastTime, lastSpellID = timeStamp, spellID
@@ -108,7 +112,9 @@ function module:OnEnable()
 
 	-- Defer event registration to next frame to avoid taint issues during addon init
 	C_Timer.After(0, function()
-		if module:IsEnabled() then module:RegisterEvent('COMBAT_LOG_EVENT_UNFILTERED', COMBAT_LOG_EVENT_UNFILTERED) end
+		if module:IsEnabled() then
+			module:RegisterEvent('COMBAT_LOG_EVENT_UNFILTERED', COMBAT_LOG_EVENT_UNFILTERED)
+		end
 	end)
 end
 
@@ -353,7 +359,9 @@ function module:FirstLaunch()
 			if SUI:IsModuleEnabled('CombatLog') then
 				local window = SUI.Setup.window
 				local IAnnounce = window.content.IAnnounce
-				if not IAnnounce.modEnabled:GetChecked() then SUI:DisableModule(module) end
+				if not IAnnounce.modEnabled:GetChecked() then
+					SUI:DisableModule(module)
+				end
 
 				for key, object in pairs(IAnnounce.options) do
 					module.DB[key] = object:GetChecked()

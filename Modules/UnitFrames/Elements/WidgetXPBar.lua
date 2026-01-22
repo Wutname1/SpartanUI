@@ -2,8 +2,7 @@ local UF = SUI.UF
 
 ---@param frame table
 ---@param DB table
-local function Build(frame, DB)
-end
+local function Build(frame, DB) end
 
 ---@param frame table
 ---@param DB? table
@@ -29,8 +28,8 @@ end
 
 local Settings = {
 	config = {
-		NoBulkUpdate = false
-	}
+		NoBulkUpdate = false,
+	},
 }
 
 UF.Elements:Register('WidgetXPBar', Build, Update, Options, Settings)

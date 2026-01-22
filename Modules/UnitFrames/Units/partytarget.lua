@@ -6,7 +6,7 @@ local elementList = {
 	'SpartanArt',
 	'RaidTargetIndicator',
 	'Range',
-	'ThreatIndicator'
+	'ThreatIndicator',
 }
 
 local function Builder(frame)
@@ -32,8 +32,7 @@ local function Updater(frame)
 	end
 end
 
-local function Options()
-end
+local function Options() end
 
 ---@type SUI.UF.Unit.Settings
 local Settings = {
@@ -46,10 +45,10 @@ local Settings = {
 					text = '[perhp]%',
 					position = {
 						y = 2,
-						anchor = 'BOTTOM'
-					}
-				}
-			}
+						anchor = 'BOTTOM',
+					},
+				},
+			},
 		},
 		Name = {
 			enabled = true,
@@ -57,14 +56,14 @@ local Settings = {
 			textSize = 10,
 			text = '[SUI_ColorClass][name]',
 			position = {
-				y = 0
-			}
-		}
+				y = 0,
+			},
+		},
 	},
 	config = {
 		isChild = true,
-		IsGroup = true
-	}
+		IsGroup = true,
+	},
 }
 
 UF.Unit:Add('partytarget', Builder, Settings, nil, GroupBuilder, Updater)

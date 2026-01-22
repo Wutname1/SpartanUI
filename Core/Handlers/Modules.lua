@@ -109,34 +109,25 @@ local function CreateSetupPage()
 
 					-- Add tooltip if description exists
 					if submodule.description then
-						checkbox:SetScript(
-							'OnEnter',
-							function(self)
-								GameTooltip:SetOwner(self, 'ANCHOR_TOP')
-								GameTooltip:SetText(Displayname)
-								GameTooltip:AddLine(submodule.description, 1, 1, 1, true)
-								GameTooltip:Show()
-							end
-						)
-						checkbox:SetScript(
-							'OnLeave',
-							function(self)
-								GameTooltip:Hide()
-							end
-						)
+						checkbox:SetScript('OnEnter', function(self)
+							GameTooltip:SetOwner(self, 'ANCHOR_TOP')
+							GameTooltip:SetText(Displayname)
+							GameTooltip:AddLine(submodule.description, 1, 1, 1, true)
+							GameTooltip:Show()
+						end)
+						checkbox:SetScript('OnLeave', function(self)
+							GameTooltip:Hide()
+						end)
 					end
 
-					checkbox:HookScript(
-						'OnClick',
-						function()
-							local IsDisabled = (not checkbox:GetChecked()) or false
-							if not IsDisabled then
-								SUI:EnableModule(submodule)
-							else
-								SUI:DisableModule(submodule)
-							end
+					checkbox:HookScript('OnClick', function()
+						local IsDisabled = (not checkbox:GetChecked()) or false
+						if not IsDisabled then
+							SUI:EnableModule(submodule)
+						else
+							SUI:DisableModule(submodule)
 						end
-					)
+					end)
 					checkbox:SetChecked(SUI:IsModuleEnabled(RealName))
 					checkbox.name = RealName
 					checkbox.Core = (submodule.Core or false)
@@ -167,31 +158,22 @@ local function CreateSetupPage()
 
 			-- Toggle optional button at bottom
 			local btnOptional = UI.CreateButton(SUI_Win.ModSelection, 130, 18, 'Toggle optional(s)')
-			btnOptional:SetScript(
-				'OnEnter',
-				function(self)
-					GameTooltip:SetOwner(self, 'ANCHOR_TOP')
-					GameTooltip:SetText('Toggle optional(s)')
-					GameTooltip:AddLine('Toggles optional SUI modules. Disabling Core modules may cause unintended side effects.', 1, 1, 1, true)
-					GameTooltip:Show()
-				end
-			)
-			btnOptional:SetScript(
-				'OnLeave',
-				function(self)
-					GameTooltip:Hide()
-				end
-			)
-			btnOptional:SetScript(
-				'OnClick',
-				function(this)
-					for i, v in ipairs(itemsMatrix) do
-						if not v.Core then
-							v:Click()
-						end
+			btnOptional:SetScript('OnEnter', function(self)
+				GameTooltip:SetOwner(self, 'ANCHOR_TOP')
+				GameTooltip:SetText('Toggle optional(s)')
+				GameTooltip:AddLine('Toggles optional SUI modules. Disabling Core modules may cause unintended side effects.', 1, 1, 1, true)
+				GameTooltip:Show()
+			end)
+			btnOptional:SetScript('OnLeave', function(self)
+				GameTooltip:Hide()
+			end)
+			btnOptional:SetScript('OnClick', function(this)
+				for i, v in ipairs(itemsMatrix) do
+					if not v.Core then
+						v:Click()
 					end
 				end
-			)
+			end)
 			btnOptional:SetPoint('BOTTOM', SUI_Win.ModSelection, 'BOTTOM', 0, 0)
 			SUI_Win.ModSelection.btnOptional = btnOptional
 		end,
@@ -200,7 +182,7 @@ local function CreateSetupPage()
 		end,
 		Skip = function()
 			SUI.DB.SetupDone = true
-		end
+		end,
 	}
 
 	SUI.Setup:AddPage(SetupPage)

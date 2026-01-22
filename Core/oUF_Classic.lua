@@ -292,15 +292,15 @@ SUIUF.Tags.Methods['SUIPower'] = SUIPower
 
 do --LEGACY Health Formatting Tags
 	local listing = {
-		['health:current-short'] = {'short'},
-		['health:current-dynamic'] = {'dynamic'},
+		['health:current-short'] = { 'short' },
+		['health:current-dynamic'] = { 'dynamic' },
 		['health:current-formatted'] = {},
-		['health:max-short'] = {'max', 'short'},
-		['health:max-dynamic'] = {'max', 'dynamic'},
-		['health:max-formatted'] = {'max'},
-		['health:missing-short'] = {'missing', 'short'},
-		['health:missing-dynamic'] = {'missing', 'dynamic'},
-		['health:missing-formatted'] = {'missing'}
+		['health:max-short'] = { 'max', 'short' },
+		['health:max-dynamic'] = { 'max', 'dynamic' },
+		['health:max-formatted'] = { 'max' },
+		['health:missing-short'] = { 'missing', 'short' },
+		['health:missing-dynamic'] = { 'missing', 'dynamic' },
+		['health:missing-formatted'] = { 'missing' },
 	}
 	for k, v in pairs(listing) do
 		SUIUF.Tags.Events[k] = 'UNIT_HEALTH UNIT_MAXHEALTH'
@@ -312,15 +312,15 @@ end
 
 do -- LEGACY Mana Formatting Tags
 	local listing = {
-		['power:current-short'] = {'short'},
-		['power:current-dynamic'] = {'dynamic'},
+		['power:current-short'] = { 'short' },
+		['power:current-dynamic'] = { 'dynamic' },
 		['power:current-formatted'] = {},
-		['power:max-short'] = {'max', 'short'},
-		['power:max-dynamic'] = {'max', 'dynamic'},
-		['power:max-formatted'] = {'max'},
-		['power:missing-short'] = {'missing', 'short'},
-		['power:missing-dynamic'] = {'missing', 'dynamic'},
-		['power:missing-formatted'] = {'missing'}
+		['power:max-short'] = { 'max', 'short' },
+		['power:max-dynamic'] = { 'max', 'dynamic' },
+		['power:max-formatted'] = { 'max' },
+		['power:missing-short'] = { 'missing', 'short' },
+		['power:missing-dynamic'] = { 'missing', 'dynamic' },
+		['power:missing-formatted'] = { 'missing' },
 	}
 	for k, v in pairs(listing) do
 		SUIUF.Tags.Events[k] = 'UNIT_MAXPOWER UNIT_DISPLAYPOWER UNIT_POWER_FREQUENT'

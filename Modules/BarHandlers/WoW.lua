@@ -35,35 +35,35 @@ local function OnEnable(args)
 		['MainMenuBar'] = {
 			settings = {
 				[Enum.EditModeActionBarSetting.HideBarArt] = 1,
-				[Enum.EditModeActionBarSetting.HideBarScrolling] = 1
+				[Enum.EditModeActionBarSetting.HideBarScrolling] = 1,
 				-- [Enum.EditModeActionBarSetting.IconSize] = 2
 			},
-			anchorInfo = 'BOTTOM,UIParent,BOTTOM,-364,78'
+			anchorInfo = 'BOTTOM,UIParent,BOTTOM,-364,78',
 		},
 		['MultiBarRight'] = {
 			settings = {
-				[Enum.EditModeActionBarSetting.Orientation] = Enum.ActionBarOrientation.Horizontal
+				[Enum.EditModeActionBarSetting.Orientation] = Enum.ActionBarOrientation.Horizontal,
 			},
-			anchorInfo = 'BOTTOM,UIParent,BOTTOM,364,78'
+			anchorInfo = 'BOTTOM,UIParent,BOTTOM,364,78',
 		},
 		['MultiBarBottomRight'] = {
 			settings = {
-				[Enum.EditModeActionBarSetting.NumRows] = 3
+				[Enum.EditModeActionBarSetting.NumRows] = 3,
 			},
-			anchorInfo = 'BOTTOM,UIParent,BOTTOM,-550,20'
+			anchorInfo = 'BOTTOM,UIParent,BOTTOM,-550,20',
 		},
 		['MultiBarBottomLeft'] = {
 			settings = {
-				[Enum.EditModeActionBarSetting.NumRows] = 3
+				[Enum.EditModeActionBarSetting.NumRows] = 3,
 			},
-			anchorInfo = 'BOTTOM,UIParent,BOTTOM,550,20'
+			anchorInfo = 'BOTTOM,UIParent,BOTTOM,550,20',
 		},
 		['MultiBarLeft'] = {
 			settings = {
-				[Enum.EditModeActionBarSetting.Orientation] = Enum.ActionBarOrientation.Horizontal
+				[Enum.EditModeActionBarSetting.Orientation] = Enum.ActionBarOrientation.Horizontal,
 			},
-			anchorInfo = 'BOTTOM,UIParent,BOTTOM,366,24'
-		}
+			anchorInfo = 'BOTTOM,UIParent,BOTTOM,366,24',
+		},
 	}
 	-- for bar, values in pairs(settings) do
 	-- 	local barObj = _G[bar]
@@ -92,7 +92,6 @@ function module:EDIT_MODE_LAYOUTS_UPDATED()
 	--TODO: Prompt to apply SUI defaults
 end
 
-local function RefreshConfig(args)
-end
+local function RefreshConfig(args) end
 
 module:AddBarSystem('WoW', OnInitialize, OnEnable, nil, nil, RefreshConfig)

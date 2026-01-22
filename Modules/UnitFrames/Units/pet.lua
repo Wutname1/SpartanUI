@@ -29,8 +29,7 @@ local function Builder(frame)
 	end
 end
 
-local function Options()
-end
+local function Options() end
 
 ---@type SUI.UF.Unit.Settings
 local Settings = {
@@ -42,20 +41,20 @@ local Settings = {
 			colorReaction = false,
 			text = {
 				['1'] = {
-					text = '[SUIHealth(short,displayDead)] [($>SUIHealth<$)(percentage,hideDead)]'
-				}
-			}
+					text = '[SUIHealth(short,displayDead)] [($>SUIHealth<$)(percentage,hideDead)]',
+				},
+			},
 		},
 		Power = {
 			height = 2,
 			text = {
 				['1'] = {
-					enabled = false
-				}
+					enabled = false,
+				},
 			},
 			position = {
-				y = 0
-			}
+				y = 0,
+			},
 		},
 		Name = {
 			enabled = true,
@@ -64,10 +63,10 @@ local Settings = {
 			position = {
 				y = 1,
 				anchor = 'BOTTOM',
-				relativePoint = 'TOP'
-			}
-		}
-	}
+				relativePoint = 'TOP',
+			},
+		},
+	},
 }
 
 UF.Unit:Add('pet', Builder, Settings)

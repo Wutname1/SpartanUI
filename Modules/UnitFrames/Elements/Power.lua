@@ -74,7 +74,7 @@ local function Update(frame, settings)
 			element.bg:SetVertexColor(1, 1, 1, alpha)
 		end
 	else
-		element.bg:SetVertexColor(unpack(DB.bg.color or {1, 1, 1, 0.2}))
+		element.bg:SetVertexColor(unpack(DB.bg.color or { 1, 1, 1, 0.2 }))
 	end
 
 	for i, key in pairs(DB.text) do
@@ -107,7 +107,7 @@ local function Options(frameName, OptionSet)
 		name = '',
 		type = 'group',
 		inline = true,
-		args = {}
+		args = {},
 	}
 
 	if frameName == 'player' then
@@ -117,7 +117,7 @@ local function Options(frameName, OptionSet)
 				desc = L['Used to represent cost of spells on top of the Power bar'],
 				type = 'toggle',
 				width = 'double',
-				order = 10
+				order = 10,
 			}
 		end
 	end
@@ -132,13 +132,13 @@ local Settings = {
 	FrameStrata = 'BACKGROUND',
 	bg = {
 		enabled = true,
-		color = {1, 1, 1, 0.2},
+		color = { 1, 1, 1, 0.2 },
 		useClassColor = false,
-		classColorAlpha = 0.2
+		classColorAlpha = 0.2,
 	},
 	customColors = {
 		useCustom = false,
-		barColor = {0, 0, 1, 1}
+		barColor = { 0, 0, 1, 1 },
 	},
 	text = {
 		['1'] = {
@@ -150,8 +150,8 @@ local Settings = {
 			position = {
 				anchor = 'CENTER',
 				x = 0,
-				y = 0
-			}
+				y = 0,
+			},
 		},
 		['2'] = {
 			enabled = false,
@@ -162,19 +162,19 @@ local Settings = {
 			position = {
 				anchor = 'CENTER',
 				x = 0,
-				y = 0
-			}
-		}
+				y = 0,
+			},
+		},
 	},
 	position = {
 		anchor = 'TOP',
 		relativeTo = 'Health',
 		relativePoint = 'BOTTOM',
-		y = -1
+		y = -1,
 	},
 	config = {
-		type = 'StatusBar'
-	}
+		type = 'StatusBar',
+	},
 }
 
 UF.Elements:Register('Power', Build, Update, Options, Settings)

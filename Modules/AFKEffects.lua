@@ -11,24 +11,24 @@ local Container
 local defaults = {
 	SpinCam = {
 		enabled = true,
-		speed = 8
+		speed = 8,
 	},
 	FilmEffects = {
 		enabled = true,
 		animationInterval = 0.2,
 		effects = {
 			['**'] = {
-				enabled = false
+				enabled = false,
 			},
 			vignette = {},
 			blur = {},
-			crisp = {}
-		}
-	}
+			crisp = {},
+		},
+	},
 }
 
 ----- Film Effects ----
-local EffectList = {'vignette', 'blur', 'crisp'}
+local EffectList = { 'vignette', 'blur', 'crisp' }
 local function EffectLoop()
 	if not module.DB.FilmEffects.effects.blur.enabled and not module.DB.FilmEffects.effects.crisp.enabled then
 		return
@@ -192,7 +192,7 @@ local function Options()
 						DEFAULT_CHAT_FRAME:AddMessage('|cff33ff99SpinCam|r: ' .. L['Spinning, to stop type /spin again'])
 					end
 					AFKToggle()
-				end
+				end,
 			},
 			SpinCam = {
 				name = L['Spin cam'],
@@ -214,7 +214,7 @@ local function Options()
 						name = L['Enabled'],
 						type = 'toggle',
 						order = 1,
-						width = 'double'
+						width = 'double',
 					},
 					speed = {
 						name = L['Spin speed'],
@@ -223,9 +223,9 @@ local function Options()
 						width = 'full',
 						min = 1,
 						max = 100,
-						step = 1
-					}
-				}
+						step = 1,
+					},
+				},
 			},
 			FilmEffects = {
 				name = L['Film effects'],
@@ -242,7 +242,7 @@ local function Options()
 						name = L['Enable Film Effects'],
 						type = 'toggle',
 						order = 1,
-						width = 'full'
+						width = 'full',
 					},
 					effects = {
 						name = L['Effects'],
@@ -254,11 +254,11 @@ local function Options()
 						set = function(info, val)
 							module.DB.FilmEffects.effects[info[#info - 1]][info[#info]] = val
 						end,
-						args = {}
-					}
-				}
-			}
-		}
+						args = {},
+					},
+				},
+			},
+		},
 	}
 
 	for k, v in ipairs(EffectList) do
@@ -271,9 +271,9 @@ local function Options()
 					name = L['Enabled'],
 					type = 'toggle',
 					order = 1,
-					width = 'double'
-				}
-			}
+					width = 'double',
+				},
+			},
 		}
 	end
 	SUI.Options:AddOptions(optTable, 'AFKEffects')
@@ -336,7 +336,7 @@ function module:CHAT_MSG_SYSTEM(_, ...)
 end
 
 function module:OnInitialize()
-	module.Database = SUI.SpartanUIDB:RegisterNamespace('AFKEffects', {profile = defaults})
+	module.Database = SUI.SpartanUIDB:RegisterNamespace('AFKEffects', { profile = defaults })
 	module.DB = module.Database.profile ---@type AFKEffectsDB
 
 	--If speed is less than 1 reset it

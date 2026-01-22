@@ -52,7 +52,7 @@ local function Options(unitName, OptionSet)
 		order = 2,
 		width = 'double',
 		name = 'Bar Texture',
-		values = AceGUIWidgetLSMlists.statusbar
+		values = AceGUIWidgetLSMlists.statusbar,
 	}
 end
 
@@ -61,8 +61,8 @@ local Settings = {
 	enabled = true,
 	config = {
 		type = 'Indicator',
-		NoBulkUpdate = true
-	}
+		NoBulkUpdate = true,
+	},
 }
 
 UF.Elements:Register('Runes', Build, Update, Options, Settings)

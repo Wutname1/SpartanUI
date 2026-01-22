@@ -32,23 +32,23 @@ Handler.DefaultSettings = {
 	background = {
 		enabled = true,
 		type = 'color',
-		color = {0.1, 0.1, 0.1, 0.8},
+		color = { 0.1, 0.1, 0.1, 0.8 },
 		texture = 'Interface\\Buttons\\WHITE8X8',
 		alpha = 0.8,
-		classColor = false
+		classColor = false,
 	},
 	border = {
 		enabled = false,
-		sides = {top = true, bottom = true, left = true, right = true},
+		sides = { top = true, bottom = true, left = true, right = true },
 		size = 1,
 		colors = {
-			top = {1, 1, 1, 1},
-			bottom = {1, 1, 1, 1},
-			left = {1, 1, 1, 1},
-			right = {1, 1, 1, 1}
+			top = { 1, 1, 1, 1 },
+			bottom = { 1, 1, 1, 1 },
+			left = { 1, 1, 1, 1 },
+			right = { 1, 1, 1, 1 },
 		},
-		classColors = {top = false, bottom = false, left = false, right = false}
-	}
+		classColors = { top = false, bottom = false, left = false, right = false },
+	},
 }
 
 ---Create a new background & border instance
@@ -70,7 +70,7 @@ function Handler:Create(parent, id, settings)
 		settings = settings,
 		background = nil,
 		borders = {},
-		visible = true
+		visible = true,
 	}
 
 	-- Create background frame
@@ -83,7 +83,7 @@ function Handler:Create(parent, id, settings)
 	instance.background.texture:SetAllPoints(instance.background)
 
 	-- Create border frames for each side
-	for _, side in ipairs({'top', 'bottom', 'left', 'right'}) do
+	for _, side in ipairs({ 'top', 'bottom', 'left', 'right' }) do
 		local border = CreateFrame('Frame', id .. '_Border_' .. side, parent)
 		border:SetFrameLevel(parent:GetFrameLevel() + settings.displayLevel + 1)
 		border.texture = border:CreateTexture(nil, 'BORDER')
@@ -190,7 +190,7 @@ function Handler:UpdateBorders(id)
 	end
 
 	-- Position and show enabled border sides
-	for _, side in ipairs({'top', 'bottom', 'left', 'right'}) do
+	for _, side in ipairs({ 'top', 'bottom', 'left', 'right' }) do
 		local borderFrame = instance.borders[side]
 
 		if border.sides[side] then
@@ -303,7 +303,7 @@ function Handler:GenerateOptions(id, getFunc, setFunc, updateFunc)
 					if updateFunc then
 						updateFunc()
 					end
-				end
+				end,
 			},
 			displayLevel = {
 				type = 'range',
@@ -323,7 +323,7 @@ function Handler:GenerateOptions(id, getFunc, setFunc, updateFunc)
 					if updateFunc then
 						updateFunc()
 					end
-				end
+				end,
 			},
 			background = {
 				type = 'group',
@@ -345,7 +345,7 @@ function Handler:GenerateOptions(id, getFunc, setFunc, updateFunc)
 							if updateFunc then
 								updateFunc()
 							end
-						end
+						end,
 					},
 					type = {
 						type = 'select',
@@ -353,7 +353,7 @@ function Handler:GenerateOptions(id, getFunc, setFunc, updateFunc)
 						order = 2,
 						values = {
 							color = L['Solid Color'] or 'Solid Color',
-							texture = L['Texture'] or 'Texture'
+							texture = L['Texture'] or 'Texture',
 						},
 						disabled = function()
 							return not getFunc().background.enabled
@@ -368,7 +368,7 @@ function Handler:GenerateOptions(id, getFunc, setFunc, updateFunc)
 							if updateFunc then
 								updateFunc()
 							end
-						end
+						end,
 					},
 					color = {
 						type = 'color',
@@ -385,12 +385,12 @@ function Handler:GenerateOptions(id, getFunc, setFunc, updateFunc)
 						end,
 						set = function(_, r, g, b, a)
 							local settings = getFunc()
-							settings.background.color = {r, g, b, a}
+							settings.background.color = { r, g, b, a }
 							setFunc(settings)
 							if updateFunc then
 								updateFunc()
 							end
-						end
+						end,
 					},
 					classColor = {
 						type = 'toggle',
@@ -410,7 +410,7 @@ function Handler:GenerateOptions(id, getFunc, setFunc, updateFunc)
 							if updateFunc then
 								updateFunc()
 							end
-						end
+						end,
 					},
 					texture = {
 						type = 'select',
@@ -435,7 +435,7 @@ function Handler:GenerateOptions(id, getFunc, setFunc, updateFunc)
 							if updateFunc then
 								updateFunc()
 							end
-						end
+						end,
 					},
 					alpha = {
 						type = 'range',
@@ -457,9 +457,9 @@ function Handler:GenerateOptions(id, getFunc, setFunc, updateFunc)
 							if updateFunc then
 								updateFunc()
 							end
-						end
-					}
-				}
+						end,
+					},
+				},
 			},
 			border = {
 				type = 'group',
@@ -481,7 +481,7 @@ function Handler:GenerateOptions(id, getFunc, setFunc, updateFunc)
 							if updateFunc then
 								updateFunc()
 							end
-						end
+						end,
 					},
 					size = {
 						type = 'range',
@@ -503,7 +503,7 @@ function Handler:GenerateOptions(id, getFunc, setFunc, updateFunc)
 							if updateFunc then
 								updateFunc()
 							end
-						end
+						end,
 					},
 					sides = {
 						type = 'multiselect',
@@ -513,7 +513,7 @@ function Handler:GenerateOptions(id, getFunc, setFunc, updateFunc)
 							top = L['Top'] or 'Top',
 							bottom = L['Bottom'] or 'Bottom',
 							left = L['Left'] or 'Left',
-							right = L['Right'] or 'Right'
+							right = L['Right'] or 'Right',
 						},
 						disabled = function()
 							return not getFunc().border.enabled
@@ -528,7 +528,7 @@ function Handler:GenerateOptions(id, getFunc, setFunc, updateFunc)
 							if updateFunc then
 								updateFunc()
 							end
-						end
+						end,
 					},
 					colors = {
 						type = 'group',
@@ -538,7 +538,7 @@ function Handler:GenerateOptions(id, getFunc, setFunc, updateFunc)
 						disabled = function()
 							return not getFunc().border.enabled
 						end,
-						args = {}
+						args = {},
 					},
 					classColors = {
 						type = 'group',
@@ -548,11 +548,11 @@ function Handler:GenerateOptions(id, getFunc, setFunc, updateFunc)
 						disabled = function()
 							return not getFunc().border.enabled
 						end,
-						args = {}
-					}
-				}
-			}
-		}
+						args = {},
+					},
+				},
+			},
+		},
 	}
 end
 
@@ -563,12 +563,12 @@ end
 ---@param updateFunc function Function to call after changes
 function Handler:AddBorderSideOptions(options, getFunc, setFunc, updateFunc)
 	local L = SUI.L
-	local sides = {'top', 'bottom', 'left', 'right'}
+	local sides = { 'top', 'bottom', 'left', 'right' }
 	local sideNames = {
 		top = L['Top'] or 'Top',
 		bottom = L['Bottom'] or 'Bottom',
 		left = L['Left'] or 'Left',
-		right = L['Right'] or 'Right'
+		right = L['Right'] or 'Right',
 	}
 
 	-- Add color options for each side
@@ -583,17 +583,17 @@ function Handler:AddBorderSideOptions(options, getFunc, setFunc, updateFunc)
 				return not settings.border.enabled or not settings.border.sides[side] or settings.border.classColors[side]
 			end,
 			get = function()
-				local color = getFunc().border.colors[side] or {1, 1, 1, 1}
+				local color = getFunc().border.colors[side] or { 1, 1, 1, 1 }
 				return unpack(color)
 			end,
 			set = function(_, r, g, b, a)
 				local settings = getFunc()
-				settings.border.colors[side] = {r, g, b, a}
+				settings.border.colors[side] = { r, g, b, a }
 				setFunc(settings)
 				if updateFunc then
 					updateFunc()
 				end
-			end
+			end,
 		}
 
 		-- Add class color toggle for each side
@@ -615,7 +615,7 @@ function Handler:AddBorderSideOptions(options, getFunc, setFunc, updateFunc)
 				if updateFunc then
 					updateFunc()
 				end
-			end
+			end,
 		}
 	end
 
@@ -667,7 +667,7 @@ end
 ---@param alpha? number Override alpha value
 ---@return SUI.BackgroundBorder.Settings
 function Handler:CreateColorBackground(color, alpha)
-	color = color or {0.1, 0.1, 0.1, 0.8}
+	color = color or { 0.1, 0.1, 0.1, 0.8 }
 	alpha = alpha or color[4] or 0.8
 
 	return {
@@ -678,11 +678,11 @@ function Handler:CreateColorBackground(color, alpha)
 			type = 'color',
 			color = color,
 			alpha = alpha,
-			classColor = false
+			classColor = false,
 		},
 		border = {
-			enabled = false
-		}
+			enabled = false,
+		},
 	}
 end
 
@@ -692,8 +692,8 @@ end
 ---@param borderSize? number Border thickness
 ---@return SUI.BackgroundBorder.Settings
 function Handler:CreateBackgroundWithBorder(backgroundColor, borderColor, borderSize)
-	backgroundColor = backgroundColor or {0.1, 0.1, 0.1, 0.8}
-	borderColor = borderColor or {1, 1, 1, 1}
+	backgroundColor = backgroundColor or { 0.1, 0.1, 0.1, 0.8 }
+	borderColor = borderColor or { 1, 1, 1, 1 }
 	borderSize = borderSize or 1
 
 	return {
@@ -704,20 +704,20 @@ function Handler:CreateBackgroundWithBorder(backgroundColor, borderColor, border
 			type = 'color',
 			color = backgroundColor,
 			alpha = backgroundColor[4] or 0.8,
-			classColor = false
+			classColor = false,
 		},
 		border = {
 			enabled = true,
-			sides = {top = true, bottom = true, left = true, right = true},
+			sides = { top = true, bottom = true, left = true, right = true },
 			size = borderSize,
 			colors = {
 				top = borderColor,
 				bottom = borderColor,
 				left = borderColor,
-				right = borderColor
+				right = borderColor,
 			},
-			classColors = {top = false, bottom = false, left = false, right = false}
-		}
+			classColors = { top = false, bottom = false, left = false, right = false },
+		},
 	}
 end
 
@@ -734,27 +734,27 @@ function Handler:CreateClassColoredBackground(useClassBorder, alpha)
 		background = {
 			enabled = true,
 			type = 'color',
-			color = {1, 1, 1, alpha}, -- Will be overridden by class color
+			color = { 1, 1, 1, alpha }, -- Will be overridden by class color
 			alpha = alpha,
-			classColor = true
+			classColor = true,
 		},
 		border = {
 			enabled = useClassBorder or false,
-			sides = {top = true, bottom = true, left = true, right = true},
+			sides = { top = true, bottom = true, left = true, right = true },
 			size = 1,
 			colors = {
-				top = {1, 1, 1, 1},
-				bottom = {1, 1, 1, 1},
-				left = {1, 1, 1, 1},
-				right = {1, 1, 1, 1}
+				top = { 1, 1, 1, 1 },
+				bottom = { 1, 1, 1, 1 },
+				left = { 1, 1, 1, 1 },
+				right = { 1, 1, 1, 1 },
 			},
 			classColors = {
 				top = useClassBorder or false,
 				bottom = useClassBorder or false,
 				left = useClassBorder or false,
-				right = useClassBorder or false
-			}
-		}
+				right = useClassBorder or false,
+			},
+		},
 	}
 end
 

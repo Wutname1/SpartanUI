@@ -44,30 +44,24 @@ local function SetupPage()
 				AutoSell.iLVLDesc = LibAT.UI.CreateLabel(AutoSell, L['Maximum iLVL to sell'])
 				AutoSell.iLVLLabel = LibAT.UI.CreateNumericBox(AutoSell, 80, 20, 1, module.DB.MaximumiLVL)
 				AutoSell.iLVLLabel:SetValue(module.DB.MaxILVL)
-				AutoSell.iLVLLabel:SetScript(
-					'OnTextChanged',
-					function(self)
-						local value = self:GetValue()
-						if value and AutoSell.iLVLSlider then
-							if math.floor(value) ~= math.floor(AutoSell.iLVLSlider:GetValue()) then
-								AutoSell.iLVLSlider:SetValue(math.floor(value))
-							end
+				AutoSell.iLVLLabel:SetScript('OnTextChanged', function(self)
+					local value = self:GetValue()
+					if value and AutoSell.iLVLSlider then
+						if math.floor(value) ~= math.floor(AutoSell.iLVLSlider:GetValue()) then
+							AutoSell.iLVLSlider:SetValue(math.floor(value))
 						end
 					end
-				)
+				end)
 
 				AutoSell.iLVLSlider = LibAT.UI.CreateSlider(AutoSell, module.DB.MaximumiLVL, 20, 1, module.DB.MaximumiLVL, 1)
 				AutoSell.iLVLSlider:SetValue(module.DB.MaxILVL)
-				AutoSell.iLVLSlider:SetScript(
-					'OnValueChanged',
-					function(self, value)
-						if AutoSell.iLVLLabel then
-							if math.floor(AutoSell.iLVLLabel:GetValue()) ~= math.floor(value) then
-								AutoSell.iLVLLabel:SetValue(math.floor(value))
-							end
+				AutoSell.iLVLSlider:SetScript('OnValueChanged', function(self, value)
+					if AutoSell.iLVLLabel then
+						if math.floor(AutoSell.iLVLLabel:GetValue()) ~= math.floor(value) then
+							AutoSell.iLVLLabel:SetValue(math.floor(value))
 						end
 					end
-				)
+				end)
 
 				-- AutoRepair
 				AutoSell.AutoRepair = LibAT.UI.CreateCheckbox(AutoSell, L['Auto repair'])
@@ -112,7 +106,7 @@ local function SetupPage()
 		end,
 		Skip = function()
 			module.DB.FirstLaunch = false
-		end
+		end,
 	}
 	SUI.Setup:AddPage(PageData)
 end
@@ -121,20 +115,17 @@ local function BuildOptions()
 	local itemCache = {}
 	local eventFrame = CreateFrame('Frame')
 	eventFrame:RegisterEvent('GET_ITEM_INFO_RECEIVED')
-	eventFrame:SetScript(
-		'OnEvent',
-		function(_, event, itemID, success)
-			if event == 'GET_ITEM_INFO_RECEIVED' and success then
-				eventFrame:UnregisterEvent('GET_ITEM_INFO_RECEIVED')
-				local itemLink = C_Item.GetItemInfo(itemID)
-				if itemLink then
-					itemCache[itemID] = itemLink
-					-- Call buildItemList to refresh the list
-					buildItemList('Items')
-				end
+	eventFrame:SetScript('OnEvent', function(_, event, itemID, success)
+		if event == 'GET_ITEM_INFO_RECEIVED' and success then
+			eventFrame:UnregisterEvent('GET_ITEM_INFO_RECEIVED')
+			local itemLink = C_Item.GetItemInfo(itemID)
+			if itemLink then
+				itemCache[itemID] = itemLink
+				-- Call buildItemList to refresh the list
+				buildItemList('Items')
 			end
 		end
-	)
+	end)
 
 	buildItemList = function(mode)
 		local listOpt = OptionTable.args[mode].args.list.args
@@ -173,7 +164,7 @@ local function BuildOptions()
 				width = 'double',
 				fontSize = 'medium',
 				order = itemId,
-				name = label
+				name = label,
 			}
 			listOpt[tostring(itemId)] = {
 				type = 'execute',
@@ -184,7 +175,7 @@ local function BuildOptions()
 					module.DB.Blacklist[mode][itemId] = nil
 					module:InvalidateBlacklistCache()
 					buildItemList(mode)
-				end
+				end,
 			}
 		end
 	end
@@ -212,7 +203,7 @@ local function BuildOptions()
 					width = 'double',
 					fontSize = 'medium',
 					order = orderCounter,
-					name = label
+					name = label,
 				}
 				listOpt[tostring(itemId)] = {
 					type = 'execute',
@@ -223,7 +214,7 @@ local function BuildOptions()
 						module.CharDB[mode][itemId] = nil
 						module:InvalidateBlacklistCache()
 						buildCharacterList(mode)
-					end
+					end,
 				}
 				orderCounter = orderCounter + 1
 			end
@@ -243,7 +234,7 @@ local function BuildOptions()
 		disabled = function()
 			return SUI:IsModuleDisabled(module)
 		end,
-		childGroups = 'tab'
+		childGroups = 'tab',
 	}
 
 	OptionTable.args = {
@@ -251,25 +242,25 @@ local function BuildOptions()
 			name = L["Don't sell crafting items"],
 			type = 'toggle',
 			order = 1,
-			width = 'full'
+			width = 'full',
 		},
 		NotConsumables = {
 			name = L["Don't sell consumables"],
 			type = 'toggle',
 			order = 2,
-			width = 'full'
+			width = 'full',
 		},
 		NotInGearset = {
 			name = L["Don't sell items in a equipment set"],
 			type = 'toggle',
 			order = 3,
-			width = 'full'
+			width = 'full',
 		},
 		GearTokens = {
 			name = L['Sell tier tokens'],
 			type = 'toggle',
 			order = 4,
-			width = 'full'
+			width = 'full',
 		},
 		MaxILVL = {
 			name = L['Maximum iLVL to sell'],
@@ -278,48 +269,48 @@ local function BuildOptions()
 			width = 'full',
 			min = 1,
 			max = module.DB.MaximumiLVL,
-			step = 1
+			step = 1,
 		},
 		Gray = {
 			name = L['Sell gray'],
 			type = 'toggle',
 			order = 20,
-			width = 'double'
+			width = 'double',
 		},
 		White = {
 			name = L['Sell white'],
 			type = 'toggle',
 			order = 21,
-			width = 'double'
+			width = 'double',
 		},
 		Green = {
 			name = L['Sell green'],
 			type = 'toggle',
 			order = 22,
-			width = 'double'
+			width = 'double',
 		},
 		Blue = {
 			name = L['Sell blue'],
 			type = 'toggle',
 			order = 23,
-			width = 'double'
+			width = 'double',
 		},
 		Purple = {
 			name = L['Sell purple'],
 			type = 'toggle',
 			order = 24,
-			width = 'double'
+			width = 'double',
 		},
-		line1 = {name = '', type = 'header', order = 200},
+		line1 = { name = '', type = 'header', order = 200 },
 		AutoRepair = {
 			name = L['Auto repair'],
 			type = 'toggle',
-			order = 201
+			order = 201,
 		},
 		UseGuildBankRepair = {
 			name = L['Use guild bank repair if possible'],
 			type = 'toggle',
-			order = 202
+			order = 202,
 		},
 		ShowBagMarking = {
 			name = 'Show bag item marking',
@@ -333,7 +324,7 @@ local function BuildOptions()
 				else
 					module:CleanupBagMarking()
 				end
-			end
+			end,
 		},
 		Items = {
 			type = 'group',
@@ -343,7 +334,7 @@ local function BuildOptions()
 				desc = {
 					name = 'Blacklisted items will not be sold',
 					type = 'description',
-					order = 1
+					order = 1,
 				},
 				create = {
 					name = 'Add Item ID',
@@ -367,16 +358,16 @@ local function BuildOptions()
 						module.DB.Blacklist.Items[#info - 1] = input
 						module:InvalidateBlacklistCache()
 						buildItemList(info[#info - 1])
-					end
+					end,
 				},
 				list = {
 					order = 3,
 					type = 'group',
 					inline = true,
 					name = 'Item list',
-					args = {}
-				}
-			}
+					args = {},
+				},
+			},
 		},
 		Types = {
 			type = 'group',
@@ -386,7 +377,7 @@ local function BuildOptions()
 				desc = {
 					name = 'Blacklisted types will not be sold',
 					type = 'description',
-					order = 1
+					order = 1,
 				},
 				create = {
 					name = 'Add Type',
@@ -404,16 +395,16 @@ local function BuildOptions()
 						module.DB.Blacklist.Types[#info - 1] = input
 						module:InvalidateBlacklistCache()
 						buildItemList(info[#info - 1])
-					end
+					end,
 				},
 				list = {
 					order = 3,
 					type = 'group',
 					inline = true,
 					name = 'Type list',
-					args = {}
-				}
-			}
+					args = {},
+				},
+			},
 		},
 		CharacterWhitelist = {
 			type = 'group',
@@ -429,7 +420,7 @@ local function BuildOptions()
 				desc = {
 					name = 'Character-specific whitelist items will always be sold (overrides all other settings for this character only)',
 					type = 'description',
-					order = 1
+					order = 1,
 				},
 				create = {
 					name = 'Add Item ID',
@@ -450,16 +441,16 @@ local function BuildOptions()
 						module.CharDB.Whitelist[itemID] = true
 						module:InvalidateBlacklistCache()
 						buildCharacterList('Whitelist')
-					end
+					end,
 				},
 				list = {
 					order = 3,
 					type = 'group',
 					inline = true,
 					name = 'Whitelisted items',
-					args = {}
-				}
-			}
+					args = {},
+				},
+			},
 		},
 		CharacterBlacklist = {
 			type = 'group',
@@ -475,7 +466,7 @@ local function BuildOptions()
 				desc = {
 					name = 'Character-specific blacklist items will never be sold (overrides all other settings for this character only)',
 					type = 'description',
-					order = 1
+					order = 1,
 				},
 				create = {
 					name = 'Add Item ID',
@@ -496,17 +487,17 @@ local function BuildOptions()
 						module.CharDB.Blacklist[itemID] = true
 						module:InvalidateBlacklistCache()
 						buildCharacterList('Blacklist')
-					end
+					end,
 				},
 				list = {
 					order = 3,
 					type = 'group',
 					inline = true,
 					name = 'Blacklisted items',
-					args = {}
-				}
-			}
-		}
+					args = {},
+				},
+			},
+		},
 	}
 	buildItemList('Items')
 	buildItemList('Types')
@@ -532,22 +523,20 @@ function module:CreateMiniVendorPanels()
 		module.VendorPanels = {}
 	end
 
-	for _, v in ipairs({'MerchantFrame'}) do
+	for _, v in ipairs({ 'MerchantFrame' }) do
 		local panelWidth = _G[v]:GetWidth() / 3
 
 		-- Create panel using native frame (StdUi:Panel replacement)
 		local OptionsPopdown = CreateFrame('Frame', nil, _G[v], 'BackdropTemplate')
 		OptionsPopdown:SetSize(panelWidth, 20)
-		OptionsPopdown:SetBackdrop(
-			{
-				bgFile = 'Interface\\Tooltips\\UI-Tooltip-Background',
-				edgeFile = 'Interface\\Tooltips\\UI-Tooltip-Border',
-				tile = true,
-				tileSize = 16,
-				edgeSize = 16,
-				insets = {left = 4, right = 4, top = 4, bottom = 4}
-			}
-		)
+		OptionsPopdown:SetBackdrop({
+			bgFile = 'Interface\\Tooltips\\UI-Tooltip-Background',
+			edgeFile = 'Interface\\Tooltips\\UI-Tooltip-Border',
+			tile = true,
+			tileSize = 16,
+			edgeSize = 16,
+			insets = { left = 4, right = 4, top = 4, bottom = 4 },
+		})
 		OptionsPopdown:SetBackdropColor(0.1, 0.1, 0.1, 0.9)
 		OptionsPopdown:SetBackdropBorderColor(0.4, 0.4, 0.4, 1)
 		OptionsPopdown:SetScale(0.95)
@@ -642,49 +631,41 @@ function module:CreateMiniVendorPanels()
 
 		-- Make the title clickable to toggle the panel
 		OptionsPopdown.title:EnableMouse(true)
-		OptionsPopdown.title:SetScript(
-			'OnMouseUp',
-			function()
-				-- Refresh values from database before showing/hiding
-				RefreshPanelValues()
+		OptionsPopdown.title:SetScript('OnMouseUp', function()
+			-- Refresh values from database before showing/hiding
+			RefreshPanelValues()
 
-				if OptionsPopdown.Panel:IsVisible() then
-					OptionsPopdown.Panel:Hide()
-					IsCollapsed = true
-				else
-					OptionsPopdown.Panel:Show()
-					IsCollapsed = false
-				end
+			if OptionsPopdown.Panel:IsVisible() then
+				OptionsPopdown.Panel:Hide()
+				IsCollapsed = true
+			else
+				OptionsPopdown.Panel:Show()
+				IsCollapsed = false
 			end
-		)
+		end)
 
-		OptionsPopdown:HookScript(
-			'OnShow',
-			function()
-				-- Refresh all values from the database when the panel is shown
-				RefreshPanelValues()
+		OptionsPopdown:HookScript('OnShow', function()
+			-- Refresh all values from the database when the panel is shown
+			RefreshPanelValues()
 
-				if IsCollapsed then
-					OptionsPopdown.Panel:Hide()
-				else
-					OptionsPopdown.Panel:Show()
-				end
+			if IsCollapsed then
+				OptionsPopdown.Panel:Hide()
+			else
+				OptionsPopdown.Panel:Show()
 			end
-		)
+		end)
 
 		-- Create the expanded panel with increased height to accommodate the settings button
 		local Panel = CreateFrame('Frame', nil, OptionsPopdown, 'BackdropTemplate')
 		Panel:SetSize(_G[v]:GetWidth(), 120)
-		Panel:SetBackdrop(
-			{
-				bgFile = 'Interface\\Tooltips\\UI-Tooltip-Background',
-				edgeFile = 'Interface\\Tooltips\\UI-Tooltip-Border',
-				tile = true,
-				tileSize = 16,
-				edgeSize = 16,
-				insets = {left = 4, right = 4, top = 4, bottom = 4}
-			}
-		)
+		Panel:SetBackdrop({
+			bgFile = 'Interface\\Tooltips\\UI-Tooltip-Background',
+			edgeFile = 'Interface\\Tooltips\\UI-Tooltip-Border',
+			tile = true,
+			tileSize = 16,
+			edgeSize = 16,
+			insets = { left = 4, right = 4, top = 4, bottom = 4 },
+		})
 		Panel:SetBackdropColor(0.1, 0.1, 0.1, 0.9)
 		Panel:SetBackdropBorderColor(0.4, 0.4, 0.4, 1)
 		Panel:SetPoint('TOPRIGHT', OptionsPopdown, 'BOTTOMRIGHT', 0, -10)
@@ -694,22 +675,16 @@ function module:CreateMiniVendorPanels()
 
 		-- Settings button (moved into the expanded area)
 		options.openSettingsButton = LibAT.UI.CreateButton(Panel, 120, 20, L['All Settings'])
-		options.openSettingsButton:SetScript(
-			'OnClick',
-			function()
-				SUI.Options:OpenModuleSettings('AutoSell')
-			end
-		)
+		options.openSettingsButton:SetScript('OnClick', function()
+			SUI.Options:OpenModuleSettings('AutoSell')
+		end)
 
 		-- Sell Items button (appears in top right when items are detected)
 		options.sellItemsButton = LibAT.UI.CreateButton(Panel, 120, 20, 'Sell 0 Items')
-		options.sellItemsButton:SetScript(
-			'OnClick',
-			function()
-				module:SellTrash()
-				options.sellItemsButton:Hide()
-			end
-		)
+		options.sellItemsButton:SetScript('OnClick', function()
+			module:SellTrash()
+			options.sellItemsButton:Hide()
+		end)
 		options.sellItemsButton:Hide()
 
 		-- Auto repair checkbox
@@ -767,20 +742,17 @@ function module:CreateMiniVendorPanels()
 				end
 			elseif setting ~= 'MaxILVLLabel' and setting ~= 'openSettingsButton' and setting ~= 'sellItemsButton' then
 				control:SetChecked(module.DB[setting])
-				control:HookScript(
-					'OnClick',
-					function()
-						-- Stop any current selling operation
-						if module:TimeLeft('SellTrashInBag') and module:TimeLeft('SellTrashInBag') > 0 then
-							module:CancelAllTimers()
-							SUI:Print('AutoSell operation interrupted by settings change')
-						end
-
-						module.DB[setting] = control:GetChecked()
-						module:InvalidateBlacklistCache()
-						UpdateSellButton() -- Update sell button when checkboxes change
+				control:HookScript('OnClick', function()
+					-- Stop any current selling operation
+					if module:TimeLeft('SellTrashInBag') and module:TimeLeft('SellTrashInBag') > 0 then
+						module:CancelAllTimers()
+						SUI:Print('AutoSell operation interrupted by settings change')
 					end
-				)
+
+					module.DB[setting] = control:GetChecked()
+					module:InvalidateBlacklistCache()
+					UpdateSellButton() -- Update sell button when checkboxes change
+				end)
 			end
 		end
 

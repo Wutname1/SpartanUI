@@ -18,33 +18,33 @@ function module:OnInitialize()
 		['MultiCastActionBarFrame'] = 'TOP,SpartanUI,TOP,-558,0',
 		--
 		['BT4BarMicroMenu'] = 'TOP,SpartanUI,TOP,324,0',
-		['BT4BarBagBar'] = 'TOP,SpartanUI,TOP,595,0'
+		['BT4BarBagBar'] = 'TOP,SpartanUI,TOP,595,0',
 	}
 
 	-- Unitframes Settings
 	local ImageInfo = {
 		Alliance = {
 			bg = {
-				Coords = {0.572265625, 0.96875, 0.74609375, 1}
+				Coords = { 0.572265625, 0.96875, 0.74609375, 1 },
 			},
 			top = {
-				Coords = {0.03125, 0.458984375, 0, 0.1796875}
+				Coords = { 0.03125, 0.458984375, 0, 0.1796875 },
 			},
 			bottom = {
-				Coords = {0.03125, 0.458984375, 0.37109375, 0.421875}
-			}
+				Coords = { 0.03125, 0.458984375, 0.37109375, 0.421875 },
+			},
 		},
 		Horde = {
 			bg = {
-				Coords = {0.572265625, 0.96875, 0.74609375, 1}
+				Coords = { 0.572265625, 0.96875, 0.74609375, 1 },
 			},
 			top = {
-				Coords = {0.541015625, 1, 0, 0.1796875}
+				Coords = { 0.541015625, 1, 0, 0.1796875 },
 			},
 			bottom = {
-				Coords = {0.541015625, 1, 0.37109375, 0.421875}
-			}
-		}
+				Coords = { 0.541015625, 1, 0.37109375, 0.421875 },
+			},
+		},
 	}
 	local pathFunc = function(frame, position)
 		local factionGroup = select(1, UnitFactionGroup('player'))
@@ -70,20 +70,20 @@ function module:OnInitialize()
 		if ImageInfo[factionGroup] and ImageInfo[factionGroup][position] then
 			return ImageInfo[factionGroup][position].Coords
 		else
-			return {1, 1, 1, 1}
+			return { 1, 1, 1, 1 }
 		end
 	end
 
 	if SUI.Minimap then
 		---@type SUI.Style.Settings.Minimap
 		local minimapSettings = {
-			size = {180, 180},
+			size = { 180, 180 },
 			position = 'BOTTOM,SUI_Art_War_Left,BOTTOMRIGHT,11,-10',
 			elements = {
 				background = {
-					texture = 'Interface\\AddOns\\SpartanUI\\Themes\\War\\Images\\minimap'
-				}
-			}
+					texture = 'Interface\\AddOns\\SpartanUI\\Themes\\War\\Images\\minimap',
+				},
+			},
 		}
 		SUI.Minimap:Register('War', minimapSettings)
 	end
@@ -93,7 +93,7 @@ function module:OnInitialize()
 		local ufsettings = {
 			displayName = 'War',
 			setup = {
-				image = 'Interface\\AddOns\\SpartanUI\\images\\setup\\Style_Frames_War'
+				image = 'Interface\\AddOns\\SpartanUI\\images\\setup\\Style_Frames_War',
 			},
 			artwork = {
 				top = {
@@ -101,24 +101,24 @@ function module:OnInitialize()
 					TexCoord = TexCoordFunc,
 					heightScale = 0.225,
 					yScale = -0.0555,
-					PVPAlpha = 0.6
+					PVPAlpha = 0.6,
 				},
 				bg = {
 					path = pathFunc,
 					TexCoord = TexCoordFunc,
-					PVPAlpha = 0.7
+					PVPAlpha = 0.7,
 				},
 				bottom = {
 					path = pathFunc,
 					TexCoord = TexCoordFunc,
 					heightScale = 0.0825,
 					yScale = 0.0223,
-					PVPAlpha = 0.7
-				}
+					PVPAlpha = 0.7,
+				},
 			},
 			positions = {
-				['player'] = 'BOTTOMRIGHT,SUI_BottomAnchor,BOTTOM,-45,250'
-			}
+				['player'] = 'BOTTOMRIGHT,SUI_BottomAnchor,BOTTOM,-45,250',
+			},
 		}
 		SUI.UF.Style:Register('War', ufsettings)
 	end
@@ -129,25 +129,25 @@ function module:OnInitialize()
 		Left = {
 			bgTexture = 'Interface\\AddOns\\SpartanUI\\Themes\\War\\Images\\StatusBar-' .. UnitFactionGroup('Player'),
 			alpha = 0.9,
-			size = {370, 20},
-			TooltipSize = {350, 100},
-			TooltipTextSize = {330, 80},
-			texCords = {0.0546875, 0.9140625, 0.5555555555555556, 0},
-			GlowPoint = {x = 1, y = 0},
+			size = { 370, 20 },
+			TooltipSize = { 350, 100 },
+			TooltipTextSize = { 330, 80 },
+			texCords = { 0.0546875, 0.9140625, 0.5555555555555556, 0 },
+			GlowPoint = { x = 1, y = 0 },
 			MaxWidth = 18,
-			Position = 'BOTTOMRIGHT,SUI_BottomAnchor,BOTTOM,-80,-2' -- Example: adjust position for Classic
+			Position = 'BOTTOMRIGHT,SUI_BottomAnchor,BOTTOM,-80,-2', -- Example: adjust position for Classic
 		},
 		Right = {
 			bgTexture = 'Interface\\AddOns\\SpartanUI\\Themes\\War\\Images\\StatusBar-' .. UnitFactionGroup('Player'),
 			alpha = 0.9,
-			size = {370, 20},
-			TooltipSize = {350, 100},
-			TooltipTextSize = {330, 80},
-			texCords = {0.0546875, 0.9140625, 0.5555555555555556, 0},
-			GlowPoint = {x = 1, y = 0},
+			size = { 370, 20 },
+			TooltipSize = { 350, 100 },
+			TooltipTextSize = { 330, 80 },
+			texCords = { 0.0546875, 0.9140625, 0.5555555555555556, 0 },
+			GlowPoint = { x = 1, y = 0 },
 			MaxWidth = 18,
-			Position = 'BOTTOMLEFT,SUI_BottomAnchor,BOTTOM,100,-2'
-		}
+			Position = 'BOTTOMLEFT,SUI_BottomAnchor,BOTTOM,100,-2',
+		},
 	}
 	if statusBarModule then
 		statusBarModule:RegisterStyle('War', StatusBarsSettings)
@@ -167,20 +167,17 @@ function module:OnEnable()
 			module:SlidingTrays()
 		end
 
-		hooksecurefunc(
-			'UIParent_ManageFramePositions',
-			function()
-				if TutorialFrameAlertButton then
-					TutorialFrameAlertButton:SetParent(Minimap)
-					TutorialFrameAlertButton:ClearAllPoints()
-					TutorialFrameAlertButton:SetPoint('CENTER', Minimap, 'TOP', -2, 30)
-				end
-				if CastingBarFrame then
-					CastingBarFrame:ClearAllPoints()
-					CastingBarFrame:SetPoint('BOTTOM', SUI_Art_War, 'TOP', 0, 90)
-				end
+		hooksecurefunc('UIParent_ManageFramePositions', function()
+			if TutorialFrameAlertButton then
+				TutorialFrameAlertButton:SetParent(Minimap)
+				TutorialFrameAlertButton:ClearAllPoints()
+				TutorialFrameAlertButton:SetPoint('CENTER', Minimap, 'TOP', -2, 30)
 			end
-		)
+			if CastingBarFrame then
+				CastingBarFrame:ClearAllPoints()
+				CastingBarFrame:SetPoint('BOTTOM', SUI_Art_War, 'TOP', 0, 90)
+			end
+		end)
 
 		module:SetupVehicleUI()
 
@@ -205,12 +202,9 @@ end
 
 function module:SetupVehicleUI()
 	if SUI.DB.Artwork.VehicleUI then
-		SUI_Art_War:HookScript(
-			'OnShow',
-			function()
-				Artwork_Core:trayWatcherEvents()
-			end
-		)
+		SUI_Art_War:HookScript('OnShow', function()
+			Artwork_Core:trayWatcherEvents()
+		end)
 		RegisterStateDriver(SUI_Art_War, 'visibility', '[overridebar][vehicleui] hide; show')
 	end
 end
@@ -227,19 +221,19 @@ function module:CreateArtwork()
 	end
 
 	-- Set faction-based colors
-	local factionColor = {1, 1, 1, 0.25} -- Default white
+	local factionColor = { 1, 1, 1, 0.25 } -- Default white
 	if UnitFactionGroup('PLAYER') == 'Horde' then
-		factionColor = {1, 0, 0, 0.25} -- Red for Horde
+		factionColor = { 1, 0, 0, 0.25 } -- Red for Horde
 	else
-		factionColor = {0, 0, 1, 0.25} -- Blue for Alliance
+		factionColor = { 0, 0, 1, 0.25 } -- Blue for Alliance
 	end
 
 	local BarBGSettings = {
 		name = 'War',
 		TexturePath = 'Interface\\AddOns\\SpartanUI\\Themes\\War\\Images\\Barbg',
-		TexCoord = {0.07421875, 0.92578125, 0.359375, 0.6796875},
+		TexCoord = { 0.07421875, 0.92578125, 0.359375, 0.6796875 },
 		alpha = 0.5,
-		color = factionColor -- Pass faction color to the framework
+		color = factionColor, -- Pass faction color to the framework
 	}
 
 	local plate = CreateFrame('Frame', 'War_ActionBarPlate', SUI_Art_War)
@@ -276,28 +270,25 @@ end
 -- Artwork Stuff
 function module:SlidingTrays()
 	-- Determine faction-based color
-	local factionColor = {r = 1, g = 1, b = 1, a = 1} -- Default white/none
+	local factionColor = { r = 1, g = 1, b = 1, a = 1 } -- Default white/none
 	local faction = UnitFactionGroup('Player')
 	if faction == 'Horde' then
-		factionColor = {r = 1, g = 0, b = 0, a = 1} -- Red
+		factionColor = { r = 1, g = 0, b = 0, a = 1 } -- Red
 	elseif faction == 'Alliance' then
-		factionColor = {r = 0, g = 0, b = 1, a = 1} -- Blue
+		factionColor = { r = 0, g = 0, b = 1, a = 1 } -- Blue
 	end
 
 	local Settings = {
-		defaultTrayColor = factionColor
+		defaultTrayColor = factionColor,
 	}
 
 	Artwork_Core:SlidingTrays(Settings)
 
 	-- Register frames that this skin places in trays
-	Artwork_Core:RegisterSkinTrayFrames(
-		'War',
-		{
-			left = 'BT4BarPetBar,BT4BarStanceBar,MultiCastActionBarFrame',
-			right = 'BT4BarMicroMenu,BT4BarBagBar'
-		}
-	)
+	Artwork_Core:RegisterSkinTrayFrames('War', {
+		left = 'BT4BarPetBar,BT4BarStanceBar,MultiCastActionBarFrame',
+		right = 'BT4BarMicroMenu,BT4BarBagBar',
+	})
 
 	if BT4BarBagBar and BT4BarPetBar.position then
 		BT4BarPetBar:position('TOPLEFT', 'SlidingTray_left', 'TOPLEFT', 50, -2)

@@ -38,12 +38,9 @@ local function Build(frame, DB)
 	HappinessIndicator:Hide()
 	HappinessIndicator.UpdateSUI = CreateFrame('Frame', nil, frame)
 	HappinessIndicator.UpdateSUI:RegisterEvent('UNIT_HAPPINESS')
-	HappinessIndicator.UpdateSUI:SetScript(
-		'OnEvent',
-		function()
-			frame:ElementUpdate('HappinessIndicator')
-		end
-	)
+	HappinessIndicator.UpdateSUI:SetScript('OnEvent', function()
+		frame:ElementUpdate('HappinessIndicator')
+	end)
 	HappinessIndicator.UpdateSUI:Hide()
 	frame.HappinessIndicator = HappinessIndicator
 end
@@ -55,8 +52,7 @@ end
 
 ---@param unitName string
 ---@param OptionSet AceConfig.OptionsTable
-local function Options(unitName, OptionSet)
-end
+local function Options(unitName, OptionSet) end
 
 ---@type SUI.UF.Elements.Settings
 local Settings = {
@@ -64,12 +60,12 @@ local Settings = {
 	position = {
 		anchor = 'LEFT',
 		x = -10,
-		y = -10
+		y = -10,
 	},
 	config = {
 		type = 'Indicator',
-		DisplayName = 'Happiness'
-	}
+		DisplayName = 'Happiness',
+	},
 }
 
 UF.Elements:Register('HappinessIndicator', Build, Update, Options, Settings)

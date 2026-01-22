@@ -132,6 +132,40 @@ Classes can be extended by redefining them in different files. This allows addin
 
 Always document function inputs and outputs to improve code maintainability and IDE support.
 
+### Code Formatting
+
+**IMPORTANT**: This project uses StyLua for automatic code formatting.
+
+- **Formatter**: StyLua (https://github.com/JohnnyMorganz/StyLua)
+- **Auto-format**: Runs automatically on save in VS Code
+- **Git Hook**: Pre-commit hook formats all staged Lua files (excluding `libs/`)
+- **Manual Format**: Run `.\format-lua.ps1` to format all files
+
+**StyLua Configuration** (`.stylua.toml`):
+
+```toml
+syntax = "Lua51"                          # WoW uses Lua 5.1
+column_width = 200                        # Target line length
+line_endings = "Unix"                     # LF line endings
+indent_type = "Tabs"                      # Use tabs for indentation
+indent_width = 4                          # 4-space tab width
+quote_style = "AutoPreferSingle"          # Prefer single quotes (''), use double when fewer escapes
+call_parentheses = "Always"               # Always use parentheses on function calls
+collapse_simple_statement = "Never"       # Don't collapse statements to single lines
+space_after_function_names = "Never"      # No space between function name and parentheses
+block_newline_gaps = "Never"              # No automatic newline gaps in blocks
+
+[sort_requires]
+enabled = false                           # Don't auto-sort require statements
+```
+
+**Best Practices**:
+
+- Don't worry about formatting while coding - StyLua handles it automatically
+- The `libs/` directory is excluded from formatting (third-party code)
+- Formatting differences will be minimal thanks to the pre-commit hook
+- To ignore formatting for specific code blocks, use `-- stylua: ignore` comments
+
 ### Logging and Debugging
 
 - **Use Logger System**: Always use `LibAT.Logger` for debugging and logging instead of `print()` statements

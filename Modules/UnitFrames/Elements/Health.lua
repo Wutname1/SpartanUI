@@ -52,7 +52,7 @@ local function Build(frame, DB)
 	frame.Health.colorSmooth = DB.colorSmooth or true
 	frame.Health.colorClass = DB.colorClass or false
 
-	frame.colors.smooth = {1, 0, 0, 1, 1, 0, 0, 1, 0}
+	frame.colors.smooth = { 1, 0, 0, 1, 1, 0, 0, 1, 0 }
 	frame.Health.colorHealth = true
 
 	frame.Health.DataTable = DB.text
@@ -118,7 +118,7 @@ local function Build(frame, DB)
 		healAbsorbBar = healAbsorbBar,
 		overAbsorb = overAbsorb,
 		overHealAbsorb = overHealAbsorb,
-		maxOverflow = 2
+		maxOverflow = 2,
 	}
 end
 
@@ -166,7 +166,7 @@ local function Update(frame, settings)
 			element.bg:SetVertexColor(1, 1, 1, alpha)
 		end
 	else
-		element.bg:SetVertexColor(unpack(DB.bg.color or {1, 1, 1, 0.2}))
+		element.bg:SetVertexColor(unpack(DB.bg.color or { 1, 1, 1, 0.2 }))
 	end
 
 	-- Update HealthPrediction bar textures and colors
@@ -232,12 +232,12 @@ local function Options(frameName, OptionSet)
 			healthprediction = {
 				name = L['Health prediction'],
 				type = 'toggle',
-				order = 5
+				order = 5,
 			},
 			DispelHighlight = {
 				name = L['Dispel highlight'],
 				type = 'toggle',
-				order = 5
+				order = 5,
 			},
 			textures = {
 				name = L['Bar Textures'],
@@ -251,7 +251,7 @@ local function Options(frameName, OptionSet)
 						order = 1,
 						width = 'double',
 						name = L['Health Bar Texture'],
-						values = SUI.Lib.LSM:HashTable('statusbar')
+						values = SUI.Lib.LSM:HashTable('statusbar'),
 					},
 					shieldTexture = {
 						type = 'select',
@@ -260,7 +260,7 @@ local function Options(frameName, OptionSet)
 						width = 'double',
 						name = L['Shield Bar Texture'],
 						desc = L['Texture used for shield and incoming heal bars'],
-						values = SUI.Lib.LSM:HashTable('statusbar')
+						values = SUI.Lib.LSM:HashTable('statusbar'),
 					},
 					absorbTexture = {
 						type = 'select',
@@ -269,9 +269,9 @@ local function Options(frameName, OptionSet)
 						width = 'double',
 						name = L['Absorb Bar Texture'],
 						desc = L['Texture used for absorb and heal absorb bars'],
-						values = SUI.Lib.LSM:HashTable('statusbar')
-					}
-				}
+						values = SUI.Lib.LSM:HashTable('statusbar'),
+					},
+				},
 			},
 			coloring = {
 				name = L['Color health bar by:'],
@@ -284,35 +284,35 @@ local function Options(frameName, OptionSet)
 						name = L['Tapped'],
 						desc = "Color's the bar if the unit isn't tapped by the player",
 						type = 'toggle',
-						order = 1
+						order = 1,
 					},
 					colorDisconnected = {
 						name = L['Disconnected'],
 						desc = L['Color the bar if the player is offline'],
 						type = 'toggle',
-						order = 2
+						order = 2,
 					},
 					colorClass = {
 						name = L['Class'],
 						desc = L['Color the bar based on unit class'],
 						type = 'toggle',
-						order = 3
+						order = 3,
 					},
 					colorReaction = {
 						name = L['Reaction'],
 						desc = "color the bar based on the player's reaction towards the player.",
 						type = 'toggle',
-						order = 4
+						order = 4,
 					},
 					colorSmooth = {
 						name = L['Smooth'],
 						desc = "color the bar with a smooth gradient based on the player's current health percentage",
 						type = 'toggle',
-						order = 5
-					}
-				}
-			}
-		}
+						order = 5,
+					},
+				},
+			},
+		},
 	}
 
 	-- Add additional shield/absorb color options to the BarColors group
@@ -325,7 +325,7 @@ local function Options(frameName, OptionSet)
 			hasAlpha = true,
 			disabled = function()
 				return not UF.CurrentSettings[frameName].elements.Health.customColors.useCustom
-			end
+			end,
 		}
 		OptionSet.args.BarColors.args.absorbColor = {
 			name = L['Absorb bar color'],
@@ -335,7 +335,7 @@ local function Options(frameName, OptionSet)
 			hasAlpha = true,
 			disabled = function()
 				return not UF.CurrentSettings[frameName].elements.Health.customColors.useCustom
-			end
+			end,
 		}
 		OptionSet.args.BarColors.args.healAbsorbColor = {
 			name = L['Heal absorb bar color'],
@@ -345,7 +345,7 @@ local function Options(frameName, OptionSet)
 			hasAlpha = true,
 			disabled = function()
 				return not UF.CurrentSettings[frameName].elements.Health.customColors.useCustom
-			end
+			end,
 		}
 	end
 
@@ -373,16 +373,16 @@ local Settings = {
 	colorDisconnected = true,
 	bg = {
 		enabled = true,
-		color = {1, 1, 1, 0.2},
+		color = { 1, 1, 1, 0.2 },
 		useClassColor = false,
-		classColorAlpha = 0.2
+		classColorAlpha = 0.2,
 	},
 	customColors = {
 		useCustom = false,
-		barColor = {0, 1, 0, 1},
-		shieldColor = {0, 1, 0.5, 1},
-		absorbColor = {0, 0.5, 1, 1},
-		healAbsorbColor = {1, 0, 0.5, 1}
+		barColor = { 0, 1, 0, 1 },
+		shieldColor = { 0, 1, 0.5, 1 },
+		absorbColor = { 0, 0.5, 1, 1 },
+		healAbsorbColor = { 1, 0, 0.5, 1 },
 	},
 	text = {
 		['1'] = {
@@ -391,24 +391,24 @@ local Settings = {
 			position = {
 				anchor = 'CENTER',
 				x = 0,
-				y = 0
-			}
+				y = 0,
+			},
 		},
 		['2'] = {
 			text = '[perhp]%',
 			position = {
 				anchor = 'RIGHT',
 				x = 0,
-				y = 0
-			}
-		}
+				y = 0,
+			},
+		},
 	},
 	position = {
-		anchor = 'TOP'
+		anchor = 'TOP',
 	},
 	config = {
-		type = 'StatusBar'
-	}
+		type = 'StatusBar',
+	},
 }
 
 UF.Elements:Register('Health', Build, Update, Options, Settings)

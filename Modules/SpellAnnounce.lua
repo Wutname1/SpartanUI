@@ -17,9 +17,9 @@ local DBDefaults = {
 				inRaid = true,
 				inParty = true,
 				inArena = true,
-				outdoors = false
+				outdoors = false,
 			},
-			SpellList = {}
+			SpellList = {},
 		},
 		-- Interrupts = {
 		-- 	enabled = true,
@@ -47,33 +47,32 @@ local DBDefaults = {
 				--Demon Hunter
 				185245, --Torment
 				--Paladin
-				204079 --Final Stand
-			}
+				204079, --Final Stand
+			},
 		},
 		Portals = {
 			enabled = true,
 			text = '%who is ripping a hole in space time to cast %spell!',
-			SpellList = {}
-		}
-	}
+			SpellList = {},
+		},
+	},
 }
 
-local function SetupPage()
-end
+local function SetupPage() end
 
 local function Options()
 	---@type AceConfig.OptionsTable
 	local OptTable = {
 		name = 'Spell announce',
 		type = 'group',
-		args = {}
+		args = {},
 	}
 
 	SUI.Options:AddOptions(OptTable, 'SpellAnnounce', nil)
 end
 
 function module:OnInitialize()
-	module.Database = SUI.SpartanUIDB:RegisterNamespace('SpellAnnounce', {profile = DBDefaults})
+	module.Database = SUI.SpartanUIDB:RegisterNamespace('SpellAnnounce', { profile = DBDefaults })
 	if SUI:IsModuleDisabled(module) then
 		return
 	end
@@ -86,5 +85,4 @@ function module:OnEnable()
 	end
 end
 
-function module:OnDisable()
-end
+function module:OnDisable() end

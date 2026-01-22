@@ -18,7 +18,7 @@ local function ReskinGameMenuButtons(frame)
 	end
 
 	-- Loop through all the child frames
-	for _, child in pairs({frame:GetChildren()}) do
+	for _, child in pairs({ frame:GetChildren() }) do
 		-- Check if the child is a button
 		if child:IsObjectType('Button') then
 			-- Reskin the button
@@ -37,7 +37,7 @@ local function ReskinGameMenuButtons(frame)
 			end
 
 			-- Remove old textures
-			for _, region in pairs({child:GetRegions()}) do
+			for _, region in pairs({ child:GetRegions() }) do
 				if region:IsObjectType('Texture') and region ~= child:GetNormalTexture() and region ~= child:GetHighlightTexture() and region ~= child:GetPushedTexture() then
 					region:Hide()
 				end
@@ -61,27 +61,21 @@ function SUIGameMenu:OnEnable()
 		return
 	end
 	-- Set up hooks
-	GameMenuFrame:HookScript(
-		'OnShow',
-		function()
-			if SUIGameMenu:IsDisabled() then
-				return
-			end
-			ReskinGameMenuButtons(GameMenuFrame)
+	GameMenuFrame:HookScript('OnShow', function()
+		if SUIGameMenu:IsDisabled() then
+			return
+		end
+		ReskinGameMenuButtons(GameMenuFrame)
 
-			MenuSkin:OnFrameShown(true)
+		MenuSkin:OnFrameShown(true)
+	end)
+	GameMenuFrame:HookScript('OnHide', function()
+		if SUIGameMenu:IsDisabled() then
+			return
 		end
-	)
-	GameMenuFrame:HookScript(
-		'OnHide',
-		function()
-			if SUIGameMenu:IsDisabled() then
-				return
-			end
-			MenuSkin:OnFrameShown(false)
-			MenuSkin:ResetAnimation()
-		end
-	)
+		MenuSkin:OnFrameShown(false)
+		MenuSkin:ResetAnimation()
+	end)
 
 	-- Use direct texture file from Interface\AddOns\SpartanUI\images\Menu\UIGearUpdate.png
 	-- This ensures consistency across all WoW versions (Retail, TBC, Mists, Classic)
@@ -102,16 +96,12 @@ function SUIGameMenu:OnEnable()
 	MenuSkin.BottomLine:SetAlpha(0.5)
 
 	if GameMenuFrame.Layout then
-		hooksecurefunc(
-			GameMenuFrame,
-			'Layout',
-			function()
-				if SUIGameMenu:IsDisabled() then
-					return
-				end
-				MenuSkin:OnFrameShown(GameMenuFrame:IsShown())
+		hooksecurefunc(GameMenuFrame, 'Layout', function()
+			if SUIGameMenu:IsDisabled() then
+				return
 			end
-		)
+			MenuSkin:OnFrameShown(GameMenuFrame:IsShown())
+		end)
 	end
 end
 
@@ -119,7 +109,7 @@ local function CreateMenuSkin()
 	-- Size matches gearUpdate-BG dimensions: 361x596
 	MenuSkin:SetSize(361, 596)
 	MenuSkin:SetFrameStrata('BACKGROUND')
-	MenuSkin:SetScale(.8)
+	MenuSkin:SetScale(0.8)
 	MenuSkin:Hide()
 
 	-- Gradient
@@ -169,46 +159,31 @@ local function CreateMenuSkin()
 	MenuSkin.LogoButton.highlight:SetBlendMode('ADD')
 	MenuSkin.LogoButton.highlight:SetAlpha(0)
 
-	MenuSkin.LogoButton:SetScript(
-		'OnEnter',
-		function(self)
-			self.highlight:SetAlpha(0.5)
-		end
-	)
+	MenuSkin.LogoButton:SetScript('OnEnter', function(self)
+		self.highlight:SetAlpha(0.5)
+	end)
 
-	MenuSkin.LogoButton:SetScript(
-		'OnLeave',
-		function(self)
-			self.highlight:SetAlpha(0)
-		end
-	)
+	MenuSkin.LogoButton:SetScript('OnLeave', function(self)
+		self.highlight:SetAlpha(0)
+	end)
 
-	MenuSkin.LogoButton:SetScript(
-		'OnMouseDown',
-		function(self)
-			self.texture:Hide()
-			self.highlight:SetAlpha(0)
-			self.mousedownTexture:Show()
-		end
-	)
+	MenuSkin.LogoButton:SetScript('OnMouseDown', function(self)
+		self.texture:Hide()
+		self.highlight:SetAlpha(0)
+		self.mousedownTexture:Show()
+	end)
 
-	MenuSkin.LogoButton:SetScript(
-		'OnMouseUp',
-		function(self)
-			self.texture:Show()
-			self.mousedownTexture:Hide()
-		end
-	)
+	MenuSkin.LogoButton:SetScript('OnMouseUp', function(self)
+		self.texture:Show()
+		self.mousedownTexture:Hide()
+	end)
 
-	MenuSkin.LogoButton:SetScript(
-		'OnClick',
-		function()
-			SUI.Options:ToggleOptions()
-			if not InCombatLockdown() then
-				HideUIPanel(GameMenuFrame)
-			end
+	MenuSkin.LogoButton:SetScript('OnClick', function()
+		SUI.Options:ToggleOptions()
+		if not InCombatLockdown() then
+			HideUIPanel(GameMenuFrame)
 		end
-	)
+	end)
 
 	-- Bottom Line
 	MenuSkin.BottomLine = MenuSkin:CreateTexture(nil, 'ARTWORK')
@@ -242,14 +217,11 @@ function MenuSkin:OnDataLoaded()
 	self:SetPoint('CENTER', UIParent, 'BOTTOMLEFT', self:GetTargetOffsets(GameMenuFrame))
 end
 
-MenuSkin:SetScript(
-	'OnEvent',
-	function(event, ...)
-		if MenuSkin[event] then
-			MenuSkin[event](MenuSkin, ...)
-		end
+MenuSkin:SetScript('OnEvent', function(event, ...)
+	if MenuSkin[event] then
+		MenuSkin[event](MenuSkin, ...)
 	end
-)
+end)
 
 function MenuSkin:ResetAnimation()
 	self:ClearAllPoints()
@@ -326,7 +298,7 @@ function MenuSkin:SkinGameMenu()
 			'BottomEdge',
 			'LeftEdge',
 			'RightEdge',
-			'Center'
+			'Center',
 		}
 		for _, partName in ipairs(nineSliceParts) do
 			if GameMenuFrame.Border[partName] then
@@ -340,7 +312,7 @@ function MenuSkin:SkinGameMenu()
 
 		-- Hide all border textures to ensure clean appearance
 		local textureCount = 0
-		for _, region in pairs({GameMenuFrame.Border:GetRegions()}) do
+		for _, region in pairs({ GameMenuFrame.Border:GetRegions() }) do
 			if region:IsObjectType('Texture') then
 				region:Hide()
 				region:SetAlpha(0)
@@ -353,15 +325,12 @@ function MenuSkin:SkinGameMenu()
 		end
 
 		-- Hook to keep it hidden if the game tries to show it again
-		GameMenuFrame.Border:SetScript(
-			'OnShow',
-			function(self)
-				if logger.debug then
-					logger.debug('Border OnShow triggered - hiding it again')
-				end
-				self:Hide()
+		GameMenuFrame.Border:SetScript('OnShow', function(self)
+			if logger.debug then
+				logger.debug('Border OnShow triggered - hiding it again')
 			end
-		)
+			self:Hide()
+		end)
 	end
 
 	if GameMenuFrame.Header then
@@ -374,7 +343,7 @@ function MenuSkin:SkinGameMenu()
 
 		-- Hide header textures as well
 		local headerTextureCount = 0
-		for _, region in pairs({GameMenuFrame.Header:GetRegions()}) do
+		for _, region in pairs({ GameMenuFrame.Header:GetRegions() }) do
 			if region:IsObjectType('Texture') then
 				region:Hide()
 				region:SetAlpha(0)
@@ -387,15 +356,12 @@ function MenuSkin:SkinGameMenu()
 		end
 
 		-- Hook to keep it hidden
-		GameMenuFrame.Header:SetScript(
-			'OnShow',
-			function(self)
-				if logger.debug then
-					logger.debug('Header OnShow triggered - hiding it again')
-				end
-				self:Hide()
+		GameMenuFrame.Header:SetScript('OnShow', function(self)
+			if logger.debug then
+				logger.debug('Header OnShow triggered - hiding it again')
 			end
-		)
+			self:Hide()
+		end)
 	end
 end
 
@@ -405,8 +371,8 @@ end
 
 -- Lerp compatibility function for older WoW versions
 local Lerp = Lerp or function(startValue, endValue, amount)
-		return startValue + (endValue - startValue) * amount
-	end
+	return startValue + (endValue - startValue) * amount
+end
 
 local x, y = 4, 5
 function MenuSkin:InterpolatePoints(center)
@@ -414,40 +380,37 @@ function MenuSkin:InterpolatePoints(center)
 		return
 	end
 
-	local MainFramePosition = {self:GetPoint()}
-	local gradientEndPoint = {self.Gradient:GetPoint(1)}
-	local secondGradientPoint = {self.Gradient:GetPoint(2)}
-	local topLinePosition = {self.TopLine:GetPoint()}
-	local bottomLinePosition = {self.BottomLine:GetPoint()}
+	local MainFramePosition = { self:GetPoint() }
+	local gradientEndPoint = { self.Gradient:GetPoint(1) }
+	local secondGradientPoint = { self.Gradient:GetPoint(2) }
+	local topLinePosition = { self.TopLine:GetPoint() }
+	local bottomLinePosition = { self.BottomLine:GetPoint() }
 	local duration, elapsed = 1.5, 0.0
 
 	local targetX, targetY = self:GetTargetOffsets(center)
 
-	self:SetScript(
-		'OnUpdate',
-		function(self, dt)
-			elapsed = elapsed + dt
-			local t = elapsed / duration
-			gradientEndPoint[x] = Lerp(gradientEndPoint[x], -70, t)
-			gradientEndPoint[y] = Lerp(gradientEndPoint[y], 120, t)
+	self:SetScript('OnUpdate', function(self, dt)
+		elapsed = elapsed + dt
+		local t = elapsed / duration
+		gradientEndPoint[x] = Lerp(gradientEndPoint[x], -70, t)
+		gradientEndPoint[y] = Lerp(gradientEndPoint[y], 120, t)
 
-			secondGradientPoint[x] = Lerp(secondGradientPoint[x], 70, t)
-			secondGradientPoint[y] = Lerp(secondGradientPoint[y], -135, t)
+		secondGradientPoint[x] = Lerp(secondGradientPoint[x], 70, t)
+		secondGradientPoint[y] = Lerp(secondGradientPoint[y], -135, t)
 
-			topLinePosition[y] = Lerp(topLinePosition[y], 0, t)
-			bottomLinePosition[y] = Lerp(bottomLinePosition[y], -50, t)
+		topLinePosition[y] = Lerp(topLinePosition[y], 0, t)
+		bottomLinePosition[y] = Lerp(bottomLinePosition[y], -50, t)
 
-			MainFramePosition[x] = Lerp(MainFramePosition[x], targetX, t)
-			MainFramePosition[y] = Lerp(MainFramePosition[y], targetY, t)
+		MainFramePosition[x] = Lerp(MainFramePosition[x], targetX, t)
+		MainFramePosition[y] = Lerp(MainFramePosition[y], targetY, t)
 
-			self:SetPoint(unpack(MainFramePosition))
-			self.Gradient:SetPoint(unpack(gradientEndPoint))
-			self.Gradient:SetPoint(unpack(secondGradientPoint))
-			self.TopLine:SetPoint(unpack(topLinePosition))
-			self.BottomLine:SetPoint(unpack(bottomLinePosition))
-			if t >= 1.0 then
-				self:SetScript('OnUpdate', nil)
-			end
+		self:SetPoint(unpack(MainFramePosition))
+		self.Gradient:SetPoint(unpack(gradientEndPoint))
+		self.Gradient:SetPoint(unpack(secondGradientPoint))
+		self.TopLine:SetPoint(unpack(topLinePosition))
+		self.BottomLine:SetPoint(unpack(bottomLinePosition))
+		if t >= 1.0 then
+			self:SetScript('OnUpdate', nil)
 		end
-	)
+	end)
 end
