@@ -516,7 +516,7 @@ function module:DisableChatLog()
 end
 
 function module:LogChatMessage(event, message, sender, languageName, channelName, _, _, _, channelIndex, channelBaseName, _, _, guid, _, _, _, _, _)
-	if not self.DB.chatLog.enabled then
+	if not self.DB.chatLog.enabled or issecretvalue(message) then
 		return
 	end
 
