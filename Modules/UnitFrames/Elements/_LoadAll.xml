@@ -3,7 +3,7 @@
 ..\..\FrameXML\UI.xsd">
 	<Script file="AdditionalPower.lua"/>
 	<Script file="AssistantIndicator.lua"/>
-	<!-- <Script file="AuraBars.lua"/> DECOMMISSIONED: Not maintaining if unavailable in retail -->
+	<Script file="AuraBars.lua"/>
 	<Script file="AuraWatch.lua"/>
 	<Script file="Buffs.lua"/>
 	<Script file="Castbar.lua"/>

@@ -1,6 +1,6 @@
 local UF = SUI.UF
 local L = SUI.L
-
+if SUI.IsRetail then return end
 -- Helper for spell info (uses unified C_Spell API available in all current versions)
 local function GetSpellInfoCompat(spellInput)
 	return C_Spell.GetSpellInfo(spellInput)
