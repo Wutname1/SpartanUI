@@ -47,8 +47,10 @@ local function Build(frame, DB)
 		updateSettings(element)
 	end
 
-	element.displayReasons = {}
-	element.FilterAura = FilterAura
+	if not SUI.IsRetail then
+		element.displayReasons = {}
+		element.FilterAura = FilterAura
+	end
 	element.PreUpdate = PreUpdate
 	element.SizeChange = SizeChange
 	frame.Buffs = element
