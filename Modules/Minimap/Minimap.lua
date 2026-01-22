@@ -561,24 +561,40 @@ function module:PositionItem(obj, position)
 end
 
 function module:SetupBackground()
-	if module.Settings.elements.background.enabled then
+	-- Get background settings (handle both Retail nested and Classic flat structure)
+	local bgSettings = SUI.IsRetail and module.Settings.elements and module.Settings.elements.background or module.Settings.background
+	if not bgSettings then
+		return
+	end
+
+	if bgSettings.enabled then
 		if not SUIMinimap.BG then
 			SUIMinimap.BG = SUIMinimap:CreateTexture(nil, 'BACKGROUND', nil, -8)
 		end
 
-		SUIMinimap.BG:SetTexture(module.Settings.elements.background.texture)
-		SUIMinimap.BG:SetSize(unpack(module.Settings.elements.background.size))
-		if module.Settings.elements.background.position then
-			module:PositionItem(SUIMinimap.BG, module.Settings.elements.background.position)
+		if bgSettings.texture then
+			SUIMinimap.BG:SetTexture(bgSettings.texture)
+		end
+		if bgSettings.size then
+			SUIMinimap.BG:SetSize(unpack(bgSettings.size))
+		end
+		if bgSettings.position then
+			module:PositionItem(SUIMinimap.BG, bgSettings.position)
 		else
 			SUIMinimap.BG:ClearAllPoints()
 			SUIMinimap.BG:SetPoint('TOPLEFT', Minimap, 'TOPLEFT', -30, 30)
 			SUIMinimap.BG:SetPoint('BOTTOMRIGHT', Minimap, 'BOTTOMRIGHT', 30, -30)
 		end
 
-		SUIMinimap.BG:SetVertexColor(unpack(module.Settings.elements.background.color))
-		SUIMinimap.BG:SetBlendMode(module.Settings.elements.background.BlendMode)
-		SUIMinimap.BG:SetAlpha(module.Settings.elements.background.alpha)
+		if bgSettings.color then
+			SUIMinimap.BG:SetVertexColor(unpack(bgSettings.color))
+		end
+		if bgSettings.BlendMode then
+			SUIMinimap.BG:SetBlendMode(bgSettings.BlendMode)
+		end
+		if bgSettings.alpha then
+			SUIMinimap.BG:SetAlpha(bgSettings.alpha)
+		end
 		SUIMinimap.BG:Show()
 	elseif SUIMinimap.BG then
 		SUIMinimap.BG:Hide()

@@ -842,6 +842,11 @@ function module:SetupBar(bar, barContainer, width, height, index)
 end
 
 function module:SetActiveStyle(style)
+	-- This function is Retail-only - Classic uses a different status bar system
+	if not SUI.IsRetail then
+		return
+	end
+
 	-- Update the style for each container (Left and Right)
 	for _, key in ipairs({'Left', 'Right'}) do
 		local barContainer = module.bars[key]
@@ -884,13 +889,15 @@ function module:SetActiveStyle(style)
 			barContainer:ClearAllPoints()
 			barContainer:SetPoint(point, anchor, secondaryPoint, x, y)
 
-			-- Update individual bars
-			for _, bar in pairs(barContainer.bars) do
-				bar:SetSize(newStyle.size[1] - 30, newStyle.size[2] - 5)
-				bar.StatusBar:SetSize(newStyle.size[1] - 30, newStyle.size[2] - 5)
+			-- Update individual bars (Retail only - barContainer.bars exists from template)
+			if barContainer.bars then
+				for _, bar in pairs(barContainer.bars) do
+					bar:SetSize(newStyle.size[1] - 30, newStyle.size[2] - 5)
+					bar.StatusBar:SetSize(newStyle.size[1] - 30, newStyle.size[2] - 5)
 
-				-- Update text if needed
-				self:SetupBarText(bar, newStyle, key == 'Left' and 1 or 2)
+					-- Update text if needed
+					self:SetupBarText(bar, newStyle, key == 'Left' and 1 or 2)
+				end
 			end
 
 			-- Store the new style settings
@@ -1196,11 +1203,21 @@ function module:factory_Classic()
 		statusbar.LeadGlow:SetTexture(StyleSetting.GlowImage)
 		statusbar.LeadGlow:SetAllPoints(statusbar.Lead)
 
+		-- Calculate GlowPoint offset based on MaxWidth if not explicitly set
+		local glowOffsetX = StyleSetting.GlowPoint.x
+		if glowOffsetX == 0 and StyleSetting.MaxWidth > 0 then
+			if StyleSetting.Grow == 'LEFT' then
+				glowOffsetX = -StyleSetting.MaxWidth
+			else
+				glowOffsetX = StyleSetting.MaxWidth
+			end
+		end
+
 		if StyleSetting.Grow == 'LEFT' then
-			statusbar.Fill:SetPoint('RIGHT', statusbar, 'RIGHT', StyleSetting.GlowPoint.x, StyleSetting.GlowPoint.y)
+			statusbar.Fill:SetPoint('RIGHT', statusbar, 'RIGHT', glowOffsetX, StyleSetting.GlowPoint.y)
 			statusbar.Lead:SetPoint('RIGHT', statusbar.Fill, 'LEFT', 0, 0)
 		else
-			statusbar.Fill:SetPoint('LEFT', statusbar, 'LEFT', StyleSetting.GlowPoint.x, StyleSetting.GlowPoint.y)
+			statusbar.Fill:SetPoint('LEFT', statusbar, 'LEFT', glowOffsetX, StyleSetting.GlowPoint.y)
 			statusbar.Lead:SetPoint('LEFT', statusbar.Fill, 'RIGHT', 0, 0)
 		end
 
