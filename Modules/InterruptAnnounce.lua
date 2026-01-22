@@ -6,7 +6,7 @@ local lastTime, lastSpellID = nil, nil
 
 -- Helpers for API compatibility (retail vs classic)
 local GetSpellLinkCompat = C_Spell and C_Spell.GetSpellLink or GetSpellLink
-local SendChatMessageCompat = C_ChatInfo and SendChatMessageCompat or SendChatMessage
+local SendChatMessageCompat = C_ChatInfo.SendChatMessage
 
 local function printFormattedString(t, sid, spell, ss, ssid, inputstring)
 	local msg = inputstring or module.DB.text
@@ -60,17 +60,15 @@ function module:OnInitialize()
 			includePets = true,
 			FirstLaunch = true,
 			announceLocation = 'SMART',
-			text = 'Interrupted %t %spell'
-		}
+			text = 'Interrupted %t %spell',
+		},
 	}
 	module.Database = SUI.SpartanUIDB:RegisterNamespace('InterruptAnnouncer', defaults)
 	module.DB = module.Database.profile
 end
 
 local function COMBAT_LOG_EVENT_UNFILTERED()
-	if SUI:IsModuleDisabled('InterruptAnnouncer') then
-		return
-	end
+	if SUI:IsModuleDisabled('InterruptAnnouncer') then return end
 
 	local continue = false
 	local inInstance, instanceType = IsInInstance()
@@ -90,9 +88,7 @@ local function COMBAT_LOG_EVENT_UNFILTERED()
 
 	-- Check if time and ID was same as last
 	-- Note: This is to prevent flooding announcements on AoE taunts.
-	if timeStamp == lastTime and spellID == lastSpellID then
-		return
-	end
+	if timeStamp == lastTime and spellID == lastSpellID then return end
 
 	-- Update last time and ID
 	lastTime, lastSpellID = timeStamp, spellID
@@ -111,14 +107,9 @@ function module:OnEnable()
 	module:FirstLaunch()
 
 	-- Defer event registration to next frame to avoid taint issues during addon init
-	C_Timer.After(
-		0,
-		function()
-			if module:IsEnabled() then
-				module:RegisterEvent('COMBAT_LOG_EVENT_UNFILTERED', COMBAT_LOG_EVENT_UNFILTERED)
-			end
-		end
-	)
+	C_Timer.After(0, function()
+		if module:IsEnabled() then module:RegisterEvent('COMBAT_LOG_EVENT_UNFILTERED', COMBAT_LOG_EVENT_UNFILTERED) end
+	end)
 end
 
 function module:Options()
@@ -138,7 +129,7 @@ function module:Options()
 			alwayson = {
 				name = L['Always on'],
 				type = 'toggle',
-				order = 1
+				order = 1,
 			},
 			active = {
 				name = L['Active when in'],
@@ -155,39 +146,39 @@ function module:Options()
 					inBG = {
 						name = L['Battleground'],
 						type = 'toggle',
-						order = 1
+						order = 1,
 					},
 					inRaid = {
 						name = L['Raid'],
 						type = 'toggle',
-						order = 1
+						order = 1,
 					},
 					inParty = {
 						name = L['Party'],
 						type = 'toggle',
-						order = 1
+						order = 1,
 					},
 					inArena = {
 						name = L['Arena'],
 						type = 'toggle',
-						order = 1
+						order = 1,
 					},
 					outdoors = {
 						name = L['Outdoors'],
 						type = 'toggle',
-						order = 1
-					}
-				}
+						order = 1,
+					},
+				},
 			},
 			selfInterrupt = {
 				name = L['Include self'],
 				type = 'toggle',
-				order = 1
+				order = 1,
 			},
 			includePets = {
 				name = L['Include pets'],
 				type = 'toggle',
-				order = 2
+				order = 2,
 			},
 			announceLocation = {
 				name = L['Announce location'],
@@ -198,8 +189,8 @@ function module:Options()
 					['PARTY'] = L['Party'],
 					['RAID'] = L['Raid'],
 					['SELF'] = L['Self'],
-					['SMART'] = L['Smart']
-				}
+					['SMART'] = L['Smart'],
+				},
 			},
 			TextInfo = {
 				name = '',
@@ -211,37 +202,37 @@ function module:Options()
 						name = L['Text variables:'],
 						type = 'description',
 						order = 10,
-						fontSize = 'large'
+						fontSize = 'large',
 					},
 					b = {
 						name = '- %t - ' .. L['Target that was interrupted'],
 						type = 'description',
 						order = 11,
-						fontSize = 'small'
+						fontSize = 'small',
 					},
 					c = {
 						name = '- %spell - ' .. L['Spell link of spell interrupted'],
 						type = 'description',
 						order = 12,
-						fontSize = 'small'
+						fontSize = 'small',
 					},
 					d = {
 						name = '- %cl - ' .. L['Spell class'],
 						type = 'description',
 						order = 14,
-						fontSize = 'small'
+						fontSize = 'small',
 					},
 					f = {
 						name = '- %myspell - ' .. L['Spell you used to interrupt'],
 						type = 'description',
 						order = 15,
-						fontSize = 'small'
+						fontSize = 'small',
 					},
 					h = {
 						name = '',
 						type = 'description',
 						order = 499,
-						fontSize = 'medium'
+						fontSize = 'medium',
 					},
 					text = {
 						name = L['Announce text:'],
@@ -253,11 +244,11 @@ function module:Options()
 						end,
 						set = function(info, value)
 							module.DB.text = value
-						end
-					}
-				}
-			}
-		}
+						end,
+					},
+				},
+			},
+		},
 	}
 end
 
@@ -293,11 +284,11 @@ function module:FirstLaunch()
 				IAnnounce.options.outdoors = LibAT.UI.CreateCheckbox(IAnnounce, L['Outdoors'])
 
 				local items = {
-					{text = L['Instance chat'], value = 'INSTANCE_CHAT'},
-					{text = L['Raid'], value = 'RAID'},
-					{text = L['Party'], value = 'PARTY'},
-					{text = L['Smart'], value = 'SMART'},
-					{text = L['Self'], value = 'SELF'}
+					{ text = L['Instance chat'], value = 'INSTANCE_CHAT' },
+					{ text = L['Raid'], value = 'RAID' },
+					{ text = L['Party'], value = 'PARTY' },
+					{ text = L['Smart'], value = 'SMART' },
+					{ text = L['Self'], value = 'SELF' },
 				}
 
 				IAnnounce.announceLocation = LibAT.UI.CreateDropdown(IAnnounce, module.DB.announceLocation or L['Smart'], 190, 20)
@@ -345,18 +336,15 @@ function module:FirstLaunch()
 					object:SetChecked(module.DB[key])
 				end
 
-				IAnnounce.modEnabled:HookScript(
-					'OnClick',
-					function()
-						for _, object in pairs(IAnnounce.options) do
-							if IAnnounce.modEnabled:GetChecked() then
-								object:Enable()
-							else
-								object:Disable()
-							end
+				IAnnounce.modEnabled:HookScript('OnClick', function()
+					for _, object in pairs(IAnnounce.options) do
+						if IAnnounce.modEnabled:GetChecked() then
+							object:Enable()
+						else
+							object:Disable()
 						end
 					end
-				)
+				end)
 			end
 
 			SUI_Win.IAnnounce = IAnnounce
@@ -365,9 +353,7 @@ function module:FirstLaunch()
 			if SUI:IsModuleEnabled('CombatLog') then
 				local window = SUI.Setup.window
 				local IAnnounce = window.content.IAnnounce
-				if not IAnnounce.modEnabled:GetChecked() then
-					SUI:DisableModule(module)
-				end
+				if not IAnnounce.modEnabled:GetChecked() then SUI:DisableModule(module) end
 
 				for key, object in pairs(IAnnounce.options) do
 					module.DB[key] = object:GetChecked()
@@ -378,7 +364,7 @@ function module:FirstLaunch()
 		end,
 		Skip = function()
 			module.DB.FirstLaunch = false
-		end
+		end,
 	}
 	SUI.Setup:AddPage(PageData)
 end
