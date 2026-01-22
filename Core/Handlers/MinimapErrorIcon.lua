@@ -21,6 +21,10 @@ local function InitializeMinimapButton()
 
 	-- Tooltip using LibAT's error data
 	MinimapButton:SetScript('OnEnter', function(self)
+		if not LibATErrorDisplay then
+			return
+		end
+
 		GameTooltip:SetOwner(self, 'TOP')
 
 		local errorsCurrent = LibATErrorDisplay.ErrorHandler:GetErrors(BugGrabber:GetSessionId())
@@ -54,6 +58,10 @@ local function InitializeMinimapButton()
 	-- Click handler - use LibAT's functions
 	MinimapButton:RegisterForClicks('AnyUp')
 	MinimapButton:SetScript('OnClick', function(self, button)
+		if not LibATErrorDisplay then
+			return
+		end
+
 		if IsAltKeyDown() then
 			LibATErrorDisplay.Reset()
 		else
@@ -65,7 +73,7 @@ local function InitializeMinimapButton()
 end
 
 local function UpdateMinimapIcon()
-	if not MinimapButton then
+	if not MinimapButton or not LibATErrorDisplay then
 		return
 	end
 
@@ -94,8 +102,8 @@ local function OnAddonLoaded(self, event, loadedAddonName)
 	end
 
 	-- Initialize LibAT references
-	if not LibAT or not LibAT.ErrorDisplay then
-		print('|cffffffffSpartan|cffe21f1fUI|r: Error - Libs-AddonTools is required but not found')
+	if not LibAT then
+		print('|cffffffffSpartan|cffe21f1fUI|r: Minimap Error - Libs-AddonTools is required but not found')
 		self:UnregisterEvent('ADDON_LOADED')
 		return
 	end
@@ -142,13 +150,19 @@ frame:SetScript('OnEvent', OnAddonLoaded)
 -- Expose global functions for compatibility
 _G.SUIErrorDisplay = {
 	OpenErrorWindow = function()
-		LibATErrorDisplay.BugWindow:OpenErrorWindow()
+		if LibATErrorDisplay then
+			LibATErrorDisplay.BugWindow:OpenErrorWindow()
+		end
 	end,
 	CloseErrorWindow = function()
-		LibATErrorDisplay.BugWindow:CloseErrorWindow()
+		if LibATErrorDisplay then
+			LibATErrorDisplay.BugWindow:CloseErrorWindow()
+		end
 	end,
 	Reset = function()
-		LibATErrorDisplay.Reset()
+		if LibATErrorDisplay then
+			LibATErrorDisplay.Reset()
+		end
 	end,
 	UpdateIcon = UpdateMinimapIcon,
 }

@@ -1196,7 +1196,8 @@
     "PartyUtil",
     "ALT_POWER_BAR_PAIR_DISPLAY_INFO",
     "STANDARD_TOTEM_PRIORITIES",
-    "SHAMAN_TOTEM_PRIORITIES"
+    "SHAMAN_TOTEM_PRIORITIES",
+    "LibAT"
   ],
   "Lua.workspace.ignoreDir": [".vscode", "libs/*"],
   "Lua.diagnostics.enable": true,

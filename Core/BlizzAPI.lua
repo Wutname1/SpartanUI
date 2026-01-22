@@ -58,6 +58,7 @@ function BlizzAPI.GetMerchantItemInfo(index)
 	end
 
 	-- Fallback to classic API, wrap in retail-style table
+	---@diagnostic disable-next-line: deprecated
 	local name, texture, price, quantity, numAvailable, isPurchasable, isUsable, extendedCost, currencyID, spellID = GetMerchantItemInfo(index)
 	return {
 		name = name,
