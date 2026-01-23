@@ -400,7 +400,7 @@ function module:OnInitialize()
 	end
 
 	-- Database migration: detect version mismatch
-	if SUI.IsAnyClassic and DB.BarPriorities and not DB[1] then
+	if not SUI.IsRetail and DB.BarPriorities and not DB[1] then
 		-- User has Retail structure on Classic - reset to defaults
 		module.Database:ResetProfile()
 		if LibAT and LibAT.Logger then

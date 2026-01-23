@@ -1,42 +1,42 @@
 ---@class SUI : AceAddon, AceEvent-3.0, AceConsole-3.0, AceSerializer-3.0
 ---@field MoveIt MoveIt
+---@field IsRetail boolean
+---@field IsClassic boolean
+---@field IsTBC boolean
+---@field IsWrath boolean
+---@field IsCata boolean
+---@field IsMOP boolean
+---@field IsAnyClassic boolean
+---@field wowVersion string
 local SUI = LibStub('AceAddon-3.0'):NewAddon('SpartanUI', 'AceEvent-3.0', 'AceConsole-3.0', 'AceSerializer-3.0')
 SUI:SetDefaultModuleLibraries('AceEvent-3.0', 'AceTimer-3.0')
 _G.SUI = SUI
 local type, pairs, unpack = type, pairs, unpack
 local _G = _G
 SUI.L = LibStub('AceLocale-3.0'):GetLocale('SpartanUI', true) ---@type SUIL
--- Only enable SUI error handler if LibAT is not available
-SUI.AutoOpenErrors = not (LibAT and LibAT.ErrorDisplay)
 SUI.Version = C_AddOns.GetAddOnMetadata('SpartanUI', 'Version') or 0
 SUI.BuildNum = C_AddOns.GetAddOnMetadata('SpartanUI', 'X-Build') or 0
 SUI.Bartender4Version = (C_AddOns.GetAddOnMetadata('Bartender4', 'Version') or 0)
-SUI.IsRetail = (WOW_PROJECT_ID == WOW_PROJECT_MAINLINE) ---@type boolean
-SUI.IsClassic = (WOW_PROJECT_ID == WOW_PROJECT_CLASSIC) ---@type boolean
-SUI.IsTBC = (WOW_PROJECT_ID == WOW_PROJECT_BURNING_CRUSADE_CLASSIC) ---@type boolean
-SUI.IsWrath = (WOW_PROJECT_ID == WOW_PROJECT_WRATH_CLASSIC) ---@type boolean
-SUI.IsCata = (WOW_PROJECT_ID == WOW_PROJECT_CATACLYSM_CLASSIC) ---@type boolean
-SUI.IsMOP = (WOW_PROJECT_ID == WOW_PROJECT_MISTS_CLASSIC) ---@type boolean
--- Helper flags for version grouping
-SUI.IsAnyClassic = not SUI.IsRetail ---@type boolean
-SUI.IsModernClassic = (SUI.IsCata or SUI.IsMOP) ---@type boolean -- Has more retail-like APIs
+
+-- Version detection using lookup table for better maintainability
+local VERSION_INFO = {
+	[WOW_PROJECT_MAINLINE or 1] = { flag = 'IsRetail', name = 'Retail' },
+	[WOW_PROJECT_CLASSIC or 2] = { flag = 'IsClassic', name = 'Classic' },
+	[WOW_PROJECT_BURNING_CRUSADE_CLASSIC or 5] = { flag = 'IsTBC', name = 'TBC' },
+	[WOW_PROJECT_WRATH_CLASSIC or 11] = { flag = 'IsWrath', name = 'Wrath' },
+	[WOW_PROJECT_CATACLYSM_CLASSIC or 14] = { flag = 'IsCata', name = 'Cata' },
+	[WOW_PROJECT_MISTS_CLASSIC or 19] = { flag = 'IsMOP', name = 'MOP' },
+}
+
+-- Set all version flags to false initially, then set the current one to true
+for _, info in pairs(VERSION_INFO) do
+	SUI[info.flag] = false
+end
+
+local currentVersion = VERSION_INFO[WOW_PROJECT_ID] or VERSION_INFO[1]
+SUI[currentVersion.flag] = true ---@type boolean
+SUI.wowVersion = currentVersion.name
 SUI.GitHash = '@project-abbreviated-hash@' -- The ZIP packager will replace this with the Git hash.
-SUI.wowVersion = 'Retail'
-if SUI.IsClassic then
-	SUI.wowVersion = 'Classic'
-end
-if SUI.IsTBC then
-	SUI.wowVersion = 'TBC'
-end
-if SUI.IsWrath then
-	SUI.wowVersion = 'Wrath'
-end
-if SUI.IsCata then
-	SUI.wowVersion = 'Cata'
-end
-if SUI.IsMOP then
-	SUI.wowVersion = 'MOP'
-end
 --@alpha@
 SUI.releaseType = 'ALPHA ' .. SUI.BuildNum
 --@end-alpha@

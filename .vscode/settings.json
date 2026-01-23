@@ -1197,7 +1197,8 @@
     "ALT_POWER_BAR_PAIR_DISPLAY_INFO",
     "STANDARD_TOTEM_PRIORITIES",
     "SHAMAN_TOTEM_PRIORITIES",
-    "LibAT"
+    "LibAT",
+    "WOW_PROJECT_MISTS_CLASSIC"
   ],
   "Lua.workspace.ignoreDir": [".vscode", "libs/*"],
   "Lua.diagnostics.enable": true,

@@ -65,40 +65,6 @@ function module:OnInitialize()
 			end,
 			set = function(info, value) end,
 		},
-		-- Only show ErrorHandler options if LibAT is not available (using SUI's error handler)
-		ErrorHandler = LibATErrorDisplay and {
-			name = L['Error handler'],
-			type = 'group',
-			inline = true,
-			order = 300,
-			args = {
-				LibATDetected = {
-					name = 'LibAT Error Handler Detected',
-					desc = 'Libs-AddonTools error handler is active. SpartanUI error handler is disabled.',
-					type = 'description',
-					fontSize = 'medium',
-				},
-			},
-		} or {
-			name = L['Error handler'],
-			type = 'group',
-			inline = true,
-			order = 300,
-			get = function(info)
-				return SUI.DBG.ErrorHandler[info[#info]]
-			end,
-			set = function(info, val)
-				SUI.DBG.ErrorHandler[info[#info]] = val
-				SUI.AutoOpenErrors = (SUI.DBG.ErrorHandler.AutoOpenErrors or false)
-			end,
-			args = {
-				AutoOpenErrors = {
-					name = L['Auto open on error'],
-					desc = L['Automatically open the error report window when a bug occurs.'],
-					type = 'toggle',
-				},
-			},
-		},
 		style = {
 			name = L['Art Style'],
 			type = 'group',
