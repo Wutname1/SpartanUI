@@ -21,15 +21,50 @@ local elementNaming = {
 local function GetOption(info)
 	local element = info[#info - 1]
 	local option = info[#info]
-	return #module.DB.customSettings[SUI.DB.Artwork.Style].elements[element] ~= 0 and module.DB.customSettings[SUI.DB.Artwork.Style].elements[element][option]
-		or module.Settings.elements[element][option]
+
+	-- Handle both Retail (nested) and Classic (flat) structures
+	local elementSettings = module.Settings.elements and module.Settings.elements[element] or module.Settings[element]
+	if not elementSettings then
+		return nil
+	end
+
+	local customSettings = module.DB.customSettings[SUI.DB.Artwork.Style]
+	if customSettings then
+		local customElement = customSettings.elements and customSettings.elements[element] or customSettings[element]
+		if customElement and customElement[option] ~= nil then
+			return customElement[option]
+		end
+	end
+
+	return elementSettings[option]
 end
 
 local function SetOption(info, value)
 	local element = info[#info - 1]
 	local option = info[#info]
-	module.Settings.elements[element][option] = value
-	module.DB.customSettings[SUI.DB.Artwork.Style].elements[element][option] = value
+
+	-- Handle both Retail (nested) and Classic (flat) structures
+	if module.Settings.elements then
+		-- Retail structure
+		module.Settings.elements[element][option] = value
+		if not module.DB.customSettings[SUI.DB.Artwork.Style].elements then
+			module.DB.customSettings[SUI.DB.Artwork.Style].elements = {}
+		end
+		if not module.DB.customSettings[SUI.DB.Artwork.Style].elements[element] then
+			module.DB.customSettings[SUI.DB.Artwork.Style].elements[element] = {}
+		end
+		module.DB.customSettings[SUI.DB.Artwork.Style].elements[element][option] = value
+	else
+		-- Classic flat structure
+		if module.Settings[element] then
+			module.Settings[element][option] = value
+		end
+		if not module.DB.customSettings[SUI.DB.Artwork.Style][element] then
+			module.DB.customSettings[SUI.DB.Artwork.Style][element] = {}
+		end
+		module.DB.customSettings[SUI.DB.Artwork.Style][element][option] = value
+	end
+
 	module:Update(true)
 end
 
@@ -41,10 +76,12 @@ local function GetRelativeToValues()
 		BorderTop = L['Border Top'],
 	}
 
-	-- Add other Minimap elements
-	for elementName, elementSettings in pairs(module.Settings.elements) do
-		if elementSettings.enabled then
-			values[elementName] = L[elementName] or elementName
+	-- Add other Minimap elements (only if elements table exists)
+	if module.Settings.elements then
+		for elementName, elementSettings in pairs(module.Settings.elements) do
+			if elementSettings.enabled then
+				values[elementName] = L[elementName] or elementName
+			end
 		end
 	end
 
@@ -72,15 +109,27 @@ end
 local function GetPositionOption(info)
 	local element = info[#info - 2]
 	local positionPart = info[#info]
-	local positionString = module.Settings.elements[element].position
 
-	if
-		module.DB.customSettings[SUI.DB.Artwork.Style].elements[element]
-		and module.DB.customSettings[SUI.DB.Artwork.Style].elements[element].position
-		and type(module.DB.customSettings[SUI.DB.Artwork.Style].elements[element].position) == 'string'
-	then
-		positionString = module.DB.customSettings[SUI.DB.Artwork.Style].elements[element].position
+	-- Handle both Retail (nested) and Classic (flat) structures
+	local elementSettings = module.Settings.elements and module.Settings.elements[element] or module.Settings[element]
+	if not elementSettings then
+		return nil
 	end
+
+	local positionString = elementSettings.position
+
+	local customSettings = module.DB.customSettings[SUI.DB.Artwork.Style]
+	if customSettings then
+		local customElement = customSettings.elements and customSettings.elements[element] or customSettings[element]
+		if customElement and customElement.position and type(customElement.position) == 'string' then
+			positionString = customElement.position
+		end
+	end
+
+	if not positionString then
+		return nil
+	end
+
 	local point, relativeTo, relativePoint, x, y = strsplit(',', positionString)
 	if positionPart == 'point' then
 		return point
@@ -98,10 +147,27 @@ end
 local function SetPositionOption(info, value)
 	local element = info[#info - 2]
 	local positionPart = info[#info]
-	local positionString = module.Settings.elements[element].position
-	if module.DB.customSettings[SUI.DB.Artwork.Style].elements[element] and type(module.DB.customSettings[SUI.DB.Artwork.Style].elements[element].position) == 'string' then
-		positionString = module.DB.customSettings[SUI.DB.Artwork.Style].elements[element].position
+
+	-- Handle both Retail (nested) and Classic (flat) structures
+	local elementSettings = module.Settings.elements and module.Settings.elements[element] or module.Settings[element]
+	if not elementSettings then
+		return
 	end
+
+	local positionString = elementSettings.position
+
+	local customSettings = module.DB.customSettings[SUI.DB.Artwork.Style]
+	if customSettings then
+		local customElement = customSettings.elements and customSettings.elements[element] or customSettings[element]
+		if customElement and type(customElement.position) == 'string' then
+			positionString = customElement.position
+		end
+	end
+
+	if not positionString then
+		return
+	end
+
 	local point, relativeTo, relativePoint, x, y = strsplit(',', positionString)
 	if positionPart == 'point' then
 		point = value
@@ -114,12 +180,28 @@ local function SetPositionOption(info, value)
 	elseif positionPart == 'y' then
 		y = value
 	end
+
 	local newPositionString = string.format('%s,%s,%s,%s,%s', point, relativeTo, relativePoint, x, y)
-	if not module.DB.customSettings[SUI.DB.Artwork.Style].elements[element] then
-		module.DB.customSettings[SUI.DB.Artwork.Style].elements[element] = {}
+
+	if module.Settings.elements then
+		-- Retail structure
+		if not module.DB.customSettings[SUI.DB.Artwork.Style].elements then
+			module.DB.customSettings[SUI.DB.Artwork.Style].elements = {}
+		end
+		if not module.DB.customSettings[SUI.DB.Artwork.Style].elements[element] then
+			module.DB.customSettings[SUI.DB.Artwork.Style].elements[element] = {}
+		end
+		module.Settings.elements[element].position = newPositionString
+		module.DB.customSettings[SUI.DB.Artwork.Style].elements[element].position = newPositionString
+	else
+		-- Classic flat structure
+		if not module.DB.customSettings[SUI.DB.Artwork.Style][element] then
+			module.DB.customSettings[SUI.DB.Artwork.Style][element] = {}
+		end
+		module.Settings[element].position = newPositionString
+		module.DB.customSettings[SUI.DB.Artwork.Style][element].position = newPositionString
 	end
-	module.Settings.elements[element].position = newPositionString
-	module.DB.customSettings[SUI.DB.Artwork.Style].elements[element].position = newPositionString
+
 	module:Update(true)
 end
 
@@ -313,159 +395,162 @@ function module:BuildOptions()
 	}
 
 	-- Build options for each element
-	for elementName, elementSettings in pairs(module.Settings.elements) do
-		options.args.elements.args[elementName] = {
-			name = L[elementNaming[elementName] or elementName],
-			type = 'group',
-			get = GetOption,
-			set = SetOption,
-			args = {
-				resetElement = {
-					name = L['Reset Element'],
-					type = 'execute',
-					order = 0,
-					hidden = function()
-						return not SUI.Options:hasChanges(module.DB.customSettings[SUI.DB.Artwork.Style].elements[elementName], module.BaseOpt.elements[elementName])
-					end,
-					func = function()
-						if module.DB.customSettings[SUI.DB.Artwork.Style] then
-							module.DB.customSettings[SUI.DB.Artwork.Style].elements[elementName] = nil
-						end
-						module:Update(true)
-					end,
+	-- Only build element options if the elements table exists (Retail structure)
+	if module.Settings.elements then
+		for elementName, elementSettings in pairs(module.Settings.elements) do
+			options.args.elements.args[elementName] = {
+				name = L[elementNaming[elementName] or elementName],
+				type = 'group',
+				get = GetOption,
+				set = SetOption,
+				args = {
+					resetElement = {
+						name = L['Reset Element'],
+						type = 'execute',
+						order = 0,
+						hidden = function()
+							return not SUI.Options:hasChanges(module.DB.customSettings[SUI.DB.Artwork.Style].elements[elementName], module.BaseOpt.elements[elementName])
+						end,
+						func = function()
+							if module.DB.customSettings[SUI.DB.Artwork.Style] then
+								module.DB.customSettings[SUI.DB.Artwork.Style].elements[elementName] = nil
+							end
+							module:Update(true)
+						end,
+					},
+					enabled = {
+						name = L['Enabled'],
+						type = 'toggle',
+						order = 1,
+						get = function()
+							return module.Settings.elements[elementName].enabled
+						end,
+						set = SetOption,
+					},
 				},
-				enabled = {
-					name = L['Enabled'],
-					type = 'toggle',
-					order = 1,
+			}
+			if elementSettings.position then
+				options.args.elements.args[elementName].args.position = {
+					name = L['Position'],
+					type = 'group',
+					order = 2,
+					inline = true,
+					args = {
+						point = {
+							name = L['Anchor'],
+							type = 'select',
+							order = 1,
+							values = anchorValues,
+							get = GetPositionOption,
+							set = SetPositionOption,
+						},
+						relativeTo = {
+							name = L['Relative To'],
+							type = 'select',
+							order = 2,
+							values = GetRelativeToValues,
+							get = GetPositionOption,
+							set = SetPositionOption,
+						},
+						relativePoint = {
+							name = L['Relative Anchor'],
+							type = 'select',
+							order = 3,
+							values = anchorValues,
+							get = GetPositionOption,
+							set = SetPositionOption,
+						},
+						x = {
+							name = L['X Offset'],
+							type = 'range',
+							order = 4,
+							min = -100,
+							max = 100,
+							step = 1,
+							get = GetPositionOption,
+							set = SetPositionOption,
+						},
+						y = {
+							name = L['Y Offset'],
+							type = 'range',
+							order = 5,
+							min = -100,
+							max = 100,
+							step = 1,
+							get = GetPositionOption,
+							set = SetPositionOption,
+						},
+					},
+				}
+			end
+
+			if elementSettings.scale then
+				options.args.elements.args[elementName].args.scale = {
+					name = L['Scale'],
+					type = 'range',
+					order = 3,
+					min = 0.1,
+					max = 2,
+					step = 0.05,
 					get = function()
-						return module.Settings.elements[elementName].enabled
+						return elementSettings.scale
 					end,
 					set = SetOption,
-				},
-			},
-		}
-		if elementSettings.position then
-			options.args.elements.args[elementName].args.position = {
-				name = L['Position'],
-				type = 'group',
-				order = 2,
-				inline = true,
-				args = {
-					point = {
-						name = L['Anchor'],
-						type = 'select',
-						order = 1,
-						values = anchorValues,
-						get = GetPositionOption,
-						set = SetPositionOption,
+				}
+			end
+
+			if elementSettings.color then
+				options.args.elements.args[elementName].args.color = {
+					name = L['Color'],
+					type = 'color',
+					order = 3,
+					get = function()
+						return unpack(elementSettings.color)
+					end,
+					set = function(info, r, g, b, a)
+						module.DB.customSettings[SUI.DB.Artwork.Style].elements[elementName].color[info[#info]] = { r, g, b, a }
+					end,
+				}
+			end
+
+			-- local order = 4
+			-- for settingName, settingValue in pairs(elementSettings) do
+			-- 	if not options.args.elements.args[elementName].args[settingName] then
+			-- 		local optionType = type(settingValue)
+			-- 		options.args.elements.args[elementName].args[settingName] = {
+			-- 			name = L[settingName] or settingName,
+			-- 			type = optionType == 'boolean' and 'toggle' or optionType == 'number' and 'range' or 'input',
+			-- 			order = order,
+			-- 			get = GetOption,
+			-- 			set = SetOption,
+			-- 		}
+
+			-- 		if optionType == 'number' then
+			-- 			options.args.elements.args[elementName].args[settingName].min = 0
+			-- 			options.args.elements.args[elementName].args[settingName].max = 2
+			-- 			options.args.elements.args[elementName].args[settingName].step = 0.01
+			-- 		end
+
+			-- 		order = order + 1
+			-- 	end
+			-- end
+
+			if elementSettings.style then
+				options.args.elements.args[elementName].args.enabled.hidden = true
+
+				options.args.elements.args[elementName].args.style = {
+					name = L['Style'],
+					type = 'select',
+					order = 4,
+					values = {
+						['always'] = L['Always'],
+						['mouseover'] = L['Mouseover'],
+						['never'] = L['Never'],
 					},
-					relativeTo = {
-						name = L['Relative To'],
-						type = 'select',
-						order = 2,
-						values = GetRelativeToValues,
-						get = GetPositionOption,
-						set = SetPositionOption,
-					},
-					relativePoint = {
-						name = L['Relative Anchor'],
-						type = 'select',
-						order = 3,
-						values = anchorValues,
-						get = GetPositionOption,
-						set = SetPositionOption,
-					},
-					x = {
-						name = L['X Offset'],
-						type = 'range',
-						order = 4,
-						min = -100,
-						max = 100,
-						step = 1,
-						get = GetPositionOption,
-						set = SetPositionOption,
-					},
-					y = {
-						name = L['Y Offset'],
-						type = 'range',
-						order = 5,
-						min = -100,
-						max = 100,
-						step = 1,
-						get = GetPositionOption,
-						set = SetPositionOption,
-					},
-				},
-			}
+				}
+			end
 		end
-
-		if elementSettings.scale then
-			options.args.elements.args[elementName].args.scale = {
-				name = L['Scale'],
-				type = 'range',
-				order = 3,
-				min = 0.1,
-				max = 2,
-				step = 0.05,
-				get = function()
-					return elementSettings.scale
-				end,
-				set = SetOption,
-			}
-		end
-
-		if elementSettings.color then
-			options.args.elements.args[elementName].args.color = {
-				name = L['Color'],
-				type = 'color',
-				order = 3,
-				get = function()
-					return unpack(elementSettings.color)
-				end,
-				set = function(info, r, g, b, a)
-					module.DB.customSettings[SUI.DB.Artwork.Style].elements[elementName].color[info[#info]] = { r, g, b, a }
-				end,
-			}
-		end
-
-		-- local order = 4
-		-- for settingName, settingValue in pairs(elementSettings) do
-		-- 	if not options.args.elements.args[elementName].args[settingName] then
-		-- 		local optionType = type(settingValue)
-		-- 		options.args.elements.args[elementName].args[settingName] = {
-		-- 			name = L[settingName] or settingName,
-		-- 			type = optionType == 'boolean' and 'toggle' or optionType == 'number' and 'range' or 'input',
-		-- 			order = order,
-		-- 			get = GetOption,
-		-- 			set = SetOption,
-		-- 		}
-
-		-- 		if optionType == 'number' then
-		-- 			options.args.elements.args[elementName].args[settingName].min = 0
-		-- 			options.args.elements.args[elementName].args[settingName].max = 2
-		-- 			options.args.elements.args[elementName].args[settingName].step = 0.01
-		-- 		end
-
-		-- 		order = order + 1
-		-- 	end
-		-- end
-
-		if elementSettings.style then
-			options.args.elements.args[elementName].args.enabled.hidden = true
-
-			options.args.elements.args[elementName].args.style = {
-				name = L['Style'],
-				type = 'select',
-				order = 4,
-				values = {
-					['always'] = L['Always'],
-					['mouseover'] = L['Mouseover'],
-					['never'] = L['Never'],
-				},
-			}
-		end
-	end
+	end -- end of if module.Settings.elements then
 
 	SUI.Options:AddOptions(options, 'Minimap')
 end

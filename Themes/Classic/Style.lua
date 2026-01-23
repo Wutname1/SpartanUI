@@ -663,37 +663,50 @@ end
 function module:OnInitialize()
 	local BarHandler = SUI.Handlers.BarSystem
 
-	BarHandler.BarPosition.BT4.Classic = {
-		['BT4Bar1'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-445,104',
-		['BT4Bar2'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-445,47',
-		--
-		['BT4Bar3'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,445,104',
-		['BT4Bar4'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,445,47',
-		--
-		['BT4Bar5'] = 'BOTTOMRIGHT,SUI_BottomAnchor,BOTTOMLEFT,-5,7',
-		['BT4Bar6'] = 'BOTTOMLEFT,SUI_BottomAnchor,BOTTOMRIGHT,5,7',
-		--
-		['BT4BarExtraActionBar'] = 'BOTTOM,SUI_BottomAnchor,TOP,0,130',
-		['BT4BarZoneAbilityBar'] = 'BOTTOM,SUI_BottomAnchor,TOP,0,130',
-		--
-		['BT4BarStanceBar'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-240,138',
-		['BT4BarPetBar'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-570,165',
-		['MultiCastActionBarFrame'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-570,165',
-		--
-		['BT4BarMicroMenu'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,282,138',
-		['BT4BarBagBar'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,628,168',
-	}
+	BarHandler.BarPosition.BT4.Classic = SUI.IsRetail
+			and {
+				['BT4Bar1'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-445,104',
+				['BT4Bar2'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-445,47',
+				--
+				['BT4Bar3'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,445,104',
+				['BT4Bar4'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,445,47',
+				--
+				['BT4Bar5'] = 'BOTTOMRIGHT,SUI_BottomAnchor,BOTTOMLEFT,-5,7',
+				['BT4Bar6'] = 'BOTTOMLEFT,SUI_BottomAnchor,BOTTOMRIGHT,5,7',
+				--
+				['BT4BarExtraActionBar'] = 'BOTTOM,SUI_BottomAnchor,TOP,0,130',
+				['BT4BarZoneAbilityBar'] = 'BOTTOM,SUI_BottomAnchor,TOP,0,130',
+				--
+				['BT4BarStanceBar'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-240,138',
+				['BT4BarPetBar'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-570,165',
+				['MultiCastActionBarFrame'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-570,165',
+				--
+				['BT4BarMicroMenu'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,282,138',
+				['BT4BarBagBar'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,628,168',
+			}
+		or {
+			['BT4Bar1'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-359,82',
+			['BT4Bar2'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-359,35',
+			--
+			['BT4Bar3'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,358,81',
+			['BT4Bar4'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,358,35',
+			--
+			['BT4Bar5'] = 'BOTTOMRIGHT,SUI_BottomAnchor,BOTTOMLEFT,-5,7',
+			['BT4Bar6'] = 'BOTTOMLEFT,SUI_BottomAnchor,BOTTOMRIGHT,5,7',
+			--
+			['BT4BarExtraActionBar'] = 'BOTTOM,SUI_BottomAnchor,TOP,0,130',
+			['BT4BarZoneAbilityBar'] = 'BOTTOM,SUI_BottomAnchor,TOP,0,130',
+			--
+			['BT4BarStanceBar'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-240,138',
+			['BT4BarPetBar'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-570,165',
+			['MultiCastActionBarFrame'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-570,165',
+			--
+			['BT4BarMicroMenu'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,304,144',
+			['BT4BarBagBar'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,647,163',
+		}
 	BarHandler.BarScale.BT4.Classic = {
-		['BT4Bar1'] = SUI.IsRetail and 0.62 or 0.77,
-		['BT4Bar2'] = SUI.IsRetail and 0.62 or 0.77,
-		['BT4Bar3'] = SUI.IsRetail and 0.62 or 0.77,
-		['BT4Bar4'] = SUI.IsRetail and 0.62 or 0.77,
 		['BT4Bar5'] = SUI.IsRetail and 0.63 or 0.75,
 		['BT4Bar6'] = SUI.IsRetail and 0.63 or 0.75,
-		['BT4Bar7'] = SUI.IsRetail and 0.62 or 0.77,
-		['BT4Bar8'] = SUI.IsRetail and 0.62 or 0.77,
-		['BT4Bar9'] = SUI.IsRetail and 0.62 or 0.77,
-		['BT4BarBagBar'] = 0.6,
 		['BT4BarStanceBar'] = 0.7,
 		['BT4BarMicroMenu'] = SUI.IsRetail and 0.7 or 0.6,
 	}
