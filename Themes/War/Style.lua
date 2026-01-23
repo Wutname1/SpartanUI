@@ -13,12 +13,12 @@ function module:OnInitialize()
 		['BT4BarExtraActionBar'] = 'BOTTOM,SUI_BottomAnchor,TOP,0,70',
 		['BT4BarZoneAbilityBar'] = 'BOTTOM,SUI_BottomAnchor,TOP,0,70',
 		--
-		['BT4BarStanceBar'] = 'TOP,SpartanUI,TOP,-301,0',
-		['BT4BarPetBar'] = 'TOP,SpartanUI,TOP,-558,0',
+		['BT4BarStanceBar'] = SUI.IsRetail and 'TOP,SpartanUI,TOP,-301,0',
+		['BT4BarPetBar'] = SUI.IsRetail and 'TOP,SpartanUI,TOP,-558,0',
 		['MultiCastActionBarFrame'] = 'TOP,SpartanUI,TOP,-558,0',
 		--
-		['BT4BarMicroMenu'] = 'TOP,SpartanUI,TOP,324,0',
-		['BT4BarBagBar'] = 'TOP,SpartanUI,TOP,595,0',
+		['BT4BarMicroMenu'] = SUI.IsRetail and 'TOP,SpartanUI,TOP,324,0',
+		['BT4BarBagBar'] = SUI.IsRetail and 'TOP,SpartanUI,TOP,595,0',
 	}
 
 	-- Unitframes Settings
