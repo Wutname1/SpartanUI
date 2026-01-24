@@ -111,38 +111,32 @@ function module:OnInitialize()
 end
 
 local onShow = function(self)
-	if not self.SetBackdrop then
-		Mixin(self, BackdropTemplateMixin)
-	end
-
-	-- Safely set backdrop with error protection
-	local success, err = pcall(function()
-		self:SetBackdrop(whitebg)
-		if self.SUITip then
-			local bgFile = LSM:Fetch('background', module.DB.Background)
-			if bgFile and bgFile ~= '' then
-				self.SUITip:SetBackdrop({ bgFile = bgFile, tile = false })
-			end
-			self.SUITip:SetFrameLevel(0)
-		end
-	end)
-
-	if not success then
-		-- If backdrop setting fails, skip it for this show event
+	if not self.SUITip then
 		return
 	end
 
-	if (module.DB.Background == 'none' or module.DB.ColorOverlay) or not self.SUITip then
-		self:SetBackdropColor(unpack(module.DB.Color))
-		if self.SUITip then
-			self.SUITip:SetBackdropColor(1, 1, 1, 1)
-		end
-	else
-		if self.SUITip then
-			self.SUITip:SetBackdropColor(unpack(module.DB.Color))
-		end
-		self:SetBackdropColor(0, 0, 0, 0)
+	-- Clear tooltip backdrop - SUITip layer provides the background
+	if self.SetBackdrop then
+		self:SetBackdrop(nil)
 	end
+
+	-- Update SUITip background texture
+	local bgTexture = LSM:Fetch('background', module.DB.Background)
+	if bgTexture and bgTexture ~= '' then
+		self.SUITip.bgTexture:SetTexture(bgTexture)
+	end
+
+	-- Apply color based on settings
+	local r, g, b, a = unpack(module.DB.Color)
+	if module.DB.Background == 'none' or module.DB.ColorOverlay then
+		-- Color overlay mode or no background: apply user's color to texture
+		self.SUITip.bgTexture:SetVertexColor(r, g, b, a)
+	else
+		-- Show background texture as-is, just apply alpha transparency
+		self.SUITip.bgTexture:SetVertexColor(1, 1, 1, a)
+	end
+
+	self.SUITip:SetFrameLevel(0)
 end
 
 local onHide = function(self)
@@ -203,9 +197,11 @@ local function ApplySkin(tooltip)
 		-- Apply color based on settings
 		local r, g, b, a = unpack(module.DB.Color)
 		if module.DB.Background == 'none' or module.DB.ColorOverlay then
+			-- Color overlay mode or no background: apply user's color to texture
 			SUITip.bgTexture:SetVertexColor(r, g, b, a)
 		else
-			SUITip.bgTexture:SetVertexColor(0, 0, 0, 1)
+			-- Show background texture as-is, just apply alpha transparency
+			SUITip.bgTexture:SetVertexColor(1, 1, 1, a)
 		end
 
 		-- Create border container
@@ -243,25 +239,22 @@ local function ApplySkin(tooltip)
 
 		tooltip.SUITip = SUITip
 		tooltip.SetBorderColor = SetBorderColor
-		-- if tooltip.SetBackdrop then
-		-- 	tooltip:SetBackdrop(nil)
-		-- end
-		-- tooltip:HookScript('OnShow', onShow)
-		-- tooltip:HookScript('OnHide', onHide)
+
+		-- Hook scripts for show/hide handling
+		tooltip:HookScript('OnShow', onShow)
+		tooltip:HookScript('OnHide', onHide)
 	end
 
-	local style = {
-		bgFile = LSM:Fetch('background', module.DB.Background),
-	}
-
+	-- Remove default Blizzard styling
 	if tooltip.NineSlice then
 		SUI.Skins.RemoveTextures(tooltip.NineSlice)
 	end
-	if not tooltip.SetBackdrop then
-		Mixin(tooltip, BackdropTemplateMixin)
+
+	-- Clear tooltip backdrop - SUITip layer provides the background
+	if tooltip.SetBackdrop then
+		tooltip:SetBackdrop(nil)
 	end
-	tooltip:SetBackdrop(style)
-	tooltip:SetBackdropColor(unpack(module.DB.Color))
+
 	tooltip.skined = true
 end
 
@@ -308,22 +301,27 @@ local TooltipSetItem = function(tooltip, tooltipData)
 
 	if itemLink then
 		local quality = select(3, C_Item.GetItemInfo(itemLink))
-		local style = {
-			bgFile = 'Interface/Tooltips/UI-Tooltip-Background',
-		}
-		if C_AzeriteEmpoweredItem and C_AzeriteItem and (C_AzeriteEmpoweredItem.IsAzeriteEmpoweredItemByID(itemLink) or C_AzeriteItem.IsAzeriteItemByID(itemLink)) then
-			style = {
-				bgFile = 'Interface/Tooltips/UI-Tooltip-Background-Azerite',
-				overlayAtlasTop = 'AzeriteTooltip-Topper',
-				overlayAtlasTopScale = 0.75,
-				overlayAtlasTopYOffset = 1,
-				overlayAtlasBottom = 'AzeriteTooltip-Bottom',
-				overlayAtlasBottomYOffset = 2,
-			}
-		end
 
-		GameTooltip:SetBackdrop(style)
-		GameTooltip:SetBackdropColor(unpack(module.DB.Color))
+		-- Update SUITip background texture for special item types
+		if tooltip.SUITip and tooltip.SUITip.bgTexture then
+			local bgTexture = 'Interface/Tooltips/UI-Tooltip-Background'
+
+			if C_AzeriteEmpoweredItem and C_AzeriteItem and (C_AzeriteEmpoweredItem.IsAzeriteEmpoweredItemByID(itemLink) or C_AzeriteItem.IsAzeriteItemByID(itemLink)) then
+				bgTexture = 'Interface/Tooltips/UI-Tooltip-Background-Azerite'
+			end
+
+			tooltip.SUITip.bgTexture:SetTexture(bgTexture)
+
+			-- Apply color based on settings
+			local r, g, b, a = unpack(module.DB.Color)
+			if module.DB.Background == 'none' or module.DB.ColorOverlay then
+				-- Color overlay mode or no background: apply user's color to texture
+				tooltip.SUITip.bgTexture:SetVertexColor(r, g, b, a)
+			else
+				-- Show background texture as-is, just apply alpha transparency
+				tooltip.SUITip.bgTexture:SetVertexColor(1, 1, 1, a)
+			end
+		end
 
 		if quality and tooltip.SetBorderColor then
 			local r, g, b = C_Item.GetItemQualityColor(quality)
@@ -546,12 +544,21 @@ end
 
 function module:UpdateBG()
 	for _, tooltip in pairs(tooltips) do
-		if tooltip.SUITip then
-			if module.DB.Background ~= 'none' then
-				tooltip.SUITip:SetBackdropColor(unpack(module.DB.Color))
+		if tooltip.SUITip and tooltip.SUITip.bgTexture then
+			-- Update background texture
+			local bgTexture = LSM:Fetch('background', module.DB.Background)
+			if bgTexture and bgTexture ~= '' then
+				tooltip.SUITip.bgTexture:SetTexture(bgTexture)
+			end
+
+			-- Apply color based on settings
+			local r, g, b, a = unpack(module.DB.Color)
+			if module.DB.Background == 'none' or module.DB.ColorOverlay then
+				-- Color overlay mode or no background: apply user's color to texture
+				tooltip.SUITip.bgTexture:SetVertexColor(r, g, b, a)
 			else
-				tooltip.SUITip:SetBackdropColor(0, 0, 0, 0)
-				tooltip:SetBackdropColor(unpack(module.DB.Color))
+				-- Show background texture as-is, just apply alpha transparency
+				tooltip.SUITip.bgTexture:SetVertexColor(1, 1, 1, a)
 			end
 		end
 
