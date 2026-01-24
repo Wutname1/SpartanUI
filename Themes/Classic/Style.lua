@@ -783,7 +783,7 @@ function module:OnInitialize()
 	local minimapSettings = SUI.IsRetail
 			and {
 				-- Retail Classic theme settings
-				size = { 180, 180 },
+				size = { 155, 155 },
 				position = 'BOTTOM,SUI_Art_Classic_Center,BOTTOM,1,6',
 				elements = {
 					background = {
