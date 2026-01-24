@@ -129,10 +129,10 @@ local onShow = function(self)
 	-- Apply color based on settings
 	local r, g, b, a = unpack(module.DB.Color)
 	if module.DB.Background == 'none' or module.DB.ColorOverlay then
-		-- Color overlay mode or no background: apply user's color to texture
-		self.SUITip.bgTexture:SetVertexColor(r, g, b, a)
+		-- Color overlay mode: apply user's color at full opacity (the color itself provides darkness)
+		self.SUITip.bgTexture:SetVertexColor(r, g, b, 1)
 	else
-		-- Show background texture as-is, just apply alpha transparency
+		-- Standard mode: show texture as-is with user's alpha transparency
 		self.SUITip.bgTexture:SetVertexColor(1, 1, 1, a)
 	end
 
@@ -197,10 +197,10 @@ local function ApplySkin(tooltip)
 		-- Apply color based on settings
 		local r, g, b, a = unpack(module.DB.Color)
 		if module.DB.Background == 'none' or module.DB.ColorOverlay then
-			-- Color overlay mode or no background: apply user's color to texture
-			SUITip.bgTexture:SetVertexColor(r, g, b, a)
+			-- Color overlay mode: apply user's color at full opacity (the color itself provides darkness)
+			SUITip.bgTexture:SetVertexColor(r, g, b, 1)
 		else
-			-- Show background texture as-is, just apply alpha transparency
+			-- Standard mode: show texture as-is with user's alpha transparency
 			SUITip.bgTexture:SetVertexColor(1, 1, 1, a)
 		end
 
@@ -315,10 +315,10 @@ local TooltipSetItem = function(tooltip, tooltipData)
 			-- Apply color based on settings
 			local r, g, b, a = unpack(module.DB.Color)
 			if module.DB.Background == 'none' or module.DB.ColorOverlay then
-				-- Color overlay mode or no background: apply user's color to texture
-				tooltip.SUITip.bgTexture:SetVertexColor(r, g, b, a)
+				-- Color overlay mode: apply user's color at full opacity (the color itself provides darkness)
+				tooltip.SUITip.bgTexture:SetVertexColor(r, g, b, 1)
 			else
-				-- Show background texture as-is, just apply alpha transparency
+				-- Standard mode: show texture as-is with user's alpha transparency
 				tooltip.SUITip.bgTexture:SetVertexColor(1, 1, 1, a)
 			end
 		end
@@ -554,10 +554,10 @@ function module:UpdateBG()
 			-- Apply color based on settings
 			local r, g, b, a = unpack(module.DB.Color)
 			if module.DB.Background == 'none' or module.DB.ColorOverlay then
-				-- Color overlay mode or no background: apply user's color to texture
-				tooltip.SUITip.bgTexture:SetVertexColor(r, g, b, a)
+				-- Color overlay mode: apply user's color at full opacity (the color itself provides darkness)
+				tooltip.SUITip.bgTexture:SetVertexColor(r, g, b, 1)
 			else
-				-- Show background texture as-is, just apply alpha transparency
+				-- Standard mode: show texture as-is with user's alpha transparency
 				tooltip.SUITip.bgTexture:SetVertexColor(1, 1, 1, a)
 			end
 		end
