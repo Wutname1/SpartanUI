@@ -60,6 +60,11 @@ function module:OnInitialize()
 				position = 'TOPRIGHT,SpartanUI,TOPRIGHT,-20,-20',
 				shape = 'square',
 				scale = 1.3,
+				elements = {
+					background = {
+						enabled = false,
+					},
+				},
 			}
 		or {
 			-- Classic client Gale theme settings
@@ -68,6 +73,9 @@ function module:OnInitialize()
 			position = 'TOPRIGHT,SpartanUI,TOPRIGHT,-20,-20',
 			shape = 'square',
 			scale = 1.0,
+			background = {
+				enabled = false,
+			},
 		}
 	SUI.Minimap:Register('Gale', minimapSettings)
 

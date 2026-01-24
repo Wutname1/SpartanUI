@@ -780,14 +780,24 @@ function module:OnInitialize()
 	end
 
 	---@type SUI.Style.Settings.Minimap
-	local minimapSettings = SUI.IsRetail and {
-			-- Retail Classic theme settings
-			size = { 180, 180 },
-			position = 'BOTTOM,SUI_Art_Classic_Center,BOTTOM,1,6',
-		} or {
+	local minimapSettings = SUI.IsRetail
+			and {
+				-- Retail Classic theme settings
+				size = { 180, 180 },
+				position = 'BOTTOM,SUI_Art_Classic_Center,BOTTOM,1,6',
+				elements = {
+					background = {
+						enabled = false,
+					},
+				},
+			}
+		or {
 			-- Classic client Classic theme settings
 			size = { 140, 140 },
 			position = 'BOTTOM,SUI_Art_Classic_Center,BOTTOM,1,6',
+			background = {
+				enabled = false,
+			},
 		}
 	SUI.Minimap:Register('Classic', minimapSettings)
 

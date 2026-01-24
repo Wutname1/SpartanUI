@@ -54,6 +54,11 @@ function module:OnInitialize()
 				position = 'TOPRIGHT,SUI_Art_Minimal_Base3,TOPRIGHT,-10,-10',
 				shape = 'square',
 				size = { 180, 180 },
+				elements = {
+					background = {
+						enabled = false,
+					},
+				},
 			}
 		or {
 			-- Classic client Minimal theme settings
@@ -62,6 +67,9 @@ function module:OnInitialize()
 			position = 'TOPRIGHT,SUI_Art_Minimal_Base3,TOPRIGHT,-10,-10',
 			shape = 'square',
 			size = { 140, 140 },
+			background = {
+				enabled = false,
+			},
 		}
 	SUI.Minimap:Register('Minimal', minimapSettings)
 

@@ -566,22 +566,24 @@ end
 function module:SetupBackground()
 	-- Get background settings (handle both Retail nested and Classic flat structure)
 	local bgSettings = SUI.IsRetail and module.Settings.elements and module.Settings.elements.background or module.Settings.background
-	if not bgSettings then
-		-- If theme doesn't define background settings, hide any existing texture
+
+	-- Hide background if: no settings, enabled is false, or no texture is defined
+	if not bgSettings or bgSettings.enabled == false or not bgSettings.texture then
 		if SUIMinimap.BG then
 			SUIMinimap.BG:Hide()
+			SUIMinimap.BG:SetTexture(nil)
 		end
 		return
 	end
 
-	if bgSettings.enabled then
+	-- Background is enabled and has a texture - show it
+	if bgSettings.enabled ~= false then
 		if not SUIMinimap.BG then
 			SUIMinimap.BG = SUIMinimap:CreateTexture(nil, 'BACKGROUND', nil, -8)
 		end
 
-		if bgSettings.texture then
-			SUIMinimap.BG:SetTexture(bgSettings.texture)
-		end
+		SUIMinimap.BG:SetTexture(bgSettings.texture)
+
 		if bgSettings.size then
 			SUIMinimap.BG:SetSize(unpack(bgSettings.size))
 		end
@@ -603,8 +605,6 @@ function module:SetupBackground()
 			SUIMinimap.BG:SetAlpha(bgSettings.alpha)
 		end
 		SUIMinimap.BG:Show()
-	elseif SUIMinimap.BG then
-		SUIMinimap.BG:Hide()
 	end
 end
 
