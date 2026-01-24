@@ -815,9 +815,9 @@ function module:SetupBar(bar, barContainer, width, height, index)
 end
 
 function module:SetActiveStyle(style)
-	-- This function is Retail-only - Classic uses a different status bar system
+	-- Dispatch to the correct version
 	if not SUI.IsRetail then
-		return
+		return self:SetActiveStyle_Classic(style)
 	end
 
 	-- Update the style for each container (Left and Right)
@@ -1351,6 +1351,105 @@ function module:factory_Classic()
 			module.bars[key]:SetAlpha(DB[i].alpha or 1)
 		end
 	end)
+end
+
+function module:SetActiveStyle_Classic(style)
+	-- Update the style for each container (Left and Right)
+	for i, key in ipairs({ 'Left', 'Right' }) do
+		local statusbar = module.bars[key]
+		if statusbar then
+			local newStyle = GetStyleSettings(key)
+
+			-- Update size
+			statusbar:SetSize(unpack(newStyle.size))
+
+			-- Update background texture
+			if newStyle.bgTexture or newStyle.bgImg then
+				statusbar.bg:SetTexture(newStyle.bgImg or newStyle.bgTexture)
+				if newStyle.texCords then
+					statusbar.bg:SetTexCoord(unpack(newStyle.texCords))
+				end
+			end
+
+			-- Update overlay texture
+			if newStyle.bgTexture or newStyle.bgImg then
+				statusbar.overlay:SetTexture(newStyle.bgImg or newStyle.bgTexture)
+				if newStyle.texCords then
+					statusbar.overlay:SetTexCoord(unpack(newStyle.texCords))
+				end
+			end
+
+			-- Update glow textures
+			if newStyle.GlowImage then
+				statusbar.Fill:SetTexture(newStyle.GlowImage)
+				statusbar.Lead:SetTexture(newStyle.GlowImage)
+				statusbar.FillGlow:SetTexture(newStyle.GlowImage)
+				statusbar.LeadGlow:SetTexture(newStyle.GlowImage)
+
+				if newStyle.GlowHeight then
+					statusbar.Fill:SetHeight(newStyle.GlowHeight)
+					statusbar.Lead:SetHeight(newStyle.GlowHeight)
+				end
+
+				-- Update glow positions
+				local glowOffsetX = newStyle.GlowPoint.x
+				if glowOffsetX == 0 and newStyle.MaxWidth > 0 then
+					if newStyle.Grow == 'LEFT' then
+						glowOffsetX = -newStyle.MaxWidth
+					else
+						glowOffsetX = newStyle.MaxWidth
+					end
+				end
+
+				statusbar.Fill:ClearAllPoints()
+				statusbar.Lead:ClearAllPoints()
+				if newStyle.Grow == 'LEFT' then
+					statusbar.Fill:SetPoint('RIGHT', statusbar, 'RIGHT', glowOffsetX, newStyle.GlowPoint.y)
+					statusbar.Lead:SetPoint('RIGHT', statusbar.Fill, 'LEFT', 0, 0)
+				else
+					statusbar.Fill:SetPoint('LEFT', statusbar, 'LEFT', glowOffsetX, newStyle.GlowPoint.y)
+					statusbar.Lead:SetPoint('LEFT', statusbar.Fill, 'RIGHT', 0, 0)
+				end
+			end
+
+			-- Update tooltip
+			if statusbar.tooltip then
+				if newStyle.TooltipSize then
+					statusbar.tooltip:SetSize(unpack(newStyle.TooltipSize))
+				end
+				if newStyle.bgTooltip then
+					statusbar.tooltip.bg:SetTexture(newStyle.bgTooltip)
+					if newStyle.texCordsTooltip then
+						statusbar.tooltip.bg:SetTexCoord(unpack(newStyle.texCordsTooltip))
+					end
+				end
+				if statusbar.tooltip.TextFrame and newStyle.TooltipTextSize then
+					statusbar.tooltip.TextFrame:SetSize(unpack(newStyle.TooltipTextSize))
+				end
+			end
+
+			-- Update text color
+			if newStyle.TextColor then
+				statusbar.Text:SetTextColor(unpack(newStyle.TextColor))
+			end
+
+			-- Update position
+			local point, anchor, secondaryPoint, x, y = strsplit(',', newStyle.Position)
+			statusbar:ClearAllPoints()
+			statusbar:SetPoint(point, anchor, secondaryPoint, x, y)
+
+			-- Store the new style settings
+			statusbar.settings = newStyle
+
+			-- Update the display
+			if DB[i].display ~= 'disabled' then
+				statusbar:Show()
+				updateText_Classic(statusbar)
+			else
+				statusbar:Hide()
+			end
+		end
+	end
 end
 
 ----------------------------------------------------------------------------------------------------

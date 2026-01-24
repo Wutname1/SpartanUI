@@ -176,11 +176,20 @@ function module:SetActiveStyle(style)
 
 		--Update minimap
 		local minimapModule = SUI:GetModule('Minimap') ---@type SUI.Module.Minimap
-		minimapModule:SetActiveStyle(style)
+		if minimapModule then
+			minimapModule:SetActiveStyle(style)
+		end
 
 		--Update statusbar
 		local StatusBars = SUI:GetModule('Artwork.StatusBars') ---@type SUI.Module.Artwork.StatusBars
-		StatusBars:SetActiveStyle(style)
+		if StatusBars then
+			StatusBars:SetActiveStyle(style)
+		end
+
+		--Update UnitFrames
+		if SUI.UF and SUI.UF.Style then
+			SUI.UF.Style:Change(style)
+		end
 	end
 
 	-- Update style settings shortcut
