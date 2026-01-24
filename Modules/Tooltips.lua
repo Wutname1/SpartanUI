@@ -343,7 +343,13 @@ local TooltipSetItem = function(tooltip, tooltipData)
 	end
 
 	if itemLink then
-		local quality = select(3, C_Item.GetItemInfo(itemLink))
+		-- Get item quality - try C_Item API first, fallback to global GetItemInfo
+		local quality
+		if C_Item and C_Item.GetItemInfo then
+			quality = select(3, C_Item.GetItemInfo(itemLink))
+		else
+			quality = select(3, GetItemInfo(itemLink))
+		end
 
 		-- Update SUITip background texture for special item types
 		if tooltip.SUITip and tooltip.SUITip.bgTexture then
@@ -367,7 +373,14 @@ local TooltipSetItem = function(tooltip, tooltipData)
 		end
 
 		if quality and tooltip.SetBorderColor then
-			local r, g, b = C_Item.GetItemQualityColor(quality)
+			-- Get quality color - try C_Item API first, fallback to GetItemQualityColor
+			local r, g, b
+			if C_Item and C_Item.GetItemQualityColor then
+				r, g, b = C_Item.GetItemQualityColor(quality)
+			else
+				r, g, b = GetItemQualityColor(quality)
+			end
+
 			if r and g and b then
 				r, g, b = (r * 0.5), (g * 0.5), (b * 0.5)
 				tooltip:SetBorderColor(r, g, b)
