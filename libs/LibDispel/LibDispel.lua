@@ -15,8 +15,6 @@ local SetCVar = C_CVar.SetCVar
 
 local CopyTable = CopyTable
 local CreateFrame = CreateFrame
-local IsSpellInSpellBook = C_SpellBook.IsSpellInSpellBook or IsSpellKnownOrOverridesKnown
-local IsSpellKnown = C_SpellBook.IsSpellKnown or IsPlayerSpell
 
 local Retail = WOW_PROJECT_ID == WOW_PROJECT_MAINLINE
 local Classic = WOW_PROJECT_ID == WOW_PROJECT_CLASSIC
@@ -24,6 +22,28 @@ local TBC = WOW_PROJECT_ID == WOW_PROJECT_BURNING_CRUSADE_CLASSIC
 local Wrath = WOW_PROJECT_ID == WOW_PROJECT_WRATH_CLASSIC
 local Cata = WOW_PROJECT_ID == WOW_PROJECT_CATACLYSM_CLASSIC
 local Mists = WOW_PROJECT_ID == WOW_PROJECT_MISTS_CLASSIC
+
+-- Handle different API signatures across game versions
+local IsSpellInSpellBook, IsSpellKnown
+if C_SpellBook and C_SpellBook.IsSpellInSpellBook then
+	-- Retail API
+	IsSpellInSpellBook = C_SpellBook.IsSpellInSpellBook
+	IsSpellKnown = C_SpellBook.IsSpellKnown
+elseif IsSpellKnownOrOverridesKnown then
+	-- Classic/TBC/Wrath API - takes only spellID
+	IsSpellInSpellBook = function(spellID)
+		return IsSpellKnownOrOverridesKnown(spellID)
+	end
+	IsSpellKnown = IsPlayerSpell
+else
+	-- Fallback for very old versions
+	IsSpellInSpellBook = function()
+		return false
+	end
+	IsSpellKnown = function()
+		return false
+	end
+end
 
 local function GetList(name, data)
 	local list = lib[name]
@@ -54,10 +74,10 @@ local DispelList = GetList('DispelList') -- List of types the player can dispel
 local DebuffColors = GetList('DebuffTypeColor', _G.DebuffTypeColor)
 
 -- These dont exist in Blizzards color table
-DebuffColors.Bleed = {r = 1, g = 0.2, b = 0.6}
-DebuffColors.EnemyNPC = {r = 0.9, g = 0.1, b = 0.1}
-DebuffColors.BadDispel = {r = 0.05, g = 0.85, b = 0.94}
-DebuffColors.Stealable = {r = 0.93, g = 0.91, b = 0.55}
+DebuffColors.Bleed = { r = 1, g = 0.2, b = 0.6 }
+DebuffColors.EnemyNPC = { r = 0.9, g = 0.1, b = 0.1 }
+DebuffColors.BadDispel = { r = 0.05, g = 0.85, b = 0.94 }
+DebuffColors.Stealable = { r = 0.93, g = 0.91, b = 0.55 }
 
 if Retail then
 	-- Bad to dispel spells
@@ -1267,7 +1287,7 @@ end
 do
 	local _, myClass = UnitClass('player')
 	local WarlockPetSpells = {
-		[89808] = 'Singe'
+		[89808] = 'Singe',
 	}
 
 	if Retail then
@@ -1283,7 +1303,14 @@ do
 	end
 
 	local function CheckSpell(spellID, pet)
-		return IsSpellInSpellBook(spellID, pet, true) and true or nil
+		-- Retail API: IsSpellInSpellBook(spellID, spellBank, includeOverrides)
+		-- Classic/TBC/Wrath: IsSpellKnownOrOverridesKnown(spellID) - no pet/bank parameter
+		if Retail then
+			return IsSpellInSpellBook(spellID, pet, true) and true or nil
+		else
+			-- For classic versions, just check if the spell is known
+			return IsSpellInSpellBook(spellID) and true or nil
+		end
 	end
 
 	local function CheckPetSpells()
@@ -1316,7 +1343,7 @@ do
 			DispelList.Magic = greater
 		elseif myClass == 'MONK' then
 			local mwDetox = CheckSpell(115450) -- Detox (Mistweaver)
-			local detox = (not Retail and mwDetox) or (Retail and (CheckSpell(218164) or C_SpellBook.IsSpellInSpellBook(388874))) -- Detox (Brewmaster or Windwalker) or Improved Detox (Mistweaver)
+			local detox = (not Retail and mwDetox) or (Retail and (CheckSpell(218164) or IsSpellInSpellBook(388874))) -- Detox (Brewmaster or Windwalker) or Improved Detox (Mistweaver)
 			DispelList.Magic = mwDetox and (not Mists or CheckSpell(115451))
 			DispelList.Disease = detox
 			DispelList.Poison = detox
@@ -1330,7 +1357,7 @@ do
 		elseif myClass == 'PRIEST' then
 			local dispel = CheckSpell(527) -- Dispel Magic
 			DispelList.Magic = dispel or CheckSpell(32375)
-			DispelList.Disease = Retail and (C_SpellBook.IsSpellInSpellBook(390632) or CheckSpell(213634)) or not Retail and (CheckSpell(552) or CheckSpell(528)) -- Purify Disease / Abolish Disease / Cure Disease
+			DispelList.Disease = Retail and (IsSpellInSpellBook(390632) or CheckSpell(213634)) or not Retail and (CheckSpell(552) or CheckSpell(528)) -- Purify Disease / Abolish Disease / Cure Disease
 		elseif myClass == 'SHAMAN' then
 			local purify = CheckSpell(77130) -- Purify Spirit
 			local cleanse = purify or CheckSpell(51886) -- Cleanse Spirit (Retail/Mists)

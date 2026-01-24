@@ -43,8 +43,9 @@ local function Builder(frame)
 		UF.Elements:Build(frame, elementName, elementDB[elementName])
 	end
 
+	-- WarlockPowerFrame only exists in Wrath Classic and later, not in TBC or Vanilla
 	local _, class = UnitClass('player')
-	if SUI.BlizzAPI.canaccessvalue(class) and class == 'WARLOCK' then
+	if SUI.BlizzAPI.canaccessvalue(class) and class == 'WARLOCK' and WarlockPowerFrame then
 		WarlockPowerFrame:SetParent(frame)
 		-- WarlockPowerFrame_OnLoad(WarlockPowerFrame)
 		WarlockPowerFrame:SetFrameStrata('MEDIUM')
