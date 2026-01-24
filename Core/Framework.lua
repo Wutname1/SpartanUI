@@ -1140,37 +1140,39 @@ function SUI:OnInitialize()
 		end, 'LE_SCRIPT_BINDING_TYPE_EXTRINSIC')
 	end
 
-	-- Initialize Logger
-	if LibAT and LibAT.Logger then
-		SUI.logger = LibAT.Logger.RegisterAddon('SpartanUI')
-		SUI.logger.info('SpartanUI ' .. SUI.Version .. ' initializing')
-
-		-- Compatibility wrapper functions for old logging API
-		---@param message string The message to log
-		---@param module string The module name
-		---@param level? LogLevel Log level - defaults to 'info'
-		function SUI.Log(message, module, level)
-			if SUI.logger then
-				-- Use LibAT.Log directly for hierarchical module names (contains dots)
-				-- This allows the logger to parse the hierarchy properly
-				LibAT.Log(message, 'SpartanUI.' .. module, level or 'info')
-			end
+	-- Initialize Logger (always define helper functions, check at runtime)
+	---@param message string The message to log
+	---@param module string The module name
+	---@param level? LogLevel Log level - defaults to 'info'
+	function SUI.Log(message, module, level)
+		if LibAT and LibAT.Log then
+			-- Use LibAT.Log directly for hierarchical module names (contains dots)
+			-- This allows the logger to parse the hierarchy properly
+			LibAT.Log(message, 'SpartanUI.' .. module, level or 'info')
 		end
+	end
 
-		---@param moduleObj SUI.Module The SpartanUI module object
-		---@param message string The message to log
-		---@param component? string Optional component for logging
-		---@param level? LogLevel Log level - defaults to 'info'
-		function SUI.ModuleLog(moduleObj, message, component, level)
+	---@param moduleObj SUI.Module The SpartanUI module object
+	---@param message string The message to log
+	---@param component? string Optional component for logging
+	---@param level? LogLevel Log level - defaults to 'info'
+	function SUI.ModuleLog(moduleObj, message, component, level)
+		if LibAT and LibAT.Log then
 			local moduleName = moduleObj.DisplayName or moduleObj:GetName()
-			if SUI.logger then
-				-- Build hierarchical name
-				local fullName = 'SpartanUI.' .. moduleName
-				if component then
-					fullName = fullName .. '.' .. component
-				end
-				LibAT.Log(message, fullName, level or 'info')
+			-- Build hierarchical name
+			local fullName = 'SpartanUI.' .. moduleName
+			if component then
+				fullName = fullName .. '.' .. component
 			end
+			LibAT.Log(message, fullName, level or 'info')
+		end
+	end
+
+	-- Register with LibAT Logger if available
+	if LibAT and LibAT.Logger and LibAT.Logger.RegisterAddon then
+		SUI.logger = LibAT.Logger.RegisterAddon('SpartanUI')
+		if SUI.logger and SUI.logger.info then
+			SUI.logger.info('SpartanUI ' .. SUI.Version .. ' initializing')
 		end
 	end
 

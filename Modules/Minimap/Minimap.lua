@@ -567,6 +567,10 @@ function module:SetupBackground()
 	-- Get background settings (handle both Retail nested and Classic flat structure)
 	local bgSettings = SUI.IsRetail and module.Settings.elements and module.Settings.elements.background or module.Settings.background
 	if not bgSettings then
+		-- If theme doesn't define background settings, hide any existing texture
+		if SUIMinimap.BG then
+			SUIMinimap.BG:Hide()
+		end
 		return
 	end
 
