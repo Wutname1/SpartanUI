@@ -84,31 +84,57 @@ function module:OnInitialize()
 	end
 
 	---@type SUI.Style.Settings.Minimap
-	local minimapSettings = {
-		size = { 156, 156 },
-		position = 'CENTER,SUI_Art_Fel_Left,RIGHT,0,-10',
-		engulfed = true,
-		elements = {
+	local minimapSettings = SUI.IsRetail
+			and {
+				-- Retail Fel theme settings (Engulfed variant)
+				size = { 180, 180 },
+				position = 'CENTER,SUI_Art_Fel_Left,RIGHT,0,-10',
+				engulfed = true,
+				elements = {
+					background = {
+						texture = 'Interface\\AddOns\\SpartanUI\\Themes\\Fel\\Images\\Minimap-Engulfed',
+						size = { 260, 260 },
+						position = 'CENTER,Minimap,CENTER,5,25',
+					},
+				},
+			}
+		or {
+			-- Classic client Fel theme settings (Engulfed variant)
+			size = { 140, 140 },
+			position = 'CENTER,SUI_Art_Fel_Left,RIGHT,0,-10',
+			engulfed = true,
 			background = {
 				texture = 'Interface\\AddOns\\SpartanUI\\Themes\\Fel\\Images\\Minimap-Engulfed',
 				size = { 220, 220 },
 				position = 'CENTER,Minimap,CENTER,5,25',
 			},
-		},
-	}
+		}
 	SUI.Minimap:Register('Fel', minimapSettings)
-	local minimapSettingsCalmed = {
-		size = { 156, 156 },
-		position = 'CENTER,SUI_Art_Fel_Left,RIGHT,0,-10',
-		engulfed = false,
-		elements = {
+	local minimapSettingsCalmed = SUI.IsRetail
+			and {
+				-- Retail Fel theme settings (Calmed variant)
+				size = { 180, 180 },
+				position = 'CENTER,SUI_Art_Fel_Left,RIGHT,0,-10',
+				engulfed = false,
+				elements = {
+					background = {
+						texture = 'Interface\\AddOns\\SpartanUI\\Themes\\Fel\\Images\\Minimap-Calmed',
+						size = { 200, 200 },
+						position = 'CENTER,Minimap,CENTER,3,-1',
+					},
+				},
+			}
+		or {
+			-- Classic client Fel theme settings (Calmed variant)
+			size = { 140, 140 },
+			position = 'CENTER,SUI_Art_Fel_Left,RIGHT,0,-10',
+			engulfed = false,
 			background = {
 				texture = 'Interface\\AddOns\\SpartanUI\\Themes\\Fel\\Images\\Minimap-Calmed',
 				size = { 162, 162 },
 				position = 'CENTER,Minimap,CENTER,3,-1',
 			},
-		},
-	}
+		}
 	SUI.Minimap:Register('FelCalmed', minimapSettingsCalmed)
 
 	local statusBarModule = SUI:GetModule('Artwork.StatusBars') ---@type SUI.Module.Artwork.StatusBars

@@ -10,107 +10,161 @@ function Auras:Filter(element, unit, data, rules)
 	if not SUI.BlizzAPI.canaccesstable(data) then
 		return true
 	end
-	---@param msg any
-	local function debug(msg)
-		if not UF.MonitoredBuffs[unit] then
-			UF.MonitoredBuffs[unit] = {}
+
+	if SUI.IsRetail then
+		-- RETAIL: Boolean-only filtering to avoid secret value crashes
+		-- Never access spellId, name, duration, or other potentially secret fields
+		local match = false
+
+		-- Source filters
+		if rules.isFromPlayerOrPlayerPet and data.isFromPlayerOrPlayerPet then
+			match = true
 		end
 
-		if spellIdNum and SUI:IsInTable(UF.MonitoredBuffs[unit], spellIdNum) then
-			print(msg)
+		if rules.isBossAura and data.isBossAura then
+			match = true
 		end
-	end
-	local ShouldDisplay = false
-	element.displayReasons[data.spellId] = {}
 
-	local function AddDisplayReason(reason)
-		debug('Adding display reason ' .. reason)
-		element.displayReasons[data.spellId][reason] = true
-		ShouldDisplay = true
-	end
+		-- Type filters
+		if rules.isHelpful and data.isHelpful then
+			match = true
+		end
 
-	debug('----')
-	debug(data.spellId)
+		if rules.isHarmful and data.isHarmful then
+			match = true
+		end
 
-	for k, v in pairs(rules) do
-		-- debug(k)
-		if data[k] then
-			-- debug(data.name)
-			if type(v) == 'table' then
-				if SUI:IsInTable(v, data[k]) then
-					if v[data[k]] then
-						debug('Force show per rules')
+		-- Special filters
+		if rules.isStealable and data.isStealable then
+			match = true
+		end
+
+		if rules.isRaid and data.isRaid then
+			match = true
+		end
+
+		-- Nameplate filters
+		if rules.nameplateShowPersonal and data.nameplateShowPersonal then
+			match = true
+		end
+
+		if rules.nameplateShowAll and data.nameplateShowAll then
+			match = true
+		end
+
+		if rules.isNameplateOnly and data.isNameplateOnly then
+			match = true
+		end
+
+		if rules.canApplyAura and data.canApplyAura then
+			match = true
+		end
+
+		return match
+	else
+		-- CLASSIC: Full filtering including whitelist/blacklist/duration
+		---@param msg any
+		local function debug(msg)
+			if not UF.MonitoredBuffs[unit] then
+				UF.MonitoredBuffs[unit] = {}
+			end
+
+			if spellIdNum and SUI:IsInTable(UF.MonitoredBuffs[unit], spellIdNum) then
+				print(msg)
+			end
+		end
+		local ShouldDisplay = false
+		element.displayReasons[data.spellId] = {}
+
+		local function AddDisplayReason(reason)
+			debug('Adding display reason ' .. reason)
+			element.displayReasons[data.spellId][reason] = true
+			ShouldDisplay = true
+		end
+
+		debug('----')
+		debug(data.spellId)
+
+		for k, v in pairs(rules) do
+			-- debug(k)
+			if data[k] then
+				-- debug(data.name)
+				if type(v) == 'table' then
+					if SUI:IsInTable(v, data[k]) then
+						if v[data[k]] then
+							debug('Force show per rules')
+							AddDisplayReason(k)
+						else
+							debug('Force hide per rules')
+							return false
+						end
+					end
+				elseif type(v) == 'boolean' then
+					if v and v == data[k] then
+						debug(k .. ' Not equal')
 						AddDisplayReason(k)
+					end
+				end
+			elseif k == 'whitelist' or k == 'blacklist' then
+				-- WoW 12.0.0: Use string key for table lookups
+				if v[data.spellId] then
+					if k == 'whitelist' then
+						AddDisplayReason(k)
+						return true
 					else
-						debug('Force hide per rules')
+						debug('Blacklisted')
 						return false
 					end
 				end
-			elseif type(v) == 'boolean' then
-				if v and v == data[k] then
-					debug(k .. ' Not equal')
-					AddDisplayReason(k)
+			else
+				if k == 'isMount' and v then
+					-- WoW 12.0.0: Use string key for table lookups
+					if UF.MountIds[data.spellId] then
+						AddDisplayReason(k)
+						return true
+					end
+				elseif k == 'showPlayers' then
+					if v == true and data.sourceUnit == 'player' then
+						debug('Is casted by the player')
+						AddDisplayReason(k)
+						ShouldDisplay = true
+					end
 				end
 			end
-		elseif k == 'whitelist' or k == 'blacklist' then
-			-- WoW 12.0.0: Use string key for table lookups
-			if v[data.spellId] then
-				if k == 'whitelist' then
-					AddDisplayReason(k)
-					return true
-				else
-					debug('Blacklisted')
-					return false
-				end
+		end
+
+		if rules.duration.enabled then
+			local moreThanMax = data.duration > rules.duration.maxTime
+			local lessThanMin = data.duration < rules.duration.minTime
+			debug('Durration is ' .. data.duration)
+			debug('Is More than ' .. rules.duration.maxTime .. ' = ' .. (moreThanMax and 'true' or 'false'))
+			debug('Is Less than ' .. rules.duration.minTime .. ' = ' .. (lessThanMin and 'true' or 'false'))
+			if ShouldDisplay and (not lessThanMin and not moreThanMax) and rules.duration.mode == 'include' then
+				AddDisplayReason('duration')
+			elseif ShouldDisplay and (lessThanMin or moreThanMax) and rules.duration.mode == 'exclude' then
+				AddDisplayReason('duration')
+			else
+				debug('Durration check Failed, ShouldDisplay is now false')
+				ShouldDisplay = false
 			end
 		else
-			if k == 'isMount' and v then
-				-- WoW 12.0.0: Use string key for table lookups
-				if UF.MountIds[data.spellId] then
-					AddDisplayReason(k)
-					return true
-				end
-			elseif k == 'showPlayers' then
-				if v == true and data.sourceUnit == 'player' then
-					debug('Is casted by the player')
-					AddDisplayReason(k)
-					ShouldDisplay = true
+			debug('Durration is not enabled')
+		end
+		debug('ShouldDisplay result ' .. (ShouldDisplay and 'true' or 'false'))
+		debug('----')
+		-- WoW 12.0.0: Use numeric value for table operations
+		if spellIdNum and SUI:IsInTable(UF.MonitoredBuffs[unit], spellIdNum) then
+			for i, v in ipairs(UF.MonitoredBuffs[unit]) do
+				if v == spellIdNum then
+					debug('Removed ' .. data.spellId .. ' from the list of monitored buffs for ' .. unit)
+					table.remove(UF.MonitoredBuffs[unit], i)
+					print('----')
 				end
 			end
 		end
-	end
 
-	if rules.duration.enabled then
-		local moreThanMax = data.duration > rules.duration.maxTime
-		local lessThanMin = data.duration < rules.duration.minTime
-		debug('Durration is ' .. data.duration)
-		debug('Is More than ' .. rules.duration.maxTime .. ' = ' .. (moreThanMax and 'true' or 'false'))
-		debug('Is Less than ' .. rules.duration.minTime .. ' = ' .. (lessThanMin and 'true' or 'false'))
-		if ShouldDisplay and (not lessThanMin and not moreThanMax) and rules.duration.mode == 'include' then
-			AddDisplayReason('duration')
-		elseif ShouldDisplay and (lessThanMin or moreThanMax) and rules.duration.mode == 'exclude' then
-			AddDisplayReason('duration')
-		else
-			debug('Durration check Failed, ShouldDisplay is now false')
-			ShouldDisplay = false
-		end
-	else
-		debug('Durration is not enabled')
+		return ShouldDisplay
 	end
-	debug('ShouldDisplay result ' .. (ShouldDisplay and 'true' or 'false'))
-	debug('----')
-	-- WoW 12.0.0: Use numeric value for table operations
-	if spellIdNum and SUI:IsInTable(UF.MonitoredBuffs[unit], spellIdNum) then
-		for i, v in ipairs(UF.MonitoredBuffs[unit]) do
-			if v == spellIdNum then
-				debug('Removed ' .. data.spellId .. ' from the list of monitored buffs for ' .. unit)
-				table.remove(UF.MonitoredBuffs[unit], i)
-				print('----')
-			end
-		end
-	end
-
-	return ShouldDisplay
 end
 
 ---@param elementName string
@@ -249,22 +303,29 @@ function Auras:OnClick(button, elementName)
 	local data = button.data ---@type UnitAuraInfo
 
 	if data and keyDown then
-		-- WoW 12.0.0: Use string key for table index
-		local spellKey = tostring(data.spellId)
-
 		if keyDown == 'CTRL' then
 			for k, v in pairs(data) do
 				print(k .. ' = ' .. tostring(v))
 			end
 		elseif keyDown == 'ALT' then
-			if button:GetParent().displayReasons[spellKey] then
-				print('Reasons for display:')
-				for k, _ in pairs(button:GetParent().displayReasons[spellKey]) do
-					print(k)
+			if not SUI.IsRetail then
+				-- WoW 12.0.0: Use string key for table index
+				local spellKey = tostring(data.spellId)
+				if button:GetParent().displayReasons[spellKey] then
+					print('Reasons for display:')
+					for k, _ in pairs(button:GetParent().displayReasons[spellKey]) do
+						print(k)
+					end
 				end
+			else
+				print('Aura filtering details are not available in Retail due to API restrictions.')
 			end
 		elseif keyDown == 'SHIFT' then
-			CreateAddToFilterWindow(button, elementName)
+			if not SUI.IsRetail then
+				CreateAddToFilterWindow(button, elementName)
+			else
+				print('Whitelist/Blacklist filtering is not available in Retail due to WoW 12.0+ API restrictions.')
+			end
 		end
 	end
 end

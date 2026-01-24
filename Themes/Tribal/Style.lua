@@ -56,16 +56,29 @@ function module:OnInitialize()
 	end
 
 	---@type SUI.Style.Settings.Minimap
-	local minimapSettings = {
-		size = { 156, 156 },
-		position = 'CENTER,SUI_Art_Tribal_Left,RIGHT,-2,-4',
-		elements = {
+	local minimapSettings = SUI.IsRetail
+			and {
+				-- Retail Tribal theme settings
+				size = { 180, 180 },
+				position = 'CENTER,SUI_Art_Tribal_Left,RIGHT,-2,-4',
+				elements = {
+					background = {
+						texture = 'Interface\\AddOns\\SpartanUI\\Themes\\Tribal\\Images\\minimap',
+						size = { 220, 220 },
+						position = 'CENTER,SUI_Art_Tribal_Left,RIGHT,-2,-4',
+					},
+				},
+			}
+		or {
+			-- Classic client Tribal theme settings
+			size = { 140, 140 },
+			position = 'CENTER,SUI_Art_Tribal_Left,RIGHT,-2,-4',
 			background = {
 				texture = 'Interface\\AddOns\\SpartanUI\\Themes\\Tribal\\Images\\minimap',
+				size = { 180, 180 },
 				position = 'CENTER,SUI_Art_Tribal_Left,RIGHT,-2,-4',
 			},
-		},
-	}
+		}
 	SUI.Minimap:Register('Tribal', minimapSettings)
 
 	local statusBarModule = SUI:GetModule('Artwork.StatusBars') ---@type SUI.Module.Artwork.StatusBars

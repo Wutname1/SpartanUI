@@ -123,15 +123,27 @@ function module:OnInitialize()
 	end
 
 	---@type SUI.Style.Settings.Minimap
-	local minimapSettings = {
-		size = { 156, 156 },
-		position = 'CENTER,SUI_Art_Arcane_Left,RIGHT,0,20',
-		elements = {
+	local minimapSettings = SUI.IsRetail
+			and {
+				-- Retail Arcane theme settings
+				size = { 180, 180 },
+				position = 'CENTER,SUI_Art_Arcane_Left,RIGHT,0,20',
+				elements = {
+					background = {
+						texture = 'Interface\\AddOns\\SpartanUI\\Themes\\Arcane\\Images\\minimap',
+						size = { 220, 220 },
+					},
+				},
+			}
+		or {
+			-- Classic client Arcane theme settings
+			size = { 140, 140 },
+			position = 'CENTER,SUI_Art_Arcane_Left,RIGHT,0,20',
 			background = {
 				texture = 'Interface\\AddOns\\SpartanUI\\Themes\\Arcane\\Images\\minimap',
+				size = { 180, 180 },
 			},
-		},
-	}
+		}
 	SUI.Minimap:Register('Arcane', minimapSettings)
 
 	local statusBarModule = SUI:GetModule('Artwork.StatusBars') ---@type SUI.Module.Artwork.StatusBars

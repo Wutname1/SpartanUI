@@ -126,6 +126,9 @@ local BaseSettingsClassic = {
 	-- Elements (flat structure for Classic)
 	background = {
 		enabled = true,
+		texture = 'Interface\\AddOns\\SpartanUI\\images\\minimap\\round',
+		size = { 180, 180 },
+		color = { 1, 1, 1, 1 },
 		BlendMode = 'ADD',
 		alpha = 1,
 	},
@@ -263,7 +266,24 @@ function module:UpdateSettings()
 		for key, value in pairs(module.Settings.elements) do
 			if not module.Settings[key] then
 				module.Settings[key] = value
+			else
+				-- Deep merge if both are tables to preserve theme overrides
+				if type(module.Settings[key]) == 'table' and type(value) == 'table' then
+					module.Settings[key] = SUI:MergeData(module.Settings[key], value, true)
+				end
 			end
+		end
+	end
+
+	-- Debug logging for minimap settings verification
+	if module.logger then
+		module.logger.debug(string.format('Minimap Settings - Size: %dx%d, IsRetail: %s, Theme: %s', module.Settings.size[1], module.Settings.size[2], tostring(SUI.IsRetail), currentStyle))
+
+		local bgSettings = SUI.IsRetail and module.Settings.elements and module.Settings.elements.background or module.Settings.background
+		if bgSettings then
+			module.logger.debug(
+				string.format('Background - Texture: %s, Size: %s', tostring(bgSettings.texture), bgSettings.size and string.format('%dx%d', bgSettings.size[1], bgSettings.size[2]) or 'nil')
+			)
 		end
 	end
 end

@@ -107,8 +107,18 @@ local Settings = {
 			maxTime = 180,
 			minTime = 1,
 		},
+		-- Classic filters (preserved)
 		isHarmful = true,
 		isBossAura = true,
+		-- Retail boolean filters (12.0.0+)
+		isFromPlayerOrPlayerPet = false,
+		isHelpful = false,
+		isStealable = false,
+		isRaid = false,
+		nameplateShowPersonal = false,
+		nameplateShowAll = false,
+		isNameplateOnly = false,
+		canApplyAura = false,
 	},
 	config = {
 		type = 'Auras',

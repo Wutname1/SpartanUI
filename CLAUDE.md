@@ -6,15 +6,6 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 SpartanUI is a comprehensive World of Warcraft addon that provides a complete user interface overhaul. It moves interface elements to the bottom of the screen to free up screen real estate and includes modular components for various gameplay features.
 
-## CRITICAL: Active Development Directory
-
-**IMPORTANT**: All development work is done in the `C:\code\SpartanUI` directory ONLY.
-
-- **DO NOT** edit files in `SpartanUI-*` directories (SpartanUI-Classic-Stable, SpartanUI-MOP-Stable, SpartanUI-TBC-Stable, etc.) unless explicitly directed by the user
-- The `SpartanUI-*` directories are version-specific stable branches maintained separately
-- When fixing bugs or making changes, always work in `C:\code\SpartanUI` unless told otherwise
-- Error paths showing `Interface/AddOns/SpartanUI/` refer to the main `C:\code\SpartanUI` directory
-
 ## Core Architecture
 
 ### Main Framework
@@ -166,11 +157,29 @@ enabled = false                           # Don't auto-sort require statements
 - Formatting differences will be minimal thanks to the pre-commit hook
 - To ignore formatting for specific code blocks, use `-- stylua: ignore` comments
 
-### Logging and Debugging
+### Logging and Debug Output
 
-- **Use Logger System**: Always use `LibAT.Logger` for debugging and logging instead of `print()` statements
-- **Logger Usage**: The logger system provides better control, filtering, and categorization of debug output
-- **Avoid Print Statements**: Direct `print()` calls should be avoided in favor of the structured logging system
+**IMPORTANT**: Always use the Libs-AddonTools Logger system for debug output and testing. Never use `print()` statements.
+
+- **Logger Integration**: See [Libs-AddonTools Logger Documentation](Libs-AddonTools/Logger-TechDoc.md) for complete integration guide
+- **Registration**: Register your addon during initialization using `LibAT.Logger.RegisterAddon(addonName)`
+- **Usage**: Use logger functions with appropriate log levels (debug, info, warning, error, critical)
+- **Access Logs**: Use `/logs` in-game to view all logged output in a searchable UI
+- **Why**: Print statements overflow the chat window and make debugging difficult. The logger provides persistent, searchable, filterable output.
+
+**Example:**
+
+```lua
+-- In main addon file
+if LibAT and LibAT.Logger then
+    MyAddon.logger = LibAT.Logger.RegisterAddon('MyAddon')
+end
+
+-- Throughout your code
+MyAddon.logger.info("System initialized")
+MyAddon.logger.debug("Debug value: " .. tostring(value))
+MyAddon.logger.warning("Warning: deprecated function called")
+```
 
 ### Configuration System
 
@@ -197,19 +206,29 @@ When working with WoW addon development, use these authoritative resources:
   - Reference when modifying .toc files for available variables
 - **Latest Interface Versions**: https://warcraft.wiki.gg/wiki/Template:API_LatestInterface
   - Quick lookup for current patch interface version numbers
-- **WoW UI Source Code Repository**: `C:\code\WOWUICode`
-  - Contains branches for each game version (Retail, Classic, TBC, Wrath, Cata, Mists, etc.)
-  - Extracted Blizzard UI source code from all supported WoW versions
-  - Use `git checkout <branch>` to switch between versions
 - **API Reference**: https://warcraft.wiki.gg
   - Most up-to-date resource for all WoW API lookups
-  - Prefer this over the local code export for API documentation
+  - Primary reference for API documentation and best practices
 
 Always use warcraft.wiki.gg as the primary reference for API lookups and documentation.
 
 ### Testing
 
-No automated test framework. Testing done manually in World of Warcraft client using `/rl` to reload changes.
+No automated test framework available. All testing must be done manually:
+
+1. Load addon in World of Warcraft client
+2. Test functionality in-game
+3. Use `/rl` to reload after making changes
+4. Check for Lua errors using in-game error display or BugSack addon
+
+**VS Code Problems Tab:**
+
+The VS Code Problems tab will display:
+
+- **Lua formatting issues**: Most can be fixed by simply saving the file (Ctrl+S) or running "Format Document" (Shift+Alt+F)
+- **WoW API errors**: Deprecated or non-existent Blizzard globals flagged by the language server
+
+Note: Formatting issues are easily resolved and don't need to be a primary concern during development.
 
 **Important Notes:**
 

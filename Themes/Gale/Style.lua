@@ -52,13 +52,23 @@ function module:OnInitialize()
 	}
 
 	-- Minimap in top right, 1.3 times larger than normal with dark border and class color glow
-	local minimapSettings = {
-		UnderVehicleUI = false,
-		scaleWithArt = false,
-		position = 'TOPRIGHT,SpartanUI,TOPRIGHT,-20,-20',
-		shape = 'square',
-		scale = 1.3,
-	}
+	local minimapSettings = SUI.IsRetail
+			and {
+				-- Retail Gale theme settings
+				UnderVehicleUI = false,
+				scaleWithArt = false,
+				position = 'TOPRIGHT,SpartanUI,TOPRIGHT,-20,-20',
+				shape = 'square',
+				scale = 1.3,
+			}
+		or {
+			-- Classic client Gale theme settings
+			UnderVehicleUI = false,
+			scaleWithArt = false,
+			position = 'TOPRIGHT,SpartanUI,TOPRIGHT,-20,-20',
+			shape = 'square',
+			scale = 1.0,
+		}
 	SUI.Minimap:Register('Gale', minimapSettings)
 
 	-- Register UnitFrame style for Gale

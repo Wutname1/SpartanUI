@@ -780,10 +780,15 @@ function module:OnInitialize()
 	end
 
 	---@type SUI.Style.Settings.Minimap
-	local minimapSettings = {
-		size = { 156, 156 },
-		position = 'BOTTOM,SUI_Art_Classic_Center,BOTTOM,1,6',
-	}
+	local minimapSettings = SUI.IsRetail and {
+			-- Retail Classic theme settings
+			size = { 180, 180 },
+			position = 'BOTTOM,SUI_Art_Classic_Center,BOTTOM,1,6',
+		} or {
+			-- Classic client Classic theme settings
+			size = { 140, 140 },
+			position = 'BOTTOM,SUI_Art_Classic_Center,BOTTOM,1,6',
+		}
 	SUI.Minimap:Register('Classic', minimapSettings)
 
 	CreateArtwork()

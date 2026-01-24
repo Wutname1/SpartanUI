@@ -497,60 +497,63 @@ end
 ---@param OptionSet AceConfig.OptionsTable
 ---@param create function
 function Options:AddAuraWhitelistBlacklist(frameName, OptionSet, create)
-	OptionSet.args.whitelist = {
-		name = L['Whitelist'],
-		desc = L['Whitelisted auras will always be shown'],
-		type = 'group',
-		order = 4,
-		args = {
-			desc = {
-				name = L['Whitelisted auras will always be shown'],
-				type = 'description',
-				order = 1,
+	-- Whitelist/Blacklist only available in Classic due to WoW 12.0+ API restrictions
+	if not SUI.IsRetail then
+		OptionSet.args.whitelist = {
+			name = L['Whitelist'],
+			desc = L['Whitelisted auras will always be shown'],
+			type = 'group',
+			order = 4,
+			args = {
+				desc = {
+					name = L['Whitelisted auras will always be shown'],
+					type = 'description',
+					order = 1,
+				},
+				create = {
+					name = L['Add spell name or ID'],
+					type = 'input',
+					order = 2,
+					width = 'full',
+					set = create,
+				},
+				spells = {
+					order = 3,
+					type = 'group',
+					inline = true,
+					name = L['Auras list'],
+					args = {},
+				},
 			},
-			create = {
-				name = L['Add spell name or ID'],
-				type = 'input',
-				order = 2,
-				width = 'full',
-				set = create,
+		}
+		OptionSet.args.blacklist = {
+			name = L['Blacklist'],
+			desc = L['Blacklisted auras will never be shown'],
+			type = 'group',
+			order = 5,
+			args = {
+				desc = {
+					name = L['Blacklisted auras will never be shown'],
+					type = 'description',
+					order = 1,
+				},
+				create = {
+					name = L['Add spell name or ID'],
+					type = 'input',
+					order = 2,
+					width = 'full',
+					set = create,
+				},
+				spells = {
+					order = 3,
+					type = 'group',
+					inline = true,
+					name = L['Auras list'],
+					args = {},
+				},
 			},
-			spells = {
-				order = 3,
-				type = 'group',
-				inline = true,
-				name = L['Auras list'],
-				args = {},
-			},
-		},
-	}
-	OptionSet.args.blacklist = {
-		name = L['Blacklist'],
-		desc = L['Blacklisted auras will never be shown'],
-		type = 'group',
-		order = 5,
-		args = {
-			desc = {
-				name = L['Blacklisted auras will never be shown'],
-				type = 'description',
-				order = 1,
-			},
-			create = {
-				name = L['Add spell name or ID'],
-				type = 'input',
-				order = 2,
-				width = 'full',
-				set = create,
-			},
-			spells = {
-				order = 3,
-				type = 'group',
-				inline = true,
-				name = L['Auras list'],
-				args = {},
-			},
-		},
-	}
+		}
+	end
 end
 
 ---@param frameName UnitFrameName
@@ -564,64 +567,119 @@ function Options:AddAuraFilters(frameName, OptionSet, set, get)
 		order = 1,
 		get = get,
 		set = set,
-		args = {
-			duration = {
-				name = L['Duration'],
-				type = 'group',
-				order = 1,
-				inline = true,
-				args = {
-					enabled = {
-						name = L['Duration rules enabled'],
-						type = 'toggle',
-						order = 1,
-					},
-					mode = {
-						name = L['Duration mode'],
-						type = 'select',
-						order = 2,
-						values = {
-							['exclude'] = 'Exclusionary',
-							['include'] = 'Inclusionary',
-						},
-					},
-					minTime = {
-						name = L['Minimum Duration'],
-						desc = L["Don't display auras that are shorter than this duration (in seconds). Set to zero to disable."],
-						type = 'range',
-						order = 2,
-						min = 0,
-						max = 600,
-						step = 1,
-					},
-					maxTime = {
-						name = L['Maximum Duration'],
-						desc = L["Don't display auras that are longer than this duration (in seconds). Set to zero to disable."],
-						type = 'range',
-						order = 3,
-						min = 0,
-						max = 3600,
-						step = 1,
-					},
-				},
-			},
-			rules = {
-				name = L['Basic states'],
-				type = 'multiselect',
-				order = 3,
-				values = {
-					IsDispellableByMe = L['Dispellable by me'],
-					isBossAura = L['Casted by boss'],
-					isHarmful = L['Harmful'],
-					isHelpful = L['Helpful'],
-					isMount = L['Mount'],
-					showPlayers = L['Player casted'],
-					isRaid = L['Raid'],
-					isStealable = L['Stealable'],
-				},
-			},
-		},
+		args = {},
 	}
+
+	if SUI.IsRetail then
+		-- RETAIL: Add API restriction notice
+		OptionSet.args.Filters.args.retailNotice = {
+			type = 'description',
+			name = '|cffFFFF00Note:|r WoW 12.0+ restricts aura filtering to prevent automation. Advanced filters (whitelist/blacklist, duration) are not available in Retail.',
+			order = 0,
+			fontSize = 'medium',
+		}
+
+		-- RETAIL: Boolean filters only
+		OptionSet.args.Filters.args.sourceFilters = {
+			name = 'Source filters',
+			type = 'multiselect',
+			order = 1,
+			values = {
+				isFromPlayerOrPlayerPet = 'Your auras only',
+				isBossAura = 'Boss auras',
+			},
+		}
+
+		OptionSet.args.Filters.args.typeFilters = {
+			name = 'Type filters',
+			type = 'multiselect',
+			order = 2,
+			values = {
+				isHelpful = 'Buffs',
+				isHarmful = 'Debuffs',
+				isStealable = 'Stealable',
+				isRaid = 'Raid-wide',
+			},
+		}
+
+		OptionSet.args.Filters.args.nameplateFilters = {
+			name = 'Nameplate filters',
+			type = 'multiselect',
+			order = 3,
+			values = {
+				nameplateShowPersonal = 'Personal nameplate',
+				nameplateShowAll = 'All nameplates',
+				isNameplateOnly = 'Nameplate-only',
+			},
+		}
+
+		OptionSet.args.Filters.args.otherFilters = {
+			name = 'Other filters',
+			type = 'multiselect',
+			order = 4,
+			values = {
+				canApplyAura = 'Can apply',
+			},
+		}
+	else
+		-- CLASSIC: Full filtering with duration, whitelist/blacklist
+		OptionSet.args.Filters.args.duration = {
+			name = L['Duration'],
+			type = 'group',
+			order = 1,
+			inline = true,
+			args = {
+				enabled = {
+					name = L['Duration rules enabled'],
+					type = 'toggle',
+					order = 1,
+				},
+				mode = {
+					name = L['Duration mode'],
+					type = 'select',
+					order = 2,
+					values = {
+						['exclude'] = 'Exclusionary',
+						['include'] = 'Inclusionary',
+					},
+				},
+				minTime = {
+					name = L['Minimum Duration'],
+					desc = L["Don't display auras that are shorter than this duration (in seconds). Set to zero to disable."],
+					type = 'range',
+					order = 2,
+					min = 0,
+					max = 600,
+					step = 1,
+				},
+				maxTime = {
+					name = L['Maximum Duration'],
+					desc = L["Don't display auras that are longer than this duration (in seconds). Set to zero to disable."],
+					type = 'range',
+					order = 3,
+					min = 0,
+					max = 3600,
+					step = 1,
+				},
+			},
+		}
+
+		OptionSet.args.Filters.args.rules = {
+			name = L['Basic states'],
+			type = 'multiselect',
+			order = 3,
+			values = {
+				IsDispellableByMe = L['Dispellable by me'],
+				isBossAura = L['Casted by boss'],
+				isHarmful = L['Harmful'],
+				isHelpful = L['Helpful'],
+				isMount = L['Mount'],
+				showPlayers = L['Player casted'],
+				isRaid = L['Raid'],
+				isStealable = L['Stealable'],
+			},
+		}
+	end
 end
 
 ---@param frameName UnitFrameName
@@ -1525,8 +1583,10 @@ function Options:Initialize()
 				end
 
 				Options:AddAuraWhitelistBlacklist(frameName, ElementOptSet, additem)
-				buildItemList('whitelist')
-				buildItemList('blacklist')
+				if not SUI.IsRetail then
+					buildItemList('whitelist')
+					buildItemList('blacklist')
+				end
 			end
 
 			--Call Elements Custom function

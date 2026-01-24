@@ -76,15 +76,27 @@ function module:OnInitialize()
 
 	if SUI.Minimap then
 		---@type SUI.Style.Settings.Minimap
-		local minimapSettings = {
-			size = { 180, 180 },
-			position = 'BOTTOM,SUI_Art_War_Left,BOTTOMRIGHT,11,-10',
-			elements = {
+		local minimapSettings = SUI.IsRetail
+				and {
+					-- Retail War theme settings
+					size = { 180, 180 },
+					position = 'BOTTOM,SUI_Art_War_Left,BOTTOMRIGHT,11,-10',
+					elements = {
+						background = {
+							texture = 'Interface\\AddOns\\SpartanUI\\Themes\\War\\Images\\minimap',
+							size = { 220, 220 },
+						},
+					},
+				}
+			or {
+				-- Classic client War theme settings
+				size = { 140, 140 },
+				position = 'BOTTOM,SUI_Art_War_Left,BOTTOMRIGHT,1,-10',
 				background = {
 					texture = 'Interface\\AddOns\\SpartanUI\\Themes\\War\\Images\\minimap',
+					size = { 180, 180 },
 				},
-			},
-		}
+			}
 		SUI.Minimap:Register('War', minimapSettings)
 	end
 

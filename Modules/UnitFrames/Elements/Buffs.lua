@@ -108,8 +108,19 @@ local Settings = {
 			maxTime = 180,
 			minTime = 1,
 		},
+		-- Classic filters (preserved)
 		isBossAura = true,
 		showPlayers = true,
+		-- Retail boolean filters (12.0.0+)
+		isFromPlayerOrPlayerPet = false,
+		isHelpful = true,
+		isHarmful = false,
+		isStealable = false,
+		isRaid = false,
+		nameplateShowPersonal = false,
+		nameplateShowAll = false,
+		isNameplateOnly = false,
+		canApplyAura = false,
 	},
 }
 UF.Elements:Register('Buffs', Build, Update, Options, Settings)

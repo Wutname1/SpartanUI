@@ -35,16 +35,27 @@ function module:OnInitialize()
 	end
 
 	---@type SUI.Style.Settings.Minimap
-	local minimapSettings = {
-		size = { 156, 156 },
-		position = 'CENTER,SUI_Art_Digital,CENTER,0,54',
-		elements = {
+	local minimapSettings = SUI.IsRetail
+			and {
+				-- Retail Digital theme settings
+				size = { 180, 180 },
+				position = 'CENTER,SUI_Art_Digital,CENTER,0,54',
+				elements = {
+					background = {
+						texture = 'Interface\\AddOns\\SpartanUI\\Themes\\Digital\\Images\\Minimap',
+						position = { 'TOPLEFT,Minimap,TOPLEFT,-38,41', 'BOTTOMRIGHT,Minimap,BOTTOMRIGHT,47,-44' },
+					},
+				},
+			}
+		or {
+			-- Classic client Digital theme settings
+			size = { 140, 140 },
+			position = 'CENTER,SUI_Art_Digital,CENTER,0,54',
 			background = {
 				texture = 'Interface\\AddOns\\SpartanUI\\Themes\\Digital\\Images\\Minimap',
 				position = { 'TOPLEFT,Minimap,TOPLEFT,-38,41', 'BOTTOMRIGHT,Minimap,BOTTOMRIGHT,47,-44' },
 			},
-		},
-	}
+		}
 	SUI.Minimap:Register('Digital', minimapSettings)
 
 	local statusBarModule = SUI:GetModule('Artwork.StatusBars') ---@type SUI.Module.Artwork.StatusBars
