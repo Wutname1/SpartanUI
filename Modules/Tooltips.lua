@@ -99,7 +99,7 @@ function module:OnInitialize()
 		VendorPrices = true,
 		Override = {},
 		ColorOverlay = true,
-		Color = { 0, 0, 0, 0.4 },
+		Color = { 0, 0, 0, 0.9 },
 		SuppressNoMatch = true,
 		SpellID = {
 			enabled = false,
@@ -124,6 +124,9 @@ local onShow = function(self)
 	local bgTexture = LSM:Fetch('background', module.DB.Background)
 	if bgTexture and bgTexture ~= '' then
 		self.SUITip.bgTexture:SetTexture(bgTexture)
+	else
+		-- Fallback to solid color if texture not available
+		self.SUITip.bgTexture:SetColorTexture(0, 0, 0, 1)
 	end
 
 	-- Apply color based on settings
@@ -133,7 +136,12 @@ local onShow = function(self)
 		self.SUITip.bgTexture:SetVertexColor(r, g, b, 1)
 	else
 		-- Standard mode: show texture as-is with user's alpha transparency
-		self.SUITip.bgTexture:SetVertexColor(1, 1, 1, a)
+		-- Use black as fallback if texture doesn't exist to prevent white backgrounds
+		if bgTexture and bgTexture ~= '' then
+			self.SUITip.bgTexture:SetVertexColor(1, 1, 1, a)
+		else
+			self.SUITip.bgTexture:SetVertexColor(0, 0, 0, a)
+		end
 	end
 
 	self.SUITip:SetFrameLevel(0)
@@ -232,6 +240,9 @@ local function ApplySkin(tooltip)
 		local bgTexture = LSM:Fetch('background', module.DB.Background)
 		if bgTexture and bgTexture ~= '' then
 			SUITip.bgTexture:SetTexture(bgTexture)
+		else
+			-- Fallback to solid color if texture not available
+			SUITip.bgTexture:SetColorTexture(0, 0, 0, 1)
 		end
 
 		-- Apply color based on settings
@@ -241,7 +252,12 @@ local function ApplySkin(tooltip)
 			SUITip.bgTexture:SetVertexColor(r, g, b, 1)
 		else
 			-- Standard mode: show texture as-is with user's alpha transparency
-			SUITip.bgTexture:SetVertexColor(1, 1, 1, a)
+			-- Use black as fallback if texture doesn't exist to prevent white backgrounds
+			if bgTexture and bgTexture ~= '' then
+				SUITip.bgTexture:SetVertexColor(1, 1, 1, a)
+			else
+				SUITip.bgTexture:SetVertexColor(0, 0, 0, a)
+			end
 		end
 
 		-- Create border container
@@ -353,13 +369,20 @@ local TooltipSetItem = function(tooltip, tooltipData)
 
 		-- Update SUITip background texture for special item types
 		if tooltip.SUITip and tooltip.SUITip.bgTexture then
-			local bgTexture = 'Interface/Tooltips/UI-Tooltip-Background'
+			local blizzBgTexture = 'Interface/Tooltips/UI-Tooltip-Background'
 
 			if C_AzeriteEmpoweredItem and C_AzeriteItem and (C_AzeriteEmpoweredItem.IsAzeriteEmpoweredItemByID(itemLink) or C_AzeriteItem.IsAzeriteItemByID(itemLink)) then
-				bgTexture = 'Interface/Tooltips/UI-Tooltip-Background-Azerite'
+				blizzBgTexture = 'Interface/Tooltips/UI-Tooltip-Background-Azerite'
 			end
 
-			tooltip.SUITip.bgTexture:SetTexture(bgTexture)
+			-- Use Blizzard background for items, but fallback to user's LSM background if needed
+			local bgTexture = LSM:Fetch('background', module.DB.Background)
+			if bgTexture and bgTexture ~= '' then
+				tooltip.SUITip.bgTexture:SetTexture(bgTexture)
+			else
+				-- Fallback to solid color if texture not available
+				tooltip.SUITip.bgTexture:SetColorTexture(0, 0, 0, 1)
+			end
 
 			-- Apply color based on settings
 			local r, g, b, a = unpack(module.DB.Color)
@@ -368,7 +391,12 @@ local TooltipSetItem = function(tooltip, tooltipData)
 				tooltip.SUITip.bgTexture:SetVertexColor(r, g, b, 1)
 			else
 				-- Standard mode: show texture as-is with user's alpha transparency
-				tooltip.SUITip.bgTexture:SetVertexColor(1, 1, 1, a)
+				-- Use black as fallback if texture doesn't exist to prevent white backgrounds
+				if bgTexture and bgTexture ~= '' then
+					tooltip.SUITip.bgTexture:SetVertexColor(1, 1, 1, a)
+				else
+					tooltip.SUITip.bgTexture:SetVertexColor(0, 0, 0, a)
+				end
 			end
 		end
 
@@ -605,6 +633,9 @@ function module:UpdateBG()
 			local bgTexture = LSM:Fetch('background', module.DB.Background)
 			if bgTexture and bgTexture ~= '' then
 				tooltip.SUITip.bgTexture:SetTexture(bgTexture)
+			else
+				-- Fallback to solid color if texture not available
+				tooltip.SUITip.bgTexture:SetColorTexture(0, 0, 0, 1)
 			end
 
 			-- Apply color based on settings
@@ -614,7 +645,12 @@ function module:UpdateBG()
 				tooltip.SUITip.bgTexture:SetVertexColor(r, g, b, 1)
 			else
 				-- Standard mode: show texture as-is with user's alpha transparency
-				tooltip.SUITip.bgTexture:SetVertexColor(1, 1, 1, a)
+				-- Use black as fallback if texture doesn't exist to prevent white backgrounds
+				if bgTexture and bgTexture ~= '' then
+					tooltip.SUITip.bgTexture:SetVertexColor(1, 1, 1, a)
+				else
+					tooltip.SUITip.bgTexture:SetVertexColor(0, 0, 0, a)
+				end
 			end
 		end
 
