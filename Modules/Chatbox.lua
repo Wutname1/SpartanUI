@@ -289,7 +289,6 @@ function module:OnInitialize()
 			enabled = true,
 			maxEntries = 50,
 			expireDays = 14,
-			cleanupLoginMessages = true,
 			history = {},
 			typesToLog = {
 				CHAT_MSG_SAY = true,
@@ -466,17 +465,6 @@ function module:OnEnable()
 	if self.DB.chatLog.enabled then
 		self:EnableChatLog()
 	end
-
-	self:RegisterEvent('PLAYER_ENTERING_WORLD')
-end
-
-function module:PLAYER_ENTERING_WORLD(event, isInitialLogin, isReloadingUi)
-	if isInitialLogin and self.DB.chatLog.cleanupLoginMessages then
-		-- Delay the cleanup to ensure it happens after login is complete
-		C_Timer.After(5, function()
-			self:CleanupLoginMessages()
-		end)
-	end
 end
 
 function module:EnableChatLog()
@@ -529,25 +517,7 @@ function module:LogChatMessage(event, message, sender, languageName, channelName
 	end
 end
 
-function module:CleanupLoginMessages()
-	-- for i = 1, NUM_CHAT_WINDOWS do
-	-- 	local chatFrame = _G['ChatFrame' .. i]
-	-- 	chatFrame:Clear()
-	-- end
-
-	-- Re-add important system messages
-	local info = ChatTypeInfo['GUILD']
-	DEFAULT_CHAT_FRAME:AddMessage(GUILD_MOTD_TEMPLATE:format(GetGuildRosterMOTD() or ''), info.r, info.g, info.b)
-
-	-- Add played time messages
-	-- RequestTimePlayed()
-end
-
 function module:RestoreChatHistory()
-	if self.DB.chatLog.cleanupLoginMessages then
-		self:CleanupLoginMessages()
-	end
-
 	local chatFrame = DEFAULT_CHAT_FRAME
 	local playerRealm = GetRealmName()
 
@@ -1248,21 +1218,6 @@ function module:BuildOptions()
 							module:ClearAllChatLogs()
 						end,
 						order = 2.5, -- Place it after the existing clear log button
-					},
-					cleanupLoginMessages = {
-						name = L['Clean Up Login Messages'],
-						desc = L['Remove addon spam and unnecessary messages on login'],
-						type = 'toggle',
-						disabled = function()
-							return not module.DB.chatLog.enabled
-						end,
-						get = function()
-							return module.DB.chatLog.cleanupLoginMessages
-						end,
-						set = function(_, val)
-							module.DB.chatLog.cleanupLoginMessages = val
-						end,
-						order = 3,
 					},
 					maxEntries = {
 						name = L['Max Log Entries'],
