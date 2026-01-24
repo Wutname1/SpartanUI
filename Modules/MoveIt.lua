@@ -478,13 +478,17 @@ function MoveIt:CreateMover(parent, name, DisplayName, postdrag, groupName)
 
 		self:SetScale(NewScale)
 		self.parent:SetScale(NewScale)
+
+		-- Save the user's scale adjustment to DB
+		MoveIt.DB.movers[name].AdjustedScale = NewScale
+
+		-- Only hide the indicator if user resets to default scale
 		if NewScale == f.defaultScale then
+			MoveIt.DB.movers[name].AdjustedScale = nil
 			ScaledText:Hide()
 		else
 			ScaledText:Show()
 		end
-
-		MoveIt.DB.movers[name].AdjustedScale = NewScale
 	end
 
 	local NudgeMover = function(self, nudgeX, nudgeY)
@@ -576,7 +580,7 @@ function MoveIt:CreateMover(parent, name, DisplayName, postdrag, groupName)
 			self.parent:SetScale(self.defaultScale)
 			ScaledText:Hide()
 
-			MoveIt.DB.movers[name].AdjustedScale = false
+			MoveIt.DB.movers[name].AdjustedScale = nil
 		elseif IsShiftKeyDown() then -- Allow hiding a mover temporarily
 			self:Hide()
 			print(self.name .. ' hidden temporarily.')
@@ -641,10 +645,13 @@ function MoveIt:CreateMover(parent, name, DisplayName, postdrag, groupName)
 			f.OnScale:SetScale(max((scale or f.defaultScale), 0.01))
 		end
 		parent:SetScale(max((scale or f.defaultScale), 0.01))
-		if scale == f.defaultScale then
-			ScaledText:Hide()
-		else
+
+		-- Only show scaled indicator if user has actually adjusted the scale
+		-- Not when themes or other internal systems change it programmatically
+		if MoveIt.DB.movers[name].AdjustedScale then
 			ScaledText:Show()
+		else
+			ScaledText:Hide()
 		end
 
 		local point, anchor, secondaryPoint, x, y = strsplit(',', f.defaultPoint)
