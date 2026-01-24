@@ -425,7 +425,10 @@ local function WelcomePage()
 			local UI = LibAT.UI
 			local profiles = {}
 			local currentProfile = SUI.SpartanUIDB:GetCurrentProfile()
-			for _, v in pairs(SUI.SpartanUIDB:GetProfiles()) do
+			local tmpProfiles = {}
+			-- GetProfiles() requires a table to populate
+			SUI.SpartanUIDB:GetProfiles(tmpProfiles)
+			for _, v in pairs(tmpProfiles) do
 				if v ~= currentProfile then
 					profiles[#profiles + 1] = { text = v, value = v }
 				end
@@ -457,19 +460,18 @@ local function WelcomePage()
 			IntroPage.ProfileCopyLabel:SetWordWrap(true)
 			IntroPage.ProfileCopyLabel:SetPoint('TOP', IntroPage.Helm, 'BOTTOM', 0, -15)
 
-			IntroPage.ProfileList = UI.CreateDropdown(IntroPage, '', 200, 20)
+			IntroPage.ProfileList = UI.CreateDropdown(IntroPage, 'Select Profile...', 200, 20)
+			IntroPage.ProfileList.selectedValue = nil
 			IntroPage.ProfileList:SetupMenu(function(dropdown, rootDescription)
 				for _, profile in ipairs(profiles) do
 					rootDescription:CreateButton(profile.text, function()
-						dropdown:SetSelectionText(function()
-							return profile.text
-						end)
 						dropdown.selectedValue = profile.value
+						dropdown:SetText(profile.text)
 					end)
 				end
 			end)
 			IntroPage.ProfileList:SetPoint('TOP', IntroPage.ProfileCopyLabel, 'BOTTOM', 0, -10)
-			IntroPage.ProfileList:SetPoint('CENTER', IntroPage, 'CENTER', -33, 0)
+			IntroPage.ProfileList:SetPoint('LEFT', IntroPage, 'CENTER', -130, 0)
 
 			IntroPage.CopyProfileButton = UI.CreateButton(IntroPage, 60, 20, 'COPY')
 			IntroPage.CopyProfileButton:SetScript('OnClick', function()
@@ -493,6 +495,7 @@ local function WelcomePage()
 			end)
 			IntroPage.Import:SetPoint('TOP', IntroPage.ProfileList, 'BOTTOM', 0, -15)
 			IntroPage.Import:SetPoint('LEFT', IntroPage, 'CENTER', -100, 0)
+			IntroPage.Import:Hide() -- TODO: Hide until profile manager is fixed
 
 			if #profiles == 0 then
 				IntroPage.ProfileCopyLabel:Hide()
