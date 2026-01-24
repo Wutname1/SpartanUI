@@ -796,7 +796,6 @@ function module:SetupClock()
 			C_AddOns.LoadAddOn('Blizzard_TimeManager')
 		end
 		if TimeManagerClockButton then
-			TimeManagerClockButton:ClearAllPoints()
 			if clockSettings.position then
 				module:PositionItem(TimeManagerClockButton, clockSettings.position)
 			end
@@ -841,18 +840,16 @@ function module:SetupMailIcon()
 			mailFrame.ignoreInLayout = true
 		end
 
-		mailFrame:ClearAllPoints()
 		if mailSettings.position then
 			module:PositionItem(mailFrame, mailSettings.position)
 		end
 		mailFrame:SetScale(mailSettings.scale or 1)
-		mailFrame:Show()
+		-- mailFrame:Show()
 
 		-- Hook the animation finished event to reapply our positioning
 		if SUI.IsRetail and mailFrame.NewMailAnim and not mailFrame.NewMailAnim.suiHooked then
 			mailFrame.NewMailAnim:HookScript('OnFinished', function()
 				-- Reapply our custom positioning after animation completes
-				mailFrame:ClearAllPoints()
 				if mailSettings.position then
 					module:PositionItem(mailFrame, mailSettings.position)
 				end
@@ -863,15 +860,14 @@ function module:SetupMailIcon()
 		if SUI.IsRetail and mailFrame.MailReminderAnim and not mailFrame.MailReminderAnim.suiHooked then
 			mailFrame.MailReminderAnim:HookScript('OnFinished', function()
 				-- Reapply our custom positioning after animation completes
-				mailFrame:ClearAllPoints()
 				if mailSettings.position then
 					module:PositionItem(mailFrame, mailSettings.position)
 				end
 			end)
 			mailFrame.MailReminderAnim.suiHooked = true
 		end
-	else
-		mailFrame:Hide()
+		-- else
+		-- mailFrame:Hide()
 	end
 end
 
@@ -894,7 +890,6 @@ function module:SetupTracking()
 	end
 
 	if trackingSettings.enabled then
-		tracking:ClearAllPoints()
 		if trackingSettings.position then
 			module:PositionItem(tracking, trackingSettings.position)
 		end
@@ -922,7 +917,6 @@ function module:SetupCalendarButton()
 	end
 
 	if calendarSettings.enabled and GameTimeFrame then
-		GameTimeFrame:ClearAllPoints()
 		if calendarSettings.position then
 			module:PositionItem(GameTimeFrame, calendarSettings.position)
 		end
@@ -952,14 +946,10 @@ function module:SetupInstanceDifficulty()
 	end
 
 	if difficultySettings.enabled then
-		difficulty:ClearAllPoints()
 		if difficultySettings.position then
 			module:PositionItem(difficulty, difficultySettings.position)
 		end
 		difficulty:SetScale(difficultySettings.scale or 0.8)
-		difficulty:Show()
-	else
-		difficulty:Hide()
 	end
 end
 
@@ -982,7 +972,6 @@ function module:SetupQueueStatus()
 	end
 
 	if queueSettings.enabled then
-		queueFrame:ClearAllPoints()
 		if queueSettings.position then
 			module:PositionItem(queueFrame, queueSettings.position)
 		end
@@ -1000,8 +989,6 @@ function module:SetupExpansionButton()
 
 	ExpansionLandingPageMinimapButton:SetScale(module.Settings.elements.expansionButton.scale)
 	module:PositionItem(ExpansionLandingPageMinimapButton, module.Settings.elements.expansionButton.position)
-	-- Note: Right-click functionality is now handled by the ExpandedExpansionButton module
-	-- This keeps the default left-click behavior intact
 end
 
 local isFrameIgnored = function(item)
