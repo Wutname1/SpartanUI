@@ -12,14 +12,16 @@ function module:OnInitialize()
 	BarHandler.BarPosition.BT4.War = {
 		['BT4BarExtraActionBar'] = 'BOTTOM,SUI_BottomAnchor,TOP,0,70',
 		['BT4BarZoneAbilityBar'] = 'BOTTOM,SUI_BottomAnchor,TOP,0,70',
-		--
-		['BT4BarStanceBar'] = SUI.IsRetail and 'TOP,SpartanUI,TOP,-301,0',
-		['BT4BarPetBar'] = SUI.IsRetail and 'TOP,SpartanUI,TOP,-558,0',
 		['MultiCastActionBarFrame'] = 'TOP,SpartanUI,TOP,-558,0',
-		--
-		['BT4BarMicroMenu'] = SUI.IsRetail and 'TOP,SpartanUI,TOP,324,0',
-		['BT4BarBagBar'] = SUI.IsRetail and 'TOP,SpartanUI,TOP,595,0',
 	}
+
+	-- Add Retail-only bars
+	if SUI.IsRetail then
+		BarHandler.BarPosition.BT4.War['BT4BarStanceBar'] = 'TOP,SpartanUI,TOP,-301,0'
+		BarHandler.BarPosition.BT4.War['BT4BarPetBar'] = 'TOP,SpartanUI,TOP,-558,0'
+		BarHandler.BarPosition.BT4.War['BT4BarMicroMenu'] = 'TOP,SpartanUI,TOP,324,0'
+		BarHandler.BarPosition.BT4.War['BT4BarBagBar'] = 'TOP,SpartanUI,TOP,595,0'
+	end
 
 	-- Unitframes Settings
 	local ImageInfo = {

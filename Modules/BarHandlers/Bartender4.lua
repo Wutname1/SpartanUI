@@ -228,7 +228,7 @@ local function RefreshConfig()
 
 	-- Position Bars
 	for _, v in ipairs(FrameList) do
-		if _G[v] and positionData[v] ~= '' then
+		if _G[v] and positionData[v] and type(positionData[v]) == 'string' and positionData[v] ~= '' then
 			local f = _G[v]
 			if f.scale then
 				f:scale(SUI.DB.scale * (scaleData[v] * 1.08696), true)
