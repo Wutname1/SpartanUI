@@ -1074,6 +1074,11 @@ function module:SetupAddonButtons()
 	-- Hook the Minimap itself for mouse events
 	Minimap:HookScript('OnEnter', showAllButtons)
 	Minimap:HookScript('OnLeave', hideAllButtons)
+
+	-- Also hook SUIMinimap holder frame to ensure mouse events are caught
+	-- This is especially important for Classic where the holder might intercept events
+	SUIMinimap:HookScript('OnEnter', showAllButtons)
+	SUIMinimap:HookScript('OnLeave', hideAllButtons)
 end
 
 function module:UpdateAddonButtons()
@@ -1133,12 +1138,8 @@ function module:SetupHooks()
 		SUIMinimap:Hide()
 	end)
 
-	SUIMinimap:HookScript('OnEnter', function()
-		IsMouseOver()
-	end)
-	SUIMinimap:HookScript('OnLeave', function()
-		IsMouseOver()
-	end)
+	-- Note: SUIMinimap OnEnter/OnLeave hooks for button fading are now handled in SetupAddonButtons()
+	-- The IsMouseOver() function is currently unused but kept for potential future use
 end
 
 function module:RegisterEvents()
@@ -1492,6 +1493,9 @@ function module:OnEnable()
 	SUIMinimap:SetFrameStrata('BACKGROUND')
 	SUIMinimap:SetFrameLevel(99)
 	SUIMinimap:SetPoint('BOTTOM', UIParent, 'BOTTOM', 0, 0)
+	-- Enable mouse events so OnEnter/OnLeave work for button fading
+	SUIMinimap:EnableMouse(true)
+	SUIMinimap:SetMouseClickEnabled(false) -- Don't intercept clicks, let them pass through to Minimap
 
 	module:UpdateSettings()
 	module:SetupElements()
