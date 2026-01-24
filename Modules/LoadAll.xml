@@ -34,5 +34,5 @@
 
 	<!-- Load UnitFrames -->
 	<Include file="UnitFrames\Load.xml"/>
-	<!-- <Script file="Nameplates.lua" /> -->
+	<Script file="Nameplates.lua" />
 </Ui>
