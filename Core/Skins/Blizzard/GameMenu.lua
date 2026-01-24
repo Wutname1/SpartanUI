@@ -4,11 +4,29 @@ local GameMenuFrame = GameMenuFrame
 ---@class SUIMenuSkin : Frame
 local MenuSkin = _G['SUIMenuSkin'] or CreateFrame('Frame', 'SUIMenuSkin', UIParent)
 
--- Logger integration
-local logger = SUI.Logger or {}
-if LibAT and LibAT.Logger then
-	logger = LibAT.Logger.RegisterAddon('SUI-GameMenu')
-end
+-- Logger integration - create a hierarchical logger under SpartanUI.Skins.GameMenu
+local logger = {
+	debug = function(msg)
+		if SUI.Log then
+			SUI.Log(msg, 'Skins.GameMenu', 'debug')
+		end
+	end,
+	info = function(msg)
+		if SUI.Log then
+			SUI.Log(msg, 'Skins.GameMenu', 'info')
+		end
+	end,
+	warning = function(msg)
+		if SUI.Log then
+			SUI.Log(msg, 'Skins.GameMenu', 'warning')
+		end
+	end,
+	error = function(msg)
+		if SUI.Log then
+			SUI.Log(msg, 'Skins.GameMenu', 'error')
+		end
+	end,
+}
 
 ---@param frame Frame The frame to reskin buttons for (typically GameMenuFrame)
 local function ReskinGameMenuButtons(frame)
