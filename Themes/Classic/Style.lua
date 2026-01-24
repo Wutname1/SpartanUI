@@ -793,8 +793,8 @@ function module:OnInitialize()
 			}
 		or {
 			-- Classic client Classic theme settings
-			size = { 140, 140 },
-			position = 'BOTTOM,SUI_Art_Classic_Center,BOTTOM,1,6',
+			size = { 160, 160 },
+			position = 'BOTTOM,SUI_Art_Classic_Center,BOTTOM,0,14',
 			background = {
 				enabled = false,
 			},
