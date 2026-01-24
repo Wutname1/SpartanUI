@@ -836,12 +836,40 @@ function module:SetupMailIcon()
 	end
 
 	if mailSettings.enabled then
+		-- Mark the MailFrame to be ignored by the IndicatorFrame's automatic layout
+		if SUI.IsRetail and mailFrame then
+			mailFrame.ignoreInLayout = true
+		end
+
 		mailFrame:ClearAllPoints()
 		if mailSettings.position then
 			module:PositionItem(mailFrame, mailSettings.position)
 		end
 		mailFrame:SetScale(mailSettings.scale or 1)
 		mailFrame:Show()
+
+		-- Hook the animation finished event to reapply our positioning
+		if SUI.IsRetail and mailFrame.NewMailAnim and not mailFrame.NewMailAnim.suiHooked then
+			mailFrame.NewMailAnim:HookScript('OnFinished', function()
+				-- Reapply our custom positioning after animation completes
+				mailFrame:ClearAllPoints()
+				if mailSettings.position then
+					module:PositionItem(mailFrame, mailSettings.position)
+				end
+			end)
+			mailFrame.NewMailAnim.suiHooked = true
+		end
+
+		if SUI.IsRetail and mailFrame.MailReminderAnim and not mailFrame.MailReminderAnim.suiHooked then
+			mailFrame.MailReminderAnim:HookScript('OnFinished', function()
+				-- Reapply our custom positioning after animation completes
+				mailFrame:ClearAllPoints()
+				if mailSettings.position then
+					module:PositionItem(mailFrame, mailSettings.position)
+				end
+			end)
+			mailFrame.MailReminderAnim.suiHooked = true
+		end
 	else
 		mailFrame:Hide()
 	end
