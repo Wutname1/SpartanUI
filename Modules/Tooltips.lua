@@ -61,6 +61,43 @@ local function IsModifierConditionMet(setting)
 	return false
 end
 
+local function SkinCompareHeader(tooltip)
+	if not tooltip.CompareHeader then
+		return
+	end
+
+	if not tooltip.CompareHeader.SUISkined then
+		-- Hide default Blizzard background
+		if tooltip.CompareHeader.Background then
+			tooltip.CompareHeader.Background:Hide()
+		end
+
+		-- Create custom background
+		if not tooltip.CompareHeader.SUIBackground then
+			tooltip.CompareHeader.SUIBackground = tooltip.CompareHeader:CreateTexture(nil, 'BACKGROUND')
+			tooltip.CompareHeader.SUIBackground:SetAllPoints(tooltip.CompareHeader)
+			tooltip.CompareHeader.SUIBackground:SetTexture('Interface\\AddOns\\SpartanUI\\images\\blank.tga')
+
+			-- Apply color based on settings
+			local r, g, b = unpack(module.DB.Color)
+			tooltip.CompareHeader.SUIBackground:SetVertexColor(r, g, b, 1)
+		end
+
+		-- Center the label
+		if tooltip.CompareHeader.Label then
+			tooltip.CompareHeader.Label:ClearAllPoints()
+			tooltip.CompareHeader.Label:SetPoint('CENTER', tooltip.CompareHeader, 'CENTER', 0, 0)
+		end
+
+		-- Reposition and resize the header to center it on the tooltip
+		tooltip.CompareHeader:ClearAllPoints()
+		tooltip.CompareHeader:SetPoint('BOTTOM', tooltip, 'TOP', 0, -1)
+		tooltip.CompareHeader:SetHeight(18)
+
+		tooltip.CompareHeader.SUISkined = true
+	end
+end
+
 function module:OnInitialize()
 	---@class SUI.Tooltip.Settings
 	local defaults = {
@@ -187,43 +224,6 @@ local ClearColors = function(SUITip)
 	SUITip.border[2]:SetVertexColor(0, 0, 0, 0)
 	SUITip.border[3]:SetVertexColor(0, 0, 0, 0)
 	SUITip.border[4]:SetVertexColor(0, 0, 0, 0)
-end
-
-local function SkinCompareHeader(tooltip)
-	if not tooltip.CompareHeader then
-		return
-	end
-
-	if not tooltip.CompareHeader.SUISkined then
-		-- Hide default Blizzard background
-		if tooltip.CompareHeader.Background then
-			tooltip.CompareHeader.Background:Hide()
-		end
-
-		-- Create custom background
-		if not tooltip.CompareHeader.SUIBackground then
-			tooltip.CompareHeader.SUIBackground = tooltip.CompareHeader:CreateTexture(nil, 'BACKGROUND')
-			tooltip.CompareHeader.SUIBackground:SetAllPoints(tooltip.CompareHeader)
-			tooltip.CompareHeader.SUIBackground:SetTexture('Interface\\AddOns\\SpartanUI\\images\\blank.tga')
-
-			-- Apply color based on settings
-			local r, g, b = unpack(module.DB.Color)
-			tooltip.CompareHeader.SUIBackground:SetVertexColor(r, g, b, 1)
-		end
-
-		-- Center the label
-		if tooltip.CompareHeader.Label then
-			tooltip.CompareHeader.Label:ClearAllPoints()
-			tooltip.CompareHeader.Label:SetPoint('CENTER', tooltip.CompareHeader, 'CENTER', 0, 0)
-		end
-
-		-- Reposition and resize the header to center it on the tooltip
-		tooltip.CompareHeader:ClearAllPoints()
-		tooltip.CompareHeader:SetPoint('BOTTOM', tooltip, 'TOP', 0, -1)
-		tooltip.CompareHeader:SetHeight(18)
-
-		tooltip.CompareHeader.SUISkined = true
-	end
 end
 
 local function ApplySkin(tooltip)
