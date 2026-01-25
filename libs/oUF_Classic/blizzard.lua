@@ -22,7 +22,9 @@ local function insecureHide(self)
 end
 
 local function resetParent(self, parent)
-	if parent ~= hiddenParent then self:SetParent(hiddenParent) end
+	if parent ~= hiddenParent then
+		self:SetParent(hiddenParent)
+	end
 end
 
 local function handleFrame(baseName, doNotReparent)
@@ -48,39 +50,61 @@ local function handleFrame(baseName, doNotReparent)
 		end
 
 		local health = frame.healthBar or frame.healthbar or frame.HealthBar
-		if health then health:UnregisterAllEvents() end
+		if health then
+			health:UnregisterAllEvents()
+		end
 
 		local power = frame.manabar or frame.ManaBar
-		if power then power:UnregisterAllEvents() end
+		if power then
+			power:UnregisterAllEvents()
+		end
 
 		local spell = frame.castBar or frame.spellbar or frame.CastingBarFrame
-		if spell then spell:UnregisterAllEvents() end
+		if spell then
+			spell:UnregisterAllEvents()
+		end
 
 		local altpowerbar = frame.powerBarAlt or frame.PowerBarAlt
-		if altpowerbar then altpowerbar:UnregisterAllEvents() end
+		if altpowerbar then
+			altpowerbar:UnregisterAllEvents()
+		end
 
 		local buffFrame = frame.BuffFrame
-		if buffFrame then buffFrame:UnregisterAllEvents() end
+		if buffFrame then
+			buffFrame:UnregisterAllEvents()
+		end
 
 		local petFrame = frame.petFrame or frame.PetFrame
-		if petFrame then petFrame:UnregisterAllEvents() end
+		if petFrame then
+			petFrame:UnregisterAllEvents()
+		end
 
 		local totFrame = frame.totFrame
-		if totFrame then totFrame:UnregisterAllEvents() end
+		if totFrame then
+			totFrame:UnregisterAllEvents()
+		end
 
 		local classPowerBar = frame.classPowerBar
-		if classPowerBar then classPowerBar:UnregisterAllEvents() end
+		if classPowerBar then
+			classPowerBar:UnregisterAllEvents()
+		end
 
 		local ccRemoverFrame = frame.CcRemoverFrame
-		if ccRemoverFrame then ccRemoverFrame:UnregisterAllEvents() end
+		if ccRemoverFrame then
+			ccRemoverFrame:UnregisterAllEvents()
+		end
 
 		local debuffFrame = frame.DebuffFrame
-		if debuffFrame then debuffFrame:UnregisterAllEvents() end
+		if debuffFrame then
+			debuffFrame:UnregisterAllEvents()
+		end
 	end
 end
 
 function oUF:DisableBlizzard(unit)
-	if not unit then return end
+	if not unit then
+		return
+	end
 
 	if unit == 'player' then
 		handleFrame(PlayerFrame)
@@ -110,12 +134,32 @@ function oUF:DisableBlizzard(unit)
 			end
 		end
 	elseif unit:match('party%d?$') then
-		local id = unit:match('party(%d)')
-		if id then
-			handleFrame('PartyMemberFrame' .. id)
-		else
+		if not isPartyHooked then
+			isPartyHooked = true
+
+			-- Handle old party frames (pre-Edit Mode)
 			for i = 1, MAX_PARTY_MEMBERS do
 				handleFrame(string.format('PartyMemberFrame%d', i))
+			end
+
+			-- Handle Edit Mode party frames (TBC+ with Edit Mode backport)
+			-- CompactPartyFrame is the new party frame system that uses Edit Mode
+			if CompactPartyFrame then
+				handleFrame(CompactPartyFrame)
+			end
+
+			-- Disable CompactPartyFrameMember frames (used in Edit Mode)
+			-- Only attempt this if CompactPartyFrameMember1 exists
+			if _G['CompactPartyFrameMember1'] then
+				for i = 1, MEMBERS_PER_RAID_GROUP do
+					handleFrame('CompactPartyFrameMember' .. i)
+				end
+			end
+
+			-- Disable the CompactRaidFrameContainer which controls visibility
+			-- This is crucial for TBC with Edit Mode backport
+			if CompactRaidFrameManager_SetSetting then
+				CompactRaidFrameManager_SetSetting('IsShown', '0')
 			end
 		end
 	elseif unit:match('arena%d?$') then
@@ -134,8 +178,12 @@ function oUF:DisableBlizzard(unit)
 end
 
 function oUF:DisableNamePlate(frame)
-	if not (frame and frame.UnitFrame) then return end
-	if frame.UnitFrame:IsForbidden() then return end
+	if not (frame and frame.UnitFrame) then
+		return
+	end
+	if frame.UnitFrame:IsForbidden() then
+		return
+	end
 
 	if not hookedNameplates[frame] then
 		frame.UnitFrame:HookScript('OnShow', insecureHide)
