@@ -44,8 +44,23 @@ local function ReskinGameMenuButtons(frame)
 			child:SetHighlightAtlas('auctionhouse-nav-button-highlight')
 			child:SetPushedAtlas('auctionhouse-nav-button-select')
 
+			-- Apply texture coordinates to all texture layers
 			local normalTexture = child:GetNormalTexture()
-			normalTexture:SetTexCoord(0, 1, 0, 0.7)
+			local highlightTexture = child:GetHighlightTexture()
+			local pushedTexture = child:GetPushedTexture()
+
+			if normalTexture then
+				normalTexture:SetTexCoord(0, 1, 0, 0.7)
+			end
+
+			-- Fix for non-retail: Apply SetTexCoord to highlight and pushed textures as well
+			if highlightTexture then
+				highlightTexture:SetTexCoord(0, 1, 0, 1)
+			end
+
+			if pushedTexture then
+				pushedTexture:SetTexCoord(0, 1, 0, 1)
+			end
 
 			-- Adjust text position if needed
 			local text = child:GetFontString()
@@ -56,7 +71,7 @@ local function ReskinGameMenuButtons(frame)
 
 			-- Remove old textures
 			for _, region in pairs({ child:GetRegions() }) do
-				if region:IsObjectType('Texture') and region ~= child:GetNormalTexture() and region ~= child:GetHighlightTexture() and region ~= child:GetPushedTexture() then
+				if region:IsObjectType('Texture') and region ~= normalTexture and region ~= highlightTexture and region ~= pushedTexture then
 					region:Hide()
 				end
 			end
@@ -129,7 +144,7 @@ end
 
 local function CreateMenuSkin()
 	-- Size matches gearUpdate-BG dimensions: 361x596
-	MenuSkin:SetSize(SUI.IsRetail and 361 or 300, 596)
+	MenuSkin:SetSize(SUI.IsRetail and 361 or 300, SUI.IsRetail and 596 or 500)
 	MenuSkin:SetFrameStrata('BACKGROUND')
 	MenuSkin:SetScale(0.8)
 	MenuSkin:Hide()
@@ -412,7 +427,7 @@ function MenuSkin:InterpolatePoints(center)
 	if SUIGameMenu:IsDisabled() then
 		return
 	end
-	local heightOffset = SUI.IsRetail and 0 or -115
+	local heightOffset = SUI.IsRetail and 0 or -100
 
 	local MainFramePosition = { self:GetPoint() }
 	local gradientEndPoint = { self.Gradient:GetPoint(1) }
@@ -432,8 +447,8 @@ function MenuSkin:InterpolatePoints(center)
 		secondGradientPoint[x] = Lerp(secondGradientPoint[x], 70, t)
 		secondGradientPoint[y] = Lerp(secondGradientPoint[y], -135, t)
 
-		topLinePosition[y] = Lerp(topLinePosition[y], 0 + (heightOffset / 1.15), t)
-		bottomLinePosition[y] = Lerp(bottomLinePosition[y], -50 + (heightOffset / 8), t)
+		topLinePosition[y] = Lerp(topLinePosition[y], 0 + (heightOffset / 1.3), t)
+		bottomLinePosition[y] = Lerp(bottomLinePosition[y], -50 + (heightOffset / 5), t)
 
 		MainFramePosition[x] = Lerp(MainFramePosition[x], targetX, t)
 		MainFramePosition[y] = Lerp(MainFramePosition[y], targetY, t)
