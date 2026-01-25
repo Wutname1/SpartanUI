@@ -1,7 +1,7 @@
 local unpack, SUI, L, print, UF = unpack, SUI, SUI.L, SUI.print, SUI.UF
--- if SUI.IsRetail then
--- 	return
--- end
+if SUI.IsRetail then
+	return
+end
 local module = SUI:NewModule('Nameplates') ---@class SUI.Nameplates | SUI.Module
 module.description = 'Basic nameplate module'
 local Images = {
