@@ -62,7 +62,11 @@ local function ReskinGameMenuButtons(frame)
 			end
 
 			-- Adjust button size if needed
-			child:SetSize(200, 36) -- You may need to adjust these values
+			local width, height = 200, 36
+			if not SUI.IsRetail then
+				width, height = 150, 30
+			end
+			child:SetSize(width, height)
 		end
 	end
 end
@@ -125,7 +129,7 @@ end
 
 local function CreateMenuSkin()
 	-- Size matches gearUpdate-BG dimensions: 361x596
-	MenuSkin:SetSize(361, 596)
+	MenuSkin:SetSize(SUI.IsRetail and 361 or 300, 596)
 	MenuSkin:SetFrameStrata('BACKGROUND')
 	MenuSkin:SetScale(0.8)
 	MenuSkin:Hide()
@@ -281,11 +285,33 @@ function MenuSkin:SkinGameMenu()
 		logger.debug('SkinGameMenu called - Border exists:', GameMenuFrame.Border ~= nil, 'Header exists:', GameMenuFrame.Header ~= nil)
 	end
 
-	if GameMenuFrame.Border then
-		if logger.debug then
-			logger.debug('Hiding GameMenuFrame.Border')
-		end
+	SUI.Skins.RemoveAllTextures(GameMenuFrame)
+	if GameMenuFrameHeader then
+		SUI.Skins.RemoveTextures(GameMenuFrameHeader)
+		GameMenuFrameHeader:Hide()
+	end
+	-- Hide NineSlice border parts that might be direct children of GameMenuFrame (Mists/Classic)
+	local nineSliceParts = {
+		'TopLeftCorner',
+		'TopRightCorner',
+		'BottomLeftCorner',
+		'BottomRightCorner',
+		'TopEdge',
+		'BottomEdge',
+		'LeftEdge',
+		'RightEdge',
+		'Center',
+		'Header',
+	}
 
+	-- First check for direct children of GameMenuFrame
+	for _, partName in ipairs(nineSliceParts) do
+		if GameMenuFrame[partName] then
+			GameMenuFrame[partName]:Hide()
+		end
+	end
+
+	if GameMenuFrame.Border then
 		GameMenuFrame.Border:Hide()
 		GameMenuFrame.Border:SetAlpha(0)
 
@@ -306,18 +332,7 @@ function MenuSkin:SkinGameMenu()
 			end
 		end
 
-		-- Hide all named NineSlice textures directly
-		local nineSliceParts = {
-			'TopLeftCorner',
-			'TopRightCorner',
-			'BottomLeftCorner',
-			'BottomRightCorner',
-			'TopEdge',
-			'BottomEdge',
-			'LeftEdge',
-			'RightEdge',
-			'Center',
-		}
+		-- Hide all named NineSlice textures under Border
 		for _, partName in ipairs(nineSliceParts) do
 			if GameMenuFrame.Border[partName] then
 				GameMenuFrame.Border[partName]:Hide()
@@ -397,6 +412,7 @@ function MenuSkin:InterpolatePoints(center)
 	if SUIGameMenu:IsDisabled() then
 		return
 	end
+	local heightOffset = SUI.IsRetail and 0 or -115
 
 	local MainFramePosition = { self:GetPoint() }
 	local gradientEndPoint = { self.Gradient:GetPoint(1) }
@@ -411,13 +427,13 @@ function MenuSkin:InterpolatePoints(center)
 		elapsed = elapsed + dt
 		local t = elapsed / duration
 		gradientEndPoint[x] = Lerp(gradientEndPoint[x], -70, t)
-		gradientEndPoint[y] = Lerp(gradientEndPoint[y], 120, t)
+		gradientEndPoint[y] = Lerp(gradientEndPoint[y], 120 + heightOffset, t)
 
 		secondGradientPoint[x] = Lerp(secondGradientPoint[x], 70, t)
 		secondGradientPoint[y] = Lerp(secondGradientPoint[y], -135, t)
 
-		topLinePosition[y] = Lerp(topLinePosition[y], 0, t)
-		bottomLinePosition[y] = Lerp(bottomLinePosition[y], -50, t)
+		topLinePosition[y] = Lerp(topLinePosition[y], 0 + (heightOffset / 1.15), t)
+		bottomLinePosition[y] = Lerp(bottomLinePosition[y], -50 + (heightOffset / 8), t)
 
 		MainFramePosition[x] = Lerp(MainFramePosition[x], targetX, t)
 		MainFramePosition[y] = Lerp(MainFramePosition[y], targetY, t)
