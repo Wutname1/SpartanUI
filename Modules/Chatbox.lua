@@ -456,6 +456,18 @@ function module:OnEnable()
 		end
 		SUI:Print('Leavers: ' .. LeaveCount)
 	end, 'Prints the number of leavers in the current battleground, addings anything after leavers will output to instance chat')
+
+	--Add chat command to clear chat history
+	SUI:AddChatCommand('clearchat', function()
+		module:ClearChatLog()
+	end, 'Clears the chat log history (also available as /clearchat)')
+
+	--Register standalone /clearchat command
+	SLASH_CLEARCHAT1 = '/clearchat'
+	SlashCmdList['CLEARCHAT'] = function()
+		module:ClearChatLog()
+	end
+
 	--Detect when we leave the battleground and reset the counter
 	module:SecureHook('LeaveBattlefield', function()
 		LeaveCount = 0
