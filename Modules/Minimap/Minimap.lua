@@ -351,9 +351,9 @@ function module:ModifyMinimapLayout()
 		if MinimapBorder then
 			MinimapBorder:Hide()
 		end
-		if MinimapBackdrop then
-			MinimapBackdrop:Hide()
-		end
+		-- if MinimapBackdrop then
+		-- 	MinimapBackdrop:Hide()
+		-- end
 
 		-- Hide or show north tag based on settings
 		if MinimapNorthTag then
@@ -1016,9 +1016,6 @@ end
 function module:SetupAddonButtons()
 	local function setupButtonFading(button)
 		local name = button:GetName()
-		if isFrameIgnored(name) then
-			print('ignore me!' .. name)
-		end
 		if button.fadeInAnim then
 			return
 		end -- Already set up
@@ -1050,6 +1047,18 @@ function module:SetupAddonButtons()
 				child:SetAlpha(1)
 			end
 		end
+
+		-- Process MinimapBackdrop children for Classic
+		if not SUI.IsRetail and MinimapBackdrop then
+			for _, child in ipairs({ MinimapBackdrop:GetChildren() }) do
+				-- if child:IsObjectType('Button') and child.fadeInAnim then
+				if child.fadeInAnim then
+					child.fadeInAnim:Stop()
+					child.fadeOutAnim:Stop()
+					child:SetAlpha(1)
+				end
+			end
+		end
 	end
 
 	local function hideAllButtons()
@@ -1057,6 +1066,16 @@ function module:SetupAddonButtons()
 			if child:IsObjectType('Button') and child.fadeOutAnim then
 				child.fadeInAnim:Stop()
 				child.fadeOutAnim:Play()
+			end
+		end
+
+		-- Process MinimapBackdrop children for Classic
+		if not SUI.IsRetail and MinimapBackdrop then
+			for _, child in ipairs({ MinimapBackdrop:GetChildren() }) do
+				if child.fadeOutAnim then
+					child.fadeInAnim:Stop()
+					child.fadeOutAnim:Play()
+				end
 			end
 		end
 	end
@@ -1070,6 +1089,17 @@ function module:SetupAddonButtons()
 		end
 	end
 
+	-- Process MinimapBackdrop children for Classic
+	if not SUI.IsRetail and MinimapBackdrop then
+		for _, child in ipairs({ MinimapBackdrop:GetChildren() }) do
+			-- if child:IsObjectType('Button') then
+			setupButtonFading(child)
+			child:HookScript('OnEnter', showAllButtons)
+			child:HookScript('OnLeave', hideAllButtons)
+			-- end
+		end
+	end
+
 	-- Hook the Minimap to catch newly added buttons
 	Minimap:HookScript('OnEvent', function(self, event, ...)
 		if event == 'ADDON_LOADED' then
@@ -1079,6 +1109,17 @@ function module:SetupAddonButtons()
 						setupButtonFading(child)
 						child:HookScript('OnEnter', showAllButtons)
 						child:HookScript('OnLeave', hideAllButtons)
+					end
+				end
+
+				-- Process MinimapBackdrop children for Classic
+				if not SUI.IsRetail and MinimapBackdrop then
+					for _, child in ipairs({ MinimapBackdrop:GetChildren() }) do
+						if child:IsObjectType('Button') and not child.fadeInAnim and not isFrameIgnored(child) then
+							setupButtonFading(child)
+							child:HookScript('OnEnter', showAllButtons)
+							child:HookScript('OnLeave', hideAllButtons)
+						end
 					end
 				end
 			end)
@@ -1094,6 +1135,12 @@ function module:SetupAddonButtons()
 	-- This is especially important for Classic where the holder might intercept events
 	SUIMinimap:HookScript('OnEnter', showAllButtons)
 	SUIMinimap:HookScript('OnLeave', hideAllButtons)
+
+	-- Hook MinimapBackdrop for Classic clients
+	if not SUI.IsRetail and MinimapBackdrop then
+		MinimapBackdrop:HookScript('OnEnter', showAllButtons)
+		MinimapBackdrop:HookScript('OnLeave', hideAllButtons)
+	end
 end
 
 function module:UpdateAddonButtons()
@@ -1109,10 +1156,26 @@ function module:UpdateAddonButtons()
 				child:SetAlpha(1)
 			end
 		end
+		-- Process MinimapBackdrop children for Classic
+		if not SUI.IsRetail and MinimapBackdrop then
+			for _, child in ipairs({ MinimapBackdrop:GetChildren() }) do
+				if child:IsObjectType('Button') and not isFrameIgnored(child) then
+					child:SetAlpha(1)
+				end
+			end
+		end
 	elseif style == 'never' then
 		for _, child in ipairs({ Minimap:GetChildren() }) do
 			if child:IsObjectType('Button') and not isFrameIgnored(child) then
 				child:SetAlpha(0)
+			end
+		end
+		-- Process MinimapBackdrop children for Classic
+		if not SUI.IsRetail and MinimapBackdrop then
+			for _, child in ipairs({ MinimapBackdrop:GetChildren() }) do
+				if child:IsObjectType('Button') and not isFrameIgnored(child) then
+					child:SetAlpha(0)
+				end
 			end
 		end
 	else -- "mouseover"
@@ -1120,6 +1183,14 @@ function module:UpdateAddonButtons()
 		for _, child in ipairs({ Minimap:GetChildren() }) do
 			if child:IsObjectType('Button') and not isFrameIgnored(child) then
 				child:SetAlpha(0) -- Start hidden
+			end
+		end
+		-- Process MinimapBackdrop children for Classic
+		if not SUI.IsRetail and MinimapBackdrop then
+			for _, child in ipairs({ MinimapBackdrop:GetChildren() }) do
+				if child:IsObjectType('Button') and not isFrameIgnored(child) then
+					child:SetAlpha(0) -- Start hidden
+				end
 			end
 		end
 	end
