@@ -34,7 +34,7 @@ local SPEC_MONK_BREWMASTER = _G.SPEC_MONK_BREWMASTER or 1
 local BREWMASTER_POWER_BAR_NAME = 'STAGGER'
 
 -- percentages at which bar should change color
-local STAGGER_YELLOW_TRANSITION =  _G.STAGGER_YELLOW_TRANSITION or 0.3
+local STAGGER_YELLOW_TRANSITION = _G.STAGGER_YELLOW_TRANSITION or 0.3
 local STAGGER_RED_TRANSITION = _G.STAGGER_RED_TRANSITION or 0.6
 
 -- table indices of bar colors
@@ -43,22 +43,24 @@ local STAGGER_YELLOW_INDEX = _G.STAGGER_YELLOW_INDEX or 2
 local STAGGER_RED_INDEX = _G.STAGGER_RED_INDEX or 3
 
 local function UpdateColor(self, event, unit)
-	if(unit and unit ~= self.unit) then return end
+	if unit and unit ~= self.unit then
+		return
+	end
 	local element = self.Stagger
 
 	local colors = self.colors.power[BREWMASTER_POWER_BAR_NAME]
 	local perc = (element.cur or 0) / (element.max or 1)
 
 	local color
-	if(perc >= STAGGER_RED_TRANSITION) then
+	if perc >= STAGGER_RED_TRANSITION then
 		color = colors and colors[STAGGER_RED_INDEX]
-	elseif(perc > STAGGER_YELLOW_TRANSITION) then
+	elseif perc > STAGGER_YELLOW_TRANSITION then
 		color = colors and colors[STAGGER_YELLOW_INDEX]
 	else
 		color = colors and colors[STAGGER_GREEN_INDEX]
 	end
 
-	if(color) then
+	if color then
 		element:GetStatusBarTexture():SetVertexColor(color:GetRGB())
 	end
 
@@ -68,13 +70,15 @@ local function UpdateColor(self, event, unit)
 	* self  - the Stagger element
 	* color - the used ColorMixin-based object (table?)
 	--]]
-	if(element.PostUpdateColor) then
+	if element.PostUpdateColor then
 		element:PostUpdateColor(color)
 	end
 end
 
 local function Update(self, event, unit)
-	if(unit and unit ~= self.unit) then return end
+	if unit and unit ~= self.unit then
+		return
+	end
 
 	local element = self.Stagger
 
@@ -83,7 +87,7 @@ local function Update(self, event, unit)
 
 	* self - the Stagger element
 	--]]
-	if(element.PreUpdate) then
+	if element.PreUpdate then
 		element:PreUpdate()
 	end
 
@@ -104,7 +108,7 @@ local function Update(self, event, unit)
 	* cur  - the amount of staggered damage (number)
 	* max  - the player's maximum possible health value (number)
 	--]]
-	if(element.PostUpdate) then
+	if element.PostUpdate then
 		element:PostUpdate(cur, max)
 	end
 end
@@ -117,7 +121,9 @@ local function Path(self, ...)
 	* event - the event triggering the update (string)
 	* unit  - the unit accompanying the event (string)
 	--]]
-	(self.Stagger.Override or Update)(self, ...);
+	do
+		(self.Stagger.Override or Update)(self, ...)
+	end
 
 	--[[ Override: Stagger.UpdateColor(self, event, unit)
 	Used to completely override the internal function for updating the widgets' colors.
@@ -126,13 +132,13 @@ local function Path(self, ...)
 	* event - the event triggering the update (string)
 	* unit  - the unit accompanying the event (string)
 	--]]
-	(self.Stagger.UpdateColor or UpdateColor) (self, ...)
+	(self.Stagger.UpdateColor or UpdateColor)(self, ...)
 end
 
 local function Visibility(self, event, unit)
 	local element = self.Stagger
-	if(SPEC_MONK_BREWMASTER ~= C_SpecializationInfo.GetSpecialization() or UnitHasVehiclePlayerFrameUI('player')) then
-		if(element:IsShown()) then
+	if SPEC_MONK_BREWMASTER ~= C_SpecializationInfo.GetSpecialization() or UnitHasVehiclePlayerFrameUI('player') then
+		if element:IsShown() then
 			element:Hide()
 			self:UnregisterEvent('UNIT_AURA', Path)
 
@@ -142,16 +148,16 @@ local function Visibility(self, event, unit)
 			* self      - the Stagger element
 			* isVisible - the current visibility state of the element (boolean)
 			--]]
-			if(element.PostVisibility) then
+			if element.PostVisibility then
 				element:PostVisibility(false)
 			end
 		end
 	else
-		if(not element:IsShown()) then
+		if not element:IsShown() then
 			element:Show()
 			self:RegisterEvent('UNIT_AURA', Path)
 
-			if(element.PostVisibility) then
+			if element.PostVisibility then
 				element:PostVisibility(true)
 			end
 		end
@@ -177,7 +183,7 @@ end
 
 local function Disable(self)
 	local element = self.Stagger
-	if(element) then
+	if element then
 		element:Hide()
 
 		self:UnregisterEvent('UNIT_AURA', Path)
@@ -193,25 +199,25 @@ local function Disable(self)
 end
 
 local function Enable(self, unit)
-	if(UnitClassBase('player') ~= 'MONK') then
+	if UnitClassBase('player') ~= 'MONK' then
 		Disable(self)
 
 		return false
 	end
 
 	local element = self.Stagger
-	if(element and UnitIsUnit(unit, 'player')) then
+	if element and UnitIsUnit(unit, 'player') then
 		element.__owner = self
 		element.ForceUpdate = ForceUpdate
 
-		if(not element.smoothing) then
+		if not element.smoothing then
 			element.smoothing = Enum.StatusBarInterpolation.Immediate
 		end
 
 		self:RegisterEvent('UNIT_DISPLAYPOWER', VisibilityPath)
 		self:RegisterEvent('PLAYER_TALENT_UPDATE', VisibilityPath, true)
 
-		if(element:IsObjectType('StatusBar') and not element:GetStatusBarTexture()) then
+		if element:IsObjectType('StatusBar') and not element:GetStatusBarTexture() then
 			element:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
 		end
 

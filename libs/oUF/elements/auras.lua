@@ -166,16 +166,7 @@ local function SetPosition(element, from, to)
 	local anchor = element.initialAnchor or 'BOTTOMLEFT'
 	local growthX = (element.growthX == 'LEFT' and -1) or 1
 	local growthY = (element.growthY == 'DOWN' and -1) or 1
-
-	-- Protect against secret values in GetWidth()
-	local cols = element.maxCols
-	if not cols then
-		local success, result = pcall(function()
-			local elementWidth = element:GetWidth()
-			return math.floor(elementWidth / sizeX + 0.5)
-		end)
-		cols = success and result or 8 -- Fallback to 8 if calculation fails
-	end
+	local cols = element.maxCols or math.floor(element:GetWidth() / sizeX + 0.5)
 
 	for i = from, to do
 		local button = element[i]
