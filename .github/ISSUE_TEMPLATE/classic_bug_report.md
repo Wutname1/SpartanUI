@@ -1,10 +1,15 @@
 ---
-name: Vanilla Bug Report
+name: Classic Bug Report
 about: Bug Report for issues when playing WoW Classic with no expansion
-title: "[Vanilla Bug Report]"
-labels: "bug, Vanilla"
+title: "[Classic Bug Report]"
+labels: "bug, Classic"
 assignees: Wutname1
 ---
+
+**What version of the game are you getting the error in?**
+[ ] Mists
+[ ] BCC
+[ ] Classic Era
 
 **Describe the bug**
 A clear and concise description of what the bug is.

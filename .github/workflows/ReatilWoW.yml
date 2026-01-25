@@ -3,7 +3,7 @@ name: Retail - CI/CD
 on:
   push:
     tags: ["**"]
-    branches: ["master", "develop"]
+    branches: ["master"]
 
 jobs:
   release:
@@ -20,66 +20,14 @@ jobs:
         with:
           fetch-depth: 0 # Fetch full git history for changelog generation
 
-      - name: Build Latest Version Changelog
-        id: build_changelog
-        uses: mikepenz/release-changelog-builder-action@v5
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          configurationJson: |
-            {
-              "template": "#{{CHANGELOG}}",
-              "pr_template": "- #{{TITLE}} ##{{NUMBER}}",
-              "categories": [
-                {
-                  "title": "### 🚀 Features",
-                  "labels": ["feat", "feature", "enhancement"]
-                },
-                {
-                  "title": "### 🐛 Fixes",
-                  "labels": ["fix", "bug", "bugfix"]
-                },
-                {
-                  "title": "### 📝 Changes",
-                  "labels": ["chore", "refactor", "style", "perf"]
-                },
-                {
-                  "title": "### 📚 Documentation",
-                  "labels": ["docs", "documentation"]
-                },
-                {
-                  "title": "### 🔧 Other",
-                  "labels": []
-                }
-              ],
-              "label_extractor": [
-                {
-                  "pattern": "^(feat|feature|enhancement):",
-                  "target": "$1"
-                },
-                {
-                  "pattern": "^(fix|bug|bugfix):",
-                  "target": "$1"
-                },
-                {
-                  "pattern": "^(chore|refactor|style|perf):",
-                  "target": "$1"
-                },
-                {
-                  "pattern": "^(docs|documentation):",
-                  "target": "$1"
-                }
-              ]
-            }
-
-      - name: Generate Hybrid Changelog with AI Summary
+      - name: Generate Smart Changelog with AI Summaries
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           AI_PROVIDER: gemini
-          LATEST_CHANGELOG: ${{ steps.build_changelog.outputs.changelog }}
+          GITHUB_REF: ${{ github.ref }}
         run: |
           chmod +x .github/scripts/generate-changelog.sh
-          .github/scripts/generate-changelog.sh CHANGELOG.md 5
+          .github/scripts/generate-changelog.sh CHANGELOG.md
 
       # Run the GitHub Action for the packager project
       - name: Package and release
