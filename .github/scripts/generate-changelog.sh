@@ -369,43 +369,49 @@ for i in "${!RECENT_TAGS[@]}"; do
     rm -f "$TEMP_TAG_COMMITS"
 done
 
-# Generate AI summaries
-log_info "Generating AI summaries..."
+# Generate AI summaries (only for tag releases)
+if [ "$IS_TAG" = true ]; then
+    log_info "Generating AI summaries for tag release..."
 
-# Monthly summary
-if [ -s "$TEMP_MONTH_COMMITS" ]; then
-    MONTH_COMMITS=$(cat "$TEMP_MONTH_COMMITS")
-    MONTH_SUMMARY=$(generate_ai_summary "$MONTH_COMMITS" "month") || MONTH_SUMMARY=""
+    # Monthly summary
+    if [ -s "$TEMP_MONTH_COMMITS" ]; then
+        MONTH_COMMITS=$(cat "$TEMP_MONTH_COMMITS")
+        MONTH_SUMMARY=$(generate_ai_summary "$MONTH_COMMITS" "month") || MONTH_SUMMARY=""
 
-    if [ -n "$MONTH_SUMMARY" ]; then
-        log_info "Monthly summary generated!"
-        sed -i "s|$MONTH_SUMMARY_MARKER|$MONTH_SUMMARY|g" "$OUTPUT_FILE"
+        if [ -n "$MONTH_SUMMARY" ]; then
+            log_info "Monthly summary generated!"
+            sed -i "s|$MONTH_SUMMARY_MARKER|$MONTH_SUMMARY|g" "$OUTPUT_FILE"
+        else
+            sed -i "/$MONTH_SUMMARY_MARKER/d" "$OUTPUT_FILE"
+        fi
     else
         sed -i "/$MONTH_SUMMARY_MARKER/d" "$OUTPUT_FILE"
     fi
-else
-    sed -i "/$MONTH_SUMMARY_MARKER/d" "$OUTPUT_FILE"
-fi
 
-# Release summary (only if there are more than 3 changes)
-if [ -s "$TEMP_RELEASE_COMMITS" ]; then
-    RELEASE_COMMIT_COUNT=$(grep -c "." "$TEMP_RELEASE_COMMITS" 2>/dev/null || echo "0")
+    # Release summary (only if there are more than 3 changes)
+    if [ -s "$TEMP_RELEASE_COMMITS" ]; then
+        RELEASE_COMMIT_COUNT=$(grep -c "." "$TEMP_RELEASE_COMMITS" 2>/dev/null || echo "0")
 
-    if [ "$RELEASE_COMMIT_COUNT" -gt 3 ]; then
-        RELEASE_COMMITS=$(cat "$TEMP_RELEASE_COMMITS")
-        RELEASE_SUMMARY=$(generate_ai_summary "$RELEASE_COMMITS" "release") || RELEASE_SUMMARY=""
+        if [ "$RELEASE_COMMIT_COUNT" -gt 3 ]; then
+            RELEASE_COMMITS=$(cat "$TEMP_RELEASE_COMMITS")
+            RELEASE_SUMMARY=$(generate_ai_summary "$RELEASE_COMMITS" "release") || RELEASE_SUMMARY=""
 
-        if [ -n "$RELEASE_SUMMARY" ]; then
-            log_info "Release summary generated!"
-            sed -i "s|$RELEASE_SUMMARY_MARKER|$RELEASE_SUMMARY|g" "$OUTPUT_FILE"
+            if [ -n "$RELEASE_SUMMARY" ]; then
+                log_info "Release summary generated!"
+                sed -i "s|$RELEASE_SUMMARY_MARKER|$RELEASE_SUMMARY|g" "$OUTPUT_FILE"
+            else
+                sed -i "/$RELEASE_SUMMARY_MARKER/d" "$OUTPUT_FILE"
+            fi
         else
+            log_info "Skipping release summary (only $RELEASE_COMMIT_COUNT changes)"
             sed -i "/$RELEASE_SUMMARY_MARKER/d" "$OUTPUT_FILE"
         fi
     else
-        log_info "Skipping release summary (only $RELEASE_COMMIT_COUNT changes)"
         sed -i "/$RELEASE_SUMMARY_MARKER/d" "$OUTPUT_FILE"
     fi
 else
+    log_info "Skipping AI summaries for alpha build"
+    sed -i "/$MONTH_SUMMARY_MARKER/d" "$OUTPUT_FILE"
     sed -i "/$RELEASE_SUMMARY_MARKER/d" "$OUTPUT_FILE"
 fi
 
