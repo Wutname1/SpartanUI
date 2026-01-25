@@ -1,7 +1,7 @@
 local unpack, SUI, L, print, UF = unpack, SUI, SUI.L, SUI.print, SUI.UF
-if SUI.IsRetail then
-	return
-end
+-- if SUI.IsRetail then
+-- 	return
+-- end
 local module = SUI:NewModule('Nameplates') ---@class SUI.Nameplates | SUI.Module
 module.description = 'Basic nameplate module'
 local Images = {
@@ -213,7 +213,15 @@ local NamePlateFactory = function(frame, unit)
 
 		frame.unitGUID = UnitGUID(unit)
 		frame.unitOnCreate = 'Nameplate'
-		frame.npcID = frame.unitGUID and select(6, strsplit('-', frame.unitGUID))
+		-- Safely extract NPC ID, handling secret values
+		if frame.unitGUID then
+			local success, result = pcall(function()
+				return select(6, strsplit('-', frame.unitGUID))
+			end)
+			frame.npcID = success and result or nil
+		else
+			frame.npcID = nil
+		end
 
 		local elementsDB = module.DB.elements
 		local height = 0
@@ -424,7 +432,15 @@ local NameplateCallback = function(self, event, unit)
 			self.widget = blizzPlate.WidgetContainer
 		end
 		self.unitGUID = UnitGUID(unit)
-		self.npcID = self.unitGUID and select(6, strsplit('-', self.unitGUID))
+		-- Safely extract NPC ID, handling secret values
+		if self.unitGUID then
+			local success, result = pcall(function()
+				return select(6, strsplit('-', self.unitGUID))
+			end)
+			self.npcID = success and result or nil
+		else
+			self.npcID = nil
+		end
 
 		NameplateList[self:GetName()] = true
 
