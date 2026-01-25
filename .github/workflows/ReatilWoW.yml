@@ -29,6 +29,10 @@ jobs:
           chmod +x .github/scripts/generate-changelog.sh
           .github/scripts/generate-changelog.sh CHANGELOG.md
 
+      - name: Add Changelog to Run Summary
+        run: |
+          cat CHANGELOG.md >> $GITHUB_STEP_SUMMARY
+
       # Run the GitHub Action for the packager project
       - name: Package and release
         uses: BigWigsMods/packager@master
