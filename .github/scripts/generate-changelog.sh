@@ -1,5 +1,10 @@
 #!/bin/bash
-# SpartanUI Changelog Generator with AI Summary
+# SpartanUI Hybrid Changelog Generator with AI Summary
+#
+# This script generates a hybrid changelog that combines:
+# - AI-generated TLDR summary of all changes
+# - Categorized changelog for the latest version (from release-changelog-builder)
+# - Simplified commit lists for older versions
 #
 # Usage: ./generate-changelog.sh [output_file] [num_versions]
 #   output_file: Path to output changelog file (default: CHANGELOG.md)
@@ -9,8 +14,9 @@
 #   GEMINI_API_KEY: Google Gemini API key for AI summaries
 #   OPENAI_API_KEY: OpenAI API key (fallback)
 #   AI_PROVIDER: "gemini" or "openai" (default: gemini)
+#   LATEST_CHANGELOG: Pre-generated categorized changelog for latest version (from release-changelog-builder)
 
-set -e  # Exit on error
+# Note: We don't use 'set -e' because we want to continue even if AI summary fails
 
 # Configuration
 OUTPUT_FILE="${1:-CHANGELOG.md}"
@@ -23,17 +29,44 @@ GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 NC='\033[0m' # No Color
 
-# Logging functions
+# Logging functions (output to stderr so they don't interfere with command substitution)
 log_info() {
-    echo -e "${GREEN}[INFO]${NC} $1"
+    echo -e "${GREEN}[INFO]${NC} $1" >&2
 }
 
 log_warn() {
-    echo -e "${YELLOW}[WARN]${NC} $1"
+    echo -e "${YELLOW}[WARN]${NC} $1" >&2
 }
 
 log_error() {
-    echo -e "${RED}[ERROR]${NC} $1"
+    echo -e "${RED}[ERROR]${NC} $1" >&2
+}
+
+# JSON escape function - works with or without jq
+json_escape() {
+    local input="$1"
+
+    # Try jq first if available
+    if command -v jq &> /dev/null; then
+        echo "$input" | jq -Rs .
+    else
+        # Fallback: use Python
+        python -c "import json, sys; print(json.dumps(sys.stdin.read()))" <<< "$input"
+    fi
+}
+
+# JSON parse function - works with or without jq
+json_parse() {
+    local json="$1"
+    local path="$2"
+
+    # Try jq first if available
+    if command -v jq &> /dev/null; then
+        echo "$json" | jq -r "$path // empty" 2>/dev/null
+    else
+        # Fallback: use Python
+        python -c "import json, sys; data = json.load(sys.stdin); print(eval('$path'.replace('//','or').replace('[0]','[0]').replace('.','[')).get('text','') if isinstance(eval('$path'.replace('//','or').replace('[0]','[0]').replace('.','['))  , dict) else '')" <<< "$json" 2>/dev/null || echo ""
+    fi
 }
 
 # Function to call Gemini Flash API
@@ -53,17 +86,22 @@ Changelog:
 $commits_text"
 
     # Escape JSON special characters in prompt
-    prompt=$(echo "$prompt" | jq -Rs .)
+    prompt=$(json_escape "$prompt")
 
-    # Build JSON request
+    # Build JSON request and write to temp file (to avoid "Argument list too long")
     local json_request="{\"contents\":[{\"parts\":[{\"text\":$prompt}]}]}"
+    local temp_request=$(mktemp)
+    echo "$json_request" > "$temp_request"
 
-    # Call Gemini API
+    # Call Gemini API (using gemini-2.5-flash)
     log_info "Calling Gemini Flash API for summary..."
     local response=$(curl -s -w "\n%{http_code}" --max-time 30 \
         -H "Content-Type: application/json" \
-        -d "$json_request" \
-        "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=$api_key")
+        -d "@$temp_request" \
+        "https://generativelanguage.googleapis.com/v1/models/gemini-2.5-flash:generateContent?key=$api_key")
+
+    # Clean up temp file
+    rm -f "$temp_request"
 
     # Extract HTTP status code (last line)
     local http_code=$(echo "$response" | tail -n1)
@@ -75,8 +113,15 @@ $commits_text"
         return 1
     fi
 
-    # Parse response and extract summary
-    local summary=$(echo "$response_body" | jq -r '.candidates[0].content.parts[0].text // empty' 2>/dev/null)
+    # Parse response and extract summary using Python
+    local summary=$(python -c "
+import json, sys
+try:
+    data = json.loads(sys.stdin.read())
+    print(data['candidates'][0]['content']['parts'][0]['text'])
+except (KeyError, IndexError, json.JSONDecodeError):
+    pass
+" <<< "$response_body" 2>/dev/null)
 
     if [ -z "$summary" ]; then
         log_error "Failed to parse Gemini API response"
@@ -104,7 +149,7 @@ Changelog:
 $commits_text"
 
     # Escape JSON special characters
-    prompt=$(echo "$prompt" | jq -Rs .)
+    prompt=$(json_escape "$prompt")
 
     # Build JSON request
     local json_request="{\"model\":\"gpt-4o-mini\",\"messages\":[{\"role\":\"user\",\"content\":$prompt}],\"temperature\":0.7,\"max_tokens\":200}"
@@ -127,8 +172,15 @@ $commits_text"
         return 1
     fi
 
-    # Parse response and extract summary
-    local summary=$(echo "$response_body" | jq -r '.choices[0].message.content // empty' 2>/dev/null)
+    # Parse response and extract summary using Python
+    local summary=$(python -c "
+import json, sys
+try:
+    data = json.loads(sys.stdin.read())
+    print(data['choices'][0]['message']['content'])
+except (KeyError, IndexError, json.JSONDecodeError):
+    pass
+" <<< "$response_body" 2>/dev/null)
 
     if [ -z "$summary" ]; then
         log_error "Failed to parse OpenAI API response"
@@ -151,7 +203,7 @@ generate_ai_summary() {
 }
 
 # Main script execution
-log_info "Generating changelog for SpartanUI..."
+log_info "Generating hybrid changelog for SpartanUI..."
 log_info "Output file: $OUTPUT_FILE"
 log_info "Number of versions: $NUM_VERSIONS"
 log_info "AI Provider: $AI_PROVIDER"
@@ -162,26 +214,32 @@ if ! git rev-parse --git-dir > /dev/null 2>&1; then
     exit 1
 fi
 
-# Get the last N tags (sorted by version)
+# Get the last N+1 tags (sorted by version) - we need one extra for the range of the oldest version
 log_info "Fetching last $NUM_VERSIONS tags..."
-TAGS=$(git tag --sort=-version:refname | head -n "$NUM_VERSIONS")
+ALL_TAGS=$(git tag --sort=-version:refname | head -n "$((NUM_VERSIONS + 1))")
 
-if [ -z "$TAGS" ]; then
+if [ -z "$ALL_TAGS" ]; then
     log_error "No tags found in repository!"
     exit 1
 fi
+
+# Split into array
+ALL_TAGS_ARRAY=($ALL_TAGS)
+
+# Tags to display (first N)
+TAGS=$(echo "$ALL_TAGS" | head -n "$NUM_VERSIONS")
 
 # Temporary file for collecting all commits
 TEMP_COMMITS=$(mktemp)
 
 # Start building the changelog
-log_info "Building changelog sections..."
+log_info "Building hybrid changelog..."
 
 # Initialize changelog file
 echo "# SpartanUI Changelog" > "$OUTPUT_FILE"
 echo "" >> "$OUTPUT_FILE"
 
-# We'll add TLDR section later, so save space for it
+# Placeholder for TLDR
 TLDR_MARKER="<!-- TLDR_PLACEHOLDER -->"
 echo "$TLDR_MARKER" >> "$OUTPUT_FILE"
 echo "" >> "$OUTPUT_FILE"
@@ -194,40 +252,66 @@ for i in "${!TAG_ARRAY[@]}"; do
     # Get tag date
     TAG_DATE=$(git log -1 --format=%ai "$TAG" | cut -d' ' -f1)
 
-    log_info "Processing version $TAG ($TAG_DATE)..."
-
-    # Add version header
-    echo "## Version $TAG ($TAG_DATE)" >> "$OUTPUT_FILE"
-    echo "" >> "$OUTPUT_FILE"
-
     # Get previous tag for this tag's range
-    if [ $i -lt $((${#TAG_ARRAY[@]} - 1)) ]; then
-        PREV_TAG="${TAG_ARRAY[$((i + 1))]}"
+    # Use the ALL_TAGS_ARRAY which has N+1 tags to ensure we have a previous tag for the oldest one
+    if [ $i -lt ${#ALL_TAGS_ARRAY[@]} ] && [ -n "${ALL_TAGS_ARRAY[$((i + 1))]}" ]; then
+        PREV_TAG="${ALL_TAGS_ARRAY[$((i + 1))]}"
         COMMIT_RANGE="$PREV_TAG..$TAG"
+        COMMITS=$(git log "$COMMIT_RANGE" --pretty=format:"- %s" --no-merges 2>/dev/null || echo "")
     else
-        # For the oldest tag in our list, get all commits up to that tag
-        COMMIT_RANGE="$TAG"
+        # First tag ever - show all commits up to this tag
+        COMMITS=$(git log "$TAG" --pretty=format:"- %s" --no-merges 2>/dev/null || echo "")
     fi
-
-    # Get commits for this range (exclude merge commits)
-    COMMITS=$(git log "$COMMIT_RANGE" --pretty=format:"- %s" --no-merges 2>/dev/null || echo "- Initial release")
 
     if [ -n "$COMMITS" ]; then
-        echo "$COMMITS" >> "$OUTPUT_FILE"
         echo "$COMMITS" >> "$TEMP_COMMITS"
-    else
-        echo "- No changes recorded" >> "$OUTPUT_FILE"
     fi
 
-    echo "" >> "$OUTPUT_FILE"
-    echo "" >> "$OUTPUT_FILE"
+    # For the LATEST version (first tag), use the pre-generated categorized changelog
+    if [ $i -eq 0 ]; then
+        log_info "Adding categorized changelog for latest version $TAG ($TAG_DATE)..."
+
+        echo "## Version $TAG ($TAG_DATE)" >> "$OUTPUT_FILE"
+        echo "" >> "$OUTPUT_FILE"
+
+        # Use the pre-generated categorized changelog if available
+        if [ -n "$LATEST_CHANGELOG" ] && [ "$LATEST_CHANGELOG" != "null" ] && [ "$LATEST_CHANGELOG" != "" ]; then
+            echo "$LATEST_CHANGELOG" >> "$OUTPUT_FILE"
+        else
+            # Fallback: simple commit list if release-changelog-builder didn't run
+            log_warn "LATEST_CHANGELOG not provided, using simple format"
+            if [ -n "$COMMITS" ]; then
+                echo "$COMMITS" >> "$OUTPUT_FILE"
+            else
+                echo "- No changes recorded" >> "$OUTPUT_FILE"
+            fi
+        fi
+
+        echo "" >> "$OUTPUT_FILE"
+        echo "" >> "$OUTPUT_FILE"
+    else
+        # For OLDER versions, use simple commit list
+        log_info "Adding simple changelog for version $TAG ($TAG_DATE)..."
+
+        echo "## Version $TAG ($TAG_DATE)" >> "$OUTPUT_FILE"
+        echo "" >> "$OUTPUT_FILE"
+
+        if [ -n "$COMMITS" ]; then
+            echo "$COMMITS" >> "$OUTPUT_FILE"
+        else
+            echo "- No changes recorded" >> "$OUTPUT_FILE"
+        fi
+
+        echo "" >> "$OUTPUT_FILE"
+        echo "" >> "$OUTPUT_FILE"
+    fi
 done
 
 # Generate AI summary from all collected commits
 ALL_COMMITS=$(cat "$TEMP_COMMITS")
 
 if [ -n "$ALL_COMMITS" ]; then
-    AI_SUMMARY=$(generate_ai_summary "$ALL_COMMITS" 2>&1) || AI_SUMMARY=""
+    AI_SUMMARY=$(generate_ai_summary "$ALL_COMMITS") || AI_SUMMARY=""
 
     if [ -n "$AI_SUMMARY" ]; then
         log_info "AI summary generated successfully!"
@@ -264,10 +348,10 @@ fi
 # Clean up
 rm -f "$TEMP_COMMITS"
 
-log_info "Changelog generated successfully: $OUTPUT_FILE"
+log_info "Hybrid changelog generated successfully: $OUTPUT_FILE"
 
 # Show a preview of the file
-log_info "Preview (first 20 lines):"
-head -n 20 "$OUTPUT_FILE"
+log_info "Preview (first 30 lines):"
+head -n 30 "$OUTPUT_FILE"
 
 exit 0
