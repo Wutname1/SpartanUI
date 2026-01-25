@@ -23,10 +23,10 @@ The `Badge` sub-widget has to be on a lower sub-layer than the `PvP` texture.
 local _, ns = ...
 local oUF = ns.oUF
 
-local ArtPositions = {'top', 'bg', 'bottom', 'full'}
+local ArtPositions = { 'top', 'bg', 'bottom', 'full' }
 
 local function Update(self, event, unit)
-	if (unit and unit ~= self.unit) then
+	if unit and unit ~= self.unit then
 		return
 	end
 
@@ -39,7 +39,7 @@ local function Update(self, event, unit)
 	* self - the SpartanArt element
 	* unit - the unit for which the update has been triggered (string)
 	--]]
-	if (element.PreUpdate) then
+	if element.PreUpdate then
 		element:PreUpdate(unit)
 	end
 
@@ -87,7 +87,7 @@ local function Update(self, event, unit)
 					end
 				end
 				if ArtData.Colorable then
-					artObj:SetVertexColor(0, 0, 0, .6)
+					artObj:SetVertexColor(0, 0, 0, 0.6)
 				end
 
 				artObj:SetScale(ArtData.scale or 1)
@@ -142,7 +142,7 @@ local function Update(self, event, unit)
 	* self   - the SpartanArt element
 	* unit   - the unit for which the update has been triggered (string)
 	--]]
-	if (element.PostUpdate) then
+	if element.PostUpdate then
 		return element:PostUpdate(unit)
 	end
 end
@@ -164,7 +164,7 @@ end
 
 local function Enable(self)
 	local element = self.SpartanArt
-	if (element) then
+	if element then
 		element.__owner = self
 		element.ForceUpdate = ForceUpdate
 
@@ -184,10 +184,10 @@ end
 
 local function Disable(self)
 	local element = self.SpartanArt
-	if (element) then
+	if element then
 		element:Hide()
 
-		if (element.Badge) then
+		if element.Badge then
 			element.Badge:Hide()
 		end
 

@@ -1,0 +1,94 @@
+---@diagnostic disable: missing-parameter
+local _, ns = ...
+local oUF = ns.oUF or oUF
+
+-- TargetIndicator as an oUF element
+-- Displays visual indicator when unit is targeted
+do
+	local Update = function(self, event, unit)
+		local element = self.TargetIndicator
+		if not element then
+			return
+		end
+
+		-- Get settings if available
+		local DB = element.DB
+		local enabled = not DB or (DB.enabled and DB.ShowTarget)
+
+		-- Check if this unit is the target
+		local isTarget = UnitIsUnit(self.unit or unit, 'target') and enabled
+
+		-- For nameplates, also check nameplate-specific logic
+		if self:GetName() and self:GetName():match('NamePlates') then
+			if UnitExists('target') and C_NamePlate.GetNamePlateForUnit('target') then
+				-- Check if SpartanUI Nameplates module exists and has ShowTarget enabled
+				local Nameplates = SUI and SUI.GetModule and SUI:GetModule('Nameplates')
+				if Nameplates and Nameplates.DB and Nameplates.DB.ShowTarget then
+					if self:GetName() ~= 'oUF_Spartan_NamePlates' .. C_NamePlate.GetNamePlateForUnit('target'):GetName() then
+						isTarget = false
+					end
+				else
+					isTarget = false
+				end
+			else
+				isTarget = false
+			end
+		end
+
+		-- Handle old structure (bg1/bg2) for backward compatibility
+		if element.bg1 then
+			if isTarget then
+				element.bg1:Show()
+				element.bg2:Show()
+			else
+				element.bg1:Hide()
+				element.bg2:Hide()
+			end
+			return
+		end
+
+		-- Handle new structure based on mode
+		local mode = DB and DB.mode or 'texture'
+
+		if mode == 'texture' or mode == 'both' then
+			if element.textureObjects then
+				for _, tex in pairs(element.textureObjects) do
+					if isTarget then
+						tex:Show()
+					else
+						tex:Hide()
+					end
+				end
+			end
+		end
+
+		if mode == 'border' or mode == 'both' then
+			if element.borderInstanceId and SUI and SUI.Handlers and SUI.Handlers.BackgroundBorder then
+				SUI.Handlers.BackgroundBorder:SetVisible(element.borderInstanceId, isTarget)
+			end
+		end
+	end
+
+	local function ForceUpdate(element)
+		return Update(element.__owner, 'ForceUpdate', element.__owner.unit)
+	end
+
+	local Enable = function(self)
+		local icon = self.TargetIndicator
+		if icon then
+			icon.__owner = self
+			icon.ForceUpdate = ForceUpdate
+			self:RegisterEvent('PLAYER_TARGET_CHANGED', Update, true)
+		end
+	end
+
+	local Disable = function(self)
+		local icon = self.TargetIndicator
+		if icon then
+			self:UnregisterEvent('PLAYER_TARGET_CHANGED', Update)
+			icon:Hide()
+		end
+	end
+
+	oUF:AddElement('TargetIndicator', Update, Enable, Disable)
+end

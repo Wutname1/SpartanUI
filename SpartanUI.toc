@@ -74,8 +74,17 @@ libs\oUF\oUF.xml [AllowLoadGameType mainline]
 libs\oUF_Classic\oUF_Classic.xml [AllowLoadGameType vanilla, tbc]
 libs\oUF_Classic\oUF_Wrath.xml [AllowLoadGameType wrath, cata, mists]
 
-# oUF Plugins
-libs\oUF_Plugins\oUF_SpartanArt\oUF_SpartanArt.lua
+# oUF Plugins - SpartanUI maintained
+Core\oUF_Plugins\HotsListing.lua
+Core\oUF_Plugins\Tags.lua [AllowLoadGameType mainline]
+Core\oUF_Plugins\Tags_Classic.lua [AllowLoadGameType vanilla, tbc, wrath, cata, mists]
+Core\oUF_Plugins\TargetIndicator.lua
+Core\oUF_Plugins\LevelSkull.lua
+Core\oUF_Plugins\RareElite.lua
+Core\oUF_Plugins\SUI_RaidGroup.lua
+Core\oUF_Plugins\oUF_SpartanArt.lua
+
+# oUF Plugins - Third-party
 libs\oUF_Plugins\oUF_AuraBars.lua [AllowLoadGameType vanilla, tbc, wrath, cata, mists]
 libs\oUF_Plugins\oUF_AuraHighlight.lua
 libs\oUF_Plugins\oUF_AuraWatch.lua [AllowLoadGameType vanilla, tbc, wrath, cata, mists]
@@ -110,8 +119,7 @@ Modules\LoadAll.xml
 # CORE FRAMEWORK POST-MODULES
 # ============================================
 Core\Framework.xml
-Core\oUF.lua [AllowLoadGameType mainline]
-Core\oUF_Classic.lua [AllowLoadGameType vanilla, tbc, wrath, cata, mists]
+Core\oUF_Classic.lua [AllowLoadGameType vanilla, tbc, wrath]
 
 # ============================================
 # THEMES
