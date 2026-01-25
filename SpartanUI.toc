@@ -58,7 +58,7 @@ libs\AceGUI-3.0-SharedMediaWidgets\widget.xml
 # ============================================
 # LIBRARIES - CLASSIC ONLY
 # ============================================
-libs\LibHealComm-4.0\LibHealComm-4.0.lua [AllowLoadGameType vanilla, tbc, wrath, cata, mists]
+libs\LibHealComm-4.0\LibHealComm-4.0.lua [AllowLoadGameType vanilla, tbc, wrath]
 libs\LibClassicDurations\LibClassicDurations.xml [AllowLoadGameType vanilla, tbc]
 libs\LibClassicCasterino\LibClassicCasterino.lua [AllowLoadGameType vanilla, tbc]
 
@@ -119,7 +119,6 @@ Modules\LoadAll.xml
 # CORE FRAMEWORK POST-MODULES
 # ============================================
 Core\Framework.xml
-Core\oUF_Classic.lua [AllowLoadGameType vanilla, tbc, wrath]
 
 # ============================================
 # THEMES
