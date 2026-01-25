@@ -160,6 +160,7 @@ local BaseSettingsClassic = {
 	tracking = {
 		enabled = true,
 		scale = 1,
+		position = 'TOPLEFT,Minimap,TOPLEFT,-5,-5',
 	},
 	mailIcon = {
 		enabled = true,
@@ -373,22 +374,54 @@ function module:ModifyMinimapLayout()
 			GameTimeFrame:GetRegions():Hide()
 		end
 
-		-- Position MiniMapTracking
-		if MiniMapTracking then
-			MiniMapTracking:ClearAllPoints()
-			MiniMapTracking:SetPoint('TOPLEFT', Minimap, 'TOPLEFT', -5, -5)
-		end
-
 		-- Position MiniMapInstanceDifficulty
 		if MiniMapInstanceDifficulty then
 			MiniMapInstanceDifficulty:ClearAllPoints()
 			MiniMapInstanceDifficulty:SetPoint('TOPLEFT', Minimap, 'TOPLEFT', 4, 22)
 		end
 
-		-- Position MiniMapWorldMapButton
+		-- Position and style MiniMapWorldMapButton
 		if MiniMapWorldMapButton then
 			MiniMapWorldMapButton:ClearAllPoints()
 			MiniMapWorldMapButton:SetPoint('TOPRIGHT', Minimap, 'TOPRIGHT', -20, 12)
+			MiniMapWorldMapButton:SetSize(32, 32)
+
+			-- Hide all default textures
+			for i = 1, MiniMapWorldMapButton:GetNumRegions() do
+				local region = select(i, MiniMapWorldMapButton:GetRegions())
+				if region and region:IsObjectType('Texture') then
+					region:Hide()
+				end
+			end
+
+			-- Create normal texture
+			if not MiniMapWorldMapButton.SUI_NormalTexture then
+				MiniMapWorldMapButton.SUI_NormalTexture = MiniMapWorldMapButton:CreateTexture(nil, 'BACKGROUND')
+				MiniMapWorldMapButton.SUI_NormalTexture:SetAtlas('ShipMissionIcon-Bonus-MapBadge')
+				MiniMapWorldMapButton.SUI_NormalTexture:SetAllPoints()
+			end
+
+			-- Create mouseover glow
+			if not MiniMapWorldMapButton.SUI_HighlightTexture then
+				MiniMapWorldMapButton.SUI_HighlightTexture = MiniMapWorldMapButton:CreateTexture(nil, 'HIGHLIGHT')
+				MiniMapWorldMapButton.SUI_HighlightTexture:SetAtlas('ShipMission-RedGlowRing')
+				MiniMapWorldMapButton.SUI_HighlightTexture:SetAllPoints()
+				MiniMapWorldMapButton.SUI_HighlightTexture:SetBlendMode('ADD')
+			end
+
+			-- Create click glow
+			if not MiniMapWorldMapButton.SUI_PushedTexture then
+				MiniMapWorldMapButton.SUI_PushedTexture = MiniMapWorldMapButton:CreateTexture(nil, 'ARTWORK')
+				MiniMapWorldMapButton.SUI_PushedTexture:SetAtlas('GarrLanding-SideToast-Glow')
+				MiniMapWorldMapButton.SUI_PushedTexture:SetAllPoints()
+				MiniMapWorldMapButton.SUI_PushedTexture:SetBlendMode('ADD')
+				MiniMapWorldMapButton.SUI_PushedTexture:Hide()
+			end
+
+			-- Setup button textures
+			MiniMapWorldMapButton:SetNormalTexture(MiniMapWorldMapButton.SUI_NormalTexture)
+			MiniMapWorldMapButton:SetHighlightTexture(MiniMapWorldMapButton.SUI_HighlightTexture)
+			MiniMapWorldMapButton:SetPushedTexture(MiniMapWorldMapButton.SUI_PushedTexture)
 		end
 
 		-- Position MiniMapMailFrame
