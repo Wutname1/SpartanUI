@@ -1,4 +1,4 @@
-local MINOR = 12
+local MINOR = 13
 local lib = LibStub:NewLibrary('LibEditMode', MINOR)
 if not lib then
 	-- this or a newer version is already loaded
@@ -22,11 +22,13 @@ lib.anonCallbacksRename = lib.anonCallbacksRename or {}
 lib.anonCallbacksDelete = lib.anonCallbacksDelete or {}
 
 lib.systemSettings = lib.systemSettings or {}
+lib.subSystemSettings = lib.subSystemSettings or {}
 lib.systemButtons = lib.systemButtons or {}
+lib.subSystemButtons = lib.subSystemButtons or {}
 
 lib.layoutCache = lib.layoutCache or {}
 
-local layoutNames = setmetatable({'Modern', 'Classic'}, {
+local layoutNames = setmetatable({ 'Modern', 'Classic' }, {
 	__index = function(t, key)
 		if key > 2 then
 			-- the first 2 indices are reserved for 'Modern' and 'Classic' layouts, and anything
@@ -40,7 +42,7 @@ local layoutNames = setmetatable({'Modern', 'Classic'}, {
 			-- also work for 'Modern' and 'Classic'
 			rawget(t, key)
 		end
-	end
+	end,
 })
 
 local function resetDialogs()
@@ -235,32 +237,66 @@ local function onSpecChanged(_, unit)
 	onEditModeChanged(nil, C_EditMode.GetLayouts())
 end
 
+local layoutCopySource
 local function onEditModeLayoutChanged()
-	local layouts = C_EditMode.GetLayouts().layouts
+	local layoutInfo = C_EditMode.GetLayouts()
+	local layouts = layoutInfo.layouts
 
-	for index = #layouts, 1, -1 do
-		if lib.layoutCache[index] then
-			local layout = layouts[index]
-			if lib.layoutCache[index].layoutName ~= layout.layoutName then
+	if #layouts > #lib.layoutCache then
+		-- a layout was created
+
+		for index, layout in next, layouts do
+			if not lib.layoutCache[index] then
+				for _, callback in next, lib.anonCallbacksCreate do
+					securecallfunction(callback, layout.layoutName, index, layoutCopySource and layoutCopySource.layoutName)
+				end
+			end
+		end
+
+		-- the game automatically switches to the newly created layout, which triggers
+		-- onEditModeChanged so we don't have to deal with that
+	elseif #layouts < #lib.layoutCache then
+		-- a layout was deleted
+
+		local newNames = {}
+		for _, layout in next, layouts do
+			newNames[layout.layoutName] = true
+		end
+
+		for _, layout in next, lib.layoutCache do
+			if not newNames[layout.layoutName] then
+				for _, callback in next, lib.anonCallbacksDelete do
+					securecallfunction(callback, layout.layoutName)
+				end
+
+				break
+			end
+		end
+
+		-- if the deleted layout was the current one the game automatically switches to Modern,
+		-- which triggers onEditModeChanged so we don't have to deal with that
+	else
+		-- a layout was renamed
+
+		for index, layout in next, layouts do
+			if layout.layoutName ~= lib.layoutCache[index].layoutName then
 				for _, callback in next, lib.anonCallbacksRename do
 					securecallfunction(callback, lib.layoutCache[index].layoutName, layout.layoutName, index)
 				end
-			end
 
-			table.remove(lib.layoutCache, index)
-		else
-			for _, callback in next, lib.anonCallbacksCreate do
-				securecallfunction(callback, layouts[index].layoutName, index)
+				if index == (lib.activeLayout - 2) then
+					-- the currently active layout was renamed, we trigger a layout update
+					lib.activeLayout = nil
+					onEditModeChanged(nil, layoutInfo)
+					return -- no need to proceed, the remaining tasks are already handled
+				end
+
+				break
 			end
 		end
 	end
 
-	for _, layout in next, lib.layoutCache do
-		for _, callback in next, lib.anonCallbacksDelete do
-			securecallfunction(callback, layout.layoutName)
-		end
-	end
-
+	layoutCopySource = nil
 	lib.layoutCache = layouts
 end
 
@@ -284,12 +320,22 @@ local function hookManager()
 		resetDialogs()
 		resetSelection()
 
-		internal.dialog:Reset()
+		if internal.dialog then
+			internal.dialog:Reset()
+		end
 
 		local systemID = systemFrame.system
-		if lib.systemSettings[systemID] or lib.systemButtons[systemID] then
-			internal.extension:Update(systemID)
+		local subSystemID = systemFrame.systemIndex
+		local isKnownSystem = lib.systemSettings[systemID] or lib.systemButtons[systemID]
+		local isKnownSubSystem = subSystemID
+			and ((lib.subSystemSettings[systemID] and lib.subSystemSettings[systemID][subSystemID]) or (lib.subSystemButtons[systemID] and lib.subSystemButtons[systemID][subSystemID]))
+		if isKnownSystem or isKnownSubSystem then
+			internal.extension:Update(systemID, isKnownSubSystem and subSystemID or nil)
 		end
+	end)
+
+	hooksecurefunc(EditModeManagerFrame, 'ShowNewLayoutDialog', function(_, sourceLayout)
+		layoutCopySource = sourceLayout
 	end)
 
 	-- fetch layout info in case EDIT_MODE_LAYOUTS_UPDATED already fired
@@ -327,7 +373,7 @@ function lib:AddFrame(frame, callback, default, name)
 	selection.system = {
 		GetSystemName = function()
 			return name or frame.editModeName or frame:GetName()
-		end
+		end,
 	}
 
 	lib.frameSelections[frame] = selection
@@ -441,20 +487,34 @@ function lib:RefreshFrameSettings(frame)
 	end
 end
 
---[[ LibEditMode:AddSystemSettings(_systemID, settings_) ![](https://img.shields.io/badge/function-blue)
+--[[ LibEditMode:AddSystemSettings(_systemID, settings[, subSystemID]_) ![](https://img.shields.io/badge/function-blue)
 Register extra settings for a Blizzard system, it will be displayed in an dialog attached to the system's dialog in the Edit Mode.
 
-* `systemID`: the ID of a system registered with the Edit Mode. See `Enum.EditModeSystem`.
+* `systemID`: the ID of a system registered with the Edit Mode. See [`Enum.EditModeSystem`](https://warcraft.wiki.gg/wiki/EDIT_MODE_LAYOUTS_UPDATED).
 * `settings`: table containing [SettingObject](Types#settingobject) entries _(table, number indexed)_
+* `subSystemID`: optional ID of a subsystem of a system registered with the Edit Mode. See [`Enum.EditMode...SystemIndices`](https://github.com/Gethe/wow-ui-source/blob/live/Interface/AddOns/Blizzard_APIDocumentationGenerated/EditModeManagerConstantsDocumentation.lua).
 --]]
-function lib:AddSystemSettings(systemID, settings)
-	if not lib.systemSettings[systemID] then
-		lib.systemSettings[systemID] = {}
-	end
+function lib:AddSystemSettings(systemID, settings, subSystemID)
+	if subSystemID then
+		if not lib.subSystemSettings[systemID] then
+			lib.subSystemSettings[systemID] = {}
+		end
 
-	-- while not ideal allow multiple addons to add their settings
-	for _, setting in next, settings do
-		table.insert(lib.systemSettings[systemID], setting)
+		if not lib.subSystemSettings[systemID][subSystemID] then
+			lib.subSystemSettings[systemID][subSystemID] = {}
+		end
+
+		for _, setting in next, settings do
+			table.insert(lib.subSystemSettings[systemID][subSystemID], setting)
+		end
+	else
+		if not lib.systemSettings[systemID] then
+			lib.systemSettings[systemID] = {}
+		end
+
+		for _, setting in next, settings do
+			table.insert(lib.systemSettings[systemID], setting)
+		end
 	end
 
 	if not internal.extension then
@@ -466,57 +526,74 @@ function lib:AddSystemSettings(systemID, settings)
 	end
 end
 
---[[ LibEditMode:EnableSystemSetting(_systemID, settingName_) ![](https://img.shields.io/badge/function-blue)
+--[[ LibEditMode:EnableSystemSetting(_systemID, settingName[, subSystemID]_) ![](https://img.shields.io/badge/function-blue)
 Enables a setting on a frame.
 
-* `systemID`: the ID of a system registered with the Edit Mode. See `Enum.EditModeSystem`.
+* `systemID`: the ID of a system registered with the Edit Mode. See [`Enum.EditModeSystem`](https://warcraft.wiki.gg/wiki/EDIT_MODE_LAYOUTS_UPDATED).
 * `settingName`: a setting already registered with [AddSystemSettings](#libeditmodeaddsystemsettingssystemid-settings-)
+* `subSystemID`: optional ID of a subsystem of a system registered with the Edit Mode. See [`Enum.EditMode...SystemIndices`](https://github.com/Gethe/wow-ui-source/blob/live/Interface/AddOns/Blizzard_APIDocumentationGenerated/EditModeManagerConstantsDocumentation.lua).
 --]]
-function lib:EnableSystemSetting(systemID, settingName)
-	local settings = internal:GetSystemSettings(systemID)
+function lib:EnableSystemSetting(systemID, settingName, subSystemID)
+	local settings = internal:GetSystemSettings(systemID, subSystemID)
 	if settings then
 		for _, setting in next, settings do
 			if setting.name == settingName then
 				setting.disabled = false
-				internal.extension:Update(internal.extension.systemID)
+				internal.extension:Update(internal.extension.systemID, internal.extension.subSystemID)
 				break
 			end
 		end
 	end
 end
 
---[[ LibEditMode:DisableSystemSetting(_systemID, settingName_) ![](https://img.shields.io/badge/function-blue)
+--[[ LibEditMode:DisableSystemSetting(_systemID, settingName[, subSystemID]_) ![](https://img.shields.io/badge/function-blue)
 Disables a setting on a frame.
 
-* `systemID`: the ID of a system registered with the Edit Mode. See `Enum.EditModeSystem`.
+* `systemID`: the ID of a system registered with the Edit Mode. See [`Enum.EditModeSystem`](https://warcraft.wiki.gg/wiki/EDIT_MODE_LAYOUTS_UPDATED).
 * `settingName`: a setting already registered with [AddSystemSettings](#libeditmodeaddsystemsettingssystemid-settings-)
+* `subSystemID`: optional ID of a subsystem of a system registered with the Edit Mode. See [`Enum.EditMode...SystemIndices`](https://github.com/Gethe/wow-ui-source/blob/live/Interface/AddOns/Blizzard_APIDocumentationGenerated/EditModeManagerConstantsDocumentation.lua).
 --]]
-function lib:DisableSystemSetting(systemID, settingName)
-	local settings = internal:GetSystemSettings(systemID)
+function lib:DisableSystemSetting(systemID, settingName, subSystemID)
+	local settings = internal:GetSystemSettings(systemID, subSystemID)
 	if settings then
 		for _, setting in next, settings do
 			if setting.name == settingName then
 				setting.disabled = true
-				internal.extension:Update(internal.extension.systemID)
+				internal.extension:Update(internal.extension.systemID, internal.extension.subSystemID)
 				break
 			end
 		end
 	end
 end
 
---[[ LibEditMode:AddSystemSettingsButtons(_systemID, buttons_) ![](https://img.shields.io/badge/function-blue)
+--[[ LibEditMode:AddSystemSettingsButtons(_systemID, buttons[, subSystemID]_) ![](https://img.shields.io/badge/function-blue)
 Register extra buttons for a Blizzard system, it will be displayed in a dialog attached to the system's dialog in the Edit Mode.
 
-* `systemID`: the ID of a system registered with the Edit Mode. See `Enum.EditModeSystem`.
+* `systemID`: the ID of a system registered with the Edit Mode. See [`Enum.EditModeSystem`](https://warcraft.wiki.gg/wiki/EDIT_MODE_LAYOUTS_UPDATED).
 * `buttons`: table containing [ButtonObject](Types#buttonobject) entries _(table, number indexed)_
+* `subSystemID`: optional ID of a subsystem of a system registered with the Edit Mode. See [`Enum.EditMode...SystemIndices`](https://github.com/Gethe/wow-ui-source/blob/live/Interface/AddOns/Blizzard_APIDocumentationGenerated/EditModeManagerConstantsDocumentation.lua).
 --]]
-function lib:AddSystemSettingsButtons(systemID, buttons)
-	if not lib.systemButtons[systemID] then
-		lib.systemButtons[systemID] = {}
-	end
+function lib:AddSystemSettingsButtons(systemID, buttons, subSystemID)
+	if subSystemID then
+		if not lib.subSystemButtons[systemID] then
+			lib.subSystemButtons[systemID] = {}
+		end
 
-	for _, button in next, buttons do
-		table.insert(lib.systemButtons[systemID], button)
+		if not lib.subSystemButtons[systemID][subSystemID] then
+			lib.subSystemButtons[systemID][subSystemID] = {}
+		end
+
+		for _, setting in next, buttons do
+			table.insert(lib.subSystemButtons[systemID][subSystemID], setting)
+		end
+	else
+		if not lib.systemButtons[systemID] then
+			lib.systemButtons[systemID] = {}
+		end
+
+		for _, button in next, buttons do
+			table.insert(lib.systemButtons[systemID], button)
+		end
 	end
 
 	if not internal.extension then
@@ -546,6 +623,7 @@ Possible events:
     * signature:
         * `layoutName`: name of the new layout
         * `layoutIndex`: index of the layout
+        * `sourceLayoutName`: name of the layout it was copied from, if it was copied
 * `rename`: triggered when a Edit Mode layout has been renamed
     * signature:
         * `oldLayoutName`: name of the layout that got renamed
@@ -553,7 +631,15 @@ Possible events:
         * `layoutIndex`: index of the layout
 * `delete`: triggered when a Edit Mode layout has been deleted
     * signature:
-        *`layoutName`: name of the layout that got deleted
+        * `layoutName`: name of the layout that got deleted
+
+Example:
+
+```lua
+LibEditMode:RegisterCallback('rename', function(oldLayoutName, newLayoutName, layoutIndex)
+    -- do something
+end)
+```
 --]]
 function lib:RegisterCallback(event, callback)
 	assert(event and type(event) == 'string', 'event must be a string')
@@ -647,16 +733,20 @@ function internal:MoveParent(selection, x, y)
 	updatePosition(selection, x, y)
 end
 
-function internal:GetSystemSettings(systemID)
-	if lib.systemSettings[systemID] then
+function internal:GetSystemSettings(systemID, subSystemID)
+	if subSystemID and lib.subSystemSettings[systemID] and lib.subSystemSettings[systemID][subSystemID] then
+		return lib.subSystemSettings[systemID][subSystemID], #lib.subSystemSettings[systemID][subSystemID]
+	elseif lib.systemSettings[systemID] then
 		return lib.systemSettings[systemID], #lib.systemSettings[systemID]
 	else
 		return nil, 0
 	end
 end
 
-function internal:GetSystemSettingsButtons(systemID)
-	if lib.systemButtons[systemID] then
+function internal:GetSystemSettingsButtons(systemID, subSystemID)
+	if subSystemID and lib.subSystemButtons[systemID] and lib.subSystemButtons[systemID][subSystemID] then
+		return lib.subSystemButtons[systemID][subSystemID], #lib.subSystemButtons[systemID][subSystemID]
+	elseif lib.systemButtons[systemID] then
 		return lib.systemButtons[systemID], #lib.systemButtons[systemID]
 	else
 		return nil, 0

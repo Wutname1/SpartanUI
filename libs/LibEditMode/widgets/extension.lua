@@ -1,4 +1,4 @@
-local MINOR = 12
+local MINOR = 13
 local lib, minor = LibStub('LibEditMode')
 if minor > MINOR then
 	return
@@ -7,8 +7,9 @@ end
 local internal = lib.internal
 
 local extensionMixin = {}
-function extensionMixin:Update(systemID)
+function extensionMixin:Update(systemID, subSystemID)
 	self.systemID = systemID
+	self.subSystemID = subSystemID
 
 	internal.ReleaseAllPools()
 
@@ -29,7 +30,7 @@ function extensionMixin:Update(systemID)
 end
 
 function extensionMixin:UpdateSettings()
-	local settings, num = internal:GetSystemSettings(self.systemID)
+	local settings, num = internal:GetSystemSettings(self.systemID, self.subSystemID)
 	local isEmpty = num == 0
 	if not isEmpty then
 		for index, data in next, settings do
@@ -52,7 +53,7 @@ function extensionMixin:UpdateSettings()
 end
 
 function extensionMixin:UpdateButtons(numSettings)
-	local buttons, num = internal:GetSystemSettingsButtons(self.systemID)
+	local buttons, num = internal:GetSystemSettingsButtons(self.systemID, self.subSystemID)
 	local isEmpty = num == 0
 	if not isEmpty then
 		if numSettings > 0 then
@@ -75,7 +76,7 @@ function extensionMixin:UpdateButtons(numSettings)
 end
 
 function extensionMixin:ResetSettings()
-	local settings, num = internal:GetSystemSettings(self.systemID)
+	local settings, num = internal:GetSystemSettings(self.systemID, self.subSystemID)
 	if num > 0 then
 		for _, data in next, settings do
 			if data.set then
@@ -83,7 +84,7 @@ function extensionMixin:ResetSettings()
 			end
 		end
 
-		self:Update(self.systemID)
+		self:Update(self.systemID, self.subSystemID)
 	end
 end
 

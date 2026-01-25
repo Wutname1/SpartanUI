@@ -1,4 +1,4 @@
-local MINOR = 12
+local MINOR = 13
 local lib, minor = LibStub('LibEditMode')
 if minor > MINOR then
 	return
@@ -48,7 +48,7 @@ function colorPickerMixin:Setup(data)
 		g = g,
 		b = b,
 		opacity = a,
-		hasOpacity = data.hasOpacity
+		hasOpacity = data.hasOpacity,
 	}
 
 	self.Swatch:SetColorRGB(r, g, b)
