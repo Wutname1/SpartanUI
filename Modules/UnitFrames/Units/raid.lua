@@ -12,6 +12,7 @@ local elementList = {
 	'Debuffs',
 	'ClassIcon',
 	'RaidTargetIndicator',
+	'TargetIndicator',
 	'ThreatIndicator',
 	'Range',
 	--Friendly Only
@@ -355,6 +356,24 @@ local Settings = {
 				anchor = 'TOPRIGHT',
 				x = -1,
 				y = 1,
+			},
+		},
+		TargetIndicator = {
+			enabled = true,
+			ShowTarget = true,
+			mode = 'border',
+			texture = {
+				textureKey = 'DoubleArrow',
+				placement = 'sides',
+				scale = 1.0,
+				color = { 1, 1, 1, 1 },
+				alpha = 1.0,
+			},
+			border = {
+				size = 2,
+				color = { 0, 1, 0, 1 },
+				sides = { top = true, bottom = true, left = true, right = true },
+				displayLevel = 5,
 			},
 		},
 	},
