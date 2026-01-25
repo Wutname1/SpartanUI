@@ -11,7 +11,12 @@ local unpack = unpack
 oUF.Tags.Events['afkdnd'] = 'PLAYER_FLAGS_CHANGED PLAYER_TARGET_CHANGED UNIT_TARGET'
 oUF.Tags.Methods['afkdnd'] = function(unit)
 	if unit then
-		return UnitIsAFK(unit) and 'AFK' or UnitIsDND(unit) and 'DND' or ''
+		if UnitIsAFK(unit) then
+			return 'AFK'
+		elseif UnitIsDND and UnitIsDND(unit) then
+			return 'DND'
+		end
+		return ''
 	end
 end
 

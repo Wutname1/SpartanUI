@@ -70,8 +70,8 @@ local function calculateResult(currentVal, maxVal, isDead, ...)
 end
 
 local function SUIHealth(unit, _, ...)
-	local currentVal = SUI.getCurrentUnitHP(unit) or 0
-	local maxVal = SUI.getMaxUnitHP(unit) or currentVal
+	local currentVal = UnitHealth(unit) or 0
+	local maxVal = UnitHealthMax(unit) or currentVal
 	local isDead = UnitIsDeadOrGhost(unit)
 
 	return calculateResult(currentVal, maxVal, isDead, ...)
@@ -134,6 +134,47 @@ do
 		SUIUF.Tags.Events[k] = 'UNIT_MAXPOWER UNIT_DISPLAYPOWER UNIT_POWER_FREQUENT'
 		SUIUF.Tags.Methods[k] = function(unit)
 			return SUIPower(unit, nil, unpack(v))
+		end
+	end
+end
+
+-- Class Color Tag
+do
+	local function hex(r, g, b)
+		if r then
+			if type(r) == 'table' then
+				if r.r then
+					r, g, b = r.r, r.g, r.b
+				else
+					r, g, b = unpack(r)
+				end
+			end
+			return ('|cff%02x%02x%02x'):format(r * 255, g * 255, b * 255)
+		end
+	end
+
+	SUIUF.Tags.Events['SUI_ColorClass'] = 'UNIT_HEALTH UNIT_MAXHEALTH'
+	SUIUF.Tags.Methods['SUI_ColorClass'] = function(u)
+		local _, class = UnitClass(u)
+
+		if u == 'pet' then
+			return hex(SUIUF.colors.class[class])
+		elseif UnitIsPlayer(u) then
+			return hex(SUIUF.colors.class[class])
+		else
+			return hex(1, 1, 1)
+		end
+	end
+	-- AFK / DND status text
+	SUIUF.Tags.Events['afkdnd'] = 'PLAYER_FLAGS_CHANGED PLAYER_TARGET_CHANGED UNIT_TARGET'
+	SUIUF.Tags.Methods['afkdnd'] = function(unit)
+		if unit then
+			if UnitIsAFK(unit) then
+				return 'AFK'
+			elseif UnitIsDND and UnitIsDND(unit) then
+				return 'DND'
+			end
+			return ''
 		end
 	end
 end

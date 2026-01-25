@@ -77,7 +77,6 @@ libs\oUF_Classic\oUF_Wrath.xml [AllowLoadGameType wrath, cata, mists]
 # oUF Plugins - SpartanUI maintained
 Core\oUF_Plugins\HotsListing.lua
 Core\oUF_Plugins\Tags.lua [AllowLoadGameType mainline]
-Core\oUF_Plugins\Tags_Classic.lua [AllowLoadGameType vanilla, tbc, wrath, cata, mists]
 Core\oUF_Plugins\TargetIndicator.lua
 Core\oUF_Plugins\LevelSkull.lua
 Core\oUF_Plugins\RareElite.lua
@@ -119,6 +118,7 @@ Modules\LoadAll.xml
 # CORE FRAMEWORK POST-MODULES
 # ============================================
 Core\Framework.xml
+Core\oUF_Plugins\Tags_Classic.lua [AllowLoadGameType vanilla, tbc, wrath, cata, mists]
 
 # ============================================
 # THEMES
