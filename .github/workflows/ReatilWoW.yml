@@ -17,6 +17,17 @@ jobs:
     steps:
       - name: Clone project
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Fetch full git history for changelog generation
+
+      - name: Generate Changelog with AI Summary
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          AI_PROVIDER: gemini  # or "openai"
+        run: |
+          chmod +x .github/scripts/generate-changelog.sh
+          .github/scripts/generate-changelog.sh CHANGELOG.md 5
 
       # Run the GitHub Action for the packager project
       - name: Package and release
