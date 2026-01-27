@@ -467,9 +467,19 @@ end
 
 ---Apply ExtraAbilities position via EditMode (ExtraActionBar + ZoneAbility)
 function BlizzardEditMode:ApplyExtraAbilitiesPosition()
-	-- ExtraAbilities is system ID 11, but we need to position ExtraActionBarFrame
-	-- The ZoneAbility is handled automatically as part of the same system
-	self:ApplyFramePosition('ExtraActionBar', 'ExtraActionBarFrame')
+	-- ExtraAbilities is system ID 11
+	-- EditMode positions the ExtraAbilityContainer, which contains both ExtraActionBarFrame and ZoneAbilityFrame
+	-- Try ExtraAbilityContainer first, fallback to ExtraActionBarFrame
+	local frame = _G['ExtraAbilityContainer'] or _G['ExtraActionBarFrame']
+	if frame then
+		self:ApplyFramePosition('ExtraActionBar', function()
+			return _G['ExtraAbilityContainer'] or _G['ExtraActionBarFrame']
+		end)
+	else
+		if MoveIt.logger then
+			MoveIt.logger.warning('ExtraAbilities: No suitable frame found (ExtraAbilityContainer or ExtraActionBarFrame)')
+		end
+	end
 end
 
 ---Apply EncounterBar position via EditMode
