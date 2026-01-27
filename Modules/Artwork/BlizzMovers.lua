@@ -182,15 +182,20 @@ end
 local function TalkingHead()
 	local moverName = 'TalkingHead'
 
-	-- Check if frame has native EditMode support (Retail)
+	-- Check if frame has native EditMode support and LibEditModeOverride is available (Retail)
 	if MoveIt.BlizzardEditMode and not MoveIt.BlizzardEditMode:NeedsCustomMover(moverName) then
-		-- Use Blizzard's native EditMode for this frame
+		-- RETAIL PATH: Use LibEditModeOverride
 		if SUI.DB.Artwork.BlizzMoverStates[moverName].enabled then
-			RestoreOriginalPosition(moverName) -- Remove our custom mover if it exists
+			-- Apply position via EditMode
+			MoveIt.BlizzardEditMode:ApplyTalkingHeadPosition()
+		else
+			-- Disabled - restore to Blizzard default
+			MoveIt.BlizzardEditMode:RestoreBlizzardDefault(moverName)
 		end
 		return
 	end
 
+	-- CLASSIC/TBC/WRATH/CATA/MISTS PATH: Use custom holder-based movers
 	-- Check if mover is enabled
 	if not SUI.DB.Artwork.BlizzMoverStates[moverName].enabled then
 		RestoreOriginalPosition(moverName)
