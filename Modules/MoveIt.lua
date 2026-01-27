@@ -1061,6 +1061,13 @@ function MoveIt:OnEnable()
 		return
 	end
 
+	-- Register logger if LibAT is available
+	local LibAT = _G.LibAT
+	if LibAT and LibAT.Logger then
+		MoveIt.logger = LibAT.Logger.RegisterAddon('SpartanUI-MoveIt')
+		MoveIt.logger.info('MoveIt system initialized')
+	end
+
 	local ChatCommand = function(arg)
 		if InCombatLockdown() then
 			print(ERR_NOT_IN_COMBAT)
@@ -1230,3 +1237,19 @@ end
 
 MoveIt.MoverWatcher = MoverWatcher
 MoveIt.MoveEnabled = MoveEnabled
+MoveIt.MoverList = MoverList
+MoveIt.coordFrame = coordFrame
+
+---Helper function to save a mover's position
+---@param name string The mover name
+function MoveIt:SaveMoverPosition(name)
+	local mover = MoverList[name]
+	if not mover or not self.PositionCalculator then
+		return
+	end
+
+	local position = self.PositionCalculator:GetRelativePosition(mover)
+	if position then
+		self.PositionCalculator:SavePosition(name, position)
+	end
+end
