@@ -1068,6 +1068,11 @@ function MoveIt:OnEnable()
 		MoveIt.logger.info('MoveIt system initialized')
 	end
 
+	-- Initialize Blizzard EditMode integration
+	if MoveIt.BlizzardEditMode then
+		MoveIt.BlizzardEditMode:Initialize()
+	end
+
 	local ChatCommand = function(arg)
 		if InCombatLockdown() then
 			print(ERR_NOT_IN_COMBAT)
@@ -1101,6 +1106,13 @@ function MoveIt:OnEnable()
 		reset = 'Reset all moved objects',
 		tips = 'Disable tips from being displayed in chat when movement system is activated',
 	}, true)
+
+	-- Register custom EditMode slash command
+	SUI:AddChatCommand('edit', function()
+		if MoveIt.CustomEditMode then
+			MoveIt.CustomEditMode:Toggle()
+		end
+	end, 'Toggle custom EditMode', nil, true)
 
 	local function OnKeyDown(self, key)
 		if MoveEnabled and key == 'ESCAPE' then

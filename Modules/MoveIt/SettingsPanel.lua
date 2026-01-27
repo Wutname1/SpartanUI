@@ -6,7 +6,7 @@ local PositionCalculator = MoveIt.PositionCalculator
 
 -- Settings panel frame
 local settingsPanel = nil
-local currentOverlay = nil
+local currentMover = nil
 
 ---Create the settings panel frame
 local function CreateSettingsPanel()
@@ -49,12 +49,9 @@ local function CreateSettingsPanel()
 	resetBtn:SetPoint('TOP', frameName, 'BOTTOM', 0, -15)
 	resetBtn:SetText('Reset Position')
 	resetBtn:SetScript('OnClick', function()
-		if currentOverlay then
-			MoveIt:Reset(currentOverlay.moverName, true)
-			-- Update overlay position
-			currentOverlay:ClearAllPoints()
-			currentOverlay:SetAllPoints(currentOverlay.parent)
-			SUI:Print('Reset ' .. (currentOverlay.mover.DisplayName or currentOverlay.moverName) .. ' to default position')
+		if currentMover then
+			MoveIt:Reset(currentMover.name, true)
+			SUI:Print('Reset ' .. (currentMover.DisplayName or currentMover.name) .. ' to default position')
 		end
 	end)
 	panel.resetBtn = resetBtn
@@ -74,22 +71,20 @@ local function CreateSettingsPanel()
 
 	scaleSlider:SetScript('OnValueChanged', function(self, value)
 		_G[self:GetName() .. 'Text']:SetText(string.format('Scale: %.2f', value))
-		if currentOverlay then
-			local mover = currentOverlay.mover
-			local parent = currentOverlay.parent
-			local name = currentOverlay.moverName
+		if currentMover then
+			local parent = currentMover.parent
+			local name = currentMover.name
 
 			-- Apply scale
-			parent:SetScale(value)
-			mover:SetScale(value)
+			if parent then
+				parent:SetScale(value)
+			end
+			currentMover:SetScale(value)
 
 			-- Save scale
 			if MoveIt.DB and MoveIt.DB.movers and MoveIt.DB.movers[name] then
 				MoveIt.DB.movers[name].AdjustedScale = value
 			end
-
-			-- Update overlay
-			CustomEditMode:UpdateOverlays()
 		end
 	end)
 	panel.scaleSlider = scaleSlider
@@ -100,7 +95,7 @@ local function CreateSettingsPanel()
 	settingsBtn:SetPoint('TOP', scaleSlider, 'BOTTOM', 0, -30)
 	settingsBtn:SetText('SpartanUI Settings')
 	settingsBtn:SetScript('OnClick', function()
-		if currentOverlay then
+		if currentMover then
 			-- Hide settings panel
 			panel:Hide()
 			-- Exit EditMode
@@ -125,36 +120,36 @@ local function CreateSettingsPanel()
 	return panel
 end
 
----Show the settings panel for an overlay
----@param overlay Frame The overlay frame
-function CustomEditMode:ShowSettingsPanel(overlay)
-	if not overlay then
+---Show the settings panel for a mover
+---@param mover Frame The mover frame
+function CustomEditMode:ShowSettingsPanel(mover)
+	if not mover then
 		return
 	end
 
 	local panel = CreateSettingsPanel()
-	currentOverlay = overlay
+	currentMover = mover
 
 	-- Update frame name
-	panel.frameName:SetText(overlay.mover.DisplayName or overlay.moverName)
+	panel.frameName:SetText(mover.DisplayName or mover.name or 'Unknown')
 
 	-- Update scale slider
-	local currentScale = overlay.parent:GetScale() or 1.0
+	local currentScale = (mover.parent and mover.parent:GetScale()) or mover:GetScale() or 1.0
 	panel.scaleSlider:SetValue(currentScale)
 
-	-- Position panel near the overlay
+	-- Position panel near the mover
 	panel:ClearAllPoints()
 
-	-- Try to position it to the right of the overlay
+	-- Try to position it to the right of the mover
 	local screenWidth = GetScreenWidth()
-	local overlayRight = overlay:GetRight() or 0
+	local moverRight = mover:GetRight() or 0
 
-	if overlayRight + 260 < screenWidth then
+	if moverRight + 260 < screenWidth then
 		-- Room on the right
-		panel:SetPoint('LEFT', overlay, 'RIGHT', 10, 0)
+		panel:SetPoint('LEFT', mover, 'RIGHT', 10, 0)
 	else
 		-- Position on the left
-		panel:SetPoint('RIGHT', overlay, 'LEFT', -10, 0)
+		panel:SetPoint('RIGHT', mover, 'LEFT', -10, 0)
 	end
 
 	panel:Show()
@@ -164,7 +159,7 @@ end
 function CustomEditMode:HideSettingsPanel()
 	if settingsPanel then
 		settingsPanel:Hide()
-		currentOverlay = nil
+		currentMover = nil
 	end
 end
 

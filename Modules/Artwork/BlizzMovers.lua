@@ -182,6 +182,15 @@ end
 local function TalkingHead()
 	local moverName = 'TalkingHead'
 
+	-- Check if frame has native EditMode support (Retail)
+	if MoveIt.BlizzardEditMode and not MoveIt.BlizzardEditMode:NeedsCustomMover(moverName) then
+		-- Use Blizzard's native EditMode for this frame
+		if SUI.DB.Artwork.BlizzMoverStates[moverName].enabled then
+			RestoreOriginalPosition(moverName) -- Remove our custom mover if it exists
+		end
+		return
+	end
+
 	-- Check if mover is enabled
 	if not SUI.DB.Artwork.BlizzMoverStates[moverName].enabled then
 		RestoreOriginalPosition(moverName)
@@ -244,6 +253,19 @@ function module:EnableBlizzMover_TalkingHead()
 end
 
 local function AbilityBars()
+	-- Check if frames have native EditMode support (Retail)
+	-- ExtraAbilities system (ID 11) handles both ExtraActionButton and ZoneAbility
+	if MoveIt.BlizzardEditMode and EditModeManagerFrame then
+		-- Use Blizzard's native EditMode for these frames
+		if SUI.DB.Artwork.BlizzMoverStates['ExtraActionBar'].enabled then
+			RestoreOriginalPosition('ExtraActionBar')
+		end
+		if SUI.DB.Artwork.BlizzMoverStates['ZoneAbility'].enabled then
+			RestoreOriginalPosition('ZoneAbility')
+		end
+		return
+	end
+
 	local NeedsReparent = false
 	local ExtraAbilityContainer = _G['ExtraAbilityContainer']
 	local ExtraActionBarFrame = _G['ExtraActionBarFrame']
@@ -501,6 +523,15 @@ end
 
 local function VehicleLeaveButton()
 	local moverName = 'VehicleLeaveButton'
+
+	-- Check if frame has native EditMode support (Retail)
+	if MoveIt.BlizzardEditMode and EditModeManagerFrame then
+		-- Use Blizzard's native EditMode for this frame
+		if SUI.DB.Artwork.BlizzMoverStates[moverName].enabled then
+			RestoreOriginalPosition(moverName)
+		end
+		return
+	end
 
 	local function MoverCreate()
 		local frame = MainMenuBarVehicleLeaveButton

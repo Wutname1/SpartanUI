@@ -9,54 +9,131 @@ MoveIt.CustomEditMode = CustomEditMode
 
 -- State tracking
 local isActive = false
-local overlays = {} -- Map of moverName -> overlay frame
-local selectedOverlay = nil
+local selectedOverlay = nil -- Currently selected mover
 local isDragging = false
 
--- Colors
+-- Colors - Colorblind-friendly palette (deuteranopia/protanopia safe)
 local COLORS = {
-	overlay = { 0.2, 0.6, 1.0, 0.3 }, -- Blue with transparency
+	overlay = { 0.2, 0.6, 1.0, 0.5 }, -- Blue with constant alpha
 	overlayHover = { 0.2, 0.6, 1.0, 0.5 }, -- Brighter blue on hover
-	overlaySelected = { 0.3, 1.0, 0.3, 0.5 }, -- Green when selected
-	border = { 0.2, 0.6, 1.0, 0.8 }, -- Blue border
+	overlaySelected = { 1.0, 0.447, 0.0, 0.5 }, -- Orange #ff7200 when selected (colorblind-safe)
+	overlayBright = { 1.0, 0.647, 0.361, 0.5 }, -- Bright orange #ffa55c for fade-in animation
+	border = { 0.2, 0.6, 1.0, 1.0 }, -- Blue border with constant alpha
 	borderHover = { 0.2, 0.6, 1.0, 1.0 }, -- Brighter on hover
-	borderSelected = { 0.3, 1.0, 0.3, 1.0 }, -- Green border when selected
+	borderSelected = { 1.0, 0.447, 0.0, 1.0 }, -- Orange #ff7200 border when selected (colorblind-safe)
+	borderBright = { 1.0, 0.647, 0.361, 1.0 }, -- Bright orange #ffa55c border for fade-in
 	text = { 1.0, 1.0, 1.0, 1.0 }, -- White text
 	textShadow = { 0, 0, 0, 0.8 }, -- Text shadow
 }
 
----Animate an overlay's fade in
----@param overlay Frame The overlay to animate
-local function AnimateFadeIn(overlay)
-	if not overlay.fadeAnimation then
-		overlay.fadeAnimation = overlay:CreateAnimationGroup()
-		local fade = overlay.fadeAnimation:CreateAnimation('Alpha')
-		fade:SetFromAlpha(0)
-		fade:SetToAlpha(1)
-		fade:SetDuration(0.2)
-		fade:SetSmoothing('IN')
-	end
-	overlay:SetAlpha(0)
-	overlay.fadeAnimation:Play()
+---Animate a mover's color transition from bright orange to darker orange
+---@param mover Frame The mover to animate
+local function AnimateFadeIn(mover)
+	-- Start with bright orange color (#ffa55c)
+	mover:SetBackdropColor(unpack(COLORS.overlayBright))
+	mover:SetBackdropBorderColor(unpack(COLORS.borderBright))
+
+	-- Smoothly interpolate RGB only (keep alpha constant)
+	local elapsed = 0
+	local duration = 0.5
+	local startR, startG, startB = COLORS.overlayBright[1], COLORS.overlayBright[2], COLORS.overlayBright[3]
+	local endR, endG, endB = COLORS.overlay[1], COLORS.overlay[2], COLORS.overlay[3]
+	local alpha = COLORS.overlay[4] -- Keep alpha constant
+	local startBorderR, startBorderG, startBorderB = COLORS.borderBright[1], COLORS.borderBright[2], COLORS.borderBright[3]
+	local endBorderR, endBorderG, endBorderB = COLORS.border[1], COLORS.border[2], COLORS.border[3]
+	local borderAlpha = COLORS.border[4] -- Keep alpha constant
+
+	local frame = mover.colorAnimFrame or CreateFrame('Frame')
+	mover.colorAnimFrame = frame
+	frame:SetScript('OnUpdate', function(self, delta)
+		elapsed = elapsed + delta
+		if elapsed >= duration then
+			-- Animation complete
+			mover:SetBackdropColor(endR, endG, endB, alpha)
+			mover:SetBackdropBorderColor(endBorderR, endBorderG, endBorderB, borderAlpha)
+			self:SetScript('OnUpdate', nil)
+			return
+		end
+
+		-- Linear interpolation of RGB only (alpha stays constant)
+		local progress = elapsed / duration
+		local r = startR + (endR - startR) * progress
+		local g = startG + (endG - startG) * progress
+		local b = startB + (endB - startB) * progress
+
+		local borderR = startBorderR + (endBorderR - startBorderR) * progress
+		local borderG = startBorderG + (endBorderG - startBorderG) * progress
+		local borderB = startBorderB + (endBorderB - startBorderB) * progress
+
+		mover:SetBackdropColor(r, g, b, alpha)
+		mover:SetBackdropBorderColor(borderR, borderG, borderB, borderAlpha)
+	end)
 end
 
----Create a pulsing glow animation for selected overlays
----@param overlay Frame The overlay to add glow to
-local function CreateGlowAnimation(overlay)
-	if overlay.glowAnimation then
-		return
+---Create a pulsing color animation for selected movers
+---Alternates between darker orange (#ff7200) and brighter orange (#ffa55c)
+---@param mover Frame The mover to add glow to
+local function CreateGlowAnimation(mover)
+	if mover.glowAnimation then
+		return mover.glowAnimation
 	end
 
-	overlay.glowAnimation = overlay:CreateAnimationGroup()
-	overlay.glowAnimation:SetLooping('BOUNCE')
+	-- Use OnUpdate for smooth color pulsing between two orange shades
+	local elapsed = 0
+	local duration = 0.8
+	local frame = CreateFrame('Frame')
+	mover.glowAnimation = frame
 
-	local alpha = overlay.glowAnimation:CreateAnimation('Alpha')
-	alpha:SetFromAlpha(0.5)
-	alpha:SetToAlpha(1.0)
-	alpha:SetDuration(0.8)
-	alpha:SetSmoothing('IN_OUT')
+	frame.playing = false
+	frame.Play = function(self)
+		if self.playing then
+			return
+		end
+		self.playing = true
+		elapsed = 0
+		self:SetScript('OnUpdate', function(_, delta)
+			elapsed = elapsed + delta
+			local progress = (elapsed % duration) / duration
 
-	return overlay.glowAnimation
+			-- Bounce between 0 and 1
+			if (math.floor(elapsed / duration) % 2) == 1 then
+				progress = 1 - progress
+			end
+
+			-- Interpolate between overlaySelected (#ff7200) and overlayBright (#ffa55c)
+			local startR, startG, startB = COLORS.overlaySelected[1], COLORS.overlaySelected[2], COLORS.overlaySelected[3]
+			local endR, endG, endB = COLORS.overlayBright[1], COLORS.overlayBright[2], COLORS.overlayBright[3]
+			local alpha = COLORS.overlaySelected[4]
+
+			local r = startR + (endR - startR) * progress
+			local g = startG + (endG - startG) * progress
+			local b = startB + (endB - startB) * progress
+
+			mover:SetBackdropColor(r, g, b, alpha)
+
+			-- Also pulse border
+			local startBorderR, startBorderG, startBorderB = COLORS.borderSelected[1], COLORS.borderSelected[2], COLORS.borderSelected[3]
+			local endBorderR, endBorderG, endBorderB = COLORS.borderBright[1], COLORS.borderBright[2], COLORS.borderBright[3]
+			local borderAlpha = COLORS.borderSelected[4]
+
+			local borderR = startBorderR + (endBorderR - startBorderR) * progress
+			local borderG = startBorderG + (endBorderG - startBorderG) * progress
+			local borderB = startBorderB + (endBorderB - startBorderB) * progress
+
+			mover:SetBackdropBorderColor(borderR, borderG, borderB, borderAlpha)
+		end)
+	end
+
+	frame.Stop = function(self)
+		if not self.playing then
+			return
+		end
+		self.playing = false
+		self:SetScript('OnUpdate', nil)
+		-- Note: Don't reset color here - let the caller decide what color to use
+	end
+
+	return frame
 end
 
 ---Check if custom EditMode is active
@@ -65,7 +142,7 @@ function CustomEditMode:IsActive()
 	return isActive
 end
 
----Enter custom EditMode - show overlays for all movers
+---Enter custom EditMode - show and style movers
 function CustomEditMode:Enter()
 	if isActive then
 		return
@@ -77,15 +154,35 @@ function CustomEditMode:Enter()
 
 	isActive = true
 
-	-- Create overlays for all movers with staggered animation
+	-- Hide problematic movers that cause input capture
+	local problematicMovers = { 'VehicleSeatIndicator', 'SUI_CustomMover_VehicleMinimapPosition' }
+	for _, moverName in ipairs(problematicMovers) do
+		local mover = MoveIt.MoverList[moverName]
+		if mover then
+			mover:Hide()
+			if MoveIt.logger then
+				MoveIt.logger.debug(('Hiding problematic mover: %s'):format(moverName))
+			end
+		end
+	end
+
+	-- Show and style existing movers with staggered animation
 	local delay = 0
 	for name, mover in pairs(MoveIt.MoverList or {}) do
-		if mover and mover.parent then
+		-- Skip movers that cause input capture issues
+		local skipMover = (name == 'VehicleSeatIndicator' or name == 'SUI_CustomMover_VehicleMinimapPosition')
+
+		if MoveIt.logger and skipMover then
+			MoveIt.logger.debug(('Skipping problematic mover: %s'):format(name))
+		end
+
+		if not skipMover and mover and mover.parent then
 			C_Timer.After(delay, function()
-				local overlay = self:CreateOverlay(name, mover)
-				if overlay then
-					AnimateFadeIn(overlay)
-				end
+				self:StyleMover(name, mover)
+				-- Disable keyboard on individual movers (MoverWatcher handles escape)
+				mover:EnableKeyboard(false)
+				mover:Show()
+				AnimateFadeIn(mover)
 			end)
 			delay = delay + 0.02 -- 20ms stagger for smooth cascade effect
 		end
@@ -102,7 +199,7 @@ function CustomEditMode:Enter()
 	end
 end
 
----Exit custom EditMode - hide and clean up overlays
+---Exit custom EditMode - hide movers and restore original styling
 function CustomEditMode:Exit()
 	if not isActive then
 		return
@@ -115,13 +212,15 @@ function CustomEditMode:Exit()
 	isActive = false
 	selectedOverlay = nil
 
-	-- Hide and clean up all overlays
-	for name, overlay in pairs(overlays) do
-		overlay:Hide()
-		overlay:SetParent(nil)
-		overlay:ClearAllPoints()
+	-- Hide all movers and restore original styling
+	for name, mover in pairs(MoveIt.MoverList or {}) do
+		if mover then
+			self:RestoreMoverStyle(mover)
+			-- Re-enable keyboard on movers for normal move mode
+			mover:EnableKeyboard(true)
+			mover:Hide()
+		end
 	end
-	wipe(overlays)
 
 	-- Hide coordinate frame
 	if MoveIt.coordFrame then
@@ -143,147 +242,156 @@ function CustomEditMode:Toggle()
 	end
 end
 
----Create an overlay frame for a mover
+---Style a mover for EditMode (change appearance to blue)
 ---@param name string Mover name
 ---@param mover Frame The mover frame
----@return Frame|nil overlay The created overlay frame
-function CustomEditMode:CreateOverlay(name, mover)
-	if overlays[name] then
-		overlays[name]:Show()
-		return overlays[name]
-	end
-
-	local parent = mover.parent
-	if not parent then
+function CustomEditMode:StyleMover(name, mover)
+	if not mover then
 		return
 	end
 
-	-- Create overlay frame
-	local overlay = CreateFrame('Frame', 'SUI_EditMode_Overlay_' .. name, UIParent, BackdropTemplateMixin and 'BackdropTemplate')
-	overlay:SetFrameStrata('DIALOG')
-	overlay:SetFrameLevel(parent:GetFrameLevel() + 10)
-
-	-- Make it clickable and draggable
-	overlay:EnableMouse(true)
-	overlay:SetMovable(true)
-	overlay:RegisterForDrag('LeftButton')
-
-	-- Visual styling
-	overlay:SetBackdrop({
-		bgFile = 'Interface\\Buttons\\WHITE8X8',
-		edgeFile = 'Interface\\Buttons\\WHITE8X8',
-		edgeSize = 2,
-	})
-	overlay:SetBackdropColor(unpack(COLORS.overlay))
-	overlay:SetBackdropBorderColor(unpack(COLORS.border))
-
-	-- Position to match the parent frame
-	overlay:SetAllPoints(parent)
-
-	-- Name label
-	local nameText = overlay:CreateFontString(nil, 'OVERLAY', 'GameFontNormalLarge')
-	nameText:SetPoint('TOP', overlay, 'TOP', 0, -10)
-	nameText:SetText(mover.DisplayName or name)
-	nameText:SetTextColor(unpack(COLORS.text))
-	nameText:SetShadowColor(unpack(COLORS.textShadow))
-	nameText:SetShadowOffset(2, -2)
-	overlay.nameText = nameText
-
-	-- Store references
-	overlay.moverName = name
-	overlay.mover = mover
-	overlay.parent = parent
-
-	-- Create glow animation
-	CreateGlowAnimation(overlay)
-
-	-- Mouse handlers with smooth transitions
-	overlay:SetScript('OnEnter', function(self)
-		if not isDragging then
-			-- Smooth color transition
-			UIFrameFadeOut(self, 0.1, self:GetAlpha(), 1.0)
-			self:SetBackdropColor(unpack(COLORS.overlayHover))
-			self:SetBackdropBorderColor(unpack(COLORS.borderHover))
-		end
-	end)
-
-	overlay:SetScript('OnLeave', function(self)
-		if self ~= selectedOverlay and not isDragging then
-			self:SetBackdropColor(unpack(COLORS.overlay))
-			self:SetBackdropBorderColor(unpack(COLORS.border))
-		end
-	end)
-
-	overlay:SetScript('OnMouseDown', function(self, button)
-		if button == 'LeftButton' then
-			-- Select this overlay
-			CustomEditMode:SelectOverlay(self)
-		end
-	end)
-
-	overlay:SetScript('OnDragStart', function(self)
-		CustomEditMode:StartDrag(self)
-	end)
-
-	overlay:SetScript('OnDragStop', function(self)
-		CustomEditMode:StopDrag(self)
-	end)
-
-	overlays[name] = overlay
-	overlay:Show()
-
-	if MoveIt.logger then
-		MoveIt.logger.debug(('Created overlay for %s'):format(name))
+	-- Store original colors if not already stored
+	if not mover.originalBackdropColor then
+		local r, g, b, a = mover:GetBackdropColor()
+		mover.originalBackdropColor = { r, g, b, a }
+	end
+	if not mover.originalBackdropBorderColor then
+		local r, g, b, a = mover:GetBackdropBorderColor()
+		mover.originalBackdropBorderColor = { r, g, b, a }
 	end
 
-	return overlay
+	-- Apply blue EditMode colors
+	mover:SetBackdropColor(unpack(COLORS.overlay))
+	mover:SetBackdropBorderColor(unpack(COLORS.border))
+
+	-- Create glow animation if it doesn't exist
+	if not mover.glowAnimation then
+		CreateGlowAnimation(mover)
+	end
+
+	-- Hook mouse events for selection and hover
+	if not mover.editModeHooked then
+		mover:HookScript('OnEnter', function(self)
+			if not isDragging and CustomEditMode:IsActive() then
+				self:SetBackdropColor(unpack(COLORS.overlayHover))
+				self:SetBackdropBorderColor(unpack(COLORS.borderHover))
+			end
+		end)
+
+		mover:HookScript('OnLeave', function(self)
+			if self ~= selectedOverlay and not isDragging and CustomEditMode:IsActive() then
+				self:SetBackdropColor(unpack(COLORS.overlay))
+				self:SetBackdropBorderColor(unpack(COLORS.border))
+			end
+		end)
+
+		mover:HookScript('OnMouseDown', function(self, button)
+			if button == 'LeftButton' and CustomEditMode:IsActive() then
+				CustomEditMode:SelectOverlay(self)
+			end
+		end)
+
+		mover.editModeHooked = true
+	end
+
+	if MoveIt.logger then
+		MoveIt.logger.debug(('Styled mover: %s'):format(name))
+	end
 end
 
----Select an overlay (highlight it)
----@param overlay Frame The overlay to select
-function CustomEditMode:SelectOverlay(overlay)
-	-- Deselect previous
-	if selectedOverlay and selectedOverlay ~= overlay then
-		selectedOverlay:SetBackdropColor(unpack(COLORS.overlay))
-		selectedOverlay:SetBackdropBorderColor(unpack(COLORS.border))
-		-- Stop glow animation
-		if selectedOverlay.glowAnimation then
-			selectedOverlay.glowAnimation:Stop()
-		end
+---Restore a mover's original styling
+---@param mover Frame The mover frame
+function CustomEditMode:RestoreMoverStyle(mover)
+	if not mover then
+		return
+	end
+
+	-- Restore original colors
+	if mover.originalBackdropColor then
+		mover:SetBackdropColor(unpack(mover.originalBackdropColor))
+	end
+	if mover.originalBackdropBorderColor then
+		mover:SetBackdropBorderColor(unpack(mover.originalBackdropBorderColor))
+	end
+
+	-- Stop glow animation
+	if mover.glowAnimation then
+		mover.glowAnimation:Stop()
+	end
+end
+
+---Deselect the currently selected mover
+function CustomEditMode:DeselectOverlay()
+	if not selectedOverlay then
+		return
+	end
+
+	-- Stop any running color animation
+	if selectedOverlay.colorAnimFrame then
+		selectedOverlay.colorAnimFrame:SetScript('OnUpdate', nil)
+	end
+	selectedOverlay:SetBackdropColor(unpack(COLORS.overlay))
+	selectedOverlay:SetBackdropBorderColor(unpack(COLORS.border))
+	-- Stop glow animation
+	if selectedOverlay.glowAnimation then
+		selectedOverlay.glowAnimation:Stop()
+	end
+
+	selectedOverlay = nil
+end
+
+---Select a mover (highlight it)
+---@param mover Frame The mover to select
+function CustomEditMode:SelectOverlay(mover)
+	if not mover then
+		return
+	end
+
+	-- Deselect any Blizzard EditMode selection first
+	if EditModeManagerFrame and EditModeManagerFrame.ClearSelectedSystem then
+		EditModeManagerFrame:ClearSelectedSystem()
+	end
+
+	-- Deselect previous SUI mover
+	if selectedOverlay and selectedOverlay ~= mover then
+		self:DeselectOverlay()
 	end
 
 	-- Select new
-	selectedOverlay = overlay
-	overlay:SetBackdropColor(unpack(COLORS.overlaySelected))
-	overlay:SetBackdropBorderColor(unpack(COLORS.borderSelected))
+	selectedOverlay = mover
+	-- Stop any running color animation on the new selection
+	if mover.colorAnimFrame then
+		mover.colorAnimFrame:SetScript('OnUpdate', nil)
+	end
+	mover:SetBackdropColor(unpack(COLORS.overlaySelected))
+	mover:SetBackdropBorderColor(unpack(COLORS.borderSelected))
 
 	-- Start glow animation
-	if overlay.glowAnimation then
-		overlay.glowAnimation:Play()
+	if mover.glowAnimation then
+		mover.glowAnimation:Play()
 	end
 
 	if MoveIt.logger then
-		MoveIt.logger.debug(('Selected overlay: %s'):format(overlay.moverName))
+		MoveIt.logger.debug(('Selected mover: %s'):format(mover.name or 'unknown'))
 	end
 
-	-- Show settings panel (Phase 3)
+	-- Show settings panel
 	if CustomEditMode.ShowSettingsPanel then
-		CustomEditMode:ShowSettingsPanel(overlay)
+		CustomEditMode:ShowSettingsPanel(mover)
 	end
 end
 
----Start dragging an overlay
----@param overlay Frame The overlay being dragged
-function CustomEditMode:StartDrag(overlay)
+---Start dragging a mover
+---@param mover Frame The mover being dragged
+function CustomEditMode:StartDrag(mover)
 	if InCombatLockdown() then
 		SUI:Print(ERR_NOT_IN_COMBAT)
 		return
 	end
 
 	isDragging = true
-	local mover = overlay.mover
 
-	-- Start moving the mover (not the overlay)
+	-- Start moving the mover
 	mover:StartMoving()
 
 	-- Show coordinate frame
@@ -293,30 +401,25 @@ function CustomEditMode:StartDrag(overlay)
 	end
 
 	if MoveIt.logger then
-		MoveIt.logger.debug(('Start drag: %s'):format(overlay.moverName))
+		MoveIt.logger.debug(('Start drag: %s'):format(mover.name or 'unknown'))
 	end
 end
 
----Stop dragging an overlay
----@param overlay Frame The overlay that was being dragged
-function CustomEditMode:StopDrag(overlay)
+---Stop dragging a mover
+---@param mover Frame The mover that was being dragged
+function CustomEditMode:StopDrag(mover)
 	if InCombatLockdown() then
 		return
 	end
 
 	isDragging = false
-	local mover = overlay.mover
-	local name = overlay.moverName
+	local name = mover.name
 
 	-- Stop moving the mover
 	mover:StopMovingOrSizing()
 
-	-- Update overlay position to match parent
-	overlay:ClearAllPoints()
-	overlay:SetAllPoints(overlay.parent)
-
-	-- Save position (Phase 2 will implement proper relative positioning)
-	if MoveIt.SaveMoverPosition then
+	-- Save position
+	if MoveIt.SaveMoverPosition and name then
 		MoveIt:SaveMoverPosition(name)
 	end
 
@@ -332,17 +435,7 @@ function CustomEditMode:StopDrag(overlay)
 	end
 
 	if MoveIt.logger then
-		MoveIt.logger.debug(('Stop drag: %s'):format(name))
-	end
-end
-
----Update overlay positions (call when frames resize or move)
-function CustomEditMode:UpdateOverlays()
-	for name, overlay in pairs(overlays) do
-		if overlay.parent and overlay.parent:IsShown() then
-			overlay:ClearAllPoints()
-			overlay:SetAllPoints(overlay.parent)
-		end
+		MoveIt.logger.debug(('Stop drag: %s'):format(name or 'unknown'))
 	end
 end
 
@@ -361,12 +454,17 @@ if EditModeManagerFrame then
 			CustomEditMode:Exit()
 		end
 	end)
+
+	-- Hook SelectSystem to deselect SUI movers when Blizzard selects something
+	hooksecurefunc(EditModeManagerFrame, 'SelectSystem', function()
+		if CustomEditMode:IsActive() then
+			CustomEditMode:DeselectOverlay()
+		end
+	end)
 end
 
--- Create slash command
-SUI:AddChatCommand('edit', function()
-	CustomEditMode:Toggle()
-end, 'Toggle custom EditMode')
+-- Create slash command (register after MoveIt OnEnable)
+-- This will be called from MoveIt.lua OnEnable function
 
 if MoveIt.logger then
 	MoveIt.logger.info('Custom EditMode system loaded')
