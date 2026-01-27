@@ -136,6 +136,14 @@ function BlizzardEditMode:EnsureProfileReady(LibEMO)
 		return false
 	end
 
+	-- Check if EditMode is ready
+	if not LibEMO:IsReady() then
+		if MoveIt.logger then
+			MoveIt.logger.warning('EnsureProfileReady: EditMode not ready yet')
+		end
+		return false
+	end
+
 	-- Load layouts first (required before any other LibEMO calls)
 	if not LibEMO:AreLayoutsLoaded() then
 		LibEMO:LoadLayouts()
@@ -338,11 +346,38 @@ end
 ---@param loadAddon? string Optional addon to load before applying position
 ---@param onLoadEvent? string Event to wait for if addon needs loading (default: PLAYER_ENTERING_WORLD)
 function BlizzardEditMode:ApplyFramePosition(frameName, frameGlobal, loadAddon, onLoadEvent)
-	-- Ensure we have LibEMO and profile is ready
+	-- Ensure we have LibEMO
 	local LibEMO = self.LibEMO or LibStub('LibEditModeOverride-1.0', true)
 	if not LibEMO then
 		if MoveIt.logger then
 			MoveIt.logger.warning(('ApplyFramePosition: LibEditModeOverride not available for %s'):format(frameName))
+		end
+		return
+	end
+
+	-- Check if EditMode is ready
+	if not LibEMO:IsReady() then
+		-- Defer until EditMode is ready
+		if MoveIt.logger then
+			MoveIt.logger.debug(('ApplyFramePosition: Deferring %s until EditMode is ready'):format(frameName))
+		end
+
+		-- Store pending application
+		if not self.pendingApplications then
+			self.pendingApplications = {}
+		end
+		self.pendingApplications[frameName] = { frameGlobal = frameGlobal, loadAddon = loadAddon, onLoadEvent = onLoadEvent }
+
+		-- Set up event handler if not already done
+		if not self.editModeReadyFrame then
+			self.editModeReadyFrame = CreateFrame('Frame')
+			self.editModeReadyFrame:RegisterEvent('EDIT_MODE_LAYOUTS_UPDATED')
+			self.editModeReadyFrame:SetScript('OnEvent', function(frame, event)
+				if LibEMO:IsReady() then
+					frame:UnregisterEvent(event)
+					BlizzardEditMode:ProcessPendingApplications()
+				end
+			end)
 		end
 		return
 	end
@@ -402,6 +437,27 @@ function BlizzardEditMode:ApplyFramePosition(frameName, frameGlobal, loadAddon, 
 	else
 		ApplyPosition()
 	end
+end
+
+---Process all pending frame position applications
+function BlizzardEditMode:ProcessPendingApplications()
+	if not self.pendingApplications then
+		return
+	end
+
+	if MoveIt.logger then
+		MoveIt.logger.info('EditMode ready - processing pending frame applications')
+	end
+
+	for frameName, data in pairs(self.pendingApplications) do
+		if MoveIt.logger then
+			MoveIt.logger.debug(('Processing pending application for %s'):format(frameName))
+		end
+		self:ApplyFramePosition(frameName, data.frameGlobal, data.loadAddon, data.onLoadEvent)
+	end
+
+	-- Clear pending applications
+	self.pendingApplications = nil
 end
 
 ---Apply TalkingHead position via EditMode
