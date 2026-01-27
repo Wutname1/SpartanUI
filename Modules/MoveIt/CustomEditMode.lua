@@ -440,7 +440,8 @@ function CustomEditMode:StopDrag(mover)
 end
 
 -- Hook into Blizzard's EditMode button if it exists
-if EditModeManagerFrame then
+-- EditModeManagerFrame is only available in Retail (Dragonflight+)
+if EditModeManagerFrame and EditModeManagerFrame.EnterEditMode then
 	-- Use Blizzard's EditMode button to toggle our custom system
 	hooksecurefunc(EditModeManagerFrame, 'EnterEditMode', function()
 		-- Don't use Blizzard's EditMode, use ours
