@@ -215,6 +215,9 @@ local DBdefault = {
 				['AlertFrame'] = 'BOTTOM,SpartanUI,BOTTOM,0,215',
 				['VehicleLeaveButton'] = 'BOTTOM,SpartanUI,BOTTOM,0,180',
 				['FramerateFrame'] = 'BOTTOM,SpartanUI,BOTTOM,0,210',
+				['EncounterBar'] = 'BOTTOM,SpartanUI,BOTTOM,0,250',
+				['TopCenterContainer'] = 'TOP,UIParent,TOP,0,-50',
+				['ArchaeologyBar'] = 'TOP,UIParent,TOP,0,-50',
 			},
 			Color = {
 				Art = false,

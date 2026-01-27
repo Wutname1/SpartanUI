@@ -258,18 +258,30 @@ function module:EnableBlizzMover_TalkingHead()
 end
 
 local function AbilityBars()
-	-- Check if frames have native EditMode support (Retail)
+	-- Check if frames have native EditMode support and LibEditModeOverride is available (Retail)
 	-- ExtraAbilities system (ID 11) handles both ExtraActionButton and ZoneAbility
-	if MoveIt.BlizzardEditMode and EditModeManagerFrame then
-		-- Use Blizzard's native EditMode for these frames
+	if MoveIt.BlizzardEditMode and not MoveIt.BlizzardEditMode:NeedsCustomMover('ExtraActionBar') then
+		-- RETAIL PATH: Use LibEditModeOverride
 		if SUI.DB.Artwork.BlizzMoverStates['ExtraActionBar'].enabled then
-			RestoreOriginalPosition('ExtraActionBar')
+			-- Apply position via EditMode
+			MoveIt.BlizzardEditMode:ApplyExtraAbilitiesPosition()
+		else
+			-- Disabled - restore to Blizzard default
+			MoveIt.BlizzardEditMode:RestoreBlizzardDefault('ExtraActionBar')
 		end
+
+		-- ZoneAbility is handled together with ExtraActionBar in the same EditMode system
 		if SUI.DB.Artwork.BlizzMoverStates['ZoneAbility'].enabled then
-			RestoreOriginalPosition('ZoneAbility')
+			-- Note: ZoneAbility positioning is part of ExtraAbilities system
+			-- Individual positioning not supported by EditMode
+			if MoveIt.logger then
+				MoveIt.logger.debug('ZoneAbility positioning handled by ExtraAbilities EditMode system')
+			end
 		end
 		return
 	end
+
+	-- CLASSIC/TBC/WRATH/CATA/MISTS PATH: Use custom holder-based movers
 
 	local NeedsReparent = false
 	local ExtraAbilityContainer = _G['ExtraAbilityContainer']
@@ -529,14 +541,20 @@ end
 local function VehicleLeaveButton()
 	local moverName = 'VehicleLeaveButton'
 
-	-- Check if frame has native EditMode support (Retail)
-	if MoveIt.BlizzardEditMode and EditModeManagerFrame then
-		-- Use Blizzard's native EditMode for this frame
+	-- Check if frame has native EditMode support and LibEditModeOverride is available (Retail)
+	if MoveIt.BlizzardEditMode and not MoveIt.BlizzardEditMode:NeedsCustomMover(moverName) then
+		-- RETAIL PATH: Use LibEditModeOverride
 		if SUI.DB.Artwork.BlizzMoverStates[moverName].enabled then
-			RestoreOriginalPosition(moverName)
+			-- Apply position via EditMode
+			MoveIt.BlizzardEditMode:ApplyVehicleLeaveButtonPosition()
+		else
+			-- Disabled - restore to Blizzard default
+			MoveIt.BlizzardEditMode:RestoreBlizzardDefault(moverName)
 		end
 		return
 	end
+
+	-- CLASSIC/TBC/WRATH/CATA/MISTS PATH: Use custom holder-based movers
 
 	local function MoverCreate()
 		local frame = MainMenuBarVehicleLeaveButton
@@ -758,14 +776,89 @@ function module:PLAYER_ENTERING_WORLD()
 	module:UPDATE_ALL_UI_WIDGETS()
 end
 
+local function EncounterBar()
+	local moverName = 'EncounterBar'
+
+	-- Check if frame has native EditMode support and LibEditModeOverride is available (Retail)
+	if MoveIt.BlizzardEditMode and not MoveIt.BlizzardEditMode:NeedsCustomMover(moverName) then
+		-- RETAIL PATH: Use LibEditModeOverride
+		if SUI.DB.Artwork.BlizzMoverStates[moverName] and SUI.DB.Artwork.BlizzMoverStates[moverName].enabled then
+			-- Apply position via EditMode
+			MoveIt.BlizzardEditMode:ApplyEncounterBarPosition()
+		else
+			-- Disabled - restore to Blizzard default
+			MoveIt.BlizzardEditMode:RestoreBlizzardDefault(moverName)
+		end
+		return
+	end
+
+	-- CLASSIC/TBC/WRATH/CATA/MISTS PATH: Use custom holder-based movers
+	-- Note: EncounterBar doesn't exist in Classic versions, so this path may never execute
+	if MoveIt.logger then
+		MoveIt.logger.debug('EncounterBar not available or EditMode not supported')
+	end
+end
+
+---Disable the EncounterBar mover
+function module:DisableBlizzMover_EncounterBar()
+	if MoveIt.BlizzardEditMode then
+		MoveIt.BlizzardEditMode:RestoreBlizzardDefault('EncounterBar')
+	end
+end
+
+---Enable the EncounterBar mover
+function module:EnableBlizzMover_EncounterBar()
+	EncounterBar()
+end
+
+local function ArchaeologyBar()
+	local moverName = 'ArchaeologyBar'
+
+	-- Check if frame has native EditMode support and LibEditModeOverride is available (Retail)
+	if MoveIt.BlizzardEditMode and not MoveIt.BlizzardEditMode:NeedsCustomMover(moverName) then
+		-- RETAIL PATH: Use LibEditModeOverride
+		if SUI.DB.Artwork.BlizzMoverStates[moverName] and SUI.DB.Artwork.BlizzMoverStates[moverName].enabled then
+			-- Apply position via EditMode
+			MoveIt.BlizzardEditMode:ApplyArchaeologyBarPosition()
+		else
+			-- Disabled - restore to Blizzard default
+			MoveIt.BlizzardEditMode:RestoreBlizzardDefault(moverName)
+		end
+		return
+	end
+
+	-- CLASSIC/TBC/WRATH/CATA/MISTS PATH: Use custom holder-based movers
+	-- Note: ArchaeologyBar doesn't exist in Classic versions, so this path may never execute
+	if MoveIt.logger then
+		MoveIt.logger.debug('ArchaeologyBar not available or EditMode not supported')
+	end
+end
+
+---Disable the ArchaeologyBar mover
+function module:DisableBlizzMover_ArchaeologyBar()
+	if MoveIt.BlizzardEditMode then
+		MoveIt.BlizzardEditMode:RestoreBlizzardDefault('ArchaeologyBar')
+	end
+end
+
+---Enable the ArchaeologyBar mover
+function module:EnableBlizzMover_ArchaeologyBar()
+	ArchaeologyBar()
+end
+
 -- This is the main inpoint
 function module.BlizzMovers()
-	FramerateFrame()
-	AbilityBars()
-	AlertFrame()
-	TopCenterContainer()
-	TalkingHead()
-	VehicleLeaveButton()
-	VehicleSeatIndicator()
-	WidgetPowerBarContainer()
+	-- Frames using LibEditModeOverride (Retail only):
+	TalkingHead() -- TalkingHeadFrame (systemID 13)
+	VehicleLeaveButton() -- MainMenuBarVehicleLeaveButton (systemID 14)
+	AbilityBars() -- ExtraActionBarFrame + ZoneAbilityFrame (systemID 11)
+	EncounterBar() -- EncounterBar (systemID 10)
+	ArchaeologyBar() -- ArcheologyDigsiteProgressBar (systemID 21)
+
+	-- Frames using custom movers (all versions):
+	FramerateFrame() -- No EditMode support
+	AlertFrame() -- No EditMode support
+	TopCenterContainer() -- No EditMode support (UIWidgetTopCenterContainerFrame)
+	VehicleSeatIndicator() -- Has EditMode but not well supported
+	WidgetPowerBarContainer() -- No EditMode support
 end

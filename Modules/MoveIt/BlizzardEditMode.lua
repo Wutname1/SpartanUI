@@ -327,13 +327,17 @@ function BlizzardEditMode:ApplyAllBlizzMoverPositions()
 	return appliedCount
 end
 
----Apply TalkingHead position via EditMode
-function BlizzardEditMode:ApplyTalkingHeadPosition()
+---Generic function to apply frame position via EditMode
+---@param frameName string The BlizzMover name (e.g., 'TalkingHead')
+---@param frameGlobal string|function The global frame name or function that returns the frame
+---@param loadAddon? string Optional addon to load before applying position
+---@param onLoadEvent? string Event to wait for if addon needs loading (default: PLAYER_ENTERING_WORLD)
+function BlizzardEditMode:ApplyFramePosition(frameName, frameGlobal, loadAddon, onLoadEvent)
 	-- Ensure we have LibEMO and profile is ready
 	local LibEMO = self.LibEMO or LibStub('LibEditModeOverride-1.0', true)
 	if not LibEMO then
 		if MoveIt.logger then
-			MoveIt.logger.warning('ApplyTalkingHeadPosition: LibEditModeOverride not available')
+			MoveIt.logger.warning(('ApplyFramePosition: LibEditModeOverride not available for %s'):format(frameName))
 		end
 		return
 	end
@@ -341,48 +345,85 @@ function BlizzardEditMode:ApplyTalkingHeadPosition()
 	-- Ensure SpartanUI profile exists and is active
 	if not self:EnsureProfileReady(LibEMO) then
 		if MoveIt.logger then
-			MoveIt.logger.warning('ApplyTalkingHeadPosition: Failed to ensure profile ready')
+			MoveIt.logger.warning(('ApplyFramePosition: Failed to ensure profile ready for %s'):format(frameName))
 		end
 		return
 	end
 
-	-- Wait for Blizzard_TalkingHeadUI to load
 	local function ApplyPosition()
-		local frame = TalkingHeadFrame
+		-- Get frame reference
+		local frame
+		if type(frameGlobal) == 'function' then
+			frame = frameGlobal()
+		else
+			frame = _G[frameGlobal]
+		end
+
 		if not frame then
 			if MoveIt.logger then
-				MoveIt.logger.warning('ApplyTalkingHeadPosition: TalkingHeadFrame not found')
+				MoveIt.logger.warning(('ApplyFramePosition: Frame not found for %s'):format(frameName))
 			end
 			return
 		end
 
 		-- Apply position from database
-		if self:SetFramePositionFromDB('TalkingHead', frame) then
+		if self:SetFramePositionFromDB(frameName, frame) then
 			-- Apply changes
 			if self:SafeApplyChanges() then
 				if MoveIt.logger then
-					MoveIt.logger.info('TalkingHead position applied via EditMode')
+					MoveIt.logger.info(('%s position applied via EditMode'):format(frameName))
 				end
 			end
 		end
 	end
 
-	-- Check if addon is loaded
-	if C_AddOns.IsAddOnLoaded('Blizzard_TalkingHeadUI') then
-		ApplyPosition()
-	else
-		-- Load the addon and apply position
-		if MoveIt.logger then
-			MoveIt.logger.debug('Loading Blizzard_TalkingHeadUI addon for TalkingHead positioning')
-		end
-		local frame = CreateFrame('Frame')
-		frame:RegisterEvent('PLAYER_ENTERING_WORLD')
-		frame:SetScript('OnEvent', function(self, event)
-			self:UnregisterEvent(event)
-			C_AddOns.LoadAddOn('Blizzard_TalkingHeadUI')
+	-- Check if addon needs to be loaded
+	if loadAddon then
+		if C_AddOns.IsAddOnLoaded(loadAddon) then
 			ApplyPosition()
-		end)
+		else
+			-- Load the addon and apply position
+			if MoveIt.logger then
+				MoveIt.logger.debug(('Loading %s addon for %s positioning'):format(loadAddon, frameName))
+			end
+			local frame = CreateFrame('Frame')
+			frame:RegisterEvent(onLoadEvent or 'PLAYER_ENTERING_WORLD')
+			frame:SetScript('OnEvent', function(self, event)
+				self:UnregisterEvent(event)
+				C_AddOns.LoadAddOn(loadAddon)
+				ApplyPosition()
+			end)
+		end
+	else
+		ApplyPosition()
 	end
+end
+
+---Apply TalkingHead position via EditMode
+function BlizzardEditMode:ApplyTalkingHeadPosition()
+	self:ApplyFramePosition('TalkingHead', 'TalkingHeadFrame', 'Blizzard_TalkingHeadUI')
+end
+
+---Apply ExtraAbilities position via EditMode (ExtraActionBar + ZoneAbility)
+function BlizzardEditMode:ApplyExtraAbilitiesPosition()
+	-- ExtraAbilities is system ID 11, but we need to position ExtraActionBarFrame
+	-- The ZoneAbility is handled automatically as part of the same system
+	self:ApplyFramePosition('ExtraActionBar', 'ExtraActionBarFrame')
+end
+
+---Apply EncounterBar position via EditMode
+function BlizzardEditMode:ApplyEncounterBarPosition()
+	self:ApplyFramePosition('EncounterBar', 'EncounterBar')
+end
+
+---Apply VehicleLeaveButton position via EditMode
+function BlizzardEditMode:ApplyVehicleLeaveButtonPosition()
+	self:ApplyFramePosition('VehicleLeaveButton', 'MainMenuBarVehicleLeaveButton')
+end
+
+---Apply ArchaeologyBar position via EditMode
+function BlizzardEditMode:ApplyArchaeologyBarPosition()
+	self:ApplyFramePosition('ArchaeologyBar', 'ArcheologyDigsiteProgressBar')
 end
 
 ---Restore a frame to Blizzard's default EditMode position
@@ -474,8 +515,17 @@ function BlizzardEditMode:NeedsCustomMover(frameName)
 		return true
 	end
 
-	-- Special case: TalkingHead migrated to use LibEditModeOverride
-	if frameName == 'TalkingHead' then
+	-- Frames migrated to use LibEditModeOverride
+	local migratedFrames = {
+		TalkingHead = true,
+		ExtraActionBar = true,
+		ZoneAbility = true,
+		EncounterBar = true,
+		VehicleLeaveButton = true,
+		ArchaeologyBar = true,
+	}
+
+	if migratedFrames[frameName] then
 		return false -- Use native EditMode via LibEditModeOverride
 	end
 
