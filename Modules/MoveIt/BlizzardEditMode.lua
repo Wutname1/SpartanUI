@@ -408,8 +408,8 @@ function BlizzardEditMode:ApplyFramePosition(frameName, frameGlobal, loadAddon, 
 
 		-- Apply position from database
 		if self:SetFramePositionFromDB(frameName, frame) then
-			-- Apply changes
-			if self:SafeApplyChanges() then
+			-- Apply changes with mover suppression to prevent showing all movers
+			if self:SafeApplyChanges(true) then -- true = suppress movers
 				if MoveIt.logger then
 					MoveIt.logger.info(('%s position applied via EditMode'):format(frameName))
 				end
@@ -509,8 +509,9 @@ function BlizzardEditMode:RestoreBlizzardDefault(frameName)
 end
 
 ---Safely apply EditMode changes (combat-aware)
+---@param suppressMovers? boolean If true, prevent showing MoveIt movers during apply
 ---@return boolean success True if changes were applied
-function BlizzardEditMode:SafeApplyChanges()
+function BlizzardEditMode:SafeApplyChanges(suppressMovers)
 	if InCombatLockdown() then
 		-- Queue for after combat
 		if not self.eventFrame then
@@ -531,9 +532,20 @@ function BlizzardEditMode:SafeApplyChanges()
 
 	local LibEMO = LibStub('LibEditModeOverride-1.0', true)
 	if LibEMO then
+		-- Suppress movers if requested
+		if suppressMovers and MoveIt.CustomEditMode then
+			MoveIt.CustomEditMode.suppressActivation = true
+		end
+
 		local success = pcall(function()
 			LibEMO:ApplyChanges()
 		end)
+
+		-- Re-enable movers
+		if suppressMovers and MoveIt.CustomEditMode then
+			MoveIt.CustomEditMode.suppressActivation = false
+		end
+
 		if success then
 			if MoveIt.logger then
 				MoveIt.logger.debug('EditMode changes applied successfully')

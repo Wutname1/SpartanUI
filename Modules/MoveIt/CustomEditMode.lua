@@ -148,6 +148,14 @@ function CustomEditMode:Enter()
 		return
 	end
 
+	-- Check if activation is suppressed (e.g., during LibEditModeOverride operations)
+	if self.suppressActivation then
+		if MoveIt.logger then
+			MoveIt.logger.debug('CustomEditMode activation suppressed')
+		end
+		return
+	end
+
 	if MoveIt.logger then
 		MoveIt.logger.info('Entering custom EditMode')
 	end
