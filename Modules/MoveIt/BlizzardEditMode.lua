@@ -74,6 +74,7 @@ function BlizzardEditMode:Initialize()
 	-- Wait for EditMode to be ready
 	if LibEMO:IsReady() then
 		self:SetupBlizzardFrames(LibEMO)
+		self:StartLayoutMonitoring()
 	else
 		-- Hook into ready event
 		local frame = CreateFrame('Frame')
@@ -81,6 +82,7 @@ function BlizzardEditMode:Initialize()
 		frame:SetScript('OnEvent', function(self, event)
 			if LibEMO:IsReady() then
 				BlizzardEditMode:SetupBlizzardFrames(LibEMO)
+				BlizzardEditMode:StartLayoutMonitoring()
 				self:UnregisterAllEvents()
 			end
 		end)
@@ -149,14 +151,24 @@ function BlizzardEditMode:EnsureProfileReady(LibEMO)
 		LibEMO:LoadLayouts()
 	end
 
+	-- Check current active layout
+	local currentLayout = LibEMO:GetActiveLayout()
+
+	-- If user is on a different profile, DO NOT switch them or modify that profile
+	if currentLayout and currentLayout ~= 'SpartanUI' then
+		if MoveIt.logger then
+			MoveIt.logger.warning(('EnsureProfileReady: User is on "%s" profile - not switching to SpartanUI'):format(currentLayout))
+		end
+		return false
+	end
+
 	-- Create profile if it doesn't exist
 	if not self:CreateSpartanUIProfile(LibEMO) then
 		return false
 	end
 
-	-- Set as active if not already
-	local currentLayout = LibEMO:GetActiveLayout()
-	if currentLayout ~= 'SpartanUI' then
+	-- Set as active if not already (only if no profile is active or we're creating it)
+	if not currentLayout or currentLayout ~= 'SpartanUI' then
 		if MoveIt.logger then
 			MoveIt.logger.info(('Activating SpartanUI EditMode profile (was: %s)'):format(tostring(currentLayout)))
 		end
@@ -164,7 +176,7 @@ function BlizzardEditMode:EnsureProfileReady(LibEMO)
 			LibEMO:SetActiveLayout('SpartanUI')
 		end)
 		if success then
-			self:SafeApplyChanges()
+			self:SafeApplyChanges(true) -- Suppress movers during activation
 		end
 		if not success then
 			if MoveIt.logger then
@@ -204,6 +216,52 @@ function BlizzardEditMode:SetupBlizzardFrames(LibEMO)
 
 	if MoveIt.logger then
 		MoveIt.logger.info('Blizzard EditMode integration complete')
+	end
+end
+
+---Start monitoring for EditMode layout changes
+function BlizzardEditMode:StartLayoutMonitoring()
+	if not EditModeManagerFrame then
+		return
+	end
+
+	-- Create monitoring frame if it doesn't exist
+	if not self.layoutMonitorFrame then
+		self.layoutMonitorFrame = CreateFrame('Frame')
+	end
+
+	-- Register for layout updates
+	self.layoutMonitorFrame:RegisterEvent('EDIT_MODE_LAYOUTS_UPDATED')
+	self.layoutMonitorFrame:SetScript('OnEvent', function(frame, event)
+		BlizzardEditMode:OnLayoutChanged()
+	end)
+
+	if MoveIt.logger then
+		MoveIt.logger.debug('Started monitoring EditMode layout changes')
+	end
+end
+
+---Handle EditMode layout changes
+function BlizzardEditMode:OnLayoutChanged()
+	local LibEMO = self.LibEMO or LibStub('LibEditModeOverride-1.0', true)
+	if not LibEMO or not LibEMO:AreLayoutsLoaded() then
+		return
+	end
+
+	-- Reload layouts to get current state
+	LibEMO:LoadLayouts()
+
+	local currentLayout = LibEMO:GetActiveLayout()
+
+	-- Warn if user switched away from SpartanUI profile
+	if currentLayout ~= 'SpartanUI' then
+		if MoveIt.logger then
+			MoveIt.logger.warning(('EditMode profile changed to "%s" - SpartanUI BlizzMovers will not apply to this profile'):format(tostring(currentLayout)))
+		end
+	else
+		if MoveIt.logger then
+			MoveIt.logger.info('EditMode profile is "SpartanUI" - BlizzMovers active')
+		end
 	end
 end
 
