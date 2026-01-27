@@ -1277,7 +1277,6 @@ function module:RegisterEvents()
 	MinimapUpdater:RegisterEvent('ZONE_CHANGED_INDOORS')
 	MinimapUpdater:RegisterEvent('ZONE_CHANGED_NEW_AREA')
 	MinimapUpdater:RegisterEvent('MINIMAP_UPDATE_TRACKING')
-	MinimapUpdater:RegisterEvent('MINIMAP_PING')
 	MinimapUpdater:RegisterEvent('PLAYER_REGEN_ENABLED')
 
 	module:ScheduleRepeatingTimer(module.Update, 30, module, true)
