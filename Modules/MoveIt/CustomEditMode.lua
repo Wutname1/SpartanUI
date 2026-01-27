@@ -303,7 +303,7 @@ function CustomEditMode:StyleMover(name, mover)
 	end
 
 	if MoveIt.logger then
-		MoveIt.logger.debug(('Styled mover: %s'):format(name))
+		-- MoveIt.logger.debug(('Styled mover: %s'):format(name))
 	end
 end
 

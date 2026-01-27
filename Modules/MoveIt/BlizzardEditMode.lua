@@ -197,22 +197,8 @@ function BlizzardEditMode:SetupBlizzardFrames(LibEMO)
 	-- Store LibEMO reference for later use
 	self.LibEMO = LibEMO
 
-	-- Just ensure profile exists, but DON'T activate it yet
-	-- We'll activate/apply when frames actually need positioning
-	local profileName = 'SpartanUI'
-	if not LibEMO:DoesLayoutExist(profileName) then
-		if MoveIt.logger then
-			MoveIt.logger.info(('Creating EditMode profile "%s" (will not activate until needed)'):format(profileName))
-		end
-		local success = pcall(function()
-			LibEMO:AddLayout(Enum.EditModeLayoutType.Character, profileName)
-		end)
-		if not success then
-			if MoveIt.logger then
-				MoveIt.logger.error(('Failed to create EditMode profile "%s"'):format(profileName))
-			end
-		end
-	end
+	-- Ensure SpartanUI profile exists and is active
+	self:EnsureProfileReady(LibEMO)
 
 	if MoveIt.logger then
 		MoveIt.logger.info('Blizzard EditMode integration complete')
@@ -236,8 +222,244 @@ function BlizzardEditMode:StartLayoutMonitoring()
 		BlizzardEditMode:OnLayoutChanged()
 	end)
 
+	-- Hook EditModePresetLayoutManager to override what Blizzard considers "default" positions
+	self:HookDefaultPositions()
+end
+
+---Hook EditModePresetLayoutManager to override default positions
+function BlizzardEditMode:HookDefaultPositions()
+	if self.defaultPositionsHooked then
+		return
+	end
+
+	-- Hook EditModePresetLayoutManager:GetDefaultSystemAnchorInfo to return SpartanUI positions
+	if not (EditModePresetLayoutManager and EditModePresetLayoutManager.GetDefaultSystemAnchorInfo) then
+		if MoveIt.logger then
+			MoveIt.logger.warning('EditModePresetLayoutManager not found - cannot override default positions')
+		end
+		return
+	end
+
+	-- Store original function
+	local originalGetDefaultAnchor = EditModePresetLayoutManager.GetDefaultSystemAnchorInfo
+
+	EditModePresetLayoutManager.GetDefaultSystemAnchorInfo = function(self, systemID, systemIndex)
+		-- Check if we're on SpartanUI profile
+		local LibEMO = BlizzardEditMode.LibEMO or LibStub('LibEditModeOverride-1.0', true)
+		if not (LibEMO and LibEMO:AreLayoutsLoaded()) then
+			return originalGetDefaultAnchor(self, systemID, systemIndex)
+		end
+
+		local currentLayout = LibEMO:GetActiveLayout()
+		if currentLayout ~= 'SpartanUI' then
+			return originalGetDefaultAnchor(self, systemID, systemIndex)
+		end
+
+		-- Get frame name from system ID
+		local frameName = BlizzardEditMode:GetFrameNameBySystemID(systemID)
+		if not frameName then
+			return originalGetDefaultAnchor(self, systemID, systemIndex)
+		end
+
+		-- Get SpartanUI's custom position
+		local positionString = SUI.DB.Styles[SUI.DB.Artwork.Style].BlizzMovers[frameName]
+		if not positionString then
+			return originalGetDefaultAnchor(self, systemID, systemIndex)
+		end
+
+		-- Parse position
+		local point, anchorName, relativePoint, x, y = BlizzardEditMode:ParseSUIPosition(positionString)
+		if not point then
+			return originalGetDefaultAnchor(self, systemID, systemIndex)
+		end
+
+		-- Return SpartanUI's custom anchor info instead of Blizzard's default
+		local customAnchor = {
+			point = point,
+			relativeTo = anchorName or 'UIParent',
+			relativePoint = relativePoint or point,
+			offsetX = x or 0,
+			offsetY = y or 0,
+		}
+
+		if MoveIt.logger then
+			MoveIt.logger.info(
+				('Returning SpartanUI default for %s: %s,%s,%s,%d,%d'):format(
+					frameName,
+					customAnchor.point,
+					customAnchor.relativeTo,
+					customAnchor.relativePoint,
+					customAnchor.offsetX,
+					customAnchor.offsetY
+				)
+			)
+		end
+
+		return customAnchor
+	end
+
+	self.defaultPositionsHooked = true
+
 	if MoveIt.logger then
-		MoveIt.logger.debug('Started monitoring EditMode layout changes')
+		MoveIt.logger.info('Hooked EditModePresetLayoutManager:GetDefaultSystemAnchorInfo to override default positions')
+	end
+
+	-- Also hook the reset button to force reapply after Blizzard's reset completes
+	self:HookResetButton()
+end
+
+---Hook the reset button to reapply SpartanUI positions after reset
+function BlizzardEditMode:HookResetButton()
+	if not EditModeSystemSettingsDialog then
+		return
+	end
+
+	-- Hook UpdateDialog to find and hook reset buttons
+	hooksecurefunc(EditModeSystemSettingsDialog, 'UpdateDialog', function(dialog, system)
+		if not system or not system.resetToDefaultPositionButton then
+			return
+		end
+
+		-- Only hook once per button
+		if system.resetToDefaultPositionButton.suiResetHooked then
+			return
+		end
+
+		system.resetToDefaultPositionButton.suiResetHooked = true
+
+		if MoveIt.logger then
+			MoveIt.logger.debug(('Hooked reset button for system %d'):format(system.system))
+		end
+
+		-- Hook button click to reapply SpartanUI position
+		system.resetToDefaultPositionButton:HookScript('OnClick', function()
+			local systemID = system.system
+			local frameName = BlizzardEditMode:GetFrameNameBySystemID(systemID)
+			if not frameName then
+				return
+			end
+
+			-- Get the frame
+			local frame = nil
+			if frameName == 'TalkingHead' then
+				frame = TalkingHeadFrame
+			elseif frameName == 'VehicleLeaveButton' then
+				frame = VehicleLeaveButton
+			elseif frameName == 'ExtraActionBar' then
+				frame = ExtraActionBarFrame
+			elseif frameName == 'EncounterBar' then
+				frame = EncounterBar
+			elseif frameName == 'ArchaeologyBar' then
+				frame = ArcheologyDigsiteProgressBar
+			end
+
+			if not frame then
+				return
+			end
+
+			if MoveIt.logger then
+				MoveIt.logger.info(('Reset button clicked for system %d (%s)'):format(systemID, frameName))
+			end
+
+			-- Reapply immediately
+			BlizzardEditMode:ReapplyFramePosition(frameName, frame, true)
+
+			-- Also reapply after delay to ensure it sticks
+			C_Timer.After(0.3, function()
+				BlizzardEditMode:ReapplyFramePosition(frameName, frame, true)
+			end)
+		end)
+	end)
+end
+
+---Get frame name from EditMode system ID
+---@param systemID number The EditMode system ID
+---@return string|nil frameName The frame name or nil
+function BlizzardEditMode:GetFrameNameBySystemID(systemID)
+	-- Map actual frame systemIDs to BlizzMover names
+	-- Note: These systemIDs are discovered at runtime and may differ from documentation
+	local systemMap = {
+		[7] = 'TalkingHead', -- TalkingHeadFrame (actual systemID verified)
+		[14] = 'VehicleLeaveButton', -- VehicleLeaveButton
+		[11] = 'ExtraActionBar', -- ExtraAbilities (ExtraActionBar + ZoneAbility)
+		[10] = 'EncounterBar', -- EncounterBar
+		[21] = 'ArchaeologyBar', -- ArchaeologyBar
+		-- TODO: Add more as we discover their actual systemIDs
+		-- ExtraActionButton, ZoneAbilityFrame, etc.
+	}
+	return systemMap[systemID]
+end
+
+---Reapply SpartanUI position for a frame (used after reset to default)
+---@param frameName string The frame name
+---@param frame Frame The frame object
+---@param skipApply? boolean If true, don't call SafeApplyChanges (for in-edit-mode adjustments)
+function BlizzardEditMode:ReapplyFramePosition(frameName, frame, skipApply)
+	if not frame then
+		return
+	end
+
+	local LibEMO = self.LibEMO or LibStub('LibEditModeOverride-1.0', true)
+	if not LibEMO then
+		return
+	end
+
+	-- Get position from database
+	local positionString = SUI.DB.Styles[SUI.DB.Artwork.Style].BlizzMovers[frameName]
+	if not positionString then
+		return
+	end
+
+	-- Parse position
+	local point, anchorName, relativePoint, x, y = self:ParseSUIPosition(positionString)
+	if not point then
+		return
+	end
+
+	-- Resolve anchor frame
+	local anchorFrame = _G[anchorName] or UIParent
+
+	-- Get the EditMode system for this frame
+	local system = nil
+	if frame.system and EditModeManagerFrame then
+		for _, sys in pairs(EditModeManagerFrame.registeredSystemFrames) do
+			if sys == frame then
+				system = sys
+				break
+			end
+		end
+	end
+
+	-- Apply position
+	pcall(function()
+		LibEMO:ReanchorFrame(frame, point, anchorFrame, relativePoint, x, y)
+
+		-- Mark as NOT in default position so EditMode doesn't override our position
+		if system and system.systemInfo then
+			system.systemInfo.isInDefaultPosition = false
+
+			-- Call ApplySystemAnchor to actually move the frame visually
+			if system.ApplySystemAnchor then
+				system:ApplySystemAnchor()
+			end
+		end
+	end)
+
+	-- Save position to layout
+	if skipApply then
+		-- We're in edit mode - save without exiting
+		pcall(function()
+			LibEMO:SaveOnly()
+		end)
+		if MoveIt.logger then
+			MoveIt.logger.info(('%s position reapplied'):format(frameName))
+		end
+	else
+		-- Apply changes with mover suppression
+		self:SafeApplyChanges(true)
+		if MoveIt.logger then
+			MoveIt.logger.info(('%s position reapplied'):format(frameName))
+		end
 	end
 end
 
@@ -285,18 +507,12 @@ end
 ---@return number|nil y
 function BlizzardEditMode:ParseSUIPosition(csvString)
 	if not csvString or csvString == '' then
-		if MoveIt.logger then
-			MoveIt.logger.warning('ParseSUIPosition: Empty or nil position string')
-		end
 		return nil, nil, nil, nil, nil
 	end
 
 	local point, anchor, relativePoint, x, y = strsplit(',', csvString)
 
 	if not point or not anchor or not relativePoint or not x or not y then
-		if MoveIt.logger then
-			MoveIt.logger.error(('ParseSUIPosition: Invalid format "%s" - expected POINT,Anchor,RelativePoint,X,Y'):format(csvString))
-		end
 		return nil, nil, nil, nil, nil
 	end
 
@@ -348,6 +564,14 @@ function BlizzardEditMode:SetFramePositionFromDB(frameName, frame)
 
 	local LibEMO = LibStub('LibEditModeOverride-1.0', true)
 	if not LibEMO then
+		return false
+	end
+
+	-- Ensure SpartanUI profile exists and is active
+	if not self:EnsureProfileReady(LibEMO) then
+		if MoveIt.logger then
+			MoveIt.logger.warning(('SetFramePositionFromDB: SpartanUI profile not ready for "%s"'):format(frameName))
+		end
 		return false
 	end
 
