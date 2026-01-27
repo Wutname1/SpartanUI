@@ -245,6 +245,37 @@ function BlizzardEditMode:ParseSUIPosition(csvString)
 	return point, anchor, relativePoint, tonumber(x), tonumber(y)
 end
 
+---Check if a frame has been moved from its default position by the user
+---@param frame Frame The frame object
+---@return boolean isCustomized True if user has moved the frame
+function BlizzardEditMode:IsFramePositionCustomized(frame)
+	if not frame or not frame.system then
+		return false
+	end
+
+	-- Check Blizzard's EditMode data directly
+	-- When a frame is moved, isInDefaultPosition is set to false
+	if EditModeManagerFrame and EditModeManagerFrame.GetActiveLayoutInfo then
+		local layoutInfo = EditModeManagerFrame:GetActiveLayoutInfo()
+		if layoutInfo and layoutInfo.systems then
+			for _, system in pairs(layoutInfo.systems) do
+				if system.system == frame.system and system.systemIndex == frame.systemIndex then
+					-- Check if isInDefaultPosition is explicitly false (user moved it)
+					if system.isInDefaultPosition == false then
+						if MoveIt.logger then
+							MoveIt.logger.debug(('Frame system %d has been customized by user'):format(frame.system))
+						end
+						return true
+					end
+					return false
+				end
+			end
+		end
+	end
+
+	return false
+end
+
 ---Set frame position from database using LibEditModeOverride
 ---@param frameName string The frame identifier in BlizzMovers table
 ---@param frame Frame The actual frame object
@@ -259,6 +290,14 @@ function BlizzardEditMode:SetFramePositionFromDB(frameName, frame)
 
 	local LibEMO = LibStub('LibEditModeOverride-1.0', true)
 	if not LibEMO then
+		return false
+	end
+
+	-- Check if user has already customized this frame's position
+	if self:IsFramePositionCustomized(frame) then
+		if MoveIt.logger then
+			MoveIt.logger.info(('SetFramePositionFromDB: Skipping "%s" - user has customized position'):format(frameName))
+		end
 		return false
 	end
 
