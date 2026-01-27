@@ -136,6 +136,11 @@ function BlizzardEditMode:EnsureProfileReady(LibEMO)
 		return false
 	end
 
+	-- Load layouts first (required before any other LibEMO calls)
+	if not LibEMO:AreLayoutsLoaded() then
+		LibEMO:LoadLayouts()
+	end
+
 	-- Create profile if it doesn't exist
 	if not self:CreateSpartanUIProfile(LibEMO) then
 		return false

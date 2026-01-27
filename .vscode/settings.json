@@ -1198,7 +1198,10 @@
     "STANDARD_TOTEM_PRIORITIES",
     "SHAMAN_TOTEM_PRIORITIES",
     "LibAT",
-    "WOW_PROJECT_MISTS_CLASSIC"
+    "WOW_PROJECT_MISTS_CLASSIC",
+    "AbbreviateNumbers",
+    "tIndexOf",
+    "GetMoneyString"
   ],
   "Lua.workspace.ignoreDir": [".vscode", "libs/*"],
   "Lua.diagnostics.enable": true,
