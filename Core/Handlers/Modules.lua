@@ -36,7 +36,7 @@ function SUI:IsModuleEnabled(moduleName)
 		end
 	end
 
-	if SUI.DB.DisabledModules[moduleName] then
+	if SUI.DB.DisabledModules and SUI.DB.DisabledModules[moduleName] then
 		return false
 	end
 

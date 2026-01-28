@@ -152,6 +152,11 @@ local onShow = function(self)
 		return
 	end
 
+	-- Ensure module.DB is initialized before accessing settings
+	if not module.DB or not module.DB.Color then
+		return
+	end
+
 	-- Clear tooltip backdrop - SUITip layer provides the background
 	if self.SetBackdrop then
 		self:SetBackdrop(nil)
