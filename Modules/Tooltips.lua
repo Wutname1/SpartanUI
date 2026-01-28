@@ -251,7 +251,9 @@ local function ApplySkin(tooltip)
 		end
 
 		-- Apply color based on settings
-		local r, g, b, a = unpack(module.DB.Color)
+		-- Ensure Color exists with fallback default
+		local colorTable = module.DB.Color or { 0, 0, 0, 0.9 }
+		local r, g, b, a = unpack(colorTable)
 		if module.DB.Background == 'none' or module.DB.ColorOverlay then
 			-- Color overlay mode: apply user's color at full opacity (the color itself provides darkness)
 			SUITip.bgTexture:SetVertexColor(r, g, b, 1)
@@ -341,7 +343,7 @@ local TooltipSetSpell = function(self, tooltipData)
 	ApplySkin(self)
 
 	-- Add spell ID if enabled and conditions are met
-	if module.DB.SpellID.enabled and tooltipData and tooltipData.id then
+	if module.DB and module.DB.SpellID and module.DB.SpellID.enabled and tooltipData and tooltipData.id then
 		local shouldShowID = IsModifierConditionMet(module.DB.SpellID.modifierKey)
 
 		if shouldShowID then
@@ -422,7 +424,7 @@ local TooltipSetItem = function(tooltip, tooltipData)
 		tooltip.itemCleared = true
 
 		-- Add item ID if enabled and conditions are met
-		if module.DB.SpellID.enabled and tooltipData and tooltipData.id then
+		if module.DB and module.DB.SpellID and module.DB.SpellID.enabled and tooltipData and tooltipData.id then
 			local shouldShowID = IsModifierConditionMet(module.DB.SpellID.modifierKey)
 
 			if shouldShowID then

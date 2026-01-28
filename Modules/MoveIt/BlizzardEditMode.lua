@@ -264,7 +264,12 @@ function BlizzardEditMode:HookDefaultPositions()
 		end
 
 		-- Get SpartanUI's custom position
-		local positionString = SUI.DB.Styles[SUI.DB.Artwork.Style].BlizzMovers[frameName]
+		local style = SUI.DB.Artwork and SUI.DB.Artwork.Style
+		if not style or not SUI.DB.Styles[style] or not SUI.DB.Styles[style].BlizzMovers then
+			return originalGetDefaultAnchor(self, systemID, systemIndex)
+		end
+
+		local positionString = SUI.DB.Styles[style].BlizzMovers[frameName]
 		if not positionString then
 			return originalGetDefaultAnchor(self, systemID, systemIndex)
 		end
@@ -407,7 +412,12 @@ function BlizzardEditMode:ReapplyFramePosition(frameName, frame, skipApply)
 	end
 
 	-- Get position from database
-	local positionString = SUI.DB.Styles[SUI.DB.Artwork.Style].BlizzMovers[frameName]
+	local style = SUI.DB.Artwork and SUI.DB.Artwork.Style
+	if not style or not SUI.DB.Styles[style] or not SUI.DB.Styles[style].BlizzMovers then
+		return
+	end
+
+	local positionString = SUI.DB.Styles[style].BlizzMovers[frameName]
 	if not positionString then
 		return
 	end
@@ -749,7 +759,15 @@ function BlizzardEditMode:SetFramePositionFromDB(frameName, frame)
 	end
 
 	-- Get position from database
-	local positionString = SUI.DB.Styles[SUI.DB.Artwork.Style].BlizzMovers[frameName]
+	local style = SUI.DB.Artwork and SUI.DB.Artwork.Style
+	if not style or not SUI.DB.Styles[style] or not SUI.DB.Styles[style].BlizzMovers then
+		if MoveIt.logger then
+			MoveIt.logger.warning(('SetFramePositionFromDB: Style or BlizzMovers not available for "%s"'):format(frameName))
+		end
+		return false
+	end
+
+	local positionString = SUI.DB.Styles[style].BlizzMovers[frameName]
 	if not positionString then
 		if MoveIt.logger then
 			MoveIt.logger.warning(('SetFramePositionFromDB: No position found in DB for "%s"'):format(frameName))
@@ -803,7 +821,7 @@ function BlizzardEditMode:ApplyAllBlizzMoverPositions()
 	-- Iterate through native EditMode frames
 	for frameName, frameData in pairs(NATIVE_EDITMODE_FRAMES) do
 		-- Check if this frame is enabled in BlizzMovers
-		if SUI.DB.Artwork.BlizzMoverStates[frameName] and SUI.DB.Artwork.BlizzMoverStates[frameName].enabled then
+		if SUI.DB.Artwork and SUI.DB.Artwork.BlizzMoverStates and SUI.DB.Artwork.BlizzMoverStates[frameName] and SUI.DB.Artwork.BlizzMoverStates[frameName].enabled then
 			-- Get frame reference (special handling for some frames)
 			local frame = _G[frameName]
 
@@ -1458,7 +1476,14 @@ function BlizzardEditMode:ApplyDefaultPositions()
 	end
 
 	-- Get current style's BlizzMover positions
-	local style = SUI.DB.Artwork.Style
+	local style = SUI.DB.Artwork and SUI.DB.Artwork.Style
+	if not style then
+		if MoveIt.logger then
+			MoveIt.logger.warning('ApplyDefaultPositions: No style defined in SUI.DB.Artwork.Style')
+		end
+		return
+	end
+
 	local blizzMovers = SUI.DB.Styles[style] and SUI.DB.Styles[style].BlizzMovers
 	if not blizzMovers then
 		if MoveIt.logger then

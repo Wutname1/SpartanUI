@@ -256,7 +256,7 @@ function module:UpdateSettings()
 
 	module.BaseOpt = SUI:CopyTable({}, module.Settings)
 	-- Apply user custom settings
-	if module.DB.customSettings[currentStyle] then
+	if module.DB and module.DB.customSettings and module.DB.customSettings[currentStyle] then
 		SUI:MergeData(module.Settings, module.DB.customSettings[currentStyle], true)
 	end
 
@@ -1402,11 +1402,13 @@ function module:InitializeVehicleMover()
 			module.Settings.vehiclePosition = position
 
 			-- Save to user settings
-			local currentStyle = SUI.DB.Artwork.Style
-			if not module.DB.customSettings[currentStyle] then
-				module.DB.customSettings[currentStyle] = {}
+			local currentStyle = SUI.DB.Artwork and SUI.DB.Artwork.Style
+			if currentStyle and module.DB and module.DB.customSettings then
+				if not module.DB.customSettings[currentStyle] then
+					module.DB.customSettings[currentStyle] = {}
+				end
+				module.DB.customSettings[currentStyle].vehiclePosition = position
 			end
-			module.DB.customSettings[currentStyle].vehiclePosition = position
 		end,
 	})
 
@@ -1449,8 +1451,8 @@ function module:ResetVehiclePosition()
 	VehicleMover:SetPoint(point, _G[anchor], secondaryPoint, x, y)
 
 	module.Settings.vehiclePosition = module.BaseOpt.vehiclePosition
-	local currentStyle = SUI.DB.Artwork.Style
-	if module.DB.customSettings[currentStyle] then
+	local currentStyle = SUI.DB.Artwork and SUI.DB.Artwork.Style
+	if currentStyle and module.DB and module.DB.customSettings and module.DB.customSettings[currentStyle] then
 		module.DB.customSettings[currentStyle].vehiclePosition = nil
 	end
 
@@ -1515,7 +1517,13 @@ function module:CheckOverrideActionBar()
 		if IsVehicleUIActive() then
 			if not module.Settings.firstVehicleDetected and module.Settings.UnderVehicleUI and module.Settings.useVehicleMover ~= false then
 				module.Settings.firstVehicleDetected = true
-				module.DB.customSettings[SUI.DB.Artwork.Style].firstVehicleDetected = true
+				local currentStyle = SUI.DB.Artwork and SUI.DB.Artwork.Style
+				if currentStyle and module.DB and module.DB.customSettings then
+					if not module.DB.customSettings[currentStyle] then
+						module.DB.customSettings[currentStyle] = {}
+					end
+					module.DB.customSettings[currentStyle].firstVehicleDetected = true
+				end
 
 				StaticPopupDialogs['SUI_MINIMAP_VEHICLE_POSITION'] = {
 					text = L['Would you like to set a custom position for your minimap when in a vehicle?'],
@@ -1569,8 +1577,14 @@ function module:OnInitialize()
 	-- Check for other addons modifying the minimap
 	module:DetectMinimapAddons()
 
-	if C_CVar.GetCVar('rotateMinimap') == '1' and not module.DB.customSettings[SUI.DB.Artwork.Style].rotate then
-		module.DB.customSettings[SUI.DB.Artwork.Style].rotate = true
+	local currentStyle = SUI.DB.Artwork and SUI.DB.Artwork.Style
+	if currentStyle and module.DB and module.DB.customSettings then
+		if not module.DB.customSettings[currentStyle] then
+			module.DB.customSettings[currentStyle] = {}
+		end
+		if C_CVar.GetCVar('rotateMinimap') == '1' and not module.DB.customSettings[currentStyle].rotate then
+			module.DB.customSettings[currentStyle].rotate = true
+		end
 	end
 end
 

@@ -106,6 +106,14 @@ end
 
 module.colors = {}
 function module.colors:GetSecondaryColor(comp)
+	-- Ensure component exists in DB, return default if not
+	if not DB or not DB.components or not DB.components[comp] then
+		-- Return class color with reduced alpha as fallback
+		local result = module.colors.GetColorTable(GetClassColor(select(2, UnitClass('player'))))
+		result[4] = 0.3
+		return result
+	end
+
 	local color = DB.components[comp].colors.secondary
 	if color == 'CLASS' then
 		local result = module.colors.GetColorTable(GetClassColor(select(2, UnitClass('player'))))
@@ -121,6 +129,12 @@ function module.colors:GetSecondaryColor(comp)
 end
 
 function module.colors:GetPrimaryColor(comp)
+	-- Ensure component exists in DB, return default if not
+	if not DB or not DB.components or not DB.components[comp] then
+		-- Return class color as fallback
+		return module.colors.GetColorTable(GetClassColor(select(2, UnitClass('player'))))
+	end
+
 	local color = DB.components[comp].colors.primary
 	if color == 'CLASS' then
 		return module.colors.GetColorTable(GetClassColor(select(2, UnitClass('player'))))
@@ -503,7 +517,7 @@ end
 ---@param mode? AppearanceMode
 ---@param component? string
 function module.SkinObj(ObjType, object, mode, component)
-	if not object or (component and not DB.components[component].enabled) or object.isSkinned then
+	if not object or (component and DB.components[component] and not DB.components[component].enabled) or object.isSkinned then
 		return
 	end
 	if ObjType and module.Objects[ObjType] then
@@ -676,7 +690,7 @@ function module:OnInitialize()
 	DB = module.Database.profile
 
 	for name, Data in pairs(module.Registry) do
-		if Data.OnInitalize and DB.components[name].enabled then
+		if Data.OnInitalize and DB.components[name] and DB.components[name].enabled then
 			Data.OnInitalize()
 		end
 	end
@@ -686,7 +700,7 @@ function module:OnEnable()
 	Options()
 
 	for name, Data in pairs(module.Registry) do
-		if Data.OnEnable and DB.components[name].enabled then
+		if Data.OnEnable and DB.components[name] and DB.components[name].enabled then
 			Data.OnEnable()
 		end
 	end
