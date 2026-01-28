@@ -1,5 +1,6 @@
----@class SUI
+--@type SUI
 local SUI = SUI
+---@class MoveIt
 local MoveIt = SUI.MoveIt
 
 ---@class SUI.MoveIt.BlizzardEditMode

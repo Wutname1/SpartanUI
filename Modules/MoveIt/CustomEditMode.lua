@@ -1,5 +1,6 @@
 ---@class SUI
 local SUI = SUI
+---@class MoveIt
 local MoveIt = SUI.MoveIt
 local L = SUI.L
 
