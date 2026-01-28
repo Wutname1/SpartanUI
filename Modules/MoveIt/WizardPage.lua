@@ -66,16 +66,13 @@ local function ShouldShowWizard()
 		return false
 	end
 
-	-- Skip if already completed setup
-	if MoveIt.DB and MoveIt.DB.EditModeWizard and MoveIt.DB.EditModeWizard.SetupDone then
-		-- Mark initial setup as complete since wizard was already done previously
-		if MoveIt.BlizzardEditMode then
-			MoveIt.BlizzardEditMode.initialSetupComplete = true
-		end
-		return false
+	-- Get current EditMode state first - we need this for all decisions
+	local state = nil
+	if MoveIt.BlizzardEditMode then
+		state = MoveIt.BlizzardEditMode:GetEditModeState()
 	end
 
-	-- Check global preference for auto-apply
+	-- Check global preference for auto-apply (before SetupDone check)
 	if MoveIt.DBG and MoveIt.DBG.EditModePreferences and MoveIt.DBG.EditModePreferences.ApplyToAllCharacters then
 		local defaultOption = MoveIt.DBG.EditModePreferences.DefaultMigrationOption
 		if defaultOption then
@@ -87,45 +84,55 @@ local function ShouldShowWizard()
 		end
 	end
 
-	-- Get current EditMode state
-	if MoveIt.BlizzardEditMode then
-		local state = MoveIt.BlizzardEditMode:GetEditModeState()
-
-		-- If EditMode state couldn't be fully determined (LibEMO not ready), skip wizard
-		-- The silent setup or popup will handle it later when ready
-		if not state.currentLayoutName then
-			if MoveIt.logger then
-				MoveIt.logger.info('ShouldShowWizard: Could not determine current layout (LibEMO not ready?), skipping wizard')
-			end
-			return false
-		end
-
-		-- If user is already on a SpartanUI layout, mark setup complete and skip
-		if state.isOnSpartanUILayout then
+	-- If user is already on a SpartanUI layout, mark setup complete and skip
+	if state and state.isOnSpartanUILayout then
+		if MoveIt.BlizzardEditMode then
 			MoveIt.BlizzardEditMode.initialSetupComplete = true
-			-- Also update DB to mark setup as done
-			if MoveIt.DB and MoveIt.DB.EditModeWizard then
-				MoveIt.DB.EditModeWizard.SetupDone = true
-				MoveIt.DB.EditModeControl.CurrentProfile = state.currentLayoutName
-			end
-			if MoveIt.logger then
-				MoveIt.logger.info(('ShouldShowWizard: User already on SpartanUI layout "%s", skipping wizard'):format(state.currentLayoutName))
-			end
-			return false
 		end
+		-- Also update DB to mark setup as done
+		if MoveIt.DB and MoveIt.DB.EditModeWizard then
+			MoveIt.DB.EditModeWizard.SetupDone = true
+			MoveIt.DB.EditModeControl.CurrentProfile = state.currentLayoutName
+		end
+		if MoveIt.logger then
+			MoveIt.logger.info(('ShouldShowWizard: User already on SpartanUI layout "%s", skipping wizard'):format(state.currentLayoutName))
+		end
+		return false
+	end
 
-		-- For preset layouts (Modern/Classic), silently apply - no wizard needed
-		if state.isOnPresetLayout then
-			C_Timer.After(0.1, function()
-				TrySilentPresetSetup()
-			end)
-			return false
+	-- For preset layouts (Modern/Classic), silently apply - no wizard needed
+	-- This runs even if SetupDone is true (upgrade scenario)
+	if state and state.isOnPresetLayout then
+		if MoveIt.logger then
+			MoveIt.logger.info(('ShouldShowWizard: User on preset layout "%s", scheduling silent setup'):format(state.currentLayoutName))
 		end
+		C_Timer.After(0.1, function()
+			TrySilentPresetSetup()
+		end)
+		return false
+	end
 
-		-- Only show wizard for upgrade scenario: custom profile that's not preset and not SpartanUI
-		if state.needsUpgradeWizard then
-			return true
+	-- Skip if already completed setup (only after checking preset/SpartanUI layouts above)
+	if MoveIt.DB and MoveIt.DB.EditModeWizard and MoveIt.DB.EditModeWizard.SetupDone then
+		-- Mark initial setup as complete since wizard was already done previously
+		if MoveIt.BlizzardEditMode then
+			MoveIt.BlizzardEditMode.initialSetupComplete = true
 		end
+		return false
+	end
+
+	-- If EditMode state couldn't be fully determined (LibEMO not ready), skip wizard
+	-- The silent setup or popup will handle it later when ready
+	if not state or not state.currentLayoutName then
+		if MoveIt.logger then
+			MoveIt.logger.info('ShouldShowWizard: Could not determine current layout (LibEMO not ready?), skipping wizard')
+		end
+		return false
+	end
+
+	-- Only show wizard for upgrade scenario: custom profile that's not preset and not SpartanUI
+	if state.needsUpgradeWizard then
+		return true
 	end
 
 	-- No wizard needed, mark setup complete
@@ -246,7 +253,8 @@ function WizardPage:ApplyMigration(option, saveGlobal)
 				if MoveIt.logger then
 					MoveIt.logger.info(('WizardPage: Creating profile "%s" as copy of "%s"'):format(newProfileName, currentLayoutName))
 				end
-				MoveIt.BlizzardEditMode:CreateLayoutFromCurrent(layoutType, newProfileName)
+				-- Pass the source layout name explicitly to ensure we copy the right one
+				MoveIt.BlizzardEditMode:CreateLayoutFromCurrent(layoutType, newProfileName, currentLayoutName)
 			end
 		end
 

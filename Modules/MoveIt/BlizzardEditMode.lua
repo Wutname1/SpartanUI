@@ -1263,18 +1263,35 @@ end
 function BlizzardEditMode:DetermineLayoutType()
 	local currentSUIProfile = SUI.SpartanUIDB:GetCurrentProfile()
 	local charKey = SUI.SpartanUIDB.keys.char
+	local realmKey = SUI.SpartanUIDB.keys.realm
+	local classKey = SUI.SpartanUIDB.keys.class
+
+	if MoveIt.logger then
+		MoveIt.logger.debug(
+			('DetermineLayoutType: currentSUIProfile="%s", charKey="%s", realmKey="%s", classKey="%s"'):format(tostring(currentSUIProfile), tostring(charKey), tostring(realmKey), tostring(classKey))
+		)
+	end
 
 	-- Shared profiles use Account scope
-	if currentSUIProfile == 'Default' or currentSUIProfile == SUI.SpartanUIDB.keys.realm or currentSUIProfile == SUI.SpartanUIDB.keys.class then
+	if currentSUIProfile == 'Default' or currentSUIProfile == realmKey or currentSUIProfile == classKey then
+		if MoveIt.logger then
+			MoveIt.logger.debug('DetermineLayoutType: Using Account scope (shared profile)')
+		end
 		return Enum.EditModeLayoutType.Account
 	end
 
 	-- Character-specific profile uses Character scope
 	if currentSUIProfile == charKey then
+		if MoveIt.logger then
+			MoveIt.logger.debug('DetermineLayoutType: Using Character scope (character profile)')
+		end
 		return Enum.EditModeLayoutType.Character
 	end
 
 	-- Custom named profiles default to Character scope
+	if MoveIt.logger then
+		MoveIt.logger.debug('DetermineLayoutType: Using Character scope (custom named profile)')
+	end
 	return Enum.EditModeLayoutType.Character
 end
 
@@ -1282,8 +1299,9 @@ end
 ---This differs from LibEMO:AddLayout which always copies from Modern
 ---@param layoutType number Enum.EditModeLayoutType (Account or Character)
 ---@param newLayoutName string Name for the new layout
+---@param sourceLayoutName? string Optional: specific layout to copy from (defaults to current active)
 ---@return boolean success True if layout was created successfully
-function BlizzardEditMode:CreateLayoutFromCurrent(layoutType, newLayoutName)
+function BlizzardEditMode:CreateLayoutFromCurrent(layoutType, newLayoutName, sourceLayoutName)
 	local LibEMO = self.LibEMO or LibStub('LibEditModeOverride-1.0', true)
 	if not LibEMO then
 		if MoveIt.logger then
@@ -1311,46 +1329,39 @@ function BlizzardEditMode:CreateLayoutFromCurrent(layoutType, newLayoutName)
 		return false
 	end
 
-	-- Get current layout info BEFORE creating new one
-	-- We need to save positions from current active layout
-	local currentLayoutInfo = C_EditMode.GetLayouts()
-	local activeLayoutIndex = currentLayoutInfo.activeLayout
+	-- Determine which layout to copy from
+	-- Use provided sourceLayoutName, or get from LibEMO (more reliable than C_EditMode index)
+	local targetLayoutName = sourceLayoutName or LibEMO:GetActiveLayout()
 
 	if MoveIt.logger then
-		MoveIt.logger.debug(('CreateLayoutFromCurrent: activeLayout index = %d, layouts count = %d'):format(activeLayoutIndex, #currentLayoutInfo.layouts))
+		MoveIt.logger.debug(('CreateLayoutFromCurrent: Will copy from layout "%s"'):format(tostring(targetLayoutName)))
 	end
 
-	-- Find the current layout by iterating through layouts
-	-- The activeLayout index corresponds to the actual layout index in the array
-	-- But we need to handle preset layouts (Modern=1, Classic=2) which may have special handling
+	-- Get current layout info
+	local currentLayoutInfo = C_EditMode.GetLayouts()
+
+	if MoveIt.logger then
+		MoveIt.logger.debug(('CreateLayoutFromCurrent: C_EditMode reports activeLayout index = %d, layouts count = %d'):format(currentLayoutInfo.activeLayout, #currentLayoutInfo.layouts))
+	end
+
+	-- Find the source layout by NAME (not by activeLayout index which can be wrong)
 	local currentLayout = nil
+	local foundIndex = nil
 
-	-- First try direct index access
-	if currentLayoutInfo.layouts[activeLayoutIndex] then
-		currentLayout = currentLayoutInfo.layouts[activeLayoutIndex]
-	else
-		-- Fallback: search for the active layout by checking if any match current settings
-		-- Get the current active layout name from LibEMO
-		local currentLayoutName = LibEMO:GetActiveLayout()
-		if MoveIt.logger then
-			MoveIt.logger.debug(('CreateLayoutFromCurrent: Looking for layout named "%s"'):format(tostring(currentLayoutName)))
-		end
-
-		for i, layout in ipairs(currentLayoutInfo.layouts) do
-			if layout.layoutName == currentLayoutName then
-				currentLayout = layout
-				activeLayoutIndex = i
-				if MoveIt.logger then
-					MoveIt.logger.debug(('CreateLayoutFromCurrent: Found layout at index %d'):format(i))
-				end
-				break
+	for i, layout in ipairs(currentLayoutInfo.layouts) do
+		if layout.layoutName == targetLayoutName then
+			currentLayout = layout
+			foundIndex = i
+			if MoveIt.logger then
+				MoveIt.logger.debug(('CreateLayoutFromCurrent: Found source layout "%s" at index %d'):format(targetLayoutName, i))
 			end
+			break
 		end
 	end
 
 	if not currentLayout then
 		if MoveIt.logger then
-			MoveIt.logger.error(('CreateLayoutFromCurrent: Could not get current layout data (activeIndex=%d)'):format(activeLayoutIndex))
+			MoveIt.logger.error(('CreateLayoutFromCurrent: Could not find layout "%s"'):format(tostring(targetLayoutName)))
 			-- Log available layouts for debugging
 			for i, layout in ipairs(currentLayoutInfo.layouts) do
 				MoveIt.logger.debug(('  Layout[%d]: name="%s", type=%d'):format(i, tostring(layout.layoutName), layout.layoutType or -1))
