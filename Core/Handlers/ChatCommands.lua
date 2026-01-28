@@ -39,7 +39,12 @@ if AddonCompartmentFrame then
 		notCheckable = true,
 		func = function(btn, arg1, arg2, checked, mouseButton)
 			if IsShiftKeyDown() then
-				SUI.MoveIt:MoveIt()
+				-- On Retail, open Blizzard's EditMode; on Classic, use legacy MoveIt
+				if EditModeManagerFrame then
+					ShowUIPanel(EditModeManagerFrame)
+				else
+					SUI.MoveIt:MoveIt()
+				end
 				return
 			end
 			-- if mouseButton == 'LeftButton' then

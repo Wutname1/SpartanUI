@@ -1118,7 +1118,12 @@ function MoveIt:OnEnable()
 		end
 
 		if not arg then
-			MoveIt:MoveIt()
+			-- On Retail, open Blizzard's EditMode; on Classic, use legacy MoveIt
+			if EditModeManagerFrame then
+				ShowUIPanel(EditModeManagerFrame)
+			else
+				MoveIt:MoveIt()
+			end
 		else
 			if MoverList[arg] then
 				MoveIt:MoveIt(arg)

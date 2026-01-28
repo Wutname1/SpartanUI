@@ -369,7 +369,12 @@ function module:ToggleOptions(pages)
 				MoveIt:SetText(L['Toggle movers'])
 				MoveIt:SetPoint('BOTTOM', -190, 10) -- Start at -190 to center the 5 buttons
 				MoveIt:HookScript('OnClick', function()
-					SUI.MoveIt:MoveIt()
+					-- On Retail, open Blizzard's EditMode; on Classic, use legacy MoveIt
+					if EditModeManagerFrame then
+						ShowUIPanel(EditModeManagerFrame)
+					else
+						SUI.MoveIt:MoveIt()
+					end
 				end)
 				SUI.Skins.SkinObj('Button', MoveIt, 'Dark', 'Ace3') -- Dark skin for prominence
 				bottom.MoveIt = MoveIt
