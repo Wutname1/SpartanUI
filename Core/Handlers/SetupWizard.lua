@@ -423,16 +423,79 @@ local function WelcomePage()
 		Desc2 = 'This setup wizard may be re-ran at any time via the SUI settings screen. You can access the SUI settings via the /sui chat command. For a full list of chat commands as well as common questions visit the wiki at http://wiki.spartanui.net or Join the SpartanUI Discord.',
 		Display = function()
 			local UI = LibAT.UI
-			local profiles = {}
 			local currentProfile = SUI.SpartanUIDB:GetCurrentProfile()
-			local tmpProfiles = {}
-			-- GetProfiles() requires a table to populate
-			SUI.SpartanUIDB:GetProfiles(tmpProfiles)
-			for _, v in pairs(tmpProfiles) do
-				if v ~= currentProfile then
-					profiles[#profiles + 1] = { text = v, value = v }
+
+			-- Build profile lists with common profiles included
+			local function GetProfileListWithCommon(excludeCurrent)
+				local profileList = {}
+				local tmpProfiles = {}
+				SUI.SpartanUIDB:GetProfiles(tmpProfiles)
+
+				-- Add existing profiles
+				for _, v in pairs(tmpProfiles) do
+					if not (excludeCurrent and v == currentProfile) then
+						profileList[#profileList + 1] = { text = v, value = v, isCommon = false }
+					end
 				end
+
+				-- Add common/default profiles if not already in the list
+				local commonProfiles = {
+					{ key = 'Default', text = 'Default' },
+					{ key = SUI.SpartanUIDB.keys.realm, text = SUI.SpartanUIDB.keys.realm },
+					{ key = SUI.SpartanUIDB.keys.class, text = UnitClass('player') },
+				}
+
+				for _, common in ipairs(commonProfiles) do
+					if not (excludeCurrent and common.key == currentProfile) then
+						local found = false
+						for _, profile in ipairs(profileList) do
+							if profile.value == common.key then
+								found = true
+								break
+							end
+						end
+						if not found then
+							profileList[#profileList + 1] = { text = common.text, value = common.key, isCommon = true }
+						end
+					end
+				end
+
+				return profileList
 			end
+
+			-- Get profile lists
+			local copyProfiles = GetProfileListWithCommon(true) -- Exclude current for copy
+			local sharedProfiles = GetProfileListWithCommon(true) -- Exclude current for shared
+
+			-- Sort shared profiles to put Default first, then Realm, then Class, then alphabetical
+			table.sort(sharedProfiles, function(a, b)
+				local aIsDefault = a.value == 'Default'
+				local bIsDefault = b.value == 'Default'
+				local aIsRealm = a.value == SUI.SpartanUIDB.keys.realm
+				local bIsRealm = b.value == SUI.SpartanUIDB.keys.realm
+				local aIsClass = a.value == SUI.SpartanUIDB.keys.class
+				local bIsClass = b.value == SUI.SpartanUIDB.keys.class
+
+				if aIsDefault then
+					return true
+				end
+				if bIsDefault then
+					return false
+				end
+				if aIsRealm and not bIsRealm then
+					return true
+				end
+				if bIsRealm and not aIsRealm then
+					return false
+				end
+				if aIsClass and not bIsClass then
+					return true
+				end
+				if bIsClass and not aIsClass then
+					return false
+				end
+				return a.text < b.text
+			end)
 
 			local IntroPage = CreateFrame('Frame', nil)
 			IntroPage:SetParent(module.window.content)
@@ -442,7 +505,7 @@ local function WelcomePage()
 			IntroPage.Helm = IntroPage:CreateTexture(nil, 'ARTWORK')
 			IntroPage.Helm:SetTexture('Interface\\AddOns\\SpartanUI\\images\\Spartan-Helm')
 			IntroPage.Helm:SetSize(114, 114)
-			IntroPage.Helm:SetPoint('CENTER', IntroPage, 'CENTER', 0, 60)
+			IntroPage.Helm:SetPoint('CENTER', IntroPage, 'CENTER', 0, 80)
 			IntroPage.Helm:SetAlpha(0.6)
 
 			if not SUI:IsAddonEnabled('Bartender4') then
@@ -454,7 +517,7 @@ local function WelcomePage()
 			end
 
 			-- Profile copy section
-			IntroPage.ProfileCopyLabel = UI.CreateLabel(IntroPage, L['If you would like to copy the configuration from another character you may do so below.'])
+			IntroPage.ProfileCopyLabel = UI.CreateLabel(IntroPage, 'If you would like to copy a profile do so below:')
 			IntroPage.ProfileCopyLabel:SetWidth(500)
 			IntroPage.ProfileCopyLabel:SetJustifyH('CENTER')
 			IntroPage.ProfileCopyLabel:SetWordWrap(true)
@@ -463,14 +526,14 @@ local function WelcomePage()
 			IntroPage.ProfileList = UI.CreateDropdown(IntroPage, 'Select Profile...', 200, 20)
 			IntroPage.ProfileList.selectedValue = nil
 			IntroPage.ProfileList:SetupMenu(function(dropdown, rootDescription)
-				for _, profile in ipairs(profiles) do
+				for _, profile in ipairs(copyProfiles) do
 					rootDescription:CreateButton(profile.text, function()
 						dropdown.selectedValue = profile.value
 						dropdown:SetText(profile.text)
 					end)
 				end
 			end)
-			IntroPage.ProfileList:SetPoint('TOP', IntroPage.ProfileCopyLabel, 'BOTTOM', 0, -10)
+			IntroPage.ProfileList:SetPoint('TOP', IntroPage.ProfileCopyLabel, 'BOTTOM', 0, -5)
 			IntroPage.ProfileList:SetPoint('LEFT', IntroPage, 'CENTER', -130, 0)
 
 			IntroPage.CopyProfileButton = UI.CreateButton(IntroPage, 60, 20, 'COPY')
@@ -487,20 +550,57 @@ local function WelcomePage()
 			end)
 			IntroPage.CopyProfileButton:SetPoint('LEFT', IntroPage.ProfileList, 'RIGHT', 4, 0)
 
+			-- Shared profile section
+			IntroPage.SharedProfileLabel = UI.CreateLabel(IntroPage, 'If you want to share a profile between characters you may select the profile you want to use below:')
+			IntroPage.SharedProfileLabel:SetWidth(500)
+			IntroPage.SharedProfileLabel:SetJustifyH('CENTER')
+			IntroPage.SharedProfileLabel:SetWordWrap(true)
+			IntroPage.SharedProfileLabel:SetPoint('TOP', IntroPage.ProfileList, 'BOTTOM', 0, -20)
+
+			IntroPage.SharedProfileList = UI.CreateDropdown(IntroPage, 'Select Profile...', 200, 20)
+			IntroPage.SharedProfileList.selectedValue = nil
+			IntroPage.SharedProfileList:SetupMenu(function(dropdown, rootDescription)
+				for _, profile in ipairs(sharedProfiles) do
+					rootDescription:CreateButton(profile.text, function()
+						dropdown.selectedValue = profile.value
+						dropdown:SetText(profile.text)
+					end)
+				end
+			end)
+			IntroPage.SharedProfileList:SetPoint('TOP', IntroPage.SharedProfileLabel, 'BOTTOM', 0, -5)
+			IntroPage.SharedProfileList:SetPoint('LEFT', IntroPage, 'CENTER', -130, 0)
+
+			IntroPage.ApplyProfileButton = UI.CreateButton(IntroPage, 60, 20, 'APPLY')
+			IntroPage.ApplyProfileButton:SetScript('OnClick', function()
+				local dropdown = module.window.content.WelcomePage.SharedProfileList
+				local ProfileSelection = dropdown.selectedValue
+				if not ProfileSelection or ProfileSelection == '' then
+					return
+				end
+				-- Set profile (share it)
+				SUI.SpartanUIDB:SetProfile(ProfileSelection)
+				-- Reload the UI
+				SUI:SafeReloadUI()
+			end)
+			IntroPage.ApplyProfileButton:SetPoint('LEFT', IntroPage.SharedProfileList, 'RIGHT', 4, 0)
+
 			-- Import button (create before conditional check)
 			IntroPage.Import = UI.CreateButton(IntroPage, 200, 20, 'IMPORT SETTINGS')
 			IntroPage.Import:SetScript('OnClick', function()
 				local Profiles = SUI:GetModule('Handler.Profiles') ---@type SUI.Handler.Profiles
 				Profiles:ImportUI()
 			end)
-			IntroPage.Import:SetPoint('TOP', IntroPage.ProfileList, 'BOTTOM', 0, -15)
+			IntroPage.Import:SetPoint('TOP', IntroPage.SharedProfileList, 'BOTTOM', 0, -15)
 			IntroPage.Import:SetPoint('LEFT', IntroPage, 'CENTER', -100, 0)
 			IntroPage.Import:Hide() -- TODO: Hide until profile manager is fixed
 
-			if #profiles == 0 then
+			if #copyProfiles == 0 and #sharedProfiles == 0 then
 				IntroPage.ProfileCopyLabel:Hide()
 				IntroPage.ProfileList:Hide()
 				IntroPage.CopyProfileButton:Hide()
+				IntroPage.SharedProfileLabel:Hide()
+				IntroPage.SharedProfileList:Hide()
+				IntroPage.ApplyProfileButton:Hide()
 
 				-- Reposition Import button when profile section is hidden
 				IntroPage.Import:ClearAllPoints()
