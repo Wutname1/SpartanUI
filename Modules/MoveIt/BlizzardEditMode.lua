@@ -1534,6 +1534,14 @@ function BlizzardEditMode:OnSUIProfileChanged(event, database, newProfile)
 		return
 	end
 
+	-- Check if user is switching to another character's profile (warn them)
+	if MoveIt.WizardPage then
+		local isUsingOtherProfile, otherCharName = MoveIt.WizardPage:IsUsingOtherCharacterProfile()
+		if isUsingOtherProfile and otherCharName then
+			MoveIt.WizardPage:ShowSharedProfileWarning(otherCharName)
+		end
+	end
+
 	-- Get the matching EditMode profile name
 	local matchingProfile = self:GetMatchingProfileName()
 
