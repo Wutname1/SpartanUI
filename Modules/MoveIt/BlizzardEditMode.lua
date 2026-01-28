@@ -75,6 +75,7 @@ function BlizzardEditMode:Initialize()
 	if LibEMO:IsReady() then
 		self:SetupBlizzardFrames(LibEMO)
 		self:StartLayoutMonitoring()
+		self:RegisterEditModeExitHandler()
 	else
 		-- Hook into ready event
 		local frame = CreateFrame('Frame')
@@ -83,6 +84,7 @@ function BlizzardEditMode:Initialize()
 			if LibEMO:IsReady() then
 				BlizzardEditMode:SetupBlizzardFrames(LibEMO)
 				BlizzardEditMode:StartLayoutMonitoring()
+				BlizzardEditMode:RegisterEditModeExitHandler()
 				self:UnregisterAllEvents()
 			end
 		end)
@@ -470,20 +472,183 @@ function BlizzardEditMode:OnLayoutChanged()
 		return
 	end
 
+	-- Skip during initial setup phase (before wizard has completed)
+	-- This prevents false positive popups on login
+	if not self.initialSetupComplete then
+		return
+	end
+
+	-- Skip if migration is in progress (wizard is actively switching profiles)
+	if MoveIt.WizardPage and MoveIt.WizardPage:IsMigrationInProgress() then
+		if MoveIt.logger then
+			MoveIt.logger.debug('OnLayoutChanged: Skipping - migration in progress')
+		end
+		return
+	end
+
 	-- Reload layouts to get current state
 	LibEMO:LoadLayouts()
 
 	local currentLayout = LibEMO:GetActiveLayout()
+	local expectedProfile = MoveIt.DB.EditModeControl.CurrentProfile
 
-	-- Warn if user switched away from SpartanUI profile
-	if currentLayout ~= 'SpartanUI' then
+	-- Check if user switched to a non-SpartanUI profile
+	if not self:IsSpartanUILayout(currentLayout) then
 		if MoveIt.logger then
-			MoveIt.logger.warning(('EditMode profile changed to "%s" - SpartanUI BlizzMovers will not apply to this profile'):format(tostring(currentLayout)))
+			MoveIt.logger.warning(('EditMode profile changed to "%s" - not a SpartanUI profile'):format(tostring(currentLayout)))
+		end
+
+		-- If EditMode control is enabled and user switched away, mark for popup prompt
+		if MoveIt.DB.EditModeControl.Enabled then
+			self.pendingManualSwitchPrompt = currentLayout
 		end
 	else
 		if MoveIt.logger then
-			MoveIt.logger.info('EditMode profile is "SpartanUI" - BlizzMovers active')
+			MoveIt.logger.info(('EditMode profile is "%s" - SpartanUI managed'):format(currentLayout))
 		end
+		self.pendingManualSwitchPrompt = nil
+	end
+end
+
+---Show popup asking user if they want SpartanUI to manage their new profile
+---Called after user exits EditMode when they switched to a non-SUI profile
+function BlizzardEditMode:ShowManualSwitchPopup()
+	if not self.pendingManualSwitchPrompt then
+		return
+	end
+
+	local newProfile = self.pendingManualSwitchPrompt
+	self.pendingManualSwitchPrompt = nil
+
+	-- Don't show if control is already disabled
+	if not MoveIt.DB.EditModeControl.Enabled then
+		return
+	end
+
+	-- Create popup using LibAT.UI if available, otherwise use StaticPopup
+	local LibAT = _G.LibAT
+	if LibAT and LibAT.UI and LibAT.UI.CreateConfirmDialog then
+		LibAT.UI.CreateConfirmDialog({
+			title = 'SpartanUI - EditMode Profile',
+			message = ('You changed to the EditMode profile "%s".\n\nWould you like SpartanUI to apply default frame positions to this profile?'):format(newProfile),
+			confirmText = 'Yes, apply SUI defaults',
+			cancelText = 'No, leave unchanged',
+			onConfirm = function()
+				-- Apply SUI defaults to this new profile
+				self:ApplyDefaultPositions()
+				self:SafeApplyChanges(true)
+				MoveIt.DB.EditModeControl.CurrentProfile = newProfile
+				if MoveIt.logger then
+					MoveIt.logger.info(('Applied SUI defaults to profile "%s"'):format(newProfile))
+				end
+			end,
+			onCancel = function()
+				-- User doesn't want us to modify this profile
+				-- Ask if they want to disable management entirely
+				C_Timer.After(0.1, function()
+					self:ShowDisableManagementPopup(newProfile)
+				end)
+			end,
+		})
+	else
+		-- Fallback to StaticPopup
+		StaticPopupDialogs['SUI_EDITMODE_MANUAL_SWITCH'] = {
+			text = ('You changed to the EditMode profile "%s".\n\nWould you like SpartanUI to apply default frame positions to this profile?'):format(newProfile),
+			button1 = 'Yes, apply defaults',
+			button2 = 'No, leave unchanged',
+			OnAccept = function()
+				-- Apply SUI defaults to this new profile
+				BlizzardEditMode:ApplyDefaultPositions()
+				BlizzardEditMode:SafeApplyChanges(true)
+				MoveIt.DB.EditModeControl.CurrentProfile = newProfile
+				if MoveIt.logger then
+					MoveIt.logger.info(('Applied SUI defaults to profile "%s"'):format(newProfile))
+				end
+			end,
+			OnCancel = function()
+				-- User doesn't want us to modify this profile
+				-- Ask if they want to disable management entirely
+				C_Timer.After(0.1, function()
+					BlizzardEditMode:ShowDisableManagementPopup(newProfile)
+				end)
+			end,
+			timeout = 0,
+			whileDead = true,
+			hideOnEscape = false,
+			preferredIndex = 3,
+		}
+		StaticPopup_Show('SUI_EDITMODE_MANUAL_SWITCH')
+	end
+end
+
+---Show popup asking if user wants to disable EditMode management
+---Called when user declines to apply SUI defaults to their profile
+---@param profileName string The profile they switched to
+function BlizzardEditMode:ShowDisableManagementPopup(profileName)
+	local LibAT = _G.LibAT
+	if LibAT and LibAT.UI and LibAT.UI.CreateConfirmDialog then
+		LibAT.UI.CreateConfirmDialog({
+			title = 'SpartanUI - EditMode Management',
+			message = 'Would you like SpartanUI to stop asking about EditMode profiles?\n\nYou can re-enable this in /sui > Movers.',
+			confirmText = 'Yes, stop asking',
+			cancelText = 'No, keep asking',
+			onConfirm = function()
+				MoveIt.DB.EditModeControl.Enabled = false
+				if MoveIt.logger then
+					MoveIt.logger.info('User disabled EditMode management')
+				end
+			end,
+			onCancel = function()
+				-- Keep management enabled, they just don't want defaults on this profile
+				if MoveIt.logger then
+					MoveIt.logger.info(('User declined defaults for "%s" but kept management enabled'):format(profileName))
+				end
+			end,
+		})
+	else
+		-- Fallback to StaticPopup
+		StaticPopupDialogs['SUI_EDITMODE_DISABLE_MANAGEMENT'] = {
+			text = 'Would you like SpartanUI to stop asking about EditMode profiles?\n\nYou can re-enable this in /sui > Movers.',
+			button1 = 'Yes, stop asking',
+			button2 = 'No, keep asking',
+			OnAccept = function()
+				MoveIt.DB.EditModeControl.Enabled = false
+				if MoveIt.logger then
+					MoveIt.logger.info('User disabled EditMode management')
+				end
+			end,
+			OnCancel = function()
+				-- Keep management enabled
+				if MoveIt.logger then
+					MoveIt.logger.info(('User declined defaults for "%s" but kept management enabled'):format(profileName))
+				end
+			end,
+			timeout = 0,
+			whileDead = true,
+			hideOnEscape = true,
+			preferredIndex = 3,
+		}
+		StaticPopup_Show('SUI_EDITMODE_DISABLE_MANAGEMENT')
+	end
+end
+
+---Register for EditMode exit event to show manual switch popup
+function BlizzardEditMode:RegisterEditModeExitHandler()
+	if self.editModeExitRegistered then
+		return
+	end
+
+	if EditModeManagerFrame then
+		EventRegistry:RegisterCallback('EditMode.Exit', function()
+			-- Check if we need to show the manual switch popup
+			if self.pendingManualSwitchPrompt then
+				-- Delay slightly to let EditMode fully exit
+				C_Timer.After(0.5, function()
+					self:ShowManualSwitchPopup()
+				end)
+			end
+		end)
+		self.editModeExitRegistered = true
 	end
 end
 
@@ -935,6 +1100,466 @@ function BlizzardEditMode:NeedsCustomMover(frameName)
 
 	-- All other frames need custom movers (until explicitly migrated)
 	return true
+end
+
+-- ============================================================================
+-- EditMode State Detection Functions
+-- ============================================================================
+
+-- Blizzard's preset layout names (not custom user profiles)
+local PRESET_LAYOUTS = {
+	['Modern'] = true,
+	['Classic'] = true,
+}
+
+---Check if a layout name is a Blizzard preset (Modern/Classic)
+---@param layoutName string The layout name to check
+---@return boolean isPreset True if this is a preset layout
+function BlizzardEditMode:IsPresetLayout(layoutName)
+	return PRESET_LAYOUTS[layoutName] == true
+end
+
+---Check if a layout name is a SpartanUI managed profile
+---@param layoutName string The layout name to check
+---@return boolean isSpartanUI True if this is a SpartanUI profile
+function BlizzardEditMode:IsSpartanUILayout(layoutName)
+	if not layoutName then
+		return false
+	end
+	-- Check for exact match "SpartanUI" or prefix "SpartanUI - "
+	return layoutName == 'SpartanUI' or layoutName:find('^SpartanUI %- ') ~= nil
+end
+
+---@class SUI.MoveIt.EditModeState
+---@field isEditModeAvailable boolean Is this Retail with EditMode?
+---@field currentLayoutName string|nil Current active layout name
+---@field isOnPresetLayout boolean Is user on Modern/Classic?
+---@field isOnSpartanUILayout boolean Is user on a SpartanUI profile?
+---@field spartanUILayoutExists boolean Does any SpartanUI profile exist?
+---@field customizedFrames string[] List of frame names user has moved
+---@field needsUpgradeWizard boolean Should show upgrade wizard page?
+
+---Get comprehensive state about EditMode configuration
+---@return SUI.MoveIt.EditModeState state The current EditMode state
+function BlizzardEditMode:GetEditModeState()
+	local state = {
+		isEditModeAvailable = false,
+		currentLayoutName = nil,
+		isOnPresetLayout = false,
+		isOnSpartanUILayout = false,
+		spartanUILayoutExists = false,
+		customizedFrames = {},
+		needsUpgradeWizard = false,
+	}
+
+	-- Check if EditMode is available (Retail only)
+	if not EditModeManagerFrame then
+		return state
+	end
+	state.isEditModeAvailable = true
+
+	-- Get LibEditModeOverride
+	local LibEMO = self.LibEMO or LibStub('LibEditModeOverride-1.0', true)
+	if not LibEMO then
+		return state
+	end
+
+	-- Ensure layouts are loaded
+	if not LibEMO:IsReady() then
+		return state
+	end
+
+	if not LibEMO:AreLayoutsLoaded() then
+		LibEMO:LoadLayouts()
+	end
+
+	-- Get current layout
+	state.currentLayoutName = LibEMO:GetActiveLayout()
+
+	-- Check layout type
+	if state.currentLayoutName then
+		state.isOnPresetLayout = self:IsPresetLayout(state.currentLayoutName)
+		state.isOnSpartanUILayout = self:IsSpartanUILayout(state.currentLayoutName)
+	end
+
+	-- Check if any SpartanUI profile exists
+	state.spartanUILayoutExists = LibEMO:DoesLayoutExist('SpartanUI')
+
+	-- Get list of customized frames
+	state.customizedFrames = self:GetCustomizedFrameNames()
+
+	-- Determine if upgrade wizard is needed
+	-- Needed when: user is on a custom profile (not preset, not SpartanUI)
+	state.needsUpgradeWizard = state.isEditModeAvailable and not state.isOnPresetLayout and not state.isOnSpartanUILayout and state.currentLayoutName ~= nil
+
+	return state
+end
+
+---Get list of frame names that user has customized (moved from default positions)
+---@return string[] frameNames List of customized frame names
+function BlizzardEditMode:GetCustomizedFrameNames()
+	local customizedFrames = {}
+
+	if not EditModeManagerFrame then
+		return customizedFrames
+	end
+
+	-- Frames we manage via EditMode
+	local managedFrames = {
+		{ name = 'TalkingHead', frame = TalkingHeadFrame },
+		{ name = 'VehicleLeaveButton', frame = MainMenuBarVehicleLeaveButton },
+		{ name = 'ExtraActionBar', frame = ExtraAbilityContainer or ExtraActionBarFrame },
+		{ name = 'EncounterBar', frame = EncounterBar },
+		{ name = 'ArchaeologyBar', frame = ArcheologyDigsiteProgressBar },
+	}
+
+	for _, frameInfo in ipairs(managedFrames) do
+		local frame = frameInfo.frame
+		if frame and self:IsFramePositionCustomized(frame) then
+			table.insert(customizedFrames, frameInfo.name)
+		end
+	end
+
+	return customizedFrames
+end
+
+---Get the appropriate EditMode profile name for current SUI profile
+---@return string profileName The matching EditMode profile name
+function BlizzardEditMode:GetMatchingProfileName()
+	local currentSUIProfile = SUI.SpartanUIDB:GetCurrentProfile()
+
+	-- Default profile -> "SpartanUI"
+	if currentSUIProfile == 'Default' then
+		return 'SpartanUI'
+	end
+
+	-- Realm profile -> "SpartanUI - RealmName"
+	if currentSUIProfile == SUI.SpartanUIDB.keys.realm then
+		return 'SpartanUI - ' .. currentSUIProfile
+	end
+
+	-- Class profile -> "SpartanUI - ClassName"
+	if currentSUIProfile == SUI.SpartanUIDB.keys.class then
+		return 'SpartanUI - ' .. currentSUIProfile
+	end
+
+	-- Character profile (CharName - RealmName) -> "SpartanUI - CharName"
+	local charKey = SUI.SpartanUIDB.keys.char
+	if currentSUIProfile == charKey then
+		-- Extract just the character name (before " - ")
+		local charName = currentSUIProfile:match('^([^%-]+)')
+		if charName then
+			charName = charName:gsub('%s+$', '') -- Trim trailing spaces
+			return 'SpartanUI - ' .. charName
+		end
+	end
+
+	-- Custom profile name -> "SpartanUI - ProfileName"
+	return 'SpartanUI - ' .. currentSUIProfile
+end
+
+---Get appropriate EditMode layout type based on SUI profile
+---@return number layoutType Enum.EditModeLayoutType value
+function BlizzardEditMode:DetermineLayoutType()
+	local currentSUIProfile = SUI.SpartanUIDB:GetCurrentProfile()
+	local charKey = SUI.SpartanUIDB.keys.char
+
+	-- Shared profiles use Account scope
+	if currentSUIProfile == 'Default' or currentSUIProfile == SUI.SpartanUIDB.keys.realm or currentSUIProfile == SUI.SpartanUIDB.keys.class then
+		return Enum.EditModeLayoutType.Account
+	end
+
+	-- Character-specific profile uses Character scope
+	if currentSUIProfile == charKey then
+		return Enum.EditModeLayoutType.Character
+	end
+
+	-- Custom named profiles default to Character scope
+	return Enum.EditModeLayoutType.Character
+end
+
+---Create a new EditMode layout copying positions from the CURRENT active layout
+---This differs from LibEMO:AddLayout which always copies from Modern
+---@param layoutType number Enum.EditModeLayoutType (Account or Character)
+---@param newLayoutName string Name for the new layout
+---@return boolean success True if layout was created successfully
+function BlizzardEditMode:CreateLayoutFromCurrent(layoutType, newLayoutName)
+	local LibEMO = self.LibEMO or LibStub('LibEditModeOverride-1.0', true)
+	if not LibEMO then
+		if MoveIt.logger then
+			MoveIt.logger.error('CreateLayoutFromCurrent: LibEditModeOverride not available')
+		end
+		return false
+	end
+
+	if not LibEMO:IsReady() then
+		if MoveIt.logger then
+			MoveIt.logger.error('CreateLayoutFromCurrent: EditMode not ready')
+		end
+		return false
+	end
+
+	if not LibEMO:AreLayoutsLoaded() then
+		LibEMO:LoadLayouts()
+	end
+
+	-- Check if layout already exists
+	if LibEMO:DoesLayoutExist(newLayoutName) then
+		if MoveIt.logger then
+			MoveIt.logger.warning(('CreateLayoutFromCurrent: Layout "%s" already exists'):format(newLayoutName))
+		end
+		return false
+	end
+
+	-- Get current layout info BEFORE creating new one
+	-- We need to save positions from current active layout
+	local currentLayoutInfo = C_EditMode.GetLayouts()
+	local activeLayoutIndex = currentLayoutInfo.activeLayout
+
+	if MoveIt.logger then
+		MoveIt.logger.debug(('CreateLayoutFromCurrent: activeLayout index = %d, layouts count = %d'):format(activeLayoutIndex, #currentLayoutInfo.layouts))
+	end
+
+	-- Find the current layout by iterating through layouts
+	-- The activeLayout index corresponds to the actual layout index in the array
+	-- But we need to handle preset layouts (Modern=1, Classic=2) which may have special handling
+	local currentLayout = nil
+
+	-- First try direct index access
+	if currentLayoutInfo.layouts[activeLayoutIndex] then
+		currentLayout = currentLayoutInfo.layouts[activeLayoutIndex]
+	else
+		-- Fallback: search for the active layout by checking if any match current settings
+		-- Get the current active layout name from LibEMO
+		local currentLayoutName = LibEMO:GetActiveLayout()
+		if MoveIt.logger then
+			MoveIt.logger.debug(('CreateLayoutFromCurrent: Looking for layout named "%s"'):format(tostring(currentLayoutName)))
+		end
+
+		for i, layout in ipairs(currentLayoutInfo.layouts) do
+			if layout.layoutName == currentLayoutName then
+				currentLayout = layout
+				activeLayoutIndex = i
+				if MoveIt.logger then
+					MoveIt.logger.debug(('CreateLayoutFromCurrent: Found layout at index %d'):format(i))
+				end
+				break
+			end
+		end
+	end
+
+	if not currentLayout then
+		if MoveIt.logger then
+			MoveIt.logger.error(('CreateLayoutFromCurrent: Could not get current layout data (activeIndex=%d)'):format(activeLayoutIndex))
+			-- Log available layouts for debugging
+			for i, layout in ipairs(currentLayoutInfo.layouts) do
+				MoveIt.logger.debug(('  Layout[%d]: name="%s", type=%d'):format(i, tostring(layout.layoutName), layout.layoutType or -1))
+			end
+		end
+		return false
+	end
+
+	if MoveIt.logger then
+		MoveIt.logger.debug(('CreateLayoutFromCurrent: Copying from layout "%s" (type=%d)'):format(tostring(currentLayout.layoutName), currentLayout.layoutType or -1))
+	end
+
+	-- Deep copy the current layout
+	local newLayout = CopyTable(currentLayout)
+	newLayout.layoutType = layoutType
+	newLayout.layoutName = newLayoutName
+
+	-- Insert new layout into the layouts table
+	-- We need to work directly with C_EditMode API since LibEMO:AddLayout copies from Modern
+	local success, errorMsg = pcall(function()
+		-- Reload layouts to get fresh state
+		LibEMO:LoadLayouts()
+
+		-- Get layouts again and insert our new one
+		local layoutInfo = C_EditMode.GetLayouts()
+
+		-- Find insertion point based on layout type
+		-- Account layouts go after presets but before character layouts
+		-- Character layouts go at the end
+		local insertIndex = #layoutInfo.layouts + 1
+		for i, layout in ipairs(layoutInfo.layouts) do
+			if layoutType == Enum.EditModeLayoutType.Account then
+				-- Insert before first character layout
+				if layout.layoutType == Enum.EditModeLayoutType.Character then
+					insertIndex = i
+					break
+				end
+			end
+			-- For character layouts, just append at end (insertIndex already set)
+		end
+
+		if MoveIt.logger then
+			MoveIt.logger.debug(('CreateLayoutFromCurrent: Inserting new layout at index %d'):format(insertIndex))
+		end
+
+		table.insert(layoutInfo.layouts, insertIndex, newLayout)
+		layoutInfo.activeLayout = insertIndex
+
+		-- Save the layouts
+		C_EditMode.SaveLayouts(layoutInfo)
+	end)
+
+	if success then
+		-- Reload LibEMO to pick up the new layout
+		LibEMO:LoadLayouts()
+
+		-- Now switch to the new layout using LibEMO (more reliable than C_EditMode)
+		if LibEMO:DoesLayoutExist(newLayoutName) then
+			LibEMO:SetActiveLayout(newLayoutName)
+			if MoveIt.logger then
+				MoveIt.logger.info(('CreateLayoutFromCurrent: Created and activated layout "%s"'):format(newLayoutName))
+			end
+		else
+			if MoveIt.logger then
+				MoveIt.logger.error(('CreateLayoutFromCurrent: Layout "%s" was not found after creation'):format(newLayoutName))
+			end
+			return false
+		end
+		return true
+	else
+		if MoveIt.logger then
+			MoveIt.logger.error(('CreateLayoutFromCurrent: Failed to create layout "%s": %s'):format(newLayoutName, tostring(errorMsg)))
+		end
+		return false
+	end
+end
+
+---Apply SUI default positions to the current EditMode profile
+---Only applies to frames that SUI manages
+function BlizzardEditMode:ApplyDefaultPositions()
+	local LibEMO = self.LibEMO or LibStub('LibEditModeOverride-1.0', true)
+	if not LibEMO then
+		if MoveIt.logger then
+			MoveIt.logger.error('ApplyDefaultPositions: LibEditModeOverride not available')
+		end
+		return
+	end
+
+	if not LibEMO:CanEditActiveLayout() then
+		if MoveIt.logger then
+			MoveIt.logger.warning('ApplyDefaultPositions: Cannot edit active layout (may be a preset)')
+		end
+		return
+	end
+
+	-- Get current style's BlizzMover positions
+	local style = SUI.DB.Artwork.Style
+	local blizzMovers = SUI.DB.Styles[style] and SUI.DB.Styles[style].BlizzMovers
+	if not blizzMovers then
+		if MoveIt.logger then
+			MoveIt.logger.warning(('ApplyDefaultPositions: No BlizzMovers defined for style "%s"'):format(style))
+		end
+		return
+	end
+
+	-- Frames we manage and their global references
+	local managedFrames = {
+		{ name = 'TalkingHead', globalName = 'TalkingHeadFrame' },
+		{ name = 'VehicleLeaveButton', globalName = 'MainMenuBarVehicleLeaveButton' },
+		{ name = 'ExtraActionBar', globalName = 'ExtraAbilityContainer', fallback = 'ExtraActionBarFrame' },
+		{ name = 'EncounterBar', globalName = 'EncounterBar' },
+		{ name = 'ArchaeologyBar', globalName = 'ArcheologyDigsiteProgressBar' },
+	}
+
+	local appliedCount = 0
+
+	for _, frameInfo in ipairs(managedFrames) do
+		local positionString = blizzMovers[frameInfo.name]
+		if positionString then
+			local frame = _G[frameInfo.globalName] or (frameInfo.fallback and _G[frameInfo.fallback])
+
+			if frame then
+				local point, anchorName, relativePoint, x, y = self:ParseSUIPosition(positionString)
+				if point then
+					local anchorFrame = _G[anchorName] or UIParent
+
+					local success = pcall(function()
+						LibEMO:ReanchorFrame(frame, point, anchorFrame, relativePoint, x, y)
+					end)
+
+					if success then
+						appliedCount = appliedCount + 1
+						if MoveIt.logger then
+							MoveIt.logger.debug(('ApplyDefaultPositions: Applied position for %s'):format(frameInfo.name))
+						end
+					end
+				end
+			end
+		end
+	end
+
+	if appliedCount > 0 then
+		if MoveIt.logger then
+			MoveIt.logger.info(('ApplyDefaultPositions: Applied %d default positions'):format(appliedCount))
+		end
+	end
+end
+
+-- ============================================================================
+-- SUI Profile Change Handling
+-- ============================================================================
+
+---Handle SUI profile change - sync EditMode profile
+---@param event string The callback event name
+---@param database table The AceDB database
+---@param newProfile string The new profile name
+function BlizzardEditMode:OnSUIProfileChanged(event, database, newProfile)
+	-- Skip if EditMode control is disabled
+	if not MoveIt.DB.EditModeControl.Enabled or not MoveIt.DB.EditModeControl.AutoSwitch then
+		return
+	end
+
+	-- Skip if EditMode not available
+	if not EditModeManagerFrame then
+		return
+	end
+
+	local LibEMO = self.LibEMO or LibStub('LibEditModeOverride-1.0', true)
+	if not LibEMO or not LibEMO:IsReady() then
+		return
+	end
+
+	-- Get the matching EditMode profile name
+	local matchingProfile = self:GetMatchingProfileName()
+
+	if MoveIt.logger then
+		MoveIt.logger.info(('OnSUIProfileChanged: SUI profile changed to "%s", matching EditMode profile: "%s"'):format(newProfile, matchingProfile))
+	end
+
+	-- Ensure layouts are loaded
+	if not LibEMO:AreLayoutsLoaded() then
+		LibEMO:LoadLayouts()
+	end
+
+	-- Check if matching EditMode profile exists
+	if LibEMO:DoesLayoutExist(matchingProfile) then
+		-- Profile exists, switch to it
+		local currentLayout = LibEMO:GetActiveLayout()
+		if currentLayout ~= matchingProfile then
+			pcall(function()
+				LibEMO:SetActiveLayout(matchingProfile)
+				self:SafeApplyChanges(true)
+			end)
+			if MoveIt.logger then
+				MoveIt.logger.info(('OnSUIProfileChanged: Switched to EditMode profile "%s"'):format(matchingProfile))
+			end
+		end
+	else
+		-- Profile doesn't exist, create it from current
+		local layoutType = self:DetermineLayoutType()
+		if self:CreateLayoutFromCurrent(layoutType, matchingProfile) then
+			-- Apply SUI defaults on top
+			self:ApplyDefaultPositions()
+			self:SafeApplyChanges(true)
+		end
+	end
+
+	-- Update stored current profile
+	MoveIt.DB.EditModeControl.CurrentProfile = matchingProfile
 end
 
 if MoveIt.logger then

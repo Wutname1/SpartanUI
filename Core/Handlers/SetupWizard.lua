@@ -426,14 +426,35 @@ local function WelcomePage()
 			local currentProfile = SUI.SpartanUIDB:GetCurrentProfile()
 
 			-- Build profile lists with common profiles included
-			local function GetProfileListWithCommon(excludeCurrent)
+			local function GetProfileListWithCommon(excludeCurrent, excludeCharProfiles)
 				local profileList = {}
 				local tmpProfiles = {}
 				SUI.SpartanUIDB:GetProfiles(tmpProfiles)
 
+				-- Helper function to detect if a profile name is a character profile
+				-- Character profiles follow pattern: "CharName - RealmName"
+				local function isCharacterProfile(profileName)
+					-- Check if profile contains " - " separator
+					if not profileName:find(' %- ') then
+						return false
+					end
+
+					-- Get all character keys from the database
+					if SUI.SpartanUIDB.sv and SUI.SpartanUIDB.sv.profileKeys then
+						for charKey, _ in pairs(SUI.SpartanUIDB.sv.profileKeys) do
+							if profileName == charKey then
+								return true
+							end
+						end
+					end
+
+					return false
+				end
+
 				-- Add existing profiles
 				for _, v in pairs(tmpProfiles) do
-					if not (excludeCurrent and v == currentProfile) then
+					local shouldExclude = (excludeCurrent and v == currentProfile) or (excludeCharProfiles and isCharacterProfile(v))
+					if not shouldExclude then
 						profileList[#profileList + 1] = { text = v, value = v, isCommon = false }
 					end
 				end
@@ -464,8 +485,8 @@ local function WelcomePage()
 			end
 
 			-- Get profile lists
-			local copyProfiles = GetProfileListWithCommon(true) -- Exclude current for copy
-			local sharedProfiles = GetProfileListWithCommon(true) -- Exclude current for shared
+			local copyProfiles = GetProfileListWithCommon(true, false) -- Exclude current for copy, allow char profiles
+			local sharedProfiles = GetProfileListWithCommon(true, true) -- Exclude current for shared, exclude char profiles
 
 			-- Sort shared profiles to put Default first, then Realm, then Class, then alphabetical
 			table.sort(sharedProfiles, function(a, b)
@@ -543,8 +564,67 @@ local function WelcomePage()
 				if not ProfileSelection or ProfileSelection == '' then
 					return
 				end
+
+				-- Handle EditMode profile BEFORE copying and reloading
+				-- For copy, we stay on current character's profile but copy settings from another
+				-- So we should create/use a character-specific EditMode profile
+				if SUI.IsRetail and EditModeManagerFrame then
+					local MoveIt = SUI.MoveIt
+					if MoveIt and MoveIt.BlizzardEditMode then
+						local state = MoveIt.BlizzardEditMode:GetEditModeState()
+						local newEditModeProfileName = MoveIt.BlizzardEditMode:GetMatchingProfileName()
+						local layoutType = MoveIt.BlizzardEditMode:DetermineLayoutType()
+
+						if MoveIt.logger then
+							MoveIt.logger.info(('WelcomePage Copy: Creating EditMode profile "%s"'):format(newEditModeProfileName))
+						end
+
+						local LibEMO = LibStub('LibEditModeOverride-1.0', true)
+						if LibEMO and LibEMO:IsReady() then
+							if not LibEMO:AreLayoutsLoaded() then
+								LibEMO:LoadLayouts()
+							end
+
+							if not LibEMO:DoesLayoutExist(newEditModeProfileName) then
+								if state.isOnPresetLayout then
+									pcall(function()
+										LibEMO:AddLayout(layoutType, newEditModeProfileName)
+										LibEMO:SetActiveLayout(newEditModeProfileName)
+									end)
+								else
+									MoveIt.BlizzardEditMode:CreateLayoutFromCurrent(layoutType, newEditModeProfileName)
+								end
+
+								MoveIt.BlizzardEditMode:ApplyDefaultPositions()
+								MoveIt.BlizzardEditMode:SafeApplyChanges(true)
+							else
+								pcall(function()
+									LibEMO:SetActiveLayout(newEditModeProfileName)
+									MoveIt.BlizzardEditMode:SafeApplyChanges(true)
+								end)
+							end
+						end
+					end
+				end
+
 				-- Copy profile
 				SUI.SpartanUIDB:CopyProfile(ProfileSelection)
+
+				-- Mark MoveIt EditMode setup as done AFTER profile copy
+				if SUI.IsRetail and EditModeManagerFrame then
+					local MoveIt = SUI.MoveIt
+					if MoveIt then
+						-- Refresh DB reference after profile copy
+						MoveIt.DB = MoveIt.Database.profile
+						if MoveIt.DB and MoveIt.DB.EditModeWizard then
+							local newEditModeProfileName = MoveIt.BlizzardEditMode:GetMatchingProfileName()
+							MoveIt.DB.EditModeWizard.SetupDone = true
+							MoveIt.DB.EditModeControl.CurrentProfile = newEditModeProfileName
+							MoveIt.BlizzardEditMode.initialSetupComplete = true
+						end
+					end
+				end
+
 				-- Reload the UI
 				SUI:SafeReloadUI()
 			end)
@@ -556,6 +636,14 @@ local function WelcomePage()
 			IntroPage.SharedProfileLabel:SetJustifyH('CENTER')
 			IntroPage.SharedProfileLabel:SetWordWrap(true)
 			IntroPage.SharedProfileLabel:SetPoint('TOP', IntroPage.ProfileList, 'BOTTOM', 0, -20)
+
+			-- Add info button next to shared profile label
+			IntroPage.SharedProfileInfoButton = UI.CreateInfoButton(
+				IntroPage,
+				"Why can't I share my character profile?",
+				'Character profiles (e.g., "Mythra - Area 52") are designed for use by a single character only.\n\nTo share settings between characters, use Default, Realm, Class, or create a custom named profile.'
+			)
+			IntroPage.SharedProfileInfoButton:SetPoint('LEFT', IntroPage.SharedProfileLabel, 'RIGHT', 5, 0)
 
 			IntroPage.SharedProfileList = UI.CreateDropdown(IntroPage, 'Select Profile...', 200, 20)
 			IntroPage.SharedProfileList.selectedValue = nil
@@ -570,6 +658,46 @@ local function WelcomePage()
 			IntroPage.SharedProfileList:SetPoint('TOP', IntroPage.SharedProfileLabel, 'BOTTOM', 0, -5)
 			IntroPage.SharedProfileList:SetPoint('LEFT', IntroPage, 'CENTER', -130, 0)
 
+			-- Status label showing current profile (appears below SharedProfileList dropdown)
+			local isCharProfile = false
+
+			-- Check if current profile is a character profile
+			if currentProfile:find(' %- ') then
+				if SUI.SpartanUIDB.sv and SUI.SpartanUIDB.sv.profileKeys then
+					for charKey, _ in pairs(SUI.SpartanUIDB.sv.profileKeys) do
+						if currentProfile == charKey then
+							isCharProfile = true
+							break
+						end
+					end
+				end
+			end
+
+			-- Create status label with appropriate message
+			IntroPage.CurrentProfileStatus = UI.CreateLabel(IntroPage, '')
+			IntroPage.CurrentProfileStatus:SetWidth(500)
+			IntroPage.CurrentProfileStatus:SetJustifyH('CENTER')
+			IntroPage.CurrentProfileStatus:SetWordWrap(true)
+			IntroPage.CurrentProfileStatus:SetPoint('TOP', IntroPage.SharedProfileList, 'BOTTOM', 0, -10)
+
+			if isCharProfile then
+				-- Character profile message
+				IntroPage.CurrentProfileStatus:SetText('Current: ' .. currentProfile)
+				IntroPage.CurrentProfileStatus:SetTextColor(1, 0.82, 0) -- Gold color
+
+				-- Add info button for character profile explanation
+				IntroPage.CurrentProfileStatusInfo = UI.CreateInfoButton(
+					IntroPage,
+					'Character Profile',
+					'This is a character profile. It cannot be shared with other characters, but you can copy it using the Copy Profile option above.'
+				)
+				IntroPage.CurrentProfileStatusInfo:SetPoint('LEFT', IntroPage.CurrentProfileStatus, 'RIGHT', 5, 0)
+			else
+				-- Shareable profile message
+				IntroPage.CurrentProfileStatus:SetText('Current: ' .. currentProfile)
+				IntroPage.CurrentProfileStatus:SetTextColor(0.5, 1, 0.5) -- Green color
+			end
+
 			IntroPage.ApplyProfileButton = UI.CreateButton(IntroPage, 60, 20, 'APPLY')
 			IntroPage.ApplyProfileButton:SetScript('OnClick', function()
 				local dropdown = module.window.content.WelcomePage.SharedProfileList
@@ -577,8 +705,96 @@ local function WelcomePage()
 				if not ProfileSelection or ProfileSelection == '' then
 					return
 				end
+
+				-- Handle EditMode profile BEFORE switching SUI profile and reloading
+				-- This ensures user on custom EditMode profile gets prompted
+				if SUI.IsRetail and EditModeManagerFrame then
+					local MoveIt = SUI.MoveIt
+					if MoveIt and MoveIt.BlizzardEditMode then
+						local state = MoveIt.BlizzardEditMode:GetEditModeState()
+
+						-- Determine the EditMode profile name based on the NEW SUI profile
+						local newEditModeProfileName
+						if ProfileSelection == 'Default' then
+							newEditModeProfileName = 'SpartanUI'
+						else
+							newEditModeProfileName = 'SpartanUI - ' .. ProfileSelection
+						end
+
+						local layoutType = Enum.EditModeLayoutType.Account -- Shared profiles use Account scope
+
+						if MoveIt.logger then
+							MoveIt.logger.info(('WelcomePage Apply: Switching to SUI profile "%s", EditMode profile "%s"'):format(ProfileSelection, newEditModeProfileName))
+						end
+
+						local LibEMO = LibStub('LibEditModeOverride-1.0', true)
+						if LibEMO and LibEMO:IsReady() then
+							if not LibEMO:AreLayoutsLoaded() then
+								LibEMO:LoadLayouts()
+							end
+
+							-- Check if the EditMode profile already exists
+							if LibEMO:DoesLayoutExist(newEditModeProfileName) then
+								-- Profile exists, just switch to it
+								pcall(function()
+									LibEMO:SetActiveLayout(newEditModeProfileName)
+									MoveIt.BlizzardEditMode:SafeApplyChanges(true)
+								end)
+								if MoveIt.logger then
+									MoveIt.logger.info(('WelcomePage Apply: Switched to existing EditMode profile "%s"'):format(newEditModeProfileName))
+								end
+							else
+								-- Need to create the profile
+								-- If user is on preset, just create new profile
+								-- If user is on custom profile, copy from current to preserve their positions
+								if state.isOnPresetLayout then
+									pcall(function()
+										LibEMO:AddLayout(layoutType, newEditModeProfileName)
+										LibEMO:SetActiveLayout(newEditModeProfileName)
+									end)
+									if MoveIt.logger then
+										MoveIt.logger.info(('WelcomePage Apply: Created new EditMode profile "%s" from preset'):format(newEditModeProfileName))
+									end
+								else
+									-- User is on custom profile - create as copy to preserve their positions
+									MoveIt.BlizzardEditMode:CreateLayoutFromCurrent(layoutType, newEditModeProfileName)
+									if MoveIt.logger then
+										MoveIt.logger.info(('WelcomePage Apply: Created EditMode profile "%s" as copy of "%s"'):format(newEditModeProfileName, state.currentLayoutName))
+									end
+								end
+
+								-- Apply SUI default positions
+								MoveIt.BlizzardEditMode:ApplyDefaultPositions()
+								MoveIt.BlizzardEditMode:SafeApplyChanges(true)
+							end
+						end
+					end
+				end
+
 				-- Set profile (share it)
 				SUI.SpartanUIDB:SetProfile(ProfileSelection)
+
+				-- Mark MoveIt EditMode setup as done AFTER profile switch
+				-- so it saves to the correct profile
+				if SUI.IsRetail and EditModeManagerFrame then
+					local MoveIt = SUI.MoveIt
+					if MoveIt then
+						-- Refresh DB reference after profile switch
+						MoveIt.DB = MoveIt.Database.profile
+						if MoveIt.DB and MoveIt.DB.EditModeWizard then
+							local newEditModeProfileName
+							if ProfileSelection == 'Default' then
+								newEditModeProfileName = 'SpartanUI'
+							else
+								newEditModeProfileName = 'SpartanUI - ' .. ProfileSelection
+							end
+							MoveIt.DB.EditModeWizard.SetupDone = true
+							MoveIt.DB.EditModeControl.CurrentProfile = newEditModeProfileName
+							MoveIt.BlizzardEditMode.initialSetupComplete = true
+						end
+					end
+				end
+
 				-- Reload the UI
 				SUI:SafeReloadUI()
 			end)
@@ -643,6 +859,54 @@ local function WelcomePage()
 			SUI.DB.SetupWizard.FirstLaunch = false
 			module.window.ProgressBar:Show()
 			module.window.Next:SetPoint('BOTTOMRIGHT', module.window.ProgressBar, 'TOPRIGHT', 0, 2)
+
+			-- Create matching EditMode profile for new users on preset layouts
+			-- This handles the "new user" scenario from the MoveIt v2 plan
+			if SUI.IsRetail and EditModeManagerFrame then
+				local MoveIt = SUI.MoveIt
+				if MoveIt and MoveIt.BlizzardEditMode then
+					local state = MoveIt.BlizzardEditMode:GetEditModeState()
+
+					-- Only create profile if user is on a preset (new user) or no profile active
+					if state.isOnPresetLayout or not state.currentLayoutName then
+						local profileName = MoveIt.BlizzardEditMode:GetMatchingProfileName()
+						local layoutType = MoveIt.BlizzardEditMode:DetermineLayoutType()
+
+						if MoveIt.logger then
+							MoveIt.logger.info(('WelcomePage: Creating EditMode profile "%s" for new user'):format(profileName))
+						end
+
+						-- Create the profile and apply defaults
+						local LibEMO = LibStub('LibEditModeOverride-1.0', true)
+						if LibEMO and LibEMO:IsReady() then
+							if not LibEMO:AreLayoutsLoaded() then
+								LibEMO:LoadLayouts()
+							end
+
+							if not LibEMO:DoesLayoutExist(profileName) then
+								pcall(function()
+									LibEMO:AddLayout(layoutType, profileName)
+									LibEMO:SetActiveLayout(profileName)
+								end)
+
+								-- Apply SUI default positions
+								MoveIt.BlizzardEditMode:ApplyDefaultPositions()
+								MoveIt.BlizzardEditMode:SafeApplyChanges(true)
+							end
+
+							-- Mark MoveIt EditMode setup as done
+							if MoveIt.DB and MoveIt.DB.EditModeWizard then
+								MoveIt.DB.EditModeWizard.SetupDone = true
+								MoveIt.DB.EditModeControl.CurrentProfile = profileName
+							end
+
+							if MoveIt.logger then
+								MoveIt.logger.info(('WelcomePage: EditMode profile "%s" created and activated'):format(profileName))
+							end
+						end
+					end
+				end
+			end
 		end,
 		RequireDisplay = SUI.DB.SetupWizard.FirstLaunch,
 		Priority = true,

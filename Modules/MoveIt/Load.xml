@@ -4,4 +4,5 @@
 	<Script file="BlizzardEditMode.lua"/>
 	<Script file="CustomEditMode.lua"/>
 	<Script file="SettingsPanel.lua"/>
+	<Script file="WizardPage.lua"/>
 </Ui>

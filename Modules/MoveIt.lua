@@ -306,6 +306,14 @@ function MoveIt:UpdateMover(name, obj, doNotScale)
 end
 
 function MoveIt:UnlockAll()
+	-- Skip if migration is in progress (wizard is applying changes)
+	if MoveIt.WizardPage and MoveIt.WizardPage:IsMigrationInProgress() then
+		if MoveIt.logger then
+			MoveIt.logger.debug('UnlockAll: Suppressed during migration')
+		end
+		return
+	end
+
 	for _, v in pairs(MoverList) do
 		v:Show()
 	end
@@ -992,11 +1000,31 @@ function MoveIt:OnInitialize()
 					MovedPoints = false,
 				},
 			},
+			-- EditMode wizard tracking
+			EditModeWizard = {
+				SetupDone = false, -- Wizard/setup completed for this character?
+				MigratedFromProfile = nil, -- Profile name we migrated from (if upgrade)
+				MigrationOption = nil, -- 'apply_current' | 'copy_new'
+			},
+			-- EditMode management control
+			EditModeControl = {
+				Enabled = true, -- Allow MoveIt to manage EditMode profiles
+				AutoSwitch = true, -- Auto-switch EditMode when SUI profile changes
+				CurrentProfile = nil, -- Currently managed EditMode profile name
+			},
+		},
+		global = {
+			-- Account-wide EditMode preferences for multi-character sync
+			EditModePreferences = {
+				ApplyToAllCharacters = false, -- Auto-apply choices on other characters
+				DefaultMigrationOption = nil, -- 'apply_current' | 'copy_new'
+			},
 		},
 	}
 	---@type MoveItDB
 	MoveIt.Database = SUI.SpartanUIDB:RegisterNamespace('MoveIt', defaults)
 	MoveIt.DB = MoveIt.Database.profile
+	MoveIt.DBG = MoveIt.Database.global -- Global scope for account-wide settings
 
 	-- Migrate old settings
 	if SUI.DB.MoveIt then
@@ -1073,6 +1101,16 @@ function MoveIt:OnEnable()
 		MoveIt.BlizzardEditMode:Initialize()
 	end
 
+	-- Register for SUI profile change callbacks to sync EditMode profiles
+	SUI.SpartanUIDB.RegisterCallback(MoveIt, 'OnProfileChanged', 'HandleProfileChange')
+	SUI.SpartanUIDB.RegisterCallback(MoveIt, 'OnProfileCopied', 'HandleProfileChange')
+	SUI.SpartanUIDB.RegisterCallback(MoveIt, 'OnProfileReset', 'HandleProfileChange')
+
+	-- Register the EditMode wizard page now that DB is available
+	if MoveIt.WizardPage and SUI.Setup then
+		MoveIt.WizardPage:RegisterPage()
+	end
+
 	local ChatCommand = function(arg)
 		if InCombatLockdown() then
 			print(ERR_NOT_IN_COMBAT)
@@ -1133,6 +1171,22 @@ function MoveIt:OnEnable()
 	MoverWatcher:SetScript('OnKeyDown', OnKeyDown)
 
 	self:RegisterEvent('PLAYER_REGEN_DISABLED', 'CombatLockdown')
+end
+
+---Handle SUI profile changes to sync EditMode profiles
+---@param event string The callback event name
+---@param database table The AceDB database object
+---@param newProfile? string The new profile name (may be nil for some events)
+function MoveIt:HandleProfileChange(event, database, newProfile)
+	-- Update our DB reference since profile changed
+	MoveIt.DB = MoveIt.Database.profile
+
+	-- Delegate to BlizzardEditMode for EditMode profile sync
+	if MoveIt.BlizzardEditMode and EditModeManagerFrame then
+		-- Get the actual new profile name if not provided
+		local profileName = newProfile or SUI.SpartanUIDB:GetCurrentProfile()
+		MoveIt.BlizzardEditMode:OnSUIProfileChanged(event, database, profileName)
+	end
 end
 
 function MoveIt:Options()
@@ -1241,6 +1295,83 @@ function MoveIt:Options()
 				end,
 				set = function(info, val)
 					MoveIt.DB.tips = val
+				end,
+			},
+			-- EditMode Control Settings (Retail only)
+			EditModeHeader = {
+				name = 'EditMode Profile Management',
+				type = 'header',
+				order = 100,
+				hidden = function()
+					return not SUI.IsRetail or not EditModeManagerFrame
+				end,
+			},
+			EditModeEnabled = {
+				name = 'Allow SpartanUI to manage EditMode profiles',
+				desc = 'When enabled, SpartanUI will create and manage EditMode profiles that match your SUI profile.',
+				type = 'toggle',
+				width = 'double',
+				order = 101,
+				hidden = function()
+					return not SUI.IsRetail or not EditModeManagerFrame
+				end,
+				get = function(info)
+					return MoveIt.DB.EditModeControl.Enabled
+				end,
+				set = function(info, val)
+					MoveIt.DB.EditModeControl.Enabled = val
+				end,
+			},
+			EditModeAutoSwitch = {
+				name = 'Auto-switch EditMode profile when changing SUI profile',
+				desc = 'When enabled, switching your SpartanUI profile will also switch your EditMode profile.',
+				type = 'toggle',
+				width = 'double',
+				order = 102,
+				hidden = function()
+					return not SUI.IsRetail or not EditModeManagerFrame
+				end,
+				disabled = function()
+					return not MoveIt.DB.EditModeControl.Enabled
+				end,
+				get = function(info)
+					return MoveIt.DB.EditModeControl.AutoSwitch
+				end,
+				set = function(info, val)
+					MoveIt.DB.EditModeControl.AutoSwitch = val
+				end,
+			},
+			EditModeCurrentProfile = {
+				name = function()
+					local profileName = MoveIt.DB.EditModeControl.CurrentProfile or 'Not set'
+					return 'Current EditMode Profile: |cFFFFFF00' .. profileName .. '|r'
+				end,
+				type = 'description',
+				order = 103,
+				fontSize = 'medium',
+				hidden = function()
+					return not SUI.IsRetail or not EditModeManagerFrame
+				end,
+			},
+			EditModeReapplyDefaults = {
+				name = 'Re-apply SUI Default Positions',
+				desc = 'Re-apply SpartanUI default frame positions to the current EditMode profile.',
+				type = 'execute',
+				order = 104,
+				hidden = function()
+					return not SUI.IsRetail or not EditModeManagerFrame
+				end,
+				disabled = function()
+					return not MoveIt.DB.EditModeControl.Enabled
+				end,
+				func = function()
+					if MoveIt.BlizzardEditMode then
+						MoveIt.BlizzardEditMode:ApplyDefaultPositions()
+						MoveIt.BlizzardEditMode:SafeApplyChanges(true)
+						if MoveIt.logger then
+							MoveIt.logger.info('Re-applied SUI default positions to EditMode profile')
+						end
+					end
 				end,
 			},
 		},
