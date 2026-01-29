@@ -741,6 +741,19 @@ function MoveIt:CreateMover(parent, name, DisplayName, postdrag, groupName, widg
 		f:ClearAllPoints()
 		f:SetPoint(point, (anchor or UIParent), (secondaryPoint or point), (x or 0), (y or 0))
 
+		-- Register frame relationships for magnetism (for non-unit-frame movers)
+		-- Unit frames register their relationships separately after all movers are created
+		if anchor and anchor ~= UIParent and self.mover and MoveIt.MagnetismManager then
+			local anchorFrame = anchor
+			if type(anchor) == 'string' then
+				anchorFrame = _G[anchor]
+			end
+
+			if anchorFrame and anchorFrame.mover then
+				MoveIt.MagnetismManager:RegisterFrameRelationship(self.mover, anchorFrame.mover)
+			end
+		end
+
 		if defaultPos then
 			f.defaultPoint = GetPoints(f)
 		end

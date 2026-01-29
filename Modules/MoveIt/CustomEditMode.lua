@@ -216,6 +216,13 @@ function CustomEditMode:Exit()
 	isActive = false
 	selectedOverlay = nil
 
+	-- Clean up magnetism session and preview lines
+	local MagnetismManager = MoveIt.MagnetismManager
+	if MagnetismManager then
+		MagnetismManager:EndDragSession()
+		MagnetismManager:ClearSnapTargetHighlights()
+	end
+
 	-- Hide all movers and restore original styling
 	for name, mover in pairs(MoveIt.MoverList or {}) do
 		if mover then

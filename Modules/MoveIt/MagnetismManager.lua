@@ -46,6 +46,10 @@ MagnetismManager.snapTargetFlashFrame = nil -- Frame for OnUpdate animation
 MagnetismManager.snapTargetFlashInterval = 0.15 -- Flash interval in seconds (fast flash)
 MagnetismManager.snapTargetFlashElapsed = 0
 
+-- Frame relationship tracking for circular dependency detection
+-- Stores {childMover = parentMover} relationships based on initial positioning
+MagnetismManager.frameRelationships = {}
+
 -- Colorblind-friendly colors for snap target highlighting
 -- Using blue/purple tones that contrast with orange selection
 MagnetismManager.SNAP_TARGET_COLORS = {
@@ -174,6 +178,37 @@ function MagnetismManager:IsAboveFrame(frameA, frameB)
 	return centerAY > centerBY
 end
 
+---Register a frame relationship (child mover is anchored to parent mover)
+---Called when a frame is initially positioned with another frame as anchor
+---@param childMover Frame The mover whose parent frame is being anchored
+---@param parentMover Frame The mover whose parent frame is the anchor target
+function MagnetismManager:RegisterFrameRelationship(childMover, parentMover)
+	if not childMover or not parentMover then
+		return
+	end
+
+	self.frameRelationships[childMover] = parentMover
+
+	if MoveIt.logger then
+		local childName = childMover.name or childMover:GetName() or 'unknown'
+		local parentName = parentMover.name or parentMover:GetName() or 'unknown'
+		MoveIt.logger.info(('Registered relationship: %s -> %s'):format(childName, parentName))
+	end
+end
+
+---Check if two movers have a registered parent/child relationship
+---@param moverA Frame First mover
+---@param moverB Frame Second mover
+---@return boolean
+function MagnetismManager:HasFrameRelationship(moverA, moverB)
+	if not moverA or not moverB then
+		return false
+	end
+
+	-- Check if moverA is anchored to moverB or vice versa
+	return self.frameRelationships[moverA] == moverB or self.frameRelationships[moverB] == moverA
+end
+
 ---Check if a frame is anchored to another frame (direct child)
 ---@param potentialChild Frame The frame that might be anchored to parent
 ---@param potentialParent Frame The frame that might be the anchor
@@ -256,13 +291,18 @@ function MagnetismManager:GetEligibleMagneticFrames(movingFrame)
 	end
 
 	-- Add other visible movers that are within proximity range
-	-- EXCEPT: frames that are already anchored to the moving frame (our children)
+	-- EXCEPT: frames that have circular dependency relationships
 	local moverCount = 0
 	local skippedChildren = 0
 	for name, mover in pairs(MoveIt.MoverList or {}) do
 		if mover and mover:IsShown() and mover ~= movingFrame then
-			-- Skip frames that are anchored TO us (our children)
-			if self:IsFrameAnchoredTo(mover, movingFrame) then
+			-- Skip frames with circular dependencies:
+			-- 1. Frames currently anchored TO us (our children)
+			-- 2. Frames we have a registered relationship with (parent/child from initial positioning)
+			local isAnchored = self:IsFrameAnchoredTo(mover, movingFrame)
+			local hasRelationship = self:HasFrameRelationship(mover, movingFrame)
+
+			if isAnchored or hasRelationship then
 				skippedChildren = skippedChildren + 1
 			-- Only consider frames within proximity range
 			elseif self:IsWithinProximity(movingFrame, mover) then
@@ -276,7 +316,7 @@ function MagnetismManager:GetEligibleMagneticFrames(movingFrame)
 	-- Only log once per drag session, not every frame
 	if skippedChildren > 0 and MoveIt.logger and self.debugLogging and not self.loggedChildSkip then
 		self.loggedChildSkip = true
-		MoveIt.logger.debug(('Skipping %d child frame(s) anchored to %s'):format(skippedChildren, movingFrame.name or 'unknown'))
+		MoveIt.logger.debug(('Skipping %d frame(s) with dependencies on %s'):format(skippedChildren, movingFrame.name or 'unknown'))
 	end
 
 	return eligibleFrames

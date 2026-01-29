@@ -191,6 +191,34 @@ function UF:OnEnable()
 		end
 	end
 
+	-- Register frame relationships for magnetism after movers are created
+	if MoveIt.MagnetismManager then
+		local positionData = UFPositionDefaults
+		local posData = UF.Style:Get(SUI.DB.Artwork.Style).positions
+		if SUI:IsModuleEnabled('Artwork') and posData then
+			positionData = SUI:CopyData(posData, UFPositionDefaults)
+		end
+
+		for unit, config in pairs(UF.Unit:GetBuiltFrameList()) do
+			if not config.isChild then
+				local posString = positionData[unit]
+				if posString then
+					local _, anchor = strsplit(',', posString)
+					if anchor and anchor ~= 'UIParent' then
+						-- Convert anchor string to frame
+						local anchorFrame = _G[anchor]
+						if anchorFrame and anchorFrame.mover then
+							local unitFrame = UF.Unit:Get(unit)
+							if unitFrame and unitFrame.mover then
+								MoveIt.MagnetismManager:RegisterFrameRelationship(unitFrame.mover, anchorFrame.mover)
+							end
+						end
+					end
+				end
+			end
+		end
+	end
+
 	-- Edit Mode integration (Retail and TBC+)
 	if EditModeManagerFrame and (SUI.IsRetail or SUI.IsTBC) then
 		local CheckedItems = {}
