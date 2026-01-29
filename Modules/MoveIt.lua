@@ -478,6 +478,36 @@ function MoveIt:CreateMover(parent, name, DisplayName, postdrag, groupName, widg
 		local savedPoints = GetPoints(f)
 		MoveIt.DB.movers[name].MovedPoints = savedPoints
 		f.MovedText:Show()
+
+		if MoveIt.logger then
+			MoveIt.logger.debug(('SaveMoverPosition %s: saved as %s'):format(name, savedPoints))
+		end
+
+		-- Debug: Hook SetPoint temporarily to catch unexpected repositioning
+		if name == 'pet' and MoveIt.logger then
+			local originalSetPoint = f.SetPoint
+			f.SetPoint = function(self, ...)
+				MoveIt.logger.debug(
+					('HOOK: SetPoint called on %s after save: %s,%s,%s,%s,%s'):format(
+						name,
+						tostring(select(1, ...)),
+						tostring(select(2, ...)),
+						tostring(select(3, ...)),
+						tostring(select(4, ...)),
+						tostring(select(5, ...))
+					)
+				)
+				MoveIt.logger.debug(('HOOK: Stack trace: %s'):format(debugstack(2, 3, 3)))
+				return originalSetPoint(self, ...)
+			end
+			-- Remove hook after 5 seconds
+			C_Timer.After(5, function()
+				f.SetPoint = originalSetPoint
+				if MoveIt.logger then
+					MoveIt.logger.debug(('HOOK: Removed SetPoint hook from %s'):format(name))
+				end
+			end)
+		end
 	end
 
 	local Scale = function(self, ammount)
@@ -570,8 +600,25 @@ function MoveIt:CreateMover(parent, name, DisplayName, postdrag, groupName, widg
 		end
 
 		-- Get position BEFORE StopMovingOrSizing changes it
-		-- (StopMovingOrSizing can reanchor the frame unpredictably)
+		-- GetCenterOffset returns where the frame's center is relative to UIParent center
 		local preStopX, preStopY = MoveIt.PositionCalculator:GetCenterOffset(self)
+
+		if MoveIt.logger then
+			local point, anchor, secondaryPoint, x, y = self:GetPoint()
+			local anchorName = anchor and anchor:GetName() or 'nil'
+			MoveIt.logger.debug(
+				('OnDragStop %s: before StopMovingOrSizing anchor=%s,%s,%s,%.1f,%.1f centerOffset=%.1f,%.1f'):format(
+					self.name or 'unknown',
+					point or 'nil',
+					anchorName,
+					secondaryPoint or 'nil',
+					x or 0,
+					y or 0,
+					preStopX or 0,
+					preStopY or 0
+				)
+			)
+		end
 
 		self:StopMovingOrSizing()
 
@@ -587,8 +634,30 @@ function MoveIt:CreateMover(parent, name, DisplayName, postdrag, groupName, widg
 		if not wasSnappedToFrame then
 			-- Use the position from BEFORE StopMovingOrSizing
 			if preStopX and preStopY then
+				if MoveIt.logger then
+					local moverScale = self:GetEffectiveScale()
+					local parentScale = self.parent and self.parent:GetEffectiveScale() or 1
+					local uiScale = UIParent:GetEffectiveScale()
+					MoveIt.logger.debug(
+						('OnDragStop %s: setting CENTER anchor to %.1f,%.1f (moverScale=%.3f parentScale=%.3f uiScale=%.3f)'):format(
+							self.name or 'unknown',
+							preStopX,
+							preStopY,
+							moverScale,
+							parentScale,
+							uiScale
+						)
+					)
+				end
 				self:ClearAllPoints()
 				self:SetPoint('CENTER', UIParent, 'CENTER', preStopX, preStopY)
+
+				-- Verify position after setting
+				if MoveIt.logger then
+					local point, anchor, secondaryPoint, x, y = self:GetPoint()
+					local anchorName = anchor and anchor:GetName() or 'nil'
+					MoveIt.logger.debug(('OnDragStop %s: after SetPoint verify=%s,%s,%s,%.1f,%.1f'):format(self.name or 'unknown', point or 'nil', anchorName, secondaryPoint or 'nil', x or 0, y or 0))
+				end
 			end
 		end
 
@@ -687,6 +756,9 @@ function MoveIt:CreateMover(parent, name, DisplayName, postdrag, groupName, widg
 
 		-- If user has adjusted scale and we're not forcing, don't change anything
 		if MoveIt.DB.movers[name].AdjustedScale and not forced then
+			if MoveIt.logger then
+				MoveIt.logger.debug(('scale() for %s: skipped due to AdjustedScale'):format(name))
+			end
 			return
 		end
 
@@ -694,6 +766,9 @@ function MoveIt:CreateMover(parent, name, DisplayName, postdrag, groupName, widg
 		-- because the saved coordinates were calculated at the current scale.
 		-- Changing scale would make those coordinates represent a different position.
 		if MoveIt.DB.movers[name].MovedPoints and not forced then
+			if MoveIt.logger then
+				MoveIt.logger.debug(('scale() for %s: skipped due to MovedPoints'):format(name))
+			end
 			return
 		end
 
@@ -720,6 +795,10 @@ function MoveIt:CreateMover(parent, name, DisplayName, postdrag, groupName, widg
 		-- Ensure x and y are numbers (strsplit returns strings)
 		x = tonumber(x) or 0
 		y = tonumber(y) or 0
+
+		if MoveIt.logger then
+			MoveIt.logger.debug(('scale() for %s: repositioning to %s,%s,%s,%.1f,%.1f'):format(name, point or 'nil', anchor or 'nil', secondaryPoint or 'nil', x, y))
+		end
 
 		f:ClearAllPoints()
 		f:SetPoint(point, anchor, secondaryPoint, x, y)
