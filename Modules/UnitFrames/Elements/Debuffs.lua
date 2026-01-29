@@ -10,9 +10,12 @@ local function updateSettings(element, unit, isFullUpdate)
 	element['growth-x'] = DB.growthx
 	element['growth-y'] = DB.growthy
 	-- Buffs.spacing = DB.spacing
-	element.showType = DB.showType
+	-- Disable showType in Retail to avoid secret aura API errors
+	element.showType = not SUI.IsRetail and DB.showType
 	element.num = DB.number or 10
 	element.onlyShowPlayer = DB.onlyShowPlayer
+	-- Set maxCols to avoid secret value errors from GetWidth() in Retail
+	element.maxCols = DB.number / DB.rows
 end
 
 ---@param element any
