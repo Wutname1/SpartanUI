@@ -360,7 +360,9 @@ function Options:CreateFrameOptionSet(frameName, get, set)
 				type = 'group',
 				childGroups = 'tree',
 				order = 50,
-				args = {},
+				args = {
+					-- Presets will be added here by AddAuraPresetsToFrame
+				},
 			},
 		},
 	} ---@type AceConfig.OptionsTable
@@ -488,6 +490,74 @@ function Options:AddAuraLayout(frameName, OptionSet)
 					['UP'] = 'UP',
 					['DOWN'] = 'DOWN',
 				},
+			},
+		},
+	}
+end
+
+---@param frameName UnitFrameName
+---@param FrameOptSet AceConfig.OptionsTable
+function Options:AddAuraPresets(frameName, FrameOptSet)
+	-- Only add presets if the AuraPresets system is loaded
+	if not UF.AuraPresets then
+		return
+	end
+
+	-- Add presets group at the top of the Auras section
+	FrameOptSet.args.Auras.args.Presets = {
+		name = L['Quick Presets'],
+		type = 'group',
+		order = 0,
+		args = {
+			desc = {
+				type = 'description',
+				name = L['Apply a preset configuration optimized for your role. This will update both Buff and Debuff display settings for this frame.'],
+				order = 0,
+				fontSize = 'medium',
+			},
+			preset = {
+				name = L['Apply Preset'],
+				desc = L['Choose a preset to apply to this unit frame'],
+				type = 'select',
+				width = 'double',
+				order = 1,
+				values = function()
+					return UF.AuraPresets:GetPresetList()
+				end,
+				get = function()
+					return 'custom'
+				end,
+				set = function(_, presetKey)
+					if presetKey ~= 'custom' then
+						UF.AuraPresets:ApplyPreset(frameName, presetKey)
+						-- Refresh the options UI
+						SUI.Lib.AceConfigRegistry:NotifyChange('SpartanUI')
+					end
+				end,
+			},
+			spacer = {
+				type = 'description',
+				name = '\n',
+				order = 2,
+			},
+			presetInfo = {
+				type = 'description',
+				order = 3,
+				fontSize = 'small',
+				name = function()
+					local presetDescriptions = {
+						healer = '|cff00ff00Healer Focus:|r Shows your HoTs, defensive cooldowns, and dispellable debuffs prominently.',
+						raider = '|cff00ff00Raider:|r Prioritizes boss debuffs, raid cooldowns, and personal defensive buffs.',
+						dps = '|cff00ff00DPS:|r Shows your DoTs, offensive buffs, and procs. Sorted by time remaining.',
+						tank = '|cff00ff00Tank:|r Shows defensive cooldowns, mitigation buffs, and threat-related debuffs.',
+						minimal = '|cff00ff00Minimal:|r Clean, minimal display showing only the most important auras.',
+					}
+					local text = '|cffffffffAvailable Presets:|r\n'
+					for key, desc in pairs(presetDescriptions) do
+						text = text .. '\n' .. desc
+					end
+					return text
+				end,
 			},
 		},
 	}
@@ -1394,6 +1464,7 @@ function Options:Initialize()
 		end)
 		Options:AddGeneral(FrameOptSet)
 		Options:AddFrameBackground(frameName, FrameOptSet)
+		Options:AddAuraPresets(frameName, FrameOptSet)
 
 		-- Add Element Options
 		local builtFrame = UF.Unit:Get(frameName)

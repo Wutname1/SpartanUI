@@ -3,6 +3,22 @@ local UF = SUI.UF
 local Auras = {}
 UF.MonitoredBuffs = {}
 
+-- Logger for debug output (uses LibAT Logger system)
+local function GetLogger()
+	if SUI.logger then
+		return SUI.logger
+	end
+	-- Fallback if logger not available
+	return {
+		debug = function(_, msg)
+			-- Silent fallback
+		end,
+		info = function(_, msg)
+			SUI:Print(msg)
+		end,
+	}
+end
+
 ---@param unit UnitId
 ---@param data UnitAuraInfo
 ---@param rules SUI.UF.Auras.Rules
@@ -70,7 +86,7 @@ function Auras:Filter(element, unit, data, rules)
 			end
 
 			if spellIdNum and SUI:IsInTable(UF.MonitoredBuffs[unit], spellIdNum) then
-				print(msg)
+				GetLogger():debug('[UF.Auras] ' .. tostring(msg))
 			end
 		end
 		local ShouldDisplay = false
@@ -158,12 +174,160 @@ function Auras:Filter(element, unit, data, rules)
 				if v == spellIdNum then
 					debug('Removed ' .. data.spellId .. ' from the list of monitored buffs for ' .. unit)
 					table.remove(UF.MonitoredBuffs[unit], i)
-					print('----')
+					GetLogger():debug('[UF.Auras] ----')
 				end
 			end
 		end
 
 		return ShouldDisplay
+	end
+end
+
+-- Priority tiers for aura sorting (higher = more important, shown first)
+-- These are base priorities that get applied based on aura properties
+local PRIORITY_BOSS = 100 -- Boss auras are highest priority
+local PRIORITY_DISPELLABLE = 80 -- Dispellable debuffs (for healers)
+local PRIORITY_PLAYER = 60 -- Player-cast auras
+local PRIORITY_STEALABLE = 50 -- Stealable buffs (for offensive dispel)
+local PRIORITY_RAID = 40 -- Raid-marked auras
+local PRIORITY_OTHER = 20 -- Everything else
+
+-- Calculate priority for an aura based on its properties
+---@param data UnitAuraInfo
+---@return number
+function Auras:GetAuraPriority(data)
+	if not data then
+		return 0
+	end
+
+	local priority = PRIORITY_OTHER
+
+	-- Boss auras are highest priority
+	if data.isBossAura then
+		priority = PRIORITY_BOSS
+	-- Player-cast auras
+	elseif data.isPlayerAura or data.isFromPlayerOrPlayerPet then
+		priority = PRIORITY_PLAYER
+	-- Raid-flagged auras
+	elseif data.isRaid then
+		priority = PRIORITY_RAID
+	end
+
+	-- Boost priority for dispellable debuffs (important for healers)
+	if data.isHarmfulAura and data.dispelName then
+		priority = math.max(priority, PRIORITY_DISPELLABLE)
+	end
+
+	-- Boost priority for stealable buffs (important for mages/priests)
+	if data.isStealable then
+		priority = math.max(priority, PRIORITY_STEALABLE)
+	end
+
+	return priority
+end
+
+-- Create a sort function for auras based on the specified mode
+-- Mode can be: 'priority', 'time', 'name', or nil (default oUF behavior)
+---@param sortMode string
+---@return function|nil
+function Auras:CreateSortFunction(sortMode)
+	if sortMode == 'priority' then
+		return function(a, b)
+			local priorityA = Auras:GetAuraPriority(a)
+			local priorityB = Auras:GetAuraPriority(b)
+
+			-- Higher priority first
+			if priorityA ~= priorityB then
+				return priorityA > priorityB
+			end
+
+			-- Same priority: sort by remaining time (shorter duration first for urgency)
+			local timeA = a.expirationTime or math.huge
+			local timeB = b.expirationTime or math.huge
+			if timeA ~= timeB then
+				return timeA < timeB
+			end
+
+			-- Fallback to instance ID for stability
+			return (a.auraInstanceID or 0) < (b.auraInstanceID or 0)
+		end
+	elseif sortMode == 'time' then
+		return function(a, b)
+			-- Shorter remaining time first
+			local timeA = a.expirationTime or math.huge
+			local timeB = b.expirationTime or math.huge
+			if timeA ~= timeB then
+				return timeA < timeB
+			end
+
+			-- Fallback to player auras first, then instance ID
+			if a.isPlayerAura ~= b.isPlayerAura then
+				return a.isPlayerAura
+			end
+
+			return (a.auraInstanceID or 0) < (b.auraInstanceID or 0)
+		end
+	elseif sortMode == 'name' then
+		return function(a, b)
+			-- Sort alphabetically by name
+			local nameA = a.name or ''
+			local nameB = b.name or ''
+			if nameA ~= nameB then
+				return nameA < nameB
+			end
+
+			return (a.auraInstanceID or 0) < (b.auraInstanceID or 0)
+		end
+	end
+
+	-- nil = use default oUF sorting
+	return nil
+end
+
+-- Format duration for display (handles seconds, minutes, hours)
+---@param duration number
+---@return string
+local function FormatDuration(duration)
+	if duration >= 3600 then
+		return string.format('%dh', math.floor(duration / 3600))
+	elseif duration >= 60 then
+		return string.format('%dm', math.floor(duration / 60))
+	elseif duration >= 10 then
+		return string.format('%d', math.floor(duration))
+	else
+		return string.format('%.1f', duration)
+	end
+end
+
+-- OnUpdate handler for duration text
+---@param button any
+---@param elapsed number
+local function DurationOnUpdate(button, elapsed)
+	if not button.expiration or button.expiration == math.huge then
+		if button.Duration then
+			button.Duration:SetText('')
+		end
+		return
+	end
+
+	button.expiration = button.expiration - elapsed
+	if button.expiration <= 0 then
+		if button.Duration then
+			button.Duration:SetText('')
+		end
+		return
+	end
+
+	if button.Duration and button.showDuration then
+		-- Color based on remaining time
+		if button.expiration < 5 then
+			button.Duration:SetTextColor(1, 0.2, 0.2) -- Red for < 5s
+		elseif button.expiration < 30 then
+			button.Duration:SetTextColor(1, 1, 0.2) -- Yellow for < 30s
+		else
+			button.Duration:SetTextColor(1, 1, 1) -- White otherwise
+		end
+		button.Duration:SetText(FormatDuration(button.expiration))
 	end
 end
 
@@ -176,19 +340,29 @@ function Auras:PostCreateButton(elementName, button)
 	--Remove game cooldown text
 	button.Cooldown:SetHideCountdownNumbers(true)
 
-	-- -- We create a parent for aura strings so that they appear over the cooldown widget
-	-- local StringParent = CreateFrame('Frame', nil, button)
-	-- StringParent:SetFrameLevel(20)
+	-- Create a parent for aura strings so that they appear over the cooldown widget
+	local StringParent = CreateFrame('Frame', nil, button)
+	StringParent:SetFrameLevel(button:GetFrameLevel() + 10)
+	StringParent:SetAllPoints(button)
 
-	-- button.count:SetParent(StringParent)
-	-- button.count:ClearAllPoints()
-	-- button.count:SetPoint('BOTTOMRIGHT', button, 2, 1)
-	-- button.count:SetFont(SUI.Font:GetFont('UnitFrames'), select(2, button.count:GetFont()) - 3)
+	-- Reposition count text
+	if button.Count then
+		button.Count:SetParent(StringParent)
+		button.Count:ClearAllPoints()
+		button.Count:SetPoint('BOTTOMRIGHT', button, 2, -2)
+		button.Count:SetFont(SUI.Font:GetFont('UnitFrames'), 10, 'OUTLINE')
+	end
 
-	-- local Duration = StringParent:CreateFontString(nil, 'OVERLAY')
-	-- Duration:SetFont(SUI.Font:GetFont('UnitFrames'), 11)
-	-- Duration:SetPoint('TOPLEFT', button, 0, -1)
-	-- button.Duration = Duration
+	-- Create duration text
+	local Duration = StringParent:CreateFontString(nil, 'OVERLAY')
+	Duration:SetFont(SUI.Font:GetFont('UnitFrames'), 10, 'OUTLINE')
+	Duration:SetPoint('CENTER', button, 'CENTER', 0, 0)
+	Duration:SetJustifyH('CENTER')
+	button.Duration = Duration
+	button.showDuration = true -- Default to showing duration
+
+	-- Set up OnUpdate for duration countdown
+	button:HookScript('OnUpdate', DurationOnUpdate)
 end
 
 local function CreateAddToFilterWindow(button, elementName)
@@ -304,27 +478,31 @@ function Auras:OnClick(button, elementName)
 
 	if data and keyDown then
 		if keyDown == 'CTRL' then
+			-- Show aura properties in logger (accessible via /logs)
+			GetLogger():info('[UF.Auras] Aura Properties:')
 			for k, v in pairs(data) do
-				print(k .. ' = ' .. tostring(v))
+				GetLogger():info('[UF.Auras]   ' .. k .. ' = ' .. tostring(v))
 			end
+			SUI:Print('Aura properties logged. Use /logs to view details.')
 		elseif keyDown == 'ALT' then
 			if not SUI.IsRetail then
 				-- WoW 12.0.0: Use string key for table index
 				local spellKey = tostring(data.spellId)
 				if button:GetParent().displayReasons[spellKey] then
-					print('Reasons for display:')
+					GetLogger():info('[UF.Auras] Reasons for display:')
 					for k, _ in pairs(button:GetParent().displayReasons[spellKey]) do
-						print(k)
+						GetLogger():info('[UF.Auras]   ' .. k)
 					end
+					SUI:Print('Display reasons logged. Use /logs to view details.')
 				end
 			else
-				print('Aura filtering details are not available in Retail due to API restrictions.')
+				SUI:Print('Aura filtering details are not available in Retail due to API restrictions.')
 			end
 		elseif keyDown == 'SHIFT' then
 			if not SUI.IsRetail then
 				CreateAddToFilterWindow(button, elementName)
 			else
-				print('Whitelist/Blacklist filtering is not available in Retail due to WoW 12.0+ API restrictions.')
+				SUI:Print('Whitelist/Blacklist filtering is not available in Retail due to WoW 12.0+ API restrictions.')
 			end
 		end
 	end
@@ -337,16 +515,30 @@ end
 function Auras.PostUpdateAura(element, unit, button, index)
 	local auraData = C_UnitAuras.GetAuraDataByIndex(unit, index, button.filter)
 	if not auraData then
+		-- Clear duration when aura data unavailable
+		button.expiration = nil
+		if button.Duration then
+			button.Duration:SetText('')
+		end
 		return
 	end
 
+	-- Safely handle duration/expiration (may be secret values in Retail)
 	local duration, expiration = auraData.duration, auraData.expirationTime
-	if duration and duration > 0 then
-		button.expiration = expiration - GetTime()
+	if duration and expiration and duration > 0 then
+		-- Calculate remaining time
+		local remaining = expiration - GetTime()
+		if remaining > 0 then
+			button.expiration = remaining
+		else
+			button.expiration = nil
+		end
 	else
+		-- No duration (permanent aura) or invalid data
 		button.expiration = math.huge
 	end
 
+	-- Visual effects for special aura types
 	if button.SetBackdrop then
 		if unit == 'target' and auraData.isStealable then
 			button:SetBackdropColor(0, 1 / 2, 1 / 2)
@@ -354,16 +546,6 @@ function Auras.PostUpdateAura(element, unit, button, index)
 			button:SetBackdropColor(0, 0, 0)
 		end
 	end
-
-	-- if (self.expiration) then
-	-- 	self.expiration = math.max(self.expiration - elapsed, 0)
-
-	-- 	if (self.expiration > 0 and self.expiration < 60) then
-	-- 		self.Duration:SetFormattedText('%d', self.expiration)
-	-- 	else
-	-- 		self.Duration:SetText()
-	-- 	end
-	-- end
 end
 
 UF.Auras = Auras

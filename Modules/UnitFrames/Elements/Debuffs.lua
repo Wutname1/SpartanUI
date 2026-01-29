@@ -36,6 +36,8 @@ local function Build(frame, DB)
 	element.PostUpdateButton = function(self, button, unit, data, position)
 		button.data = data
 		button.unit = unit
+		-- Update duration display setting from element DB
+		button.showDuration = self.DB and self.DB.showDuration
 	end
 	element.PostCreateButton = function(self, button)
 		UF.Auras:PostCreateButton('Debuffs', button)
@@ -48,6 +50,9 @@ local function Build(frame, DB)
 	end
 	local PreUpdate = function(self)
 		updateSettings(element)
+		-- Update sort function based on settings
+		local sortMode = element.DB and element.DB.sortMode
+		element.SortDebuffs = UF.Auras:CreateSortFunction(sortMode)
 	end
 
 	if not SUI.IsRetail then
@@ -78,6 +83,9 @@ end
 ---@param unitName string
 ---@param OptionSet AceConfig.OptionsTable
 local function Options(unitName, OptionSet)
+	local L = SUI.L
+	local ElementSettings = UF.CurrentSettings[unitName].elements.Debuffs
+
 	local function OptUpdate(option, val)
 		--Update memory
 		UF.CurrentSettings[unitName].elements.Debuffs[option] = val
@@ -86,7 +94,45 @@ local function Options(unitName, OptionSet)
 		--Update the screen
 		UF.Unit[unitName]:ElementUpdate('Debuffs')
 	end
-	--local DB = UF.CurrentSettings[unitName].elements.Debuffs
+
+	OptionSet.args.Display = OptionSet.args.Display or {
+		name = L['Display'],
+		type = 'group',
+		order = 10,
+		inline = true,
+		args = {},
+	}
+
+	OptionSet.args.Display.args.showDuration = {
+		name = L['Show Duration'],
+		desc = L['Display remaining duration text on aura icons'],
+		type = 'toggle',
+		order = 5,
+		get = function()
+			return ElementSettings.showDuration
+		end,
+		set = function(_, val)
+			OptUpdate('showDuration', val)
+		end,
+	}
+
+	OptionSet.args.Display.args.sortMode = {
+		name = L['Sort Mode'],
+		desc = L['How to sort auras. Priority sorts by importance (boss > dispellable > player), Time sorts by remaining duration, Name sorts alphabetically.'],
+		type = 'select',
+		order = 6,
+		values = {
+			priority = L['Priority (Recommended)'],
+			time = L['Time Remaining'],
+			name = L['Alphabetical'],
+		},
+		get = function()
+			return ElementSettings.sortMode or 'priority'
+		end,
+		set = function(_, val)
+			OptUpdate('sortMode', val)
+		end,
+	}
 end
 
 ---@type SUI.UF.Elements.Settings
@@ -97,6 +143,8 @@ local Settings = {
 	width = false,
 	ShowBoss = true,
 	showType = true,
+	showDuration = true, -- Show duration text on aura icons
+	sortMode = 'priority', -- Sort mode: 'priority', 'time', 'name', or nil for default
 	growthx = 'LEFT',
 	growthy = 'UP',
 	rows = 2,

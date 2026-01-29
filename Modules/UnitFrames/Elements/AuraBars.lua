@@ -1,8 +1,6 @@
 local UF = SUI.UF
 local L = SUI.L
-if SUI.IsRetail then
-	return
-end
+
 -- Helper for spell info (uses unified C_Spell API available in all current versions)
 local function GetSpellInfoCompat(spellInput)
 	return C_Spell.GetSpellInfo(spellInput)
@@ -161,6 +159,71 @@ local function Build(frame, DB)
 	function element:CustomAuraFilter(unit, data)
 		local DB = self.DB
 
+		-- Retail vs Classic filtering approach
+		-- Retail: Cannot access spellId due to secret values - use boolean properties only
+		-- Classic: Full access to spellId for spell-specific filtering
+		if SUI.IsRetail then
+			return self:RetailAuraFilter(unit, data)
+		else
+			return self:ClassicAuraFilter(unit, data)
+		end
+	end
+
+	-- Retail filtering: Boolean properties only (no spellId access due to secret values)
+	---@param unit UnitId
+	---@param data UnitAuraInfo
+	function element:RetailAuraFilter(unit, data)
+		local DB = self.DB
+
+		-- Raider mode: always show boss auras regardless of role
+		if DB.raiderMode and data.isBossAura then
+			return true
+		end
+
+		-- Enhanced filtering with role presets using boolean-only properties
+		if DB.filterMode == 'healer' then
+			-- Healer mode: Show player's helpful auras (HoTs, shields, buffs)
+			if data.isFromPlayerOrPlayerPet and data.isHelpful then
+				return true
+			end
+			-- Also show boss auras for healers
+			if data.isBossAura then
+				return true
+			end
+		elseif DB.filterMode == 'dps' then
+			-- DPS mode: Show player's harmful auras (DoTs, debuffs)
+			if data.isFromPlayerOrPlayerPet and data.isHarmful then
+				return true
+			end
+			-- Also show boss auras for DPS
+			if data.isBossAura then
+				return true
+			end
+		elseif DB.filterMode == 'tank' then
+			-- Tank mode: Show player's helpful auras (defensive cooldowns)
+			if data.isFromPlayerOrPlayerPet and data.isHelpful then
+				return true
+			end
+			-- Also show boss auras for tanks
+			if data.isBossAura then
+				return true
+			end
+		elseif DB.filterMode == 'custom' then
+			-- Custom mode: Show player-cast auras and boss auras
+			if data.isBossAura or data.isFromPlayerOrPlayerPet then
+				return true
+			end
+		end
+
+		return false
+	end
+
+	-- Classic filtering: Full spellId access for spell-specific filtering
+	---@param unit UnitId
+	---@param data UnitAuraInfo
+	function element:ClassicAuraFilter(unit, data)
+		local DB = self.DB
+
 		-- If using legacy custom filter, fall back to that
 		if DB.useLegacyFilter then
 			if (data.sourceUnit == 'player' or data.sourceUnit == 'vehicle' or data.isBossAura) and data.duration ~= 0 and data.duration <= 900 then
@@ -297,14 +360,15 @@ local function Options(unitName, OptionSet)
 		args = {
 			filterMode = {
 				name = L['Filtering Mode'],
-				desc = L['Choose how aura bars are filtered. Healer mode shows HoTs, DPS mode shows DoTs, Tank mode shows defensive buffs.'],
+				desc = SUI.IsRetail and L['Choose how aura bars are filtered. Healer shows your helpful auras, DPS shows your harmful auras, Tank shows your defensive auras.']
+					or L['Choose how aura bars are filtered. Healer mode shows HoTs, DPS mode shows DoTs, Tank mode shows defensive buffs.'],
 				type = 'select',
 				order = 1,
 				values = {
-					healer = L['Healer (HoTs & Defensive)'],
-					dps = L['DPS (DoTs & Offensive)'],
-					tank = L['Tank (Defensive & Short Buffs)'],
-					custom = L['Custom (Use Advanced Filters)'],
+					healer = SUI.IsRetail and L['Healer (Your Helpful Auras)'] or L['Healer (HoTs & Defensive)'],
+					dps = SUI.IsRetail and L['DPS (Your Harmful Auras)'] or L['DPS (DoTs & Offensive)'],
+					tank = SUI.IsRetail and L['Tank (Your Defensive Auras)'] or L['Tank (Defensive & Short Buffs)'],
+					custom = SUI.IsRetail and L['Custom (Your Auras + Boss)'] or L['Custom (Use Advanced Filters)'],
 				},
 				get = function()
 					return ElementSettings.filterMode
@@ -330,6 +394,9 @@ local function Options(unitName, OptionSet)
 				desc = L['Use the original filtering system (player/vehicle/boss auras under 15 minutes) instead of role-based filtering'],
 				type = 'toggle',
 				order = 3,
+				hidden = function()
+					return SUI.IsRetail
+				end, -- Hidden in Retail - legacy filter uses duration which is unavailable
 				get = function()
 					return ElementSettings.useLegacyFilter
 				end,
@@ -341,7 +408,10 @@ local function Options(unitName, OptionSet)
 				name = L['Maximum Duration'],
 				desc = L['Maximum duration in seconds for player auras to be shown (when not using role presets)'],
 				type = 'range',
-				order = 3,
+				order = 4,
+				hidden = function()
+					return SUI.IsRetail
+				end, -- Hidden in Retail - duration access unavailable
 				min = 30,
 				max = 3600,
 				step = 30,
@@ -552,10 +622,10 @@ local Settings = {
 	scaleTime = false,
 	icon = true,
 	-- Enhanced filtering options
-	filterMode = 'custom', -- 'healer', 'dps', 'tank', 'custom'
-	raiderMode = false,
-	useLegacyFilter = true,
-	maxDuration = 900, -- 15 minutes in seconds
+	filterMode = 'healer', -- 'healer', 'dps', 'tank', 'custom' - default to healer as primary AuraBars use case
+	raiderMode = true, -- Show boss auras by default
+	useLegacyFilter = false, -- Legacy filter disabled by default (uses duration which is unavailable in Retail)
+	maxDuration = 900, -- 15 minutes in seconds (Classic only)
 	position = {
 		anchor = 'BOTTOMLEFT',
 		relativePoint = 'TOPLEFT',

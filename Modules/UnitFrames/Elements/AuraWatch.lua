@@ -48,145 +48,173 @@ end
 ---@param OptionSet AceConfig.OptionsTable
 ---@param DB? table
 local function Options(unitName, OptionSet, DB)
+	local L = SUI.L
 	local ElementSettings = UF.CurrentSettings[unitName].elements.AuraWatch
 	local UserSetting = UF.DB.UserSettings[UF.DB.Style][unitName].elements.AuraWatch
 
-	-- Remove Basic Filters
+	-- Remove Basic Filters (not used by AuraWatch)
 	OptionSet.args.Filters = nil
-	-- Remove Blacklist
 	OptionSet.args.whitelist = nil
 	OptionSet.args.blacklist = nil
-	-- Remove Layout Configuration
 	OptionSet.args.Layout = nil
-	local buildItemList
 
-	local spellLabel = {
-		type = 'description',
-		width = 'double',
-		fontSize = 'medium',
-		order = function(info)
-			return tonumber(string.match(info[#info], '(%d+)'))
-		end,
-		name = function(info)
-			local id = tonumber(string.match(info[#info], '(%d+)'))
-			local name = 'unknown'
-			if id then
-				local spellInfo = GetSpellInfoCompat(id)
+	local buildSpellList
+
+	-- Create a spell label entry
+	local function createSpellLabel(spellID)
+		return {
+			type = 'description',
+			width = 'double',
+			fontSize = 'medium',
+			order = spellID,
+			name = function()
+				local spellInfo = GetSpellInfoCompat(spellID)
 				if spellInfo then
-					name = string.format('|T%s:14:14:0:0|t %s (#%i)', spellInfo.iconID or 'Interface\\Icons\\Inv_misc_questionmark', spellInfo.name or SUI.L['Unknown'], id)
+					return string.format('|T%s:14:14:0:0|t %s (#%i)', spellInfo.iconID or 'Interface\\Icons\\Inv_misc_questionmark', spellInfo.name or L['Unknown'], spellID)
 				end
-			end
-			return name
-		end,
-	}
+				return string.format('Unknown Spell (#%i)', spellID)
+			end,
+		}
+	end
 
-	local spellDelete = {
-		type = 'execute',
-		name = SUI.L['Delete'],
-		width = 'half',
-		order = function(info)
-			return tonumber(string.match(info[#info], '(%d+)')) + 0.5
-		end,
-		func = function(info)
-			local id = tonumber(info[#info])
+	-- Create a delete button for a spell
+	local function createDeleteButton(spellID)
+		return {
+			type = 'execute',
+			name = L['Delete'],
+			width = 'half',
+			order = spellID + 0.5,
+			func = function()
+				-- Remove from settings
+				ElementSettings.watched[spellID] = nil
+				if UserSetting.watched then
+					UserSetting.watched[spellID] = nil
+				end
 
-			-- Remove Setting
-			ElementSettings.rules[info[#info - 2]][id] = nil
-			UserSetting.rules[info[#info - 2]][id] = nil
+				-- Rebuild list and update
+				buildSpellList()
+				UF.Unit[unitName]:ElementUpdate('AuraWatch')
+			end,
+		}
+	end
 
-			-- Update Screen
-			buildItemList(info[#info - 2])
-			UF.Unit[unitName]:ElementUpdate('AuraWatch')
-		end,
-	}
-
-	buildItemList = function(mode)
-		local spellsOpt = OptionSet.args[mode].args.spells.args
+	-- Build the spell list for the options UI
+	buildSpellList = function()
+		local spellsOpt = OptionSet.args.watched.args.spells.args
 		table.wipe(spellsOpt)
 
-		for spellID, _ in pairs(ElementSettings.rules[mode]) do
-			spellsOpt[spellID .. 'label'] = spellLabel
-			spellsOpt[tostring(spellID)] = spellDelete
+		-- Add each watched spell (skip the '**' defaults key)
+		for spellID, _ in pairs(ElementSettings.watched or {}) do
+			if type(spellID) == 'number' then
+				spellsOpt['label' .. spellID] = createSpellLabel(spellID)
+				spellsOpt[tostring(spellID)] = createDeleteButton(spellID)
+			end
 		end
 	end
 
-	local additem = function(info, input)
+	-- Add a new spell to watch
+	local function addSpell(_, input)
 		local spellId
 		if type(input) == 'string' then
-			-- See if we got a spell link
+			-- Try to parse spell link
 			if input:find('|Hspell:%d+') then
 				spellId = tonumber(input:match('|Hspell:(%d+)'))
 			elseif input:find('%[(.-)%]') then
 				local spellInfo = GetSpellInfoCompat(input:match('%[(.-)%]'))
 				spellId = spellInfo and spellInfo.spellID
 			else
-				local spellInfo = GetSpellInfoCompat(input)
-				spellId = spellInfo and spellInfo.spellID
+				-- Try as spell name or ID
+				local numericId = tonumber(input)
+				if numericId then
+					spellId = numericId
+				else
+					local spellInfo = GetSpellInfoCompat(input)
+					spellId = spellInfo and spellInfo.spellID
+				end
 			end
+
 			if not spellId then
-				SUI:Print('Invalid spell name or ID')
+				SUI:Print(L['Invalid spell name or ID'])
 				return
 			end
 		end
 
-		ElementSettings.rules[info[#info - 1]][spellId] = true
-		UserSetting.rules[info[#info - 1]][spellId] = true
+		-- Add to settings (uses '**' defaults)
+		ElementSettings.watched[spellId] = {}
+		if not UserSetting.watched then
+			UserSetting.watched = {}
+		end
+		UserSetting.watched[spellId] = {}
 
+		-- Update UI
+		buildSpellList()
 		UF.Unit[unitName]:ElementUpdate('AuraWatch')
-		buildItemList(info[#info - 1])
 	end
 
 	OptionSet.args.watched = {
-		name = 'Tracked Auras',
+		name = L['Tracked Auras'],
 		type = 'group',
 		order = 4,
 		args = {
-			soon = {
+			desc = {
 				type = 'description',
-				name = 'Options Coming soon, Right now Priest, Mage, and Druid raid buffs tracked by default IF the current character is one of those classes.',
+				name = L['Track important buffs and debuffs on party/raid members. Auras are auto-populated based on your class. Add custom spells using spell name or ID below.'],
 				order = 0.5,
 			},
 			create = {
-				name = SUI.L['Add spell name or ID'],
+				name = L['Add spell name or ID'],
 				type = 'input',
 				order = 1,
 				width = 'full',
-				set = additem,
+				set = addSpell,
 			},
 			spells = {
 				order = 2,
 				type = 'group',
 				inline = true,
-				name = 'Auras list',
+				name = L['Tracked Auras'],
 				args = {},
 			},
 		},
 	}
 
-	OptionSet.args.watched.args.create.disabled = true
+	-- Build initial spell list
+	buildSpellList()
 end
 
 ---@class SUI.UF.Unit.Settings.AuraWatch.Watched
 ---@field anyUnit? boolean
 ---@field onlyShowMissing? boolean
+---@field onlyIfCastable? boolean
+---@field displayInCombat? boolean
 ---@field point? string
 ---@field xOffset? number
 ---@field yOffset? number
-local watched = {}
 
 ---@class SUI.UF.Unit.Settings.AuraWatch : SUI.UF.Unit.Settings
----@field watched table<integer, SUI.UF.Unit.Settings.AuraWatch.Watched>
-local a = {}
+---@field watched table<integer|string, SUI.UF.Unit.Settings.AuraWatch.Watched>
+---@field size number
+
+-- Get default watched spells (class-aware if AuraWatchSpells is loaded)
+local function GetDefaultWatched()
+	-- Use class-specific spells if the data file is loaded
+	if UF.AuraWatchSpells and UF.AuraWatchSpells.GetDefaults then
+		return UF.AuraWatchSpells:GetDefaults()
+	end
+
+	-- Fallback to basic raid buffs
+	return {
+		['**'] = { onlyIfCastable = true, anyUnit = true, onlyShowMissing = true, point = 'BOTTOM', xOffset = 0, yOffset = 0, displayInCombat = false },
+		[1126] = {}, -- Mark of the Wild
+		[1459] = {}, -- Arcane Intellect
+		[21562] = {}, -- Power Word: Fortitude
+	}
+end
 
 ---@class SUI.UF.Unit.Settings.AuraWatch
 local Settings = {
 	size = 20,
-	watched = {
-		['**'] = { onlyIfCastable = true, anyUnit = true, onlyShowMissing = true, point = 'BOTTOM', xOffset = 0, yOffset = 0, displayInCombat = false },
-		[1126] = {}, -- Mark of the wild
-		[1459] = {}, -- Arcane Intellect
-		[21562] = {}, -- Power Word: Fortitude
-	},
+	watched = GetDefaultWatched(),
 	config = {
 		type = 'Auras',
 	},
