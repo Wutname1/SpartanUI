@@ -8,7 +8,7 @@ local nierror = Private.nierror
 local colorMixin = {
 	SetAtlas = function(self, atlas)
 		local info = C_Texture.GetAtlasInfo(atlas)
-		if(not info) then
+		if not info then
 			return nierror(string.format('"%s" is an invalid atlas.', atlas))
 		end
 
@@ -18,20 +18,20 @@ local colorMixin = {
 		return self.atlas
 	end,
 	SetCurve = function(self, ...)
-		if(...) then
-			if(self.curve) then
+		if ... then
+			if self.curve then
 				self.curve:ClearPoints()
 			else
 				self.curve = C_CurveUtil.CreateColorCurve()
 			end
 
-			if(type(...) == 'table') then
+			if type(...) == 'table' then
 				for x, y in next, (...) do
 					self.curve:AddPoint(x, y)
 				end
 			else
 				for i = 1, select('#', ...), 2 do
-					self.curve:AddPoint(select(i, ...), select(i+1, ...))
+					self.curve:AddPoint(select(i, ...), select(i + 1, ...))
 				end
 			end
 		else
@@ -60,7 +60,7 @@ The rgb values can be either normalized (0-1) or bytes (0-255).
 * color - the ColorMixin-based object
 --]]
 function oUF:CreateColor(r, g, b, a)
-	if(r > 1 or g > 1 or b > 1) then
+	if r > 1 or g > 1 or b > 1 then
 		r, g, b = r / 255, g / 255, b / 255
 	end
 
@@ -69,9 +69,9 @@ function oUF:CreateColor(r, g, b, a)
 
 	-- provide a default curve for smooth colors
 	color:SetCurve({
-		[  0] = CreateColor(1, 0, 0),
+		[0] = CreateColor(1, 0, 0),
 		[0.5] = CreateColor(1, 1, 0),
-		[  1] = CreateColor(0, 1, 0),
+		[1] = CreateColor(0, 1, 0),
 	})
 
 	return color
@@ -111,7 +111,7 @@ local colors = {
 -- We do this because people edit the vars directly, and changing the default
 -- globals makes SPICE FLOW!
 local function customClassColors()
-	if(_G.CUSTOM_CLASS_COLORS) then
+	if _G.CUSTOM_CLASS_COLORS then
 		local function updateColors()
 			for classToken, color in next, _G.CUSTOM_CLASS_COLORS do
 				colors.class[classToken] = oUF:CreateColor(color.r, color.g, color.b)
@@ -129,7 +129,7 @@ local function customClassColors()
 	end
 end
 
-if(not customClassColors()) then
+if not customClassColors() then
 	for classToken, color in next, _G.RAID_CLASS_COLORS do
 		colors.class[classToken] = oUF:CreateColor(color.r, color.g, color.b)
 	end
@@ -138,7 +138,7 @@ if(not customClassColors()) then
 	eventHandler:RegisterEvent('ADDON_LOADED')
 	eventHandler:RegisterEvent('PLAYER_ENTERING_WORLD')
 	eventHandler:SetScript('OnEvent', function(self)
-		if(customClassColors()) then
+		if customClassColors() then
 			self:UnregisterAllEvents()
 			self:SetScript('OnEvent', nil)
 		end
@@ -158,34 +158,38 @@ for eclass, color in next, _G.FACTION_BAR_COLORS do
 	colors.reaction[eclass] = oUF:CreateColor(color.r, color.g, color.b)
 end
 
-local staggerIndices = {
+local stageIndices = {
+	-- stagger
 	green = 1,
 	yellow = 2,
 	red = 3,
+	-- soul fragments
+	voidMetamorphosisProgess = 1,
+	collapsingStarProgess = 2,
 }
 
 for power, color in next, PowerBarColor do
-	if (type(power) == 'string') then
-		if(color.r) then
+	if type(power) == 'string' then
+		if color.r then
 			colors.power[power] = oUF:CreateColor(color.r, color.g, color.b)
 
-			if(color.atlas) then
+			if color.atlas then
 				colors.power[power]:SetAtlas(color.atlas)
 			end
 
-			if(color.atlasElementName) then
-				colors.power[power]:SetAtlas("UI-HUD-UnitFrame-Player-PortraitOn-Bar-" .. color.atlasElementName)
+			if color.atlasElementName then
+				colors.power[power]:SetAtlas('UI-HUD-UnitFrame-Player-PortraitOn-Bar-' .. color.atlasElementName)
 			end
 		else
-			-- special handling for stagger
+			-- special handling of colours with stages
 			colors.power[power] = {}
 
 			for name, color_ in next, color do
-				local index = staggerIndices[name]
-				if(index) then
+				local index = stageIndices[name]
+				if index then
 					colors.power[power][index] = oUF:CreateColor(color_.r, color_.g, color_.b)
 
-					if(color_.atlas) then
+					if color_.atlas then
 						colors.power[power][index]:SetAtlas(color_.atlas)
 					end
 				end
