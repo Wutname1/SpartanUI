@@ -186,9 +186,15 @@ function PositionCalculator:GetCenterOffset(frame)
 	uiCenterX = uiCenterX * uiScale
 	uiCenterY = uiCenterY * uiScale
 
-	-- Calculate offset in UIParent coordinate space
-	local offsetX = math.floor((screenCenterX - uiCenterX) / uiScale + 0.5)
-	local offsetY = math.floor((screenCenterY - uiCenterY) / uiScale + 0.5)
+	-- Calculate offset in screen coordinates
+	local screenOffsetX = screenCenterX - uiCenterX
+	local screenOffsetY = screenCenterY - uiCenterY
+
+	-- Convert to frame's coordinate space (for SetPoint)
+	-- When calling frame:SetPoint('CENTER', UIParent, 'CENTER', x, y),
+	-- the x,y values are interpreted in the FRAME's coordinate space
+	local offsetX = math.floor(screenOffsetX / frameScale + 0.5)
+	local offsetY = math.floor(screenOffsetY / frameScale + 0.5)
 
 	return offsetX, offsetY
 end
