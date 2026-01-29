@@ -22,9 +22,16 @@ function SUI:ChatCommand(input)
 		return
 	end
 
-	-- If no special handling needed, execute the command directly
-	if SUIChatCommands[input] then
-		SUIChatCommands[input]()
+	-- Parse command and arguments (e.g., "move reset" -> command="move", arg="reset")
+	local command, arg = strsplit(' ', input, 2)
+	command = command:trim()
+	if arg then
+		arg = arg:trim()
+	end
+
+	-- Execute the command with its argument
+	if SUIChatCommands[command] then
+		SUIChatCommands[command](arg)
 	else
 		SUI:Print('Unknown command: ' .. input)
 		SUI:Print('Try /sui > Artwork to navigate to a specific options page')

@@ -14,7 +14,6 @@ local colors = {
 }
 local MoverWatcher = CreateFrame('Frame', nil, UIParent)
 local MoveEnabled = false
-local coordFrame
 local anchorPoints = {
 	['TOPLEFT'] = 'TOP LEFT',
 	['TOP'] = 'TOP',
@@ -380,8 +379,9 @@ local parentFrameTemp = {}
 ---@param DisplayName? string
 ---@param postdrag? function
 ---@param groupName? string
+---@param widgets? table Ace3-style widget definitions for the settings panel
 ---@return nil
-function MoveIt:CreateMover(parent, name, DisplayName, postdrag, groupName)
+function MoveIt:CreateMover(parent, name, DisplayName, postdrag, groupName, widgets)
 	if SUI:IsModuleDisabled('MoveIt') then
 		return
 	end
@@ -422,11 +422,17 @@ function MoveIt:CreateMover(parent, name, DisplayName, postdrag, groupName)
 	f.postdrag = postdrag
 	f.defaultScale = (parent:GetScale() or 1)
 	f.defaultPoint = GetPoints(parent)
+	f.widgets = widgets -- Ace3-style widget definitions for settings panel
 
 	f:SetFrameLevel(parent:GetFrameLevel() + 1)
 	f:SetFrameStrata('DIALOG')
 
 	MoverList[name] = f
+
+	-- Register frame with magnetism manager if available
+	if MoveIt.MagnetismManager then
+		MoveIt.MagnetismManager:RegisterFrame(f)
+	end
 
 	local nameText = f:CreateFontString(nil, 'OVERLAY')
 	SUI.Font:Format(nameText, 12, 'Mover')
@@ -469,21 +475,17 @@ function MoveIt:CreateMover(parent, name, DisplayName, postdrag, groupName)
 	f:SetPoint(point, anchor, secondaryPoint, x, y)
 
 	local function SaveMoverPosition()
-		MoveIt.DB.movers[name].MovedPoints = GetPoints(f)
+		local savedPoints = GetPoints(f)
+		MoveIt.DB.movers[name].MovedPoints = savedPoints
 		f.MovedText:Show()
-
-		-- Reset the frame so we dont anchor to nil after moving
-		-- Without this the minimap cause LUA errors in a vehicle
-		if f.parent.position then
-			local point, anchor, secondaryPoint, x, y = strsplit(',', MoveIt.DB.movers[name].MovedPoints)
-			f.parent:position(point, anchor, secondaryPoint, x, y, true)
-		end
 	end
 
 	local Scale = function(self, ammount)
 		local Current = self:GetScale()
 		local NewScale = Current + (ammount or 0)
 
+		-- Simply apply scale - don't try to adjust position
+		-- The frame scales from its anchor point (CENTER), so position stays stable
 		self:SetScale(NewScale)
 		self.parent:SetScale(NewScale)
 
@@ -525,9 +527,34 @@ function MoveIt:CreateMover(parent, name, DisplayName, postdrag, groupName)
 
 		self:StartMoving()
 
-		coordFrame.child = self
-		coordFrame:Show()
 		isDragging = true
+
+		-- Initialize magnetism for this drag session
+		local MagnetismManager = MoveIt.MagnetismManager
+		if MagnetismManager and MagnetismManager.enabled then
+			MagnetismManager:BeginDragSession(self)
+		end
+
+		-- Create OnUpdate frame for continuous snap detection during drag
+		if not self.dragUpdateFrame then
+			self.dragUpdateFrame = CreateFrame('Frame')
+		end
+		self.dragUpdateFrame:SetScript('OnUpdate', function()
+			if MagnetismManager and MagnetismManager.enabled then
+				local snapInfo = MagnetismManager:CheckForSnaps(self)
+				if snapInfo then
+					MagnetismManager:ShowPreviewLines(snapInfo)
+				else
+					MagnetismManager:HidePreviewLines()
+				end
+			end
+
+			-- Update settings panel position display during drag
+			local SettingsPanel = MoveIt.SettingsPanel
+			if SettingsPanel and SettingsPanel.nudgeWidget and SettingsPanel.nudgeWidget.UpdatePositionDisplay then
+				SettingsPanel.nudgeWidget:UpdatePositionDisplay()
+			end
+		end)
 	end
 
 	local function OnDragStop(self)
@@ -536,29 +563,44 @@ function MoveIt:CreateMover(parent, name, DisplayName, postdrag, groupName)
 			return
 		end
 		isDragging = false
-		-- if db.stickyFrames then
-		-- 	Sticky:StopMoving(self)
-		-- else
+
+		-- Stop OnUpdate for snap detection
+		if self.dragUpdateFrame then
+			self.dragUpdateFrame:SetScript('OnUpdate', nil)
+		end
+
+		-- Get position BEFORE StopMovingOrSizing changes it
+		-- (StopMovingOrSizing can reanchor the frame unpredictably)
+		local preStopX, preStopY = MoveIt.PositionCalculator:GetCenterOffset(self)
+
 		self:StopMovingOrSizing()
-		-- end
+
+		-- Apply final snap if within range (may anchor to another frame)
+		local MagnetismManager = MoveIt.MagnetismManager
+		local wasSnappedToFrame = false
+		if MagnetismManager and MagnetismManager.enabled then
+			wasSnappedToFrame = MagnetismManager:ApplyFinalSnap(self)
+			MagnetismManager:EndDragSession()
+		end
+
+		-- If not snapped to another frame, normalize to CENTER anchor for consistency
+		if not wasSnappedToFrame then
+			-- Use the position from BEFORE StopMovingOrSizing
+			if preStopX and preStopY then
+				self:ClearAllPoints()
+				self:SetPoint('CENTER', UIParent, 'CENTER', preStopX, preStopY)
+			end
+		end
 
 		SaveMoverPosition()
-		-- MoveIt.DB.movers[name].MovedPoints = GetPoints(f)
-
-		-- Reset the frame so we dont anchor to nil after moving
-		-- Without this the minimap cause LUA errors in a vehicle
-		-- if parent.position then
-		-- 	local point, anchor, secondaryPoint, x, y = strsplit(',', MoveIt.DB.movers[name].MovedPoints)
-		-- 	parent:position(point, anchor, secondaryPoint, x, y, true)
-		-- end
-		-- if NudgeWindow then
-		-- 	E:UpdateNudgeFrame(self, x, y)
-		-- end
-
-		coordFrame.child = nil
-		coordFrame:Hide()
 
 		self:SetUserPlaced(false)
+
+		-- Update settings panel position display after drag
+		local SettingsPanel = MoveIt.SettingsPanel
+		if SettingsPanel and SettingsPanel.nudgeWidget and SettingsPanel.nudgeWidget.UpdatePositionDisplay then
+			SettingsPanel.nudgeWidget:UpdatePositionDisplay()
+		end
 	end
 
 	local function OnEnter(self)
@@ -643,8 +685,15 @@ function MoveIt:CreateMover(parent, name, DisplayName, postdrag, groupName)
 			f.defaultScale = scale
 		end
 
-		-- If the frame has been moved and we are not focing the movement exit
+		-- If user has adjusted scale and we're not forcing, don't change anything
 		if MoveIt.DB.movers[name].AdjustedScale and not forced then
+			return
+		end
+
+		-- IMPORTANT: If the frame has been MOVED, we should not change its scale
+		-- because the saved coordinates were calculated at the current scale.
+		-- Changing scale would make those coordinates represent a different position.
+		if MoveIt.DB.movers[name].MovedPoints and not forced then
 			return
 		end
 
@@ -667,6 +716,11 @@ function MoveIt:CreateMover(parent, name, DisplayName, postdrag, groupName)
 		if MoveIt.DB.movers[name].MovedPoints then
 			point, anchor, secondaryPoint, x, y = strsplit(',', MoveIt.DB.movers[name].MovedPoints)
 		end
+
+		-- Ensure x and y are numbers (strsplit returns strings)
+		x = tonumber(x) or 0
+		y = tonumber(y) or 0
+
 		f:ClearAllPoints()
 		f:SetPoint(point, anchor, secondaryPoint, x, y)
 	end
@@ -678,7 +732,7 @@ function MoveIt:CreateMover(parent, name, DisplayName, postdrag, groupName)
 			return
 		end
 
-		-- If the frame has been moved and we are not focing the movement exit
+		-- If the frame has been moved and we are not forcing the movement, exit
 		if MoveIt.DB.movers[name].MovedPoints and not forced then
 			return
 		end
@@ -814,28 +868,6 @@ function MoveIt:CreateCustomMover(displayName, defaultPosition, config)
 	helpText:SetTextColor(unpack(cfg.colors.text))
 	mover.HelpText = helpText
 
-	-- Create coordinate display frame
-	local coordFrame = CreateFrame('Frame', name .. '_CoordFrame', mover, BackdropTemplateMixin and 'BackdropTemplate')
-	coordFrame:SetSize(150, 40)
-	coordFrame:SetPoint('TOP', mover.DisplayName, 'BOTTOM', 0, -5)
-	coordFrame:SetBackdrop({
-		bgFile = 'Interface\\DialogFrame\\UI-DialogBox-Background',
-		edgeFile = 'Interface\\DialogFrame\\UI-DialogBox-Border',
-		edgeSize = 16,
-		insets = { left = 4, right = 4, top = 4, bottom = 4 },
-	})
-	coordFrame:SetBackdropColor(0, 0, 0, 0.9)
-	coordFrame:SetFrameLevel(mover:GetFrameLevel() + 1)
-
-	local coordText = coordFrame:CreateFontString(nil, 'OVERLAY')
-	SUI.Font:Format(coordText, 10, 'Mover')
-	coordText:SetJustifyH('CENTER')
-	coordText:SetPoint('CENTER')
-	coordText:SetTextColor(1, 1, 1, 1)
-	coordFrame.Text = coordText
-	coordFrame:Hide()
-	mover.coordFrame = coordFrame
-
 	-- Set initial position from saved settings
 	local point, anchor, secondaryPoint, x, y = strsplit(',', defaultPosition)
 	mover:ClearAllPoints()
@@ -851,7 +883,6 @@ function MoveIt:CreateCustomMover(displayName, defaultPosition, config)
 		end
 
 		self:StartMoving()
-		coordFrame:Show()
 		isDragging = true
 	end)
 
@@ -883,7 +914,6 @@ function MoveIt:CreateCustomMover(displayName, defaultPosition, config)
 			cfg.onPositionChanged(self)
 		end
 
-		coordFrame:Hide()
 		self:SetUserPlaced(false)
 	end)
 
@@ -955,18 +985,6 @@ function MoveIt:CreateCustomMover(displayName, defaultPosition, config)
 		end
 	end)
 
-	-- Update coordinate text when the frame moves
-	mover:SetScript('OnUpdate', function(self)
-		if isDragging then
-			local scale = self:GetEffectiveScale()
-			local x, y = self:GetCenter()
-			x = x * scale
-			y = y * scale
-
-			coordFrame.Text:SetText(format('X: %d, Y: %d', Round(x), Round(y)))
-		end
-	end)
-
 	-- Add Escape key handling
 	mover:SetScript('OnKeyDown', function(self, key)
 		if key == 'ESCAPE' then
@@ -1035,37 +1053,6 @@ function MoveIt:OnInitialize()
 
 	--Build Options
 	MoveIt:Options()
-
-	-- Build Coord Frame using LibAT.UI
-	-- Access LibAT from global namespace (not LibStub)
-	local LibAT = _G.LibAT
-	if LibAT and LibAT.UI then
-		coordFrame = LibAT.UI.CreateWindow({
-			name = 'SUI_MoveIt_CoordFrame',
-			title = 'MoveIt',
-			width = 480,
-			height = 200,
-			hidePortrait = true,
-		})
-	else
-		-- Fallback to basic frame if LibAT not available
-		coordFrame = CreateFrame('Frame', 'SUI_MoveIt_CoordFrame', UIParent, 'BasicFrameTemplateWithInset')
-		coordFrame:SetSize(480, 200)
-		coordFrame:SetPoint('CENTER')
-		coordFrame:EnableMouse(true)
-		coordFrame:SetMovable(true)
-		coordFrame:RegisterForDrag('LeftButton')
-		coordFrame:SetScript('OnDragStart', coordFrame.StartMoving)
-		coordFrame:SetScript('OnDragStop', coordFrame.StopMovingOrSizing)
-	end
-	coordFrame:SetFrameStrata('DIALOG')
-	coordFrame:Hide()
-
-	-- Create title texture
-	coordFrame.Title = SUI.UI.CreateTexture(coordFrame, 104, 30, 'Interface\\AddOns\\SpartanUI\\images\\setup\\SUISetup')
-	coordFrame.Title:SetTexCoord(0, 0.611328125, 0, 0.6640625)
-	coordFrame.Title:SetPoint('TOP')
-	coordFrame.Title:SetAlpha(0.8)
 
 	if EditModeManagerFrame then
 		EventRegistry:RegisterCallback('EditMode.Enter', function()
@@ -1386,7 +1373,6 @@ end
 MoveIt.MoverWatcher = MoverWatcher
 MoveIt.MoveEnabled = MoveEnabled
 MoveIt.MoverList = MoverList
-MoveIt.coordFrame = coordFrame
 
 ---Helper function to save a mover's position
 ---@param name string The mover name
@@ -1400,4 +1386,73 @@ function MoveIt:SaveMoverPosition(name)
 	if position then
 		self.PositionCalculator:SavePosition(name, position)
 	end
+end
+
+---Create two debug test movers for snapping troubleshooting
+---Call with: /run SUI.MoveIt:CreateDebugTestMovers()
+function MoveIt:CreateDebugTestMovers()
+	-- Remove existing test movers if they exist
+	if MoverList['DebugTestMover1'] then
+		MoverList['DebugTestMover1']:Hide()
+		MoverList['DebugTestMover1'] = nil
+	end
+	if MoverList['DebugTestMover2'] then
+		MoverList['DebugTestMover2']:Hide()
+		MoverList['DebugTestMover2'] = nil
+	end
+
+	-- Create test mover parent frames (required for CreateMover)
+	local parent1 = CreateFrame('Frame', 'SUI_DebugTestParent1', UIParent)
+	parent1:SetSize(50, 50)
+	parent1:SetPoint('CENTER', UIParent, 'CENTER', -100, 100)
+
+	local parent2 = CreateFrame('Frame', 'SUI_DebugTestParent2', UIParent)
+	parent2:SetSize(50, 50)
+	parent2:SetPoint('CENTER', UIParent, 'CENTER', 100, 100)
+
+	-- Initialize DB entries for the test movers
+	if not MoveIt.DB.movers['DebugTestMover1'] then
+		MoveIt.DB.movers['DebugTestMover1'] = { defaultPoint = false, MovedPoints = false }
+	end
+	if not MoveIt.DB.movers['DebugTestMover2'] then
+		MoveIt.DB.movers['DebugTestMover2'] = { defaultPoint = false, MovedPoints = false }
+	end
+
+	-- Create the movers using standard CreateMover
+	MoveIt:CreateMover(parent1, 'DebugTestMover1', 'Test Box 1', nil, 'Debug')
+	MoveIt:CreateMover(parent2, 'DebugTestMover2', 'Test Box 2', nil, 'Debug')
+
+	-- Show the test movers
+	if MoverList['DebugTestMover1'] then
+		MoverList['DebugTestMover1']:Show()
+	end
+	if MoverList['DebugTestMover2'] then
+		MoverList['DebugTestMover2']:Show()
+	end
+
+	if MoveIt.logger then
+		MoveIt.logger.info('Created 2 debug test movers (50x50)')
+	end
+
+	print('Debug test movers created. Use /sui move to see them.')
+end
+
+---Remove debug test movers
+---Call with: /run SUI.MoveIt:RemoveDebugTestMovers()
+function MoveIt:RemoveDebugTestMovers()
+	if MoverList['DebugTestMover1'] then
+		MoverList['DebugTestMover1']:Hide()
+		MoverList['DebugTestMover1'] = nil
+	end
+	if MoverList['DebugTestMover2'] then
+		MoverList['DebugTestMover2']:Hide()
+		MoverList['DebugTestMover2'] = nil
+	end
+	if _G['SUI_DebugTestParent1'] then
+		_G['SUI_DebugTestParent1']:Hide()
+	end
+	if _G['SUI_DebugTestParent2'] then
+		_G['SUI_DebugTestParent2']:Hide()
+	end
+	print('Debug test movers removed.')
 end

@@ -158,6 +158,60 @@ function PositionCalculator:Round(num, decimals)
 	return math.floor(num * mult + 0.5) / mult
 end
 
+---Calculate CENTER anchor offset for a frame relative to UIParent
+---Accounts for scale differences between frame and UIParent
+---@param frame Frame The frame to calculate position for
+---@return number|nil offsetX X offset from UIParent CENTER
+---@return number|nil offsetY Y offset from UIParent CENTER
+function PositionCalculator:GetCenterOffset(frame)
+	if not frame then
+		return nil, nil
+	end
+
+	local centerX, centerY = frame:GetCenter()
+	if not centerX or not centerY then
+		return nil, nil
+	end
+
+	-- Account for scale differences between frame and UIParent
+	local frameScale = frame:GetEffectiveScale()
+	local uiScale = UIParent:GetEffectiveScale()
+
+	-- Convert frame center to screen coordinates
+	local screenCenterX = centerX * frameScale
+	local screenCenterY = centerY * frameScale
+
+	-- Get UIParent center in screen coordinates
+	local uiCenterX, uiCenterY = UIParent:GetCenter()
+	uiCenterX = uiCenterX * uiScale
+	uiCenterY = uiCenterY * uiScale
+
+	-- Calculate offset in UIParent coordinate space
+	local offsetX = math.floor((screenCenterX - uiCenterX) / uiScale + 0.5)
+	local offsetY = math.floor((screenCenterY - uiCenterY) / uiScale + 0.5)
+
+	return offsetX, offsetY
+end
+
+---Apply CENTER anchor to a frame relative to UIParent
+---Uses GetCenterOffset to calculate the position
+---@param frame Frame The frame to reposition
+---@return boolean success Whether the operation succeeded
+function PositionCalculator:ApplyCenterAnchor(frame)
+	if not frame then
+		return false
+	end
+
+	local offsetX, offsetY = self:GetCenterOffset(frame)
+	if not offsetX or not offsetY then
+		return false
+	end
+
+	frame:ClearAllPoints()
+	frame:SetPoint('CENTER', UIParent, 'CENTER', offsetX, offsetY)
+	return true
+end
+
 ---Save a mover's position to the database
 ---@param name string The mover name
 ---@param position table The position {point, anchorFrameName, anchorPoint, x, y}

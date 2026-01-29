@@ -197,11 +197,6 @@ function CustomEditMode:Enter()
 		end
 	end
 
-	-- Show coordinate frame if it exists
-	if MoveIt.coordFrame then
-		MoveIt.coordFrame:Show()
-	end
-
 	-- Fire callback
 	if MoveIt.Callbacks and MoveIt.Callbacks.OnEditModeEnter then
 		MoveIt.Callbacks.OnEditModeEnter()
@@ -229,11 +224,6 @@ function CustomEditMode:Exit()
 			mover:EnableKeyboard(true)
 			mover:Hide()
 		end
-	end
-
-	-- Hide coordinate frame
-	if MoveIt.coordFrame then
-		MoveIt.coordFrame:Hide()
 	end
 
 	-- Fire callback
@@ -403,11 +393,26 @@ function CustomEditMode:StartDrag(mover)
 	-- Start moving the mover
 	mover:StartMoving()
 
-	-- Show coordinate frame
-	if MoveIt.coordFrame then
-		MoveIt.coordFrame.child = mover
-		MoveIt.coordFrame:Show()
+	-- Initialize magnetism for this drag session
+	local MagnetismManager = MoveIt.MagnetismManager
+	if MagnetismManager and MagnetismManager.enabled then
+		MagnetismManager:BeginDragSession(mover)
 	end
+
+	-- Create OnUpdate frame for continuous snap detection during drag
+	if not mover.dragUpdateFrame then
+		mover.dragUpdateFrame = CreateFrame('Frame')
+	end
+	mover.dragUpdateFrame:SetScript('OnUpdate', function()
+		if MagnetismManager and MagnetismManager.enabled then
+			local snapInfo = MagnetismManager:CheckForSnaps(mover)
+			if snapInfo then
+				MagnetismManager:ShowPreviewLines(snapInfo)
+			else
+				MagnetismManager:HidePreviewLines()
+			end
+		end
+	end)
 
 	if MoveIt.logger then
 		MoveIt.logger.debug(('Start drag: %s'):format(mover.name or 'unknown'))
@@ -424,18 +429,24 @@ function CustomEditMode:StopDrag(mover)
 	isDragging = false
 	local name = mover.name
 
+	-- Stop OnUpdate for snap detection
+	if mover.dragUpdateFrame then
+		mover.dragUpdateFrame:SetScript('OnUpdate', nil)
+	end
+
 	-- Stop moving the mover
 	mover:StopMovingOrSizing()
+
+	-- Apply final snap if within range
+	local MagnetismManager = MoveIt.MagnetismManager
+	if MagnetismManager and MagnetismManager.enabled then
+		MagnetismManager:ApplyFinalSnap(mover)
+		MagnetismManager:EndDragSession()
+	end
 
 	-- Save position
 	if MoveIt.SaveMoverPosition and name then
 		MoveIt:SaveMoverPosition(name)
-	end
-
-	-- Hide coordinate frame
-	if MoveIt.coordFrame then
-		MoveIt.coordFrame.child = nil
-		MoveIt.coordFrame:Hide()
 	end
 
 	-- Call postdrag callback if exists
@@ -469,6 +480,10 @@ if EditModeManagerFrame and EditModeManagerFrame.EnterEditMode then
 	hooksecurefunc(EditModeManagerFrame, 'SelectSystem', function()
 		if CustomEditMode:IsActive() then
 			CustomEditMode:DeselectOverlay()
+			-- Also hide our settings panel when Blizzard frame is selected
+			if CustomEditMode.HideSettingsPanel then
+				CustomEditMode:HideSettingsPanel()
+			end
 		end
 	end)
 end

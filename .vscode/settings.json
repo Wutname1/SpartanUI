@@ -1203,7 +1203,8 @@
     "tIndexOf",
     "GetMoneyString",
     "EditModeSystemMixin",
-    "EditModeSystemSettingsDialog"
+    "EditModeSystemSettingsDialog",
+    "CreateObjectPool"
   ],
   "Lua.workspace.ignoreDir": [".vscode", "libs/*"],
   "Lua.diagnostics.enable": true,
