@@ -3,7 +3,7 @@ name: Retail - CI/CD
 on:
   push:
     tags: ["**"]
-    branches: ["master"]
+    branches: ["develop"]
 
 jobs:
   release:
