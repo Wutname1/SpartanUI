@@ -3,48 +3,17 @@ local UF = SUI.UF
 local Auras = {}
 UF.MonitoredBuffs = {}
 
--- Logger for debug output (uses LibAT Logger system)
-local function GetLogger()
-	if SUI.logger then
-		return SUI.logger
-	end
-	-- Fallback if logger not available
-	return {
-		debug = function(_, msg)
-			-- Silent fallback
-		end,
-		info = function(_, msg)
-			SUI:Print(msg)
-		end,
-	}
-end
-
 -- Track which auras we've already logged to avoid spam
 local loggedAuras = {}
 local loggedAurasCount = 0
 local MAX_LOGGED_AURAS = 100 -- Clear cache after this many entries to prevent memory leak
-local secretValueLoggingEnabled = false -- Disabled by default to avoid log spam
-
--- Enable/disable secret value logging
--- Use: UF.Auras:EnableSecretLogging(true) or /run SUI.UF.Auras:EnableSecretLogging(true)
-function Auras:EnableSecretLogging(enabled)
-	secretValueLoggingEnabled = enabled
-	loggedAuras = {} -- Clear cache when toggling
-	loggedAurasCount = 0
-	local status = enabled and 'ENABLED' or 'DISABLED'
-	GetLogger():info('[UF.Auras] Secret value logging ' .. status .. '. Use /logs to view output.')
-end
 
 -- Diagnostic function to log whether aura properties are secret values
 -- Logs once per unique aura (by auraInstanceID) to avoid spam
+-- ALWAYS ON for debugging - logs to /logs via UF:debug
 ---@param data UnitAuraInfo
 ---@param unit UnitId
 local function LogAuraSecretStatus(data, unit)
-	-- Check if logging is enabled
-	if not secretValueLoggingEnabled then
-		return
-	end
-
 	if not SUI.IsRetail then
 		return -- Only relevant for Retail
 	end
@@ -74,8 +43,6 @@ local function LogAuraSecretStatus(data, unit)
 		loggedAurasCount = 0
 	end
 
-	local logger = GetLogger()
-
 	-- List of properties to check
 	local propertiesToCheck = {
 		'auraInstanceID',
@@ -104,7 +71,7 @@ local function LogAuraSecretStatus(data, unit)
 		'isHarmfulAura',
 	}
 
-	logger:info('[UF.Auras] === Secret Value Check for aura ID: ' .. tostring(auraKey) .. ' on ' .. tostring(unit) .. ' ===')
+	UF:debug('=== Secret Value Check for aura ID: ' .. tostring(auraKey) .. ' on ' .. tostring(unit) .. ' ===')
 
 	for _, prop in ipairs(propertiesToCheck) do
 		local value = data[prop]
@@ -129,10 +96,10 @@ local function LogAuraSecretStatus(data, unit)
 		end
 
 		local status = isSecret and 'SECRET' or 'safe'
-		logger:info('[UF.Auras]   ' .. prop .. ': ' .. status .. ' = ' .. safeForDisplay)
+		UF:debug('  ' .. prop .. ': ' .. status .. ' = ' .. safeForDisplay)
 	end
 
-	logger:info('[UF.Auras] === End Secret Value Check ===')
+	UF:debug('=== End Secret Value Check ===')
 end
 
 -- Export for use in other modules
@@ -142,63 +109,83 @@ Auras.LogAuraSecretStatus = LogAuraSecretStatus
 ---@param data UnitAuraInfo
 ---@param rules SUI.UF.Auras.Rules
 function Auras:Filter(element, unit, data, rules)
+	-- Commented out verbose entry logging - uncomment if needed
+	-- UF:debug('Auras:Filter ENTRY - unit: ' .. tostring(unit) .. ', auraID: ' .. tostring(data and data.auraInstanceID or 'nil'))
+
 	if not SUI.BlizzAPI.canaccesstable(data) then
+		UF:debug('Auras:Filter - data not accessible, returning true')
 		return true
 	end
 
 	-- Log secret value status for diagnostics (only logs once per aura)
-	LogAuraSecretStatus(data, unit)
+	-- Commented out - too verbose. Uncomment for deep aura debugging:
+	-- LogAuraSecretStatus(data, unit)
 
 	if SUI.IsRetail then
-		-- RETAIL: Boolean-only filtering to avoid secret value crashes
-		-- Never access spellId, name, duration, or other potentially secret fields
-		local match = false
+		-- RETAIL (12.0+): Aura data properties are "secret values" in combat
+		-- Use C_UnitAuras.IsAuraFilteredOutByInstanceID with RAID filter to check
+		-- if an aura should show on raid frames - this works even in combat!
 
-		-- Source filters
-		if rules.isFromPlayerOrPlayerPet and data.isFromPlayerOrPlayerPet then
-			match = true
+		-- Check both rules table AND element-level onlyShowPlayer setting
+		local showPlayerOnly = rules.isFromPlayerOrPlayerPet or element.onlyShowPlayer
+
+		-- Check for healing mode (12.1+ RAID_IN_COMBAT filter)
+		local healingMode = element.DB and element.DB.healingMode
+
+		if showPlayerOnly then
+			-- Only show player's own auras (isPlayerAura is safe - created by oUF)
+			if data.isPlayerAura ~= true then
+				return false
+			end
+
+			-- Use the RAID filter API to check if this aura should show on raid frames
+			-- This is NOT a secret value check - it's a direct API call that works in combat
+			local auraInstanceID = data.auraInstanceID
+			if auraInstanceID then
+				-- Healing Mode (12.1+): Use RAID_IN_COMBAT filter for HoTs
+				if healingMode then
+					-- RAID_IN_COMBAT returns auras flagged to show on raid frames in combat
+					-- When used with HELPFUL|PLAYER, this should return mostly HoTs
+					local isFilteredOut = C_UnitAuras.IsAuraFilteredOutByInstanceID(unit, auraInstanceID, 'HELPFUL|PLAYER|RAID_IN_COMBAT')
+					if not isFilteredOut then
+						return true
+					end
+				end
+
+				-- Check if the aura passes the HELPFUL|RAID filter (for buffs on raid frames)
+				-- IsAuraFilteredOutByInstanceID returns true if the aura is FILTERED OUT
+				-- So we want it to return false (not filtered out = should show)
+				local isFilteredOut = C_UnitAuras.IsAuraFilteredOutByInstanceID(unit, auraInstanceID, 'HELPFUL|RAID')
+				if not isFilteredOut then
+					return true
+				end
+
+				-- Also check HELPFUL|PLAYER|RAID for player-cast raid buffs
+				isFilteredOut = C_UnitAuras.IsAuraFilteredOutByInstanceID(unit, auraInstanceID, 'HELPFUL|PLAYER|RAID')
+				if not isFilteredOut then
+					return true
+				end
+			end
+
+			-- Aura doesn't pass RAID filter - hide it
+			return false
 		end
 
-		if rules.isBossAura and data.isBossAura then
-			match = true
+		-- Healing Mode without player-only filter
+		if healingMode then
+			local auraInstanceID = data.auraInstanceID
+			if auraInstanceID then
+				-- Show any aura that passes RAID_IN_COMBAT filter
+				local isFilteredOut = C_UnitAuras.IsAuraFilteredOutByInstanceID(unit, auraInstanceID, 'HELPFUL|RAID_IN_COMBAT')
+				if not isFilteredOut then
+					return true
+				end
+			end
 		end
 
-		-- Type filters
-		if rules.isHelpful and data.isHelpful then
-			match = true
-		end
-
-		if rules.isHarmful and data.isHarmful then
-			match = true
-		end
-
-		-- Special filters
-		if rules.isStealable and data.isStealable then
-			match = true
-		end
-
-		if rules.isRaid and data.isRaid then
-			match = true
-		end
-
-		-- Nameplate filters
-		if rules.nameplateShowPersonal and data.nameplateShowPersonal then
-			match = true
-		end
-
-		if rules.nameplateShowAll and data.nameplateShowAll then
-			match = true
-		end
-
-		if rules.isNameplateOnly and data.isNameplateOnly then
-			match = true
-		end
-
-		if rules.canApplyAura and data.canApplyAura then
-			match = true
-		end
-
-		return match
+		-- No player-only filter - show all auras
+		-- The filter string (HELPFUL/HARMFUL) already filtered at the API level
+		return true
 	else
 		-- CLASSIC: Full filtering including whitelist/blacklist/duration
 		---@param msg any
@@ -208,7 +195,7 @@ function Auras:Filter(element, unit, data, rules)
 			end
 
 			if spellIdNum and SUI:IsInTable(UF.MonitoredBuffs[unit], spellIdNum) then
-				GetLogger():debug('[UF.Auras] ' .. tostring(msg))
+				UF.Log:debug('[UF.Auras] ' .. tostring(msg))
 			end
 		end
 		local ShouldDisplay = false
@@ -296,7 +283,7 @@ function Auras:Filter(element, unit, data, rules)
 				if v == spellIdNum then
 					debug('Removed ' .. data.spellId .. ' from the list of monitored buffs for ' .. unit)
 					table.remove(UF.MonitoredBuffs[unit], i)
-					GetLogger():debug('[UF.Auras] ----')
+					UF.Log:debug('[UF.Auras] ----')
 				end
 			end
 		end
@@ -406,8 +393,9 @@ end
 
 -- Create a sort function for auras based on the specified mode
 -- Mode can be: 'priority', 'time', 'name', or nil (default oUF behavior)
--- All sort functions are designed to be safe with Retail's secret values
----@param sortMode string
+-- RETAIL: Limited sorting - duration/name/etc are secret values
+-- CLASSIC: Full sorting capabilities available
+---@param sortMode string|nil
 ---@return function|nil
 function Auras:CreateSortFunction(sortMode)
 	if sortMode == 'priority' then
@@ -432,6 +420,16 @@ function Auras:CreateSortFunction(sortMode)
 		end
 	elseif sortMode == 'time' then
 		return function(a, b)
+			if not SUI.IsRetail then
+				-- CLASSIC: Can sort by expiration time
+				local timeA = SafeGetNumber(a, 'expirationTime', math.huge)
+				local timeB = SafeGetNumber(b, 'expirationTime', math.huge)
+				-- Shorter time remaining first (more urgent)
+				if timeA ~= timeB then
+					return timeA < timeB
+				end
+			end
+
 			-- Player auras first (safe property)
 			if a.isPlayerAura ~= b.isPlayerAura then
 				return a.isPlayerAura == true
@@ -444,8 +442,16 @@ function Auras:CreateSortFunction(sortMode)
 		end
 	elseif sortMode == 'name' then
 		return function(a, b)
-			-- In Retail, name might be a secret value, so we can't sort by it
-			-- Fall back to player auras first, then instance ID
+			if not SUI.IsRetail then
+				-- CLASSIC: Can sort by name
+				local nameA = SafeGetString(a, 'name', '')
+				local nameB = SafeGetString(b, 'name', '')
+				if nameA ~= nameB then
+					return nameA < nameB
+				end
+			end
+
+			-- Retail: name is secret, fall back to player auras first
 			if a.isPlayerAura ~= b.isPlayerAura then
 				return a.isPlayerAura == true
 			end
@@ -476,9 +482,16 @@ local function FormatDuration(duration)
 end
 
 -- OnUpdate handler for duration text
+-- RETAIL: Duration text disabled (secret values) - cooldown spiral shows duration instead
+-- CLASSIC: Full duration text support
 ---@param button any
 ---@param elapsed number
 local function DurationOnUpdate(button, elapsed)
+	-- Retail doesn't support duration text - oUF's cooldown spiral handles it
+	if SUI.IsRetail then
+		return
+	end
+
 	if not button.expiration or button.expiration == math.huge then
 		if button.Duration then
 			button.Duration:SetText('')
@@ -654,20 +667,74 @@ function Auras:OnClick(button, elementName)
 
 	if data and keyDown then
 		if keyDown == 'CTRL' then
-			-- Show aura properties in logger (accessible via /logs)
-			GetLogger():info('[UF.Auras] Aura Properties:')
-			for k, v in pairs(data) do
-				GetLogger():info('[UF.Auras]   ' .. k .. ' = ' .. tostring(v))
+			-- Show aura properties in chat and logger
+			SUI:Print('=== Aura Properties ===')
+
+			-- List of known aura data properties to check
+			local propsToCheck = {
+				-- oUF-created safe properties
+				'auraInstanceID',
+				'isPlayerAura',
+				'isHarmfulAura',
+				-- Standard WoW aura properties (may be secret in Retail for other units' auras)
+				'name',
+				'icon',
+				'applications',
+				'dispelName',
+				'duration',
+				'expirationTime',
+				'sourceUnit',
+				'isStealable',
+				'nameplateShowPersonal',
+				'spellId',
+				'canApplyAura',
+				'isBossAura',
+				'isFromPlayerOrPlayerPet',
+				'nameplateShowAll',
+				'timeMod',
+				'isHarmful',
+				'isHelpful',
+				'isRaid',
+				'isNameplateOnly',
+			}
+
+			for _, k in ipairs(propsToCheck) do
+				local success, result = pcall(function()
+					local v = data[k]
+					if v == nil then
+						return nil
+					end
+					-- Check if it's a secret value
+					if issecretvalue and issecretvalue(v) then
+						return '<SECRET>'
+					end
+					-- Format the value
+					if type(v) == 'table' then
+						return 'table[' .. #v .. ']'
+					elseif type(v) == 'boolean' then
+						return v and 'true' or 'false'
+					else
+						return tostring(v)
+					end
+				end)
+
+				if success and result then
+					SUI:Print('  ' .. k .. ' = ' .. result)
+					UF:debug('[Auras:OnClick] ' .. k .. ' = ' .. result)
+				elseif not success then
+					SUI:Print('  ' .. k .. ' = <ERROR: ' .. tostring(result) .. '>')
+				end
 			end
-			SUI:Print('Aura properties logged. Use /logs to view details.')
+
+			SUI:Print('======================')
 		elseif keyDown == 'ALT' then
 			if not SUI.IsRetail then
 				-- WoW 12.0.0: Use string key for table index
 				local spellKey = tostring(data.spellId)
 				if button:GetParent().displayReasons[spellKey] then
-					GetLogger():info('[UF.Auras] Reasons for display:')
+					UF.Log:info('[UF.Auras] Reasons for display:')
 					for k, _ in pairs(button:GetParent().displayReasons[spellKey]) do
-						GetLogger():info('[UF.Auras]   ' .. k)
+						UF.Log:info('[UF.Auras]   ' .. k)
 					end
 					SUI:Print('Display reasons logged. Use /logs to view details.')
 				end
@@ -699,27 +766,45 @@ function Auras.PostUpdateAura(element, unit, button, index)
 		return
 	end
 
-	-- Safely handle duration/expiration (may be secret values in Retail)
-	local duration, expiration = auraData.duration, auraData.expirationTime
-	if duration and expiration and duration > 0 then
-		-- Calculate remaining time
-		local remaining = expiration - GetTime()
-		if remaining > 0 then
-			button.expiration = remaining
-		else
-			button.expiration = nil
+	if SUI.IsRetail then
+		-- RETAIL (12.0+): duration and expirationTime are SECRET VALUES
+		-- Cannot access them for text display - attempting to read causes errors
+		-- Duration countdown is shown via cooldown spiral (oUF uses SetCooldownFromDurationObject)
+		-- Hide our text duration display in Retail
+		button.expiration = nil
+		if button.Duration then
+			button.Duration:SetText('')
+		end
+
+		-- Visual effects - CANNOT safely access isStealable or sourceUnit in Retail
+		-- These are secret values and will crash if tested
+		-- Only use isPlayerAura (safe, created by oUF) or isHarmfulAura (safe)
+		if button.SetBackdrop then
+			button:SetBackdropColor(0, 0, 0)
 		end
 	else
-		-- No duration (permanent aura) or invalid data
-		button.expiration = math.huge
-	end
+		-- CLASSIC/WRATH/CATA: Full access to aura properties - duration text works!
+		local duration, expiration = auraData.duration, auraData.expirationTime
+		if duration and expiration and duration > 0 then
+			-- Calculate remaining time
+			local remaining = expiration - GetTime()
+			if remaining > 0 then
+				button.expiration = remaining
+			else
+				button.expiration = nil
+			end
+		else
+			-- No duration (permanent aura) or invalid data
+			button.expiration = math.huge
+		end
 
-	-- Visual effects for special aura types
-	if button.SetBackdrop then
-		if unit == 'target' and auraData.isStealable then
-			button:SetBackdropColor(0, 1 / 2, 1 / 2)
-		elseif auraData.sourceUnit ~= 'player' then
-			button:SetBackdropColor(0, 0, 0)
+		-- Visual effects for special aura types
+		if button.SetBackdrop then
+			if unit == 'target' and auraData.isStealable then
+				button:SetBackdropColor(0, 1 / 2, 1 / 2)
+			elseif auraData.sourceUnit ~= 'player' then
+				button:SetBackdropColor(0, 0, 0)
+			end
 		end
 	end
 end

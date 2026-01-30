@@ -55,9 +55,10 @@ local function Build(frame, DB)
 		element.SortBuffs = UF.Auras:CreateSortFunction(sortMode)
 	end
 
+	-- Set FilterAura for both Retail and Classic
+	element.FilterAura = FilterAura
 	if not SUI.IsRetail then
 		element.displayReasons = {}
-		element.FilterAura = FilterAura
 	end
 	element.PreUpdate = PreUpdate
 	element.SizeChange = SizeChange
@@ -102,11 +103,13 @@ local function Options(unitName, OptionSet)
 		args = {},
 	}
 
+	-- Duration text only works in Classic (Retail uses cooldown spiral instead due to secret values)
 	OptionSet.args.Display.args.showDuration = {
 		name = L['Show Duration'],
-		desc = L['Display remaining duration text on aura icons'],
+		desc = SUI.IsRetail and L['Duration text unavailable in Retail - cooldown spiral shows duration instead'] or L['Display remaining duration text on aura icons'],
 		type = 'toggle',
 		order = 5,
+		disabled = SUI.IsRetail,
 		get = function()
 			return ElementSettings.showDuration
 		end,
@@ -117,10 +120,13 @@ local function Options(unitName, OptionSet)
 
 	OptionSet.args.Display.args.sortMode = {
 		name = L['Sort Mode'],
-		desc = L['How to sort auras. Priority sorts by importance (boss > dispellable > player), Time sorts by remaining duration, Name sorts alphabetically.'],
+		desc = SUI.IsRetail and L['Sort by priority (player auras first). Time/Name sorting unavailable in Retail.']
+			or L['How to sort auras. Priority sorts by importance (boss > dispellable > player), Time sorts by remaining duration, Name sorts alphabetically.'],
 		type = 'select',
 		order = 6,
-		values = {
+		values = SUI.IsRetail and {
+			priority = L['Priority (Recommended)'],
+		} or {
 			priority = L['Priority (Recommended)'],
 			time = L['Time Remaining'],
 			name = L['Alphabetical'],
@@ -130,6 +136,34 @@ local function Options(unitName, OptionSet)
 		end,
 		set = function(_, val)
 			OptUpdate('sortMode', val)
+		end,
+	}
+
+	OptionSet.args.Display.args.onlyShowPlayer = {
+		name = L['Only Show Your Auras'],
+		desc = L['Only display buffs cast by you'],
+		type = 'toggle',
+		order = 7,
+		get = function()
+			return ElementSettings.onlyShowPlayer
+		end,
+		set = function(_, val)
+			OptUpdate('onlyShowPlayer', val)
+		end,
+	}
+
+	-- Healing Mode - only available in Retail 12.1+ with RAID_IN_COMBAT filter
+	OptionSet.args.Display.args.healingMode = {
+		name = L['Healing Mode'],
+		desc = L['Show HoTs and combat-relevant buffs (Rejuvenation, Renew, etc). Uses RAID_IN_COMBAT filter. Retail 12.1+ only.'],
+		type = 'toggle',
+		order = 8,
+		hidden = not SUI.IsRetail,
+		get = function()
+			return ElementSettings.healingMode
+		end,
+		set = function(_, val)
+			OptUpdate('healingMode', val)
 		end,
 	}
 end
@@ -142,6 +176,8 @@ local Settings = {
 	showType = true,
 	showDuration = true, -- Show duration text on aura icons
 	sortMode = 'priority', -- Sort mode: 'priority', 'time', 'name', or nil for default
+	onlyShowPlayer = false, -- Only show buffs cast by the player
+	healingMode = false, -- Retail 12.1+: Use RAID_IN_COMBAT filter to show HoTs
 	width = false,
 	growthx = 'RIGHT',
 	growthy = 'DOWN',

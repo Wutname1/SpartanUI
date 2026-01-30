@@ -46,6 +46,7 @@ local function Build(frame, DB)
 	---@param unit UnitId
 	---@param data UnitAuraInfo
 	local FilterAura = function(element, unit, data)
+		UF:debug('Debuffs FilterAura called for unit: ' .. tostring(unit) .. ', auraID: ' .. tostring(data and data.auraInstanceID or 'nil'))
 		return UF.Auras:Filter(element, unit, data, element.DB.rules)
 	end
 	local PreUpdate = function(self)
@@ -55,9 +56,10 @@ local function Build(frame, DB)
 		element.SortDebuffs = UF.Auras:CreateSortFunction(sortMode)
 	end
 
+	-- Set FilterAura for both Retail and Classic
+	element.FilterAura = FilterAura
 	if not SUI.IsRetail then
 		element.displayReasons = {}
-		element.FilterAura = FilterAura
 	end
 	element.PreUpdate = PreUpdate
 	element.SizeChange = SizeChange
@@ -103,11 +105,13 @@ local function Options(unitName, OptionSet)
 		args = {},
 	}
 
+	-- Duration text only works in Classic (Retail uses cooldown spiral instead due to secret values)
 	OptionSet.args.Display.args.showDuration = {
 		name = L['Show Duration'],
-		desc = L['Display remaining duration text on aura icons'],
+		desc = SUI.IsRetail and L['Duration text unavailable in Retail - cooldown spiral shows duration instead'] or L['Display remaining duration text on aura icons'],
 		type = 'toggle',
 		order = 5,
+		disabled = SUI.IsRetail,
 		get = function()
 			return ElementSettings.showDuration
 		end,
@@ -118,10 +122,13 @@ local function Options(unitName, OptionSet)
 
 	OptionSet.args.Display.args.sortMode = {
 		name = L['Sort Mode'],
-		desc = L['How to sort auras. Priority sorts by importance (boss > dispellable > player), Time sorts by remaining duration, Name sorts alphabetically.'],
+		desc = SUI.IsRetail and L['Sort by priority (player auras first). Time/Name sorting unavailable in Retail.']
+			or L['How to sort auras. Priority sorts by importance (boss > dispellable > player), Time sorts by remaining duration, Name sorts alphabetically.'],
 		type = 'select',
 		order = 6,
-		values = {
+		values = SUI.IsRetail and {
+			priority = L['Priority (Recommended)'],
+		} or {
 			priority = L['Priority (Recommended)'],
 			time = L['Time Remaining'],
 			name = L['Alphabetical'],
