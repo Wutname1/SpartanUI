@@ -133,6 +133,25 @@ function Unit:Get(frameName)
 	-- end
 end
 
+---Get all frames for a unit (handles both single frames and groups)
+---Returns an array of frames for consistent iteration
+---@param frameName UnitFrameName
+---@return table[] frames Array of frames
+function Unit:GetFrames(frameName)
+	local unitFrame = BuiltFrames[frameName]
+	if not unitFrame then
+		return {}
+	end
+
+	-- Check if this is a group frame (has .frames table)
+	if unitFrame.frames then
+		return unitFrame.frames
+	end
+
+	-- Single frame - wrap in table for consistent iteration
+	return { unitFrame }
+end
+
 ---Gets the current active settings for a unit frame
 ---@param frameName UnitFrameName
 ---@return SUI.UF.Unit.Settings

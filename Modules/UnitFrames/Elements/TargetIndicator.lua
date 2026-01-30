@@ -319,12 +319,9 @@ local function Options(unitName, OptionSet)
 		set = function(_, val)
 			OptUpdate('mode', val)
 			-- Rebuild display when mode changes
-			local frames = UF.Unit[unitName]:GetFrames()
-			if frames then
-				for _, frame in pairs(frames) do
-					if frame.TargetIndicator then
-						RebuildDisplay(frame.TargetIndicator, UF.CurrentSettings[unitName].elements.TargetIndicator)
-					end
+			for _, frame in pairs(UF.Unit:GetFrames(unitName)) do
+				if frame.TargetIndicator then
+					RebuildDisplay(frame.TargetIndicator, UF.CurrentSettings[unitName].elements.TargetIndicator)
 				end
 			end
 		end,
@@ -352,12 +349,9 @@ local function Options(unitName, OptionSet)
 				set = function(_, val)
 					OptUpdate('textureKey', val, 'texture')
 					-- Rebuild display when texture changes
-					local frames = UF.Unit[unitName]:GetFrames()
-					if frames then
-						for _, frame in pairs(frames) do
-							if frame.TargetIndicator then
-								RebuildDisplay(frame.TargetIndicator, UF.CurrentSettings[unitName].elements.TargetIndicator)
-							end
+					for _, frame in pairs(UF.Unit:GetFrames(unitName)) do
+						if frame.TargetIndicator then
+							RebuildDisplay(frame.TargetIndicator, UF.CurrentSettings[unitName].elements.TargetIndicator)
 						end
 					end
 				end,
@@ -385,12 +379,9 @@ local function Options(unitName, OptionSet)
 				set = function(_, val)
 					OptUpdate('placement', val, 'texture')
 					-- Rebuild display when placement changes
-					local frames = UF.Unit[unitName]:GetFrames()
-					if frames then
-						for _, frame in pairs(frames) do
-							if frame.TargetIndicator then
-								RebuildDisplay(frame.TargetIndicator, UF.CurrentSettings[unitName].elements.TargetIndicator)
-							end
+					for _, frame in pairs(UF.Unit:GetFrames(unitName)) do
+						if frame.TargetIndicator then
+							RebuildDisplay(frame.TargetIndicator, UF.CurrentSettings[unitName].elements.TargetIndicator)
 						end
 					end
 				end,
@@ -408,12 +399,9 @@ local function Options(unitName, OptionSet)
 				set = function(_, val)
 					OptUpdate('scale', val, 'texture')
 					-- Rebuild display when scale changes
-					local frames = UF.Unit[unitName]:GetFrames()
-					if frames then
-						for _, frame in pairs(frames) do
-							if frame.TargetIndicator then
-								RebuildDisplay(frame.TargetIndicator, UF.CurrentSettings[unitName].elements.TargetIndicator)
-							end
+					for _, frame in pairs(UF.Unit:GetFrames(unitName)) do
+						if frame.TargetIndicator then
+							RebuildDisplay(frame.TargetIndicator, UF.CurrentSettings[unitName].elements.TargetIndicator)
 						end
 					end
 				end,
@@ -458,14 +446,11 @@ local function Options(unitName, OptionSet)
 				set = function(_, val)
 					OptUpdate('size', val, 'border')
 					-- Update border when size changes
-					local frames = UF.Unit[unitName]:GetFrames()
-					if frames then
-						for _, frame in pairs(frames) do
-							if frame.TargetIndicator and frame.TargetIndicator.borderInstance then
-								SUI.Handlers.BackgroundBorder:Update('TargetIndicator_' .. frame:GetName(), {
-									border = { size = val },
-								})
-							end
+					for _, frame in pairs(UF.Unit:GetFrames(unitName)) do
+						if frame.TargetIndicator and frame.TargetIndicator.borderInstance then
+							SUI.Handlers.BackgroundBorder:Update('TargetIndicator_' .. frame:GetName(), {
+								border = { size = val },
+							})
 						end
 					end
 				end,
@@ -483,21 +468,18 @@ local function Options(unitName, OptionSet)
 					local color = { r, g, b, a }
 					OptUpdate('color', color, 'border')
 					-- Update border when color changes
-					local frames = UF.Unit[unitName]:GetFrames()
-					if frames then
-						for _, frame in pairs(frames) do
-							if frame.TargetIndicator and frame.TargetIndicator.borderInstance then
-								SUI.Handlers.BackgroundBorder:Update('TargetIndicator_' .. frame:GetName(), {
-									border = {
-										colors = {
-											top = color,
-											bottom = color,
-											left = color,
-											right = color,
-										},
+					for _, frame in pairs(UF.Unit:GetFrames(unitName)) do
+						if frame.TargetIndicator and frame.TargetIndicator.borderInstance then
+							SUI.Handlers.BackgroundBorder:Update('TargetIndicator_' .. frame:GetName(), {
+								border = {
+									colors = {
+										top = color,
+										bottom = color,
+										left = color,
+										right = color,
 									},
-								})
-							end
+								},
+							})
 						end
 					end
 				end,
@@ -520,12 +502,9 @@ local function Options(unitName, OptionSet)
 					sides[key] = val
 					OptUpdate('sides', sides, 'border')
 					-- Update border when sides change
-					local frames = UF.Unit[unitName]:GetFrames()
-					if frames then
-						for _, frame in pairs(frames) do
-							if frame.TargetIndicator and frame.TargetIndicator.borderInstance then
-								SUI.Handlers.BackgroundBorder:Update('TargetIndicator_' .. frame:GetName(), { border = { sides = sides } })
-							end
+					for _, frame in pairs(UF.Unit:GetFrames(unitName)) do
+						if frame.TargetIndicator and frame.TargetIndicator.borderInstance then
+							SUI.Handlers.BackgroundBorder:Update('TargetIndicator_' .. frame:GetName(), { border = { sides = sides } })
 						end
 					end
 				end,
