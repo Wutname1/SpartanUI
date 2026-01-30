@@ -61,7 +61,10 @@ function Handler:Create(parent, id, settings)
 		self:Destroy(id)
 	end
 
-	settings = SUI:MergeData(SUI:CopyData(self.DefaultSettings), settings or {})
+	-- Deep copy DefaultSettings first, then merge passed settings into the copy
+	-- Note: SUI:CopyData(dest, source) copies source into dest, so we need to pass {} as dest
+	local defaults = SUI:CopyData({}, self.DefaultSettings)
+	settings = SUI:MergeData(defaults, settings or {})
 
 	---@class SUI.BackgroundBorder.Instance
 	local instance = {
@@ -76,7 +79,14 @@ function Handler:Create(parent, id, settings)
 	-- Create background frame
 	instance.background = CreateFrame('Frame', id .. '_Background', parent)
 	instance.background:SetAllPoints(parent)
-	instance.background:SetFrameLevel(parent:GetFrameLevel() + settings.displayLevel)
+
+	-- Safely calculate frame level (clamp to valid range 0-65535)
+	local baseLevel = parent:GetFrameLevel() or 0
+	local displayLevel = settings.displayLevel or 0
+	local bgLevel = math.max(0, math.min(65535, baseLevel + displayLevel))
+	local borderLevel = math.max(0, math.min(65535, baseLevel + displayLevel + 1))
+
+	instance.background:SetFrameLevel(bgLevel)
 
 	-- Create background texture
 	instance.background.texture = instance.background:CreateTexture(nil, 'BACKGROUND')
@@ -85,7 +95,7 @@ function Handler:Create(parent, id, settings)
 	-- Create border frames for each side
 	for _, side in ipairs({ 'top', 'bottom', 'left', 'right' }) do
 		local border = CreateFrame('Frame', id .. '_Border_' .. side, parent)
-		border:SetFrameLevel(parent:GetFrameLevel() + settings.displayLevel + 1)
+		border:SetFrameLevel(borderLevel)
 		border.texture = border:CreateTexture(nil, 'BORDER')
 		border.texture:SetAllPoints(border)
 		border.texture:SetTexture('Interface\\Buttons\\WHITE8X8')
@@ -114,10 +124,16 @@ function Handler:Update(id, settings)
 
 	local config = instance.settings
 
+	-- Safely calculate frame levels (clamp to valid range 0-65535)
+	local baseLevel = instance.parent:GetFrameLevel() or 0
+	local displayLevel = config.displayLevel or 0
+	local bgLevel = math.max(0, math.min(65535, baseLevel + displayLevel))
+	local borderLevel = math.max(0, math.min(65535, baseLevel + displayLevel + 1))
+
 	-- Update frame levels
-	instance.background:SetFrameLevel(instance.parent:GetFrameLevel() + config.displayLevel)
+	instance.background:SetFrameLevel(bgLevel)
 	for _, border in pairs(instance.borders) do
-		border:SetFrameLevel(instance.parent:GetFrameLevel() + config.displayLevel + 1)
+		border:SetFrameLevel(borderLevel)
 	end
 
 	-- Update visibility
