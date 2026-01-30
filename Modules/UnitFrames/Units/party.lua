@@ -28,6 +28,7 @@ local elementList = {
 	'StatusText',
 	'SUI_RaidGroup',
 	'AuraWatch',
+	'DefensiveIndicator',
 }
 
 local function GroupBuilder(holder)
@@ -272,6 +273,20 @@ local Settings = {
 				color = { 1, 1, 0, 1 },
 				sides = { top = true, bottom = true, left = true, right = true },
 				displayLevel = 5,
+			},
+		},
+		DefensiveIndicator = {
+			enabled = true,
+			size = 24,
+			showSwipe = true,
+			showDuration = true,
+			showBorder = true,
+			borderSize = 2,
+			borderColor = { 0, 0.8, 0, 1 },
+			position = {
+				anchor = 'CENTER',
+				x = 0,
+				y = 0,
 			},
 		},
 	},

@@ -28,6 +28,7 @@ local elementList = {
 	'StatusText',
 	'SUI_RaidGroup',
 	'AuraWatch',
+	'DefensiveIndicator',
 }
 
 local function groupingOrder()
@@ -40,13 +41,22 @@ local function groupingOrder()
 end
 
 local function GroupBuilder(holder)
-	UF:debug('Raid GroupBuilder ENTRY - Creating raid header')
+	if UF.BuildDebug then
+		UF:debug('Raid GroupBuilder ENTRY - Creating raid header')
+	end
 
 	local configFunc = ('self:SetWidth(%d) self:SetHeight(%d)'):format(UF.CurrentSettings.raid.width, UF:CalculateHeight('raid'))
-	UF:debug('Raid GroupBuilder - Config function: ' .. configFunc)
-	UF:debug(
-		'Raid GroupBuilder - Settings: mode=' .. UF.CurrentSettings.raid.mode .. ', maxColumns=' .. UF.CurrentSettings.raid.maxColumns .. ', unitsPerColumn=' .. UF.CurrentSettings.raid.unitsPerColumn
-	)
+	if UF.BuildDebug then
+		UF:debug('Raid GroupBuilder - Config function: ' .. configFunc)
+		UF:debug(
+			'Raid GroupBuilder - Settings: mode='
+				.. UF.CurrentSettings.raid.mode
+				.. ', maxColumns='
+				.. UF.CurrentSettings.raid.maxColumns
+				.. ', unitsPerColumn='
+				.. UF.CurrentSettings.raid.unitsPerColumn
+		)
+	end
 
 	if SUI.IsRetail then
 		-- Retail uses templateType
@@ -125,7 +135,9 @@ local function GroupBuilder(holder)
 		)
 	end
 
-	UF:debug('Raid GroupBuilder - Header spawned, setting up attributes')
+	if UF.BuildDebug then
+		UF:debug('Raid GroupBuilder - Header spawned, setting up attributes')
+	end
 	holder.header:SetPoint('TOPLEFT', holder, 'TOPLEFT')
 
 	-- Force creation of all 40 possible raid frames upfront
@@ -137,25 +149,33 @@ local function GroupBuilder(holder)
 	holder.header.initialized = true
 	holder.header:SetAttribute('startingIndex', nil)
 
-	UF:debug('Raid GroupBuilder EXIT - Header initialization complete, created 40 frames')
+	if UF.BuildDebug then
+		UF:debug('Raid GroupBuilder EXIT - Header initialization complete, created 40 frames')
+	end
 end
 
 local function Builder(frame)
 	local frameName = frame:GetName() or 'Unknown'
 	local elementDB = frame.elementDB
 
-	UF:debug('Raid Builder ENTRY - Frame: ' .. frameName)
-	UF:debug('Raid Builder - Element list has ' .. #elementList .. ' elements to build')
+	if UF.BuildDebug then
+		UF:debug('Raid Builder ENTRY - Frame: ' .. frameName)
+		UF:debug('Raid Builder - Element list has ' .. #elementList .. ' elements to build')
+	end
 
 	for index, elementName in pairs(elementList) do
-		UF:debug('Raid Builder - Building element [' .. index .. ']: ' .. elementName .. ' for frame: ' .. frameName)
-		if not elementDB[elementName] then
-			UF:debug('Raid Builder - WARNING: No DB entry for element: ' .. elementName)
+		if UF.BuildDebug then
+			UF:debug('Raid Builder - Building element [' .. index .. ']: ' .. elementName .. ' for frame: ' .. frameName)
+			if not elementDB[elementName] then
+				UF:debug('Raid Builder - WARNING: No DB entry for element: ' .. elementName)
+			end
 		end
 		UF.Elements:Build(frame, elementName, elementDB[elementName])
 	end
 
-	UF:debug('Raid Builder EXIT - Completed building all elements for: ' .. frameName)
+	if UF.BuildDebug then
+		UF:debug('Raid Builder EXIT - Completed building all elements for: ' .. frameName)
+	end
 end
 
 local function Update(frame)
@@ -374,6 +394,20 @@ local Settings = {
 				color = { 0, 1, 0, 1 },
 				sides = { top = true, bottom = true, left = true, right = true },
 				displayLevel = 5,
+			},
+		},
+		DefensiveIndicator = {
+			enabled = true,
+			size = 20,
+			showSwipe = true,
+			showDuration = true,
+			showBorder = true,
+			borderSize = 2,
+			borderColor = { 0, 0.8, 0, 1 },
+			position = {
+				anchor = 'CENTER',
+				x = 0,
+				y = 0,
 			},
 		},
 	},
