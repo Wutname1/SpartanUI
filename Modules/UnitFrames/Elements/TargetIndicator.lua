@@ -187,7 +187,18 @@ local function CreateBorderDisplay(element, DB)
 	local id = 'TargetIndicator_' .. frame:GetName()
 	element.borderInstance = SUI.Handlers.BackgroundBorder:Create(frame, id, borderSettings)
 	element.borderInstanceId = id
-	SUI.Handlers.BackgroundBorder:SetVisible(id, false)
+
+	-- Force-set enabled=true on the instance since MergeData doesn't override existing false values
+	local instance = SUI.Handlers.BackgroundBorder.instances[id]
+	if instance then
+		instance.settings.enabled = true
+		instance.settings.border.enabled = true
+		instance.settings.background.enabled = false -- We don't want background
+		instance.visible = false -- Start hidden until target is selected
+	end
+
+	-- Update to apply the corrected settings (starts hidden because visible=false)
+	SUI.Handlers.BackgroundBorder:Update(id)
 end
 
 ---Rebuild display based on current mode settings

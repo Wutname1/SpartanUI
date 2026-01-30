@@ -1204,7 +1204,8 @@
     "GetMoneyString",
     "EditModeSystemMixin",
     "EditModeSystemSettingsDialog",
-    "CreateObjectPool"
+    "CreateObjectPool",
+    "CompactUnitFrame_UpdateAuras"
   ],
   "Lua.workspace.ignoreDir": [".vscode", "libs/*"],
   "Lua.diagnostics.enable": true,
