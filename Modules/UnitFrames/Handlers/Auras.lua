@@ -19,6 +19,125 @@ local function GetLogger()
 	}
 end
 
+-- Track which auras we've already logged to avoid spam
+local loggedAuras = {}
+local loggedAurasCount = 0
+local MAX_LOGGED_AURAS = 100 -- Clear cache after this many entries to prevent memory leak
+local secretValueLoggingEnabled = false -- Disabled by default to avoid log spam
+
+-- Enable/disable secret value logging
+-- Use: UF.Auras:EnableSecretLogging(true) or /run SUI.UF.Auras:EnableSecretLogging(true)
+function Auras:EnableSecretLogging(enabled)
+	secretValueLoggingEnabled = enabled
+	loggedAuras = {} -- Clear cache when toggling
+	loggedAurasCount = 0
+	local status = enabled and 'ENABLED' or 'DISABLED'
+	GetLogger():info('[UF.Auras] Secret value logging ' .. status .. '. Use /logs to view output.')
+end
+
+-- Diagnostic function to log whether aura properties are secret values
+-- Logs once per unique aura (by auraInstanceID) to avoid spam
+---@param data UnitAuraInfo
+---@param unit UnitId
+local function LogAuraSecretStatus(data, unit)
+	-- Check if logging is enabled
+	if not secretValueLoggingEnabled then
+		return
+	end
+
+	if not SUI.IsRetail then
+		return -- Only relevant for Retail
+	end
+
+	if not data then
+		return
+	end
+
+	-- Get a unique key for this aura - auraInstanceID is always safe
+	local auraKey = data.auraInstanceID
+	if not auraKey then
+		return -- No way to track uniqueness
+	end
+
+	-- Check if we already logged this aura
+	if loggedAuras[auraKey] then
+		return
+	end
+
+	-- Mark as logged
+	loggedAuras[auraKey] = true
+	loggedAurasCount = loggedAurasCount + 1
+
+	-- Clear cache if it gets too large
+	if loggedAurasCount > MAX_LOGGED_AURAS then
+		loggedAuras = {}
+		loggedAurasCount = 0
+	end
+
+	local logger = GetLogger()
+
+	-- List of properties to check
+	local propertiesToCheck = {
+		'auraInstanceID',
+		'name',
+		'icon',
+		'applications',
+		'dispelName',
+		'duration',
+		'expirationTime',
+		'sourceUnit',
+		'isStealable',
+		'nameplateShowPersonal',
+		'spellId',
+		'canApplyAura',
+		'isBossAura',
+		'isFromPlayerOrPlayerPet',
+		'nameplateShowAll',
+		'timeMod',
+		'points',
+		'isHarmful',
+		'isHelpful',
+		'isRaid',
+		'isNameplateOnly',
+		-- oUF-created properties (should always be safe)
+		'isPlayerAura',
+		'isHarmfulAura',
+	}
+
+	logger:info('[UF.Auras] === Secret Value Check for aura ID: ' .. tostring(auraKey) .. ' on ' .. tostring(unit) .. ' ===')
+
+	for _, prop in ipairs(propertiesToCheck) do
+		local value = data[prop]
+		local isSecret = false
+		local safeForDisplay = 'nil'
+
+		if value ~= nil then
+			-- Check if it's a secret value
+			if issecretvalue and issecretvalue(value) then
+				isSecret = true
+				safeForDisplay = '<SECRET>'
+			else
+				-- Safe to display - convert to string
+				if type(value) == 'table' then
+					safeForDisplay = 'table[' .. #value .. ']'
+				elseif type(value) == 'boolean' then
+					safeForDisplay = value and 'true' or 'false'
+				else
+					safeForDisplay = tostring(value)
+				end
+			end
+		end
+
+		local status = isSecret and 'SECRET' or 'safe'
+		logger:info('[UF.Auras]   ' .. prop .. ': ' .. status .. ' = ' .. safeForDisplay)
+	end
+
+	logger:info('[UF.Auras] === End Secret Value Check ===')
+end
+
+-- Export for use in other modules
+Auras.LogAuraSecretStatus = LogAuraSecretStatus
+
 ---@param unit UnitId
 ---@param data UnitAuraInfo
 ---@param rules SUI.UF.Auras.Rules
@@ -26,6 +145,9 @@ function Auras:Filter(element, unit, data, rules)
 	if not SUI.BlizzAPI.canaccesstable(data) then
 		return true
 	end
+
+	-- Log secret value status for diagnostics (only logs once per aura)
+	LogAuraSecretStatus(data, unit)
 
 	if SUI.IsRetail then
 		-- RETAIL: Boolean-only filtering to avoid secret value crashes
@@ -192,7 +314,19 @@ local PRIORITY_STEALABLE = 50 -- Stealable buffs (for offensive dispel)
 local PRIORITY_RAID = 40 -- Raid-marked auras
 local PRIORITY_OTHER = 20 -- Everything else
 
+-- Helper to safely check if a value is a secret value (Retail WoW 12.0+)
+-- Secret values cannot be used in boolean tests, comparisons, or arithmetic
+local function IsSafeValue(value)
+	-- issecretvalue is a global WoW API function
+	if issecretvalue then
+		return not issecretvalue(value)
+	end
+	return true -- Classic doesn't have secret values
+end
+
 -- Calculate priority for an aura based on its properties
+-- RETAIL: Only uses safe values (isPlayerAura, isHarmfulAura created by oUF, auraInstanceID)
+-- CLASSIC: Can use full aura properties
 ---@param data UnitAuraInfo
 ---@return number
 function Auras:GetAuraPriority(data)
@@ -202,32 +336,77 @@ function Auras:GetAuraPriority(data)
 
 	local priority = PRIORITY_OTHER
 
-	-- Boss auras are highest priority
-	if data.isBossAura then
-		priority = PRIORITY_BOSS
-	-- Player-cast auras
-	elseif data.isPlayerAura or data.isFromPlayerOrPlayerPet then
-		priority = PRIORITY_PLAYER
-	-- Raid-flagged auras
-	elseif data.isRaid then
-		priority = PRIORITY_RAID
-	end
+	if SUI.IsRetail then
+		-- RETAIL: Only use properties that oUF has pre-processed as safe
+		-- isPlayerAura is safe - created by oUF using C_UnitAuras.IsAuraFilteredOutByInstanceID
+		-- isHarmfulAura is safe - created by oUF from filter string
+		if data.isPlayerAura then
+			priority = PRIORITY_PLAYER
+		end
+		-- That's all we can safely test in Retail - other properties are secret values
+	else
+		-- CLASSIC: Full access to all aura properties
+		-- Boss auras are highest priority
+		if data.isBossAura then
+			priority = PRIORITY_BOSS
+		-- Player-cast auras
+		elseif data.isPlayerAura or data.isFromPlayerOrPlayerPet then
+			priority = PRIORITY_PLAYER
+		-- Raid-flagged auras
+		elseif data.isRaid then
+			priority = PRIORITY_RAID
+		end
 
-	-- Boost priority for dispellable debuffs (important for healers)
-	if data.isHarmfulAura and data.dispelName then
-		priority = math.max(priority, PRIORITY_DISPELLABLE)
-	end
+		-- Boost priority for dispellable debuffs (important for healers)
+		if data.isHarmfulAura and data.dispelName then
+			priority = math.max(priority, PRIORITY_DISPELLABLE)
+		end
 
-	-- Boost priority for stealable buffs (important for mages/priests)
-	if data.isStealable then
-		priority = math.max(priority, PRIORITY_STEALABLE)
+		-- Boost priority for stealable buffs (important for mages/priests)
+		if data.isStealable then
+			priority = math.max(priority, PRIORITY_STEALABLE)
+		end
 	end
 
 	return priority
 end
 
+-- Safely get a numeric value from aura data (handles secret values)
+-- Returns fallback if value is nil, secret, or causes error
+local function SafeGetNumber(data, field, fallback)
+	if not data then
+		return fallback
+	end
+	local value = data[field]
+	if value == nil then
+		return fallback
+	end
+	-- Check if it's a secret value
+	if issecretvalue and issecretvalue(value) then
+		return fallback
+	end
+	return value
+end
+
+-- Safely get a string value from aura data (handles secret values)
+local function SafeGetString(data, field, fallback)
+	if not data then
+		return fallback
+	end
+	local value = data[field]
+	if value == nil then
+		return fallback
+	end
+	-- Check if it's a secret value
+	if issecretvalue and issecretvalue(value) then
+		return fallback
+	end
+	return value
+end
+
 -- Create a sort function for auras based on the specified mode
 -- Mode can be: 'priority', 'time', 'name', or nil (default oUF behavior)
+-- All sort functions are designed to be safe with Retail's secret values
 ---@param sortMode string
 ---@return function|nil
 function Auras:CreateSortFunction(sortMode)
@@ -241,42 +420,39 @@ function Auras:CreateSortFunction(sortMode)
 				return priorityA > priorityB
 			end
 
-			-- Same priority: sort by remaining time (shorter duration first for urgency)
-			local timeA = a.expirationTime or math.huge
-			local timeB = b.expirationTime or math.huge
-			if timeA ~= timeB then
-				return timeA < timeB
+			-- Same priority: player auras first (safe property created by oUF)
+			if a.isPlayerAura ~= b.isPlayerAura then
+				return a.isPlayerAura == true
 			end
 
-			-- Fallback to instance ID for stability
-			return (a.auraInstanceID or 0) < (b.auraInstanceID or 0)
+			-- Fallback to instance ID for stability (always safe - it's an integer)
+			local idA = SafeGetNumber(a, 'auraInstanceID', 0)
+			local idB = SafeGetNumber(b, 'auraInstanceID', 0)
+			return idA < idB
 		end
 	elseif sortMode == 'time' then
 		return function(a, b)
-			-- Shorter remaining time first
-			local timeA = a.expirationTime or math.huge
-			local timeB = b.expirationTime or math.huge
-			if timeA ~= timeB then
-				return timeA < timeB
-			end
-
-			-- Fallback to player auras first, then instance ID
+			-- Player auras first (safe property)
 			if a.isPlayerAura ~= b.isPlayerAura then
-				return a.isPlayerAura
+				return a.isPlayerAura == true
 			end
 
-			return (a.auraInstanceID or 0) < (b.auraInstanceID or 0)
+			-- Fallback to instance ID for stability
+			local idA = SafeGetNumber(a, 'auraInstanceID', 0)
+			local idB = SafeGetNumber(b, 'auraInstanceID', 0)
+			return idA < idB
 		end
 	elseif sortMode == 'name' then
 		return function(a, b)
-			-- Sort alphabetically by name
-			local nameA = a.name or ''
-			local nameB = b.name or ''
-			if nameA ~= nameB then
-				return nameA < nameB
+			-- In Retail, name might be a secret value, so we can't sort by it
+			-- Fall back to player auras first, then instance ID
+			if a.isPlayerAura ~= b.isPlayerAura then
+				return a.isPlayerAura == true
 			end
 
-			return (a.auraInstanceID or 0) < (b.auraInstanceID or 0)
+			local idA = SafeGetNumber(a, 'auraInstanceID', 0)
+			local idB = SafeGetNumber(b, 'auraInstanceID', 0)
+			return idA < idB
 		end
 	end
 
