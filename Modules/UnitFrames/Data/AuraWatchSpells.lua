@@ -154,7 +154,7 @@ function AuraWatchSpells:GetDefaults()
 	if not playerClass then
 		-- Fallback to basic raid buffs if class detection fails
 		return {
-			['**'] = { onlyIfCastable = true, anyUnit = true, onlyShowMissing = true, point = 'BOTTOM', xOffset = 0, yOffset = 0, displayInCombat = false },
+			['**'] = { onlyIfCastable = false, anyUnit = true, onlyShowMissing = true, point = 'CENTER', xOffset = 0, yOffset = 0, displayInCombat = false },
 			[1126] = {}, -- Mark of the Wild
 			[1459] = {}, -- Arcane Intellect
 			[21562] = {}, -- Power Word: Fortitude
@@ -163,7 +163,7 @@ function AuraWatchSpells:GetDefaults()
 
 	local classSpells = self:GetClassSpells(playerClass)
 	local watched = {
-		['**'] = { onlyIfCastable = true, anyUnit = true, onlyShowMissing = true, point = 'BOTTOM', xOffset = 0, yOffset = 0, displayInCombat = false },
+		['**'] = { onlyIfCastable = false, anyUnit = true, onlyShowMissing = true, point = 'CENTER', xOffset = 0, yOffset = 0, displayInCombat = false },
 	}
 
 	for spellID, settings in pairs(classSpells) do

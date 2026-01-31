@@ -19,11 +19,23 @@ end
 ---@param DB table
 local function Build(frame, DB)
 	local element = CreateFrame('Frame', '$parent_AuraWatch', frame)
+	element:SetAllPoints(frame)
+	element.DB = DB
+
+	-- Initialize watched table from DB (required by oUF_AuraWatch)
+	-- oUF_AuraWatch Enable function sets element.watched = element.watched or {}
+	-- so we must set it before oUF enables the element
+	element.watched = DB.watched or GetDefaultWatched()
+	element.size = DB.size or 20
+
 	element.PostUpdateIcon = function(_, unit, button, index, position, duration, expiration, debuffType, isStealable)
 		if not button.spellID then
 			return
 		end
 		local settings = button.setting
+		if not settings then
+			return
+		end
 		local SpellKnown = IsSpellInSpellBookCompat(button.spellID)
 		if settings.onlyIfCastable and not SpellKnown then
 			button:Hide()
@@ -39,9 +51,21 @@ end
 ---@param data? table
 local function Update(frame, data)
 	local element = frame.AuraWatch
+	if not element then
+		return
+	end
 	local DB = data or element.DB
+	if not DB then
+		return
+	end
+	element.DB = DB
 	element.size = DB.size or 20
-	element.watched = DB.watched
+	element.watched = DB.watched or element.watched or GetDefaultWatched()
+
+	-- Force oUF to update
+	if element.ForceUpdate then
+		element:ForceUpdate()
+	end
 end
 
 ---@param unitName string
@@ -203,8 +227,10 @@ local function GetDefaultWatched()
 	end
 
 	-- Fallback to basic raid buffs
+	-- Note: onlyIfCastable = false so all classes see missing raid buffs
+	-- point = 'CENTER' to show missing buffs prominently in frame center
 	return {
-		['**'] = { onlyIfCastable = true, anyUnit = true, onlyShowMissing = true, point = 'BOTTOM', xOffset = 0, yOffset = 0, displayInCombat = false },
+		['**'] = { onlyIfCastable = false, anyUnit = true, onlyShowMissing = true, point = 'CENTER', xOffset = 0, yOffset = 0, displayInCombat = false },
 		[1126] = {}, -- Mark of the Wild
 		[1459] = {}, -- Arcane Intellect
 		[21562] = {}, -- Power Word: Fortitude
