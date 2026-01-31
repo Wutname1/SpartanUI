@@ -1171,7 +1171,7 @@ function MoveIt:OnEnable()
 	-- Register logger if LibAT is available
 	local LibAT = _G.LibAT
 	if LibAT and LibAT.Logger then
-		MoveIt.logger = LibAT.Logger.RegisterAddon('SpartanUI-MoveIt')
+		MoveIt.logger = SUI.logger:RegisterCategory('MoveIt')
 		MoveIt.logger.info('MoveIt system initialized')
 	end
 

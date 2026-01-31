@@ -426,7 +426,7 @@ function module:OnInitialize()
 
 	-- Register logger
 	if LibAT and LibAT.Logger then
-		module.logger = LibAT.Logger.RegisterAddon('SUI-HousingEndeavor')
+		module.logger = SUI.logger:RegisterCategory('HousingEndeavor')
 	end
 end
 
