@@ -275,11 +275,30 @@ function module:BuildTaskXPCache()
 	end)
 end
 
----Get cached XP for a specific task
+---Get XP for a specific task (from API data or cache)
 ---@param taskID number
 ---@return SUI.HousingEndeavor.TaskXPEntry|nil
 function module:GetTaskXP(taskID)
-	return self.taskXPCache[taskID]
+	-- First check cache
+	if self.taskXPCache[taskID] then
+		return self.taskXPCache[taskID]
+	end
+
+	-- Try to get from current API data
+	local info = self:GetInitiativeInfo()
+	if info and info.tasks then
+		for _, task in ipairs(info.tasks) do
+			if task.ID == taskID then
+				return {
+					name = task.taskName or L['Unknown Task'],
+					amount = task.progressContributionAmount or 0,
+					completionTime = 0,
+				}
+			end
+		end
+	end
+
+	return nil
 end
 
 ---Clear the task XP cache
