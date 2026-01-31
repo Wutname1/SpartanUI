@@ -57,7 +57,10 @@ local function Build(frame, DB)
 
 	frame.Health.DataTable = DB.text
 
-	-- Position and size
+	-- Check if we're on the new 12.0+ API (CreateUnitHealPredictionCalculator exists in retail 12.0+)
+	local isNewAPI = CreateUnitHealPredictionCalculator ~= nil
+
+	-- Incoming heals bar (player heals)
 	local myBar = CreateFrame('StatusBar', nil, frame.Health)
 	myBar:SetFrameLevel((DB.FrameLevel or 2) - 1) -- Ensure it's below text
 	myBar:SetPoint('TOP')
@@ -68,6 +71,7 @@ local function Build(frame, DB)
 	myBar:SetSize(150, 16)
 	myBar:Hide()
 
+	-- Incoming heals bar (other players' heals) - only used in old API
 	local otherBar = CreateFrame('StatusBar', nil, myBar)
 	otherBar:SetFrameLevel((DB.FrameLevel or 2) - 1) -- Ensure it's below text
 	otherBar:SetPoint('TOP')
@@ -78,25 +82,35 @@ local function Build(frame, DB)
 	otherBar:SetSize(150, 16)
 	otherBar:Hide()
 
+	-- Damage absorb bar (shields like Power Word: Shield)
 	local absorbBar = CreateFrame('StatusBar', nil, frame.Health)
 	absorbBar:SetFrameLevel((DB.FrameLevel or 2) - 1) -- Ensure it's below text
 	absorbBar:SetPoint('TOP')
 	absorbBar:SetPoint('BOTTOM')
-	absorbBar:SetPoint('LEFT', otherBar:GetStatusBarTexture(), 'RIGHT')
+	-- In new API, absorb anchors to myBar (healingAll). In old API, it anchors to otherBar
+	if isNewAPI then
+		absorbBar:SetPoint('LEFT', myBar:GetStatusBarTexture(), 'RIGHT')
+	else
+		absorbBar:SetPoint('LEFT', otherBar:GetStatusBarTexture(), 'RIGHT')
+	end
 	absorbBar:SetStatusBarTexture(UF:FindStatusBarTexture(DB.absorbTexture or DB.texture))
+	absorbBar:SetStatusBarColor(0, 0.5, 1, 0.65)
 	absorbBar:SetWidth(10)
 	absorbBar:Hide()
 
+	-- Heal absorb bar (effects that absorb incoming healing)
 	local healAbsorbBar = CreateFrame('StatusBar', nil, frame.Health)
 	healAbsorbBar:SetFrameLevel((DB.FrameLevel or 2) - 1) -- Ensure it's below text
 	healAbsorbBar:SetPoint('TOP')
 	healAbsorbBar:SetPoint('BOTTOM')
 	healAbsorbBar:SetPoint('RIGHT', frame.Health:GetStatusBarTexture())
 	healAbsorbBar:SetStatusBarTexture(UF:FindStatusBarTexture(DB.absorbTexture or DB.texture))
+	healAbsorbBar:SetStatusBarColor(1, 0, 0.5, 0.65)
 	healAbsorbBar:SetReverseFill(true)
 	healAbsorbBar:SetWidth(10)
 	healAbsorbBar:Hide()
 
+	-- Overflow indicator for damage absorbs (when absorb exceeds display area)
 	local overAbsorb = frame.Health:CreateTexture(nil, 'OVERLAY')
 	overAbsorb:SetPoint('TOP')
 	overAbsorb:SetPoint('BOTTOM')
@@ -104,6 +118,7 @@ local function Build(frame, DB)
 	overAbsorb:SetWidth(10)
 	overAbsorb:Hide()
 
+	-- Overflow indicator for heal absorbs
 	local overHealAbsorb = frame.Health:CreateTexture(nil, 'OVERLAY')
 	overHealAbsorb:SetPoint('TOP')
 	overHealAbsorb:SetPoint('BOTTOM')
@@ -111,15 +126,29 @@ local function Build(frame, DB)
 	overHealAbsorb:SetWidth(10)
 	overHealAbsorb:Hide()
 
-	frame.HealthPrediction = {
-		myBar = myBar,
-		otherBar = otherBar,
-		absorbBar = absorbBar,
-		healAbsorbBar = healAbsorbBar,
-		overAbsorb = overAbsorb,
-		overHealAbsorb = overHealAbsorb,
-		maxOverflow = 2,
-	}
+	-- Build HealthPrediction table with appropriate property names for the API version
+	if isNewAPI then
+		-- 12.0+ API uses new property names
+		frame.HealthPrediction = {
+			healingAll = myBar, -- Combined incoming heals (player + others)
+			damageAbsorb = absorbBar, -- Damage absorb shields
+			healAbsorb = healAbsorbBar, -- Heal absorb effects
+			overDamageAbsorbIndicator = overAbsorb,
+			overHealAbsorbIndicator = overHealAbsorb,
+			incomingHealOverflow = 1.05,
+		}
+	else
+		-- Pre-12.0 API uses old property names
+		frame.HealthPrediction = {
+			myBar = myBar, -- Player's incoming heals
+			otherBar = otherBar, -- Other players' incoming heals
+			absorbBar = absorbBar, -- Damage absorb shields
+			healAbsorbBar = healAbsorbBar, -- Heal absorb effects
+			overAbsorb = overAbsorb,
+			overHealAbsorb = overHealAbsorb,
+			maxOverflow = 2,
+		}
+	end
 end
 
 ---@param frame table
@@ -169,30 +198,47 @@ local function Update(frame, settings)
 		element.bg:SetVertexColor(unpack(DB.bg.color or { 1, 1, 1, 0.2 }))
 	end
 
-	-- Update HealthPrediction bar textures and colors
+	-- Update HealthPrediction bar textures and colors (supports both old and new API)
 	if frame.HealthPrediction then
-		if frame.HealthPrediction.myBar then
-			frame.HealthPrediction.myBar:SetStatusBarTexture(UF:FindStatusBarTexture(DB.shieldTexture or DB.texture))
+		-- Check if we're on the new 12.0+ API
+		local isNewAPI = CreateUnitHealPredictionCalculator ~= nil
+
+		-- Get the bars using the appropriate property names
+		local healBar = frame.HealthPrediction.healingAll or frame.HealthPrediction.myBar
+		local otherHealBar = frame.HealthPrediction.otherBar -- Only exists in old API
+		local absorbBar = frame.HealthPrediction.damageAbsorb or frame.HealthPrediction.absorbBar
+		local healAbsorbBar = frame.HealthPrediction.healAbsorb or frame.HealthPrediction.healAbsorbBar
+
+		if healBar then
+			healBar:SetStatusBarTexture(UF:FindStatusBarTexture(DB.shieldTexture or DB.texture))
 			if DB.customColors and DB.customColors.useCustom then
-				frame.HealthPrediction.myBar:SetStatusBarColor(unpack(DB.customColors.shieldColor))
+				healBar:SetStatusBarColor(unpack(DB.customColors.shieldColor))
+			else
+				healBar:SetStatusBarColor(0, 1, 0.5, 0.45)
 			end
 		end
-		if frame.HealthPrediction.otherBar then
-			frame.HealthPrediction.otherBar:SetStatusBarTexture(UF:FindStatusBarTexture(DB.shieldTexture or DB.texture))
+		if otherHealBar then
+			otherHealBar:SetStatusBarTexture(UF:FindStatusBarTexture(DB.shieldTexture or DB.texture))
 			if DB.customColors and DB.customColors.useCustom then
-				frame.HealthPrediction.otherBar:SetStatusBarColor(unpack(DB.customColors.shieldColor))
+				otherHealBar:SetStatusBarColor(unpack(DB.customColors.shieldColor))
+			else
+				otherHealBar:SetStatusBarColor(0, 0.5, 1, 0.35)
 			end
 		end
-		if frame.HealthPrediction.absorbBar then
-			frame.HealthPrediction.absorbBar:SetStatusBarTexture(UF:FindStatusBarTexture(DB.absorbTexture or DB.texture))
+		if absorbBar then
+			absorbBar:SetStatusBarTexture(UF:FindStatusBarTexture(DB.absorbTexture or DB.texture))
 			if DB.customColors and DB.customColors.useCustom then
-				frame.HealthPrediction.absorbBar:SetStatusBarColor(unpack(DB.customColors.absorbColor))
+				absorbBar:SetStatusBarColor(unpack(DB.customColors.absorbColor))
+			else
+				absorbBar:SetStatusBarColor(0, 0.5, 1, 0.65)
 			end
 		end
-		if frame.HealthPrediction.healAbsorbBar then
-			frame.HealthPrediction.healAbsorbBar:SetStatusBarTexture(UF:FindStatusBarTexture(DB.absorbTexture or DB.texture))
+		if healAbsorbBar then
+			healAbsorbBar:SetStatusBarTexture(UF:FindStatusBarTexture(DB.absorbTexture or DB.texture))
 			if DB.customColors and DB.customColors.useCustom then
-				frame.HealthPrediction.healAbsorbBar:SetStatusBarColor(unpack(DB.customColors.healAbsorbColor))
+				healAbsorbBar:SetStatusBarColor(unpack(DB.customColors.healAbsorbColor))
+			else
+				healAbsorbBar:SetStatusBarColor(1, 0, 0.5, 0.65)
 			end
 		end
 	end
