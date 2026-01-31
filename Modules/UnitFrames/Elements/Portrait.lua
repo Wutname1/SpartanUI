@@ -83,7 +83,7 @@ local function Update(frame)
 		frame.Portrait = frame.Portrait2D
 		frame.Portrait2D:Show()
 	end
-	frame:UpdateAllElements('OnUpdate')
+	-- frame:UpdateAllElements('OnUpdate')
 end
 
 ---@param frameName string

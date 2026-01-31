@@ -164,33 +164,49 @@ end
 ---@param frame table
 function Unit:BuildFrame(frameName, frame)
 	local actualFrameName = frame:GetName() or 'Unknown'
-	UF:debug('Unit:BuildFrame ENTRY - UnitName: ' .. frameName .. ', Frame: ' .. actualFrameName)
+	if UF.BuildDebug then
+		UF:debug('Unit:BuildFrame ENTRY - UnitName: ' .. frameName .. ', Frame: ' .. actualFrameName)
+	end
 
 	if not FrameData[frameName] then
-		UF:debug('Unit:BuildFrame - ERROR: No FrameData found for: ' .. frameName)
+		if UF.BuildDebug then
+			UF:debug('Unit:BuildFrame - ERROR: No FrameData found for: ' .. frameName)
+		end
 		return
 	end
 
-	UF:debug('Unit:BuildFrame - Calling builder function for: ' .. frameName)
+	if UF.BuildDebug then
+		UF:debug('Unit:BuildFrame - Calling builder function for: ' .. frameName)
+	end
 	FrameData[frameName].builder(frame)
 	frame.config = UF.Unit:GetConfig(frameName)
 
 	if Unit:GetConfig(frameName).config.IsGroup then
-		UF:debug('Unit:BuildFrame - This is a group frame: ' .. frameName)
+		if UF.BuildDebug then
+			UF:debug('Unit:BuildFrame - This is a group frame: ' .. frameName)
+		end
 		if not BuiltFrames[frameName] then
-			UF:debug('Unit:BuildFrame - ERROR: No BuiltFrames entry for group: ' .. frameName)
+			if UF.BuildDebug then
+				UF:debug('Unit:BuildFrame - ERROR: No BuiltFrames entry for group: ' .. frameName)
+			end
 			return
 		end
 
 		table.insert(BuiltFrames[frameName].frames, frame)
-		UF:debug('Unit:BuildFrame - Added frame to group, total frames: ' .. #BuiltFrames[frameName].frames)
+		if UF.BuildDebug then
+			UF:debug('Unit:BuildFrame - Added frame to group, total frames: ' .. #BuiltFrames[frameName].frames)
+		end
 	else
 		BuiltFrames[frameName] = frame
-		UF:debug('Unit:BuildFrame - Registered as single frame: ' .. frameName)
+		if UF.BuildDebug then
+			UF:debug('Unit:BuildFrame - Registered as single frame: ' .. frameName)
+		end
 	end
 
 	Unit.UnitsBuilt[frameName] = frame.config.config
-	UF:debug('Unit:BuildFrame EXIT - Frame built: ' .. actualFrameName)
+	if UF.BuildDebug then
+		UF:debug('Unit:BuildFrame EXIT - Frame built: ' .. actualFrameName)
+	end
 end
 
 ---Gets a table of all the frames that are currently built and their default settings

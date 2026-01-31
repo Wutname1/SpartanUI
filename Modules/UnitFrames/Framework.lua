@@ -7,6 +7,7 @@ UF.DisplayName = L['Unit frames']
 UF.description = 'CORE: SUI Unitframes'
 UF.Core = true
 UF.CurrentSettings = {}
+UF.BuildDebug = false -- Set to true to enable verbose build logging
 
 ---@class SUI.UF.FramePositions
 local UFPositionDefaults = {

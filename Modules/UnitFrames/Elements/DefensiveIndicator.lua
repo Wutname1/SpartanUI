@@ -5,7 +5,7 @@ local UF = SUI.UF
 -- Uses Blizzard's CenterDefensiveBuff data to determine which defensive to display
 -- This works in combat because we leverage Blizzard's pre-filtered aura decisions
 --
--- Note: The Blizzard frame hooks and cache are managed by libs\oUF_Plugins\oUF_DefensiveIndicator.lua
+-- Note: The Blizzard frame hooks and cache are managed by Core\oUF_Plugins\oUF_DefensiveIndicator.lua
 -- which exposes SUI_DefensiveCache globally
 
 -- Reference the global cache set up by the oUF plugin
@@ -337,7 +337,7 @@ end
 -- ============================================================
 -- SETTINGS & REGISTRATION
 -- ============================================================
--- Note: oUF element registration is handled by libs\oUF_Plugins\oUF_DefensiveIndicator.lua
+-- Note: oUF element registration is handled by Core\oUF_Plugins\oUF_DefensiveIndicator.lua
 
 ---@type SUI.UF.Elements.Settings
 local Settings = {

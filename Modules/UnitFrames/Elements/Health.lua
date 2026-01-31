@@ -234,7 +234,7 @@ local function Options(frameName, OptionSet)
 				type = 'toggle',
 				order = 5,
 			},
-			DispelHighlight = {
+			Dispel = {
 				name = L['Dispel highlight'],
 				type = 'toggle',
 				order = 5,
@@ -350,7 +350,7 @@ local function Options(frameName, OptionSet)
 	end
 
 	if not UF.Unit:isFriendly(frameName) then
-		OptionSet.args.general.args.DispelHighlight.hidden = true
+		OptionSet.args.general.args.Dispel.hidden = true
 	end
 
 	UF.Options:AddDynamicText(frameName, OptionSet, 'Health')
