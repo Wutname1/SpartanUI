@@ -1,6 +1,9 @@
 -- oUF DefensiveIndicator Element
 -- Shows defensive cooldowns (Ironbark, Pain Suppression, etc.) on raid/party frames
--- Uses Blizzard's CenterDefensiveBuff data to determine which defensive to display
+--
+-- RETAIL 12.1+: Uses BIG_DEFENSIVE aura filter for direct API access
+-- RETAIL 12.0: Disabled due to secret value restrictions
+-- CLASSIC: Not supported (no defensive buff display system)
 
 local _, ns = ...
 local oUF = ns.oUF or oUF
@@ -9,8 +12,29 @@ if not oUF then
 	return
 end
 
+-- TODO: Remove this version check after 12.0.x is no longer supported
+-- Check build version - disable for 12.0.0 due to secret value issues
+local buildVersion = GetBuildInfo()
+if buildVersion and buildVersion:match('^12%.0%.0') then
+	return
+end
+
+-- Check if new filter types are available (12.1+)
+local hasBigDefensiveFilter = AuraUtil
+	and AuraUtil.FindAuraByName
+	and pcall(function()
+		-- Try to use the filter - if it errors, it's not available
+		local test = AuraUtil.CreateFilterString('BIG_DEFENSIVE')
+		return test ~= nil
+	end)
+
+-- Alternative check: see if the enum exists
+if not hasBigDefensiveFilter then
+	hasBigDefensiveFilter = Enum and Enum.AuraFilter and Enum.AuraFilter.BigDefensive ~= nil
+end
+
 -- ============================================================
--- BLIZZARD FRAME CACHE
+-- LEGACY: BLIZZARD FRAME CACHE (for 12.0 fallback)
 -- ============================================================
 
 -- Cache of defensive auras from Blizzard's CompactUnitFrame
@@ -104,6 +128,65 @@ local function ScanAllBlizzardFrames()
 end
 
 -- ============================================================
+-- NEW API: Direct BIG_DEFENSIVE filter (12.1+)
+-- ============================================================
+
+-- Find defensive aura using the new BIG_DEFENSIVE filter
+---@param unit UnitId
+---@return number|nil auraInstanceID
+---@return table|nil auraData
+local function FindDefensiveAura_NewAPI(unit)
+	if not unit or not UnitExists(unit) then
+		return nil, nil
+	end
+
+	-- Only check friendly units
+	if not UnitCanAssist('player', unit) then
+		return nil, nil
+	end
+
+	-- Use AuraUtil.ForEachAura with BIG_DEFENSIVE filter
+	local bestAura = nil
+
+	AuraUtil.ForEachAura(unit, 'HELPFUL|BIG_DEFENSIVE', nil, function(aura)
+		-- Take the first one (highest priority)
+		if not bestAura then
+			bestAura = aura
+			return true -- Stop iteration
+		end
+	end, true) -- usePackedAura = true for aura table
+
+	if bestAura then
+		return bestAura.auraInstanceID, bestAura
+	end
+
+	return nil, nil
+end
+
+-- ============================================================
+-- LEGACY API: Cache-based lookup (12.0)
+-- ============================================================
+
+-- Find defensive aura using cached Blizzard frame data
+---@param unit UnitId
+---@return number|nil auraInstanceID
+local function FindDefensiveAura_LegacyAPI(unit)
+	-- Scan Blizzard frames to update cache
+	ScanAllBlizzardFrames()
+
+	-- Get cached defensive from Blizzard's CenterDefensiveBuff
+	local cache = DefensiveCache[unit]
+	if cache then
+		-- Get the first (and typically only) defensive
+		for id in pairs(cache) do
+			return id
+		end
+	end
+
+	return nil
+end
+
+-- ============================================================
 -- OUF ELEMENT
 -- ============================================================
 
@@ -132,19 +215,15 @@ local function Update(self, event, unit)
 		return
 	end
 
-	-- Scan Blizzard frames to update cache
-	ScanAllBlizzardFrames()
+	-- Find defensive aura using appropriate API
+	local auraInstanceID, auraData
 
-	-- Get cached defensive from Blizzard's CenterDefensiveBuff
-	local cache = DefensiveCache[unit]
-	local auraInstanceID = nil
-
-	if cache then
-		-- Get the first (and typically only) defensive
-		for id in pairs(cache) do
-			auraInstanceID = id
-			break
-		end
+	if hasBigDefensiveFilter then
+		-- Use new 12.1+ API
+		auraInstanceID, auraData = FindDefensiveAura_NewAPI(unit)
+	else
+		-- Fall back to legacy cache-based approach
+		auraInstanceID = FindDefensiveAura_LegacyAPI(unit)
 	end
 
 	if not auraInstanceID then
@@ -152,16 +231,16 @@ local function Update(self, event, unit)
 		return
 	end
 
-	-- Get aura data using the auraInstanceID
-	-- This API is safe to call even in combat
-	local auraData = nil
-	local success = pcall(function()
-		auraData = C_UnitAuras.GetAuraDataByAuraInstanceID(unit, auraInstanceID)
-	end)
-
-	if not success or not auraData then
-		element:Hide()
-		return
+	-- Get aura data if we don't have it yet (legacy path)
+	if not auraData then
+		local success
+		success, auraData = pcall(function()
+			return C_UnitAuras.GetAuraDataByAuraInstanceID(unit, auraInstanceID)
+		end)
+		if not success or not auraData then
+			element:Hide()
+			return
+		end
 	end
 
 	-- Set icon texture (use pcall for secret value protection)
@@ -180,10 +259,23 @@ local function Update(self, event, unit)
 
 	-- Update cooldown
 	if element.cooldown then
-		-- Use SetCooldownFromExpirationTime if available (safer with secrets)
-		if element.cooldown.SetCooldownFromExpirationTime and auraData.expirationTime and auraData.duration then
+		-- Try new duration API first (secret-value-safe)
+		local durationSet = false
+		if C_UnitAuras.GetAuraDuration then
+			pcall(function()
+				local durationObj = C_UnitAuras.GetAuraDuration(unit, auraInstanceID)
+				if durationObj and element.cooldown.SetCooldownFromDurationObject then
+					element.cooldown:SetCooldownFromDurationObject(durationObj)
+					durationSet = true
+				end
+			end)
+		end
+
+		-- Fall back to expiration time method
+		if not durationSet and element.cooldown.SetCooldownFromExpirationTime and auraData.expirationTime and auraData.duration then
 			pcall(function()
 				element.cooldown:SetCooldownFromExpirationTime(auraData.expirationTime, auraData.duration)
+				durationSet = true
 			end)
 		end
 
@@ -196,7 +288,7 @@ local function Update(self, event, unit)
 		-- Show/hide cooldown using secret-safe API if available
 		if element.cooldown.SetShownFromBoolean then
 			element.cooldown:SetShownFromBoolean(hasExpiration, true, false)
-		else
+		elseif durationSet then
 			element.cooldown:Show()
 		end
 	end
@@ -205,10 +297,12 @@ local function Update(self, event, unit)
 	if element.count then
 		element.count:SetText('')
 		if C_UnitAuras.GetAuraApplicationDisplayCount then
-			local stackText = C_UnitAuras.GetAuraApplicationDisplayCount(unit, auraInstanceID, 2, 99)
-			if stackText then
-				element.count:SetText(stackText)
-			end
+			pcall(function()
+				local stackText = C_UnitAuras.GetAuraApplicationDisplayCount(unit, auraInstanceID, 2, 99)
+				if stackText then
+					element.count:SetText(stackText)
+				end
+			end)
 		end
 	end
 
@@ -236,14 +330,14 @@ local function Enable(self)
 		element.__owner = self
 		element.ForceUpdate = ForceUpdate
 
-		-- Setup Blizzard hooks
-		SetupBlizzardHooks()
+		-- Setup Blizzard hooks for legacy fallback
+		if not hasBigDefensiveFilter then
+			SetupBlizzardHooks()
+			ScanAllBlizzardFrames()
+		end
 
 		-- Register for aura events
 		self:RegisterEvent('UNIT_AURA', Update)
-
-		-- Initial scan
-		ScanAllBlizzardFrames()
 
 		return true
 	end

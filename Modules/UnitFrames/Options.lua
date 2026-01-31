@@ -531,7 +531,7 @@ function Options:AddAuraPresets(frameName, FrameOptSet)
 					if presetKey ~= 'custom' then
 						UF.AuraPresets:ApplyPreset(frameName, presetKey)
 						-- Refresh the options UI
-						SUI.Lib.AceConfigRegistry:NotifyChange('SpartanUI')
+						LibStub('AceConfigRegistry-3.0'):NotifyChange('SpartanUI')
 					end
 				end,
 			},
@@ -641,54 +641,36 @@ function Options:AddAuraFilters(frameName, OptionSet, set, get)
 	}
 
 	if SUI.IsRetail then
-		-- RETAIL: Add API restriction notice
+		-- RETAIL (12.0+): Most aura properties are "secret values" that cannot be tested
+		-- Only these filters actually work:
+		--   - isFromPlayerOrPlayerPet (via isPlayerAura computed by oUF)
+		-- All other filter properties (isBossAura, isStealable, duration, etc.) are SECRET VALUES
+		-- and cannot be used for filtering in Retail.
+
 		OptionSet.args.Filters.args.retailNotice = {
 			type = 'description',
-			name = '|cffFFFF00Note:|r WoW 12.0+ restricts aura filtering to prevent automation. Advanced filters (whitelist/blacklist, duration) are not available in Retail.',
+			name = '|cffFF6600WoW 12.0 API Restrictions|r\n\n'
+				.. 'Blizzard has restricted most aura properties to prevent automation. '
+				.. 'In Retail, only the "Your auras only" filter works. '
+				.. 'Duration text is also unavailable (the cooldown spiral still shows duration).\n\n'
+				.. 'Full filtering (duration, whitelist/blacklist, boss auras, etc.) is available in Classic/Wrath/Cata.',
 			order = 0,
 			fontSize = 'medium',
 		}
 
-		-- RETAIL: Boolean filters only
-		OptionSet.args.Filters.args.sourceFilters = {
-			name = 'Source filters',
-			type = 'multiselect',
+		-- RETAIL: Only filter that actually works
+		OptionSet.args.Filters.args.workingFilters = {
+			name = L['Available Filters'],
+			type = 'group',
 			order = 1,
-			values = {
-				isFromPlayerOrPlayerPet = 'Your auras only',
-				isBossAura = 'Boss auras',
-			},
-		}
-
-		OptionSet.args.Filters.args.typeFilters = {
-			name = 'Type filters',
-			type = 'multiselect',
-			order = 2,
-			values = {
-				isHelpful = 'Buffs',
-				isHarmful = 'Debuffs',
-				isStealable = 'Stealable',
-				isRaid = 'Raid-wide',
-			},
-		}
-
-		OptionSet.args.Filters.args.nameplateFilters = {
-			name = 'Nameplate filters',
-			type = 'multiselect',
-			order = 3,
-			values = {
-				nameplateShowPersonal = 'Personal nameplate',
-				nameplateShowAll = 'All nameplates',
-				isNameplateOnly = 'Nameplate-only',
-			},
-		}
-
-		OptionSet.args.Filters.args.otherFilters = {
-			name = 'Other filters',
-			type = 'multiselect',
-			order = 4,
-			values = {
-				canApplyAura = 'Can apply',
+			inline = true,
+			args = {
+				isFromPlayerOrPlayerPet = {
+					name = L['Your auras only'],
+					desc = L['Only show auras cast by you or your pet'],
+					type = 'toggle',
+					order = 1,
+				},
 			},
 		}
 	else
@@ -1508,7 +1490,7 @@ function Options:Initialize()
 							UF:Update()
 
 							-- Refresh the options UI
-							SUI.Lib.AceConfigRegistry:NotifyChange('SpartanUI')
+							LibStub('AceConfigRegistry-3.0'):NotifyChange('SpartanUI')
 						end,
 					},
 				},

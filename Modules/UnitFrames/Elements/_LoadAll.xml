@@ -11,7 +11,8 @@
 	<Script file="ClassPower.lua"/>
 	<Script file="CombatIndicator.lua"/>
 	<Script file="Debuffs.lua"/>
-	<Script file="DispelHighlight.lua"/>
+	<Script file="DefensiveIndicator.lua"/>
+	<Script file="Dispel.lua"/>
 	<Script file="GroupRoleIndicator.lua"/>
 	<Script file="Health.lua"/>
 	<Script file="LeaderIndicator.lua"/>
@@ -24,6 +25,7 @@
 	<Script file="PvPRoleIndicator.lua"/>
 	<Script file="PVPSpecIcon.lua"/>
 	<Script file="QuestMob.lua"/>
+	<Script file="RaidDebuffs.lua"/>
 	<Script file="RaidRoleIndicator.lua"/>
 	<Script file="RaidTargetIndicator.lua"/>
 	<Script file="ResurrectIndicator.lua"/>
@@ -39,4 +41,5 @@
 	<Script file="TargetIndicator.lua"/>
 	<Script file="ThreatIndicator.lua"/>
 	<Script file="Totems.lua"/>
+	<Script file="WidgetXPBar.lua"/>
 </Ui>
