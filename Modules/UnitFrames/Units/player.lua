@@ -9,7 +9,7 @@ local function Builder(frame)
 		'Castbar',
 		'Power',
 		'Portrait',
-		'DispelHighlight',
+		'Dispel',
 		'SpartanArt',
 		'Buffs',
 		'Debuffs',

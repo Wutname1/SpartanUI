@@ -589,7 +589,7 @@ function module:OnInitialize()
 				colorMode = 'reaction',
 				alpha = 0.35,
 			},
-			DispelHighlight = {},
+			Dispel = {},
 			RareElite = {},
 			Name = {
 				enabled = true,

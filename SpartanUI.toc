@@ -81,18 +81,18 @@ Core\oUF_Plugins\LevelSkull.lua
 Core\oUF_Plugins\RareElite.lua
 Core\oUF_Plugins\SUI_RaidGroup.lua
 Core\oUF_Plugins\oUF_SpartanArt.lua
+Core\oUF_Plugins\oUF_DefensiveIndicator.lua [AllowLoadGameType mainline]
+Core\oUF_Plugins\oUF_RaidDebuffs.lua
 
 # oUF Plugins - Third-party
 libs\oUF_Plugins\oUF_AuraBars.lua [AllowLoadGameType vanilla, tbc, wrath, cata, mists]
 libs\oUF_Plugins\oUF_AuraHighlight.lua
 libs\oUF_Plugins\oUF_AuraWatch.lua [AllowLoadGameType vanilla, tbc, wrath, cata, mists]
 libs\oUF_Plugins\oUF_ClassicAuraDurations.lua [AllowLoadGameType vanilla, tbc, wrath, cata, mists]
-Core\oUF_Plugins\oUF_DefensiveIndicator.lua [AllowLoadGameType mainline]
 libs\oUF_Plugins\oUF_Fader.lua
 libs\oUF_Plugins\oUF_PvPRoleIndicator.lua
 libs\oUF_Plugins\oUF_QuestMob.lua
 libs\oUF_Plugins\oUF_PVPSpecIcons.lua
-libs\oUF_Plugins\oUF_RaidDebuffs.lua
 libs\oUF_Plugins\oUF_WidgetXPBar.lua
 
 # ============================================
