@@ -250,7 +250,7 @@ function UF:OnEnable()
 		local unit, spellId = strsplit(' ', args)
 
 		if not spellId then
-			print('Please specify a SpellID')
+			SUI:Print('Please specify a SpellID')
 			return
 		end
 
@@ -260,14 +260,20 @@ function UF:OnEnable()
 
 		for i, v in ipairs(SUI.UF.MonitoredBuffs[unit]) do
 			if v == tonumber(spellId) then
-				print('Removed ' .. spellId .. ' from the list of monitored buffs')
+				SUI:Print('Removed ' .. spellId .. ' from the list of monitored buffs')
+				if UF.Log then
+					UF.Log.info('Removed ' .. spellId .. ' from monitored buffs for ' .. unit)
+				end
 				table.remove(SUI.UF.MonitoredBuffs[unit], i)
 				return
 			end
 		end
 
 		table.insert(SUI.UF.MonitoredBuffs[unit], tonumber(spellId))
-		print('Added ' .. spellId .. ' to the list of monitored buffs')
+		SUI:Print('Added ' .. spellId .. ' to the list of monitored buffs')
+		if UF.Log then
+			UF.Log.info('Added ' .. spellId .. ' to monitored buffs for ' .. unit)
+		end
 	end, 'Add/Remove a spellID to the list of spells to debug')
 end
 

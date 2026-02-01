@@ -138,37 +138,15 @@ function Auras:Filter(element, unit, data, rules)
 				return false
 			end
 
-			-- Use the RAID filter API to check if this aura should show on raid frames
-			-- This is NOT a secret value check - it's a direct API call that works in combat
-			local auraInstanceID = data.auraInstanceID
-			if auraInstanceID then
-				-- Healing Mode (12.1+): Use RAID_IN_COMBAT filter for HoTs
-				if healingMode then
-					-- RAID_IN_COMBAT returns auras flagged to show on raid frames in combat
-					-- When used with HELPFUL|PLAYER, this should return mostly HoTs
-					local isFilteredOut = C_UnitAuras.IsAuraFilteredOutByInstanceID(unit, auraInstanceID, 'HELPFUL|PLAYER|RAID_IN_COMBAT')
-					if not isFilteredOut then
-						return true
-					end
-				end
-
-				-- Check if the aura passes the HELPFUL|RAID filter (for buffs on raid frames)
-				-- IsAuraFilteredOutByInstanceID returns true if the aura is FILTERED OUT
-				-- So we want it to return false (not filtered out = should show)
-				local isFilteredOut = C_UnitAuras.IsAuraFilteredOutByInstanceID(unit, auraInstanceID, 'HELPFUL|RAID')
-				if not isFilteredOut then
-					return true
-				end
-
-				-- Also check HELPFUL|PLAYER|RAID for player-cast raid buffs
-				isFilteredOut = C_UnitAuras.IsAuraFilteredOutByInstanceID(unit, auraInstanceID, 'HELPFUL|PLAYER|RAID')
-				if not isFilteredOut then
-					return true
-				end
+			-- Filter out permanent buffs (duration = 0) - these are world/event buffs, not player-cast HoTs
+			-- Real HoTs and buffs always have a duration
+			local duration = data.duration
+			if not SUI.BlizzAPI.issecretvalue(duration) and duration == 0 then
+				return false
 			end
 
-			-- Aura doesn't pass RAID filter - hide it
-			return false
+			-- Player cast this aura with a duration - show it
+			return true
 		end
 
 		-- Healing Mode without player-only filter
@@ -176,39 +154,60 @@ function Auras:Filter(element, unit, data, rules)
 			local auraInstanceID = data.auraInstanceID
 			if auraInstanceID then
 				-- Show any aura that passes RAID_IN_COMBAT filter
-				local isFilteredOut = C_UnitAuras.IsAuraFilteredOutByInstanceID(unit, auraInstanceID, 'HELPFUL|RAID_IN_COMBAT')
+				local isFilteredOut = C_UnitAuras.IsAuraFilteredOutByInstanceID(unit, auraInstanceID, 'RAID_IN_COMBAT')
 				if not isFilteredOut then
 					return true
 				end
 			end
 		end
 
-		-- No player-only filter - show all auras
-		-- The filter string (HELPFUL/HARMFUL) already filtered at the API level
-		return true
+		-- No player-only filter - use RAID filter to only show important auras
+		-- This prevents showing ALL buffs (food buffs, mount auras, etc.)
+		local auraInstanceID = data.auraInstanceID
+		if auraInstanceID then
+			-- Check if the aura passes the RAID filter (shows on raid frames)
+			local isFilteredOut = C_UnitAuras.IsAuraFilteredOutByInstanceID(unit, auraInstanceID, 'HELPFUL|RAID')
+			if not isFilteredOut then
+				return true
+			end
+		end
+
+		-- Aura doesn't pass RAID filter - hide it
+		return false
 	else
 		-- CLASSIC: Full filtering including whitelist/blacklist/duration
+		local spellIdNum = data.spellId and tonumber(data.spellId)
+
 		---@param msg any
 		local function debug(msg)
 			if not UF.MonitoredBuffs[unit] then
 				UF.MonitoredBuffs[unit] = {}
 			end
 
-			if spellIdNum and SUI:IsInTable(UF.MonitoredBuffs[unit], spellIdNum) then
-				UF.Log:debug('[UF.Auras] ' .. tostring(msg))
+			if spellIdNum and SUI:IsInTable(UF.MonitoredBuffs[unit], spellIdNum) and UF.Log then
+				UF.Log.debug('[UF.Auras] ' .. tostring(msg))
 			end
 		end
 		local ShouldDisplay = false
-		element.displayReasons[data.spellId] = {}
+		-- Use string key for consistent lookup (ALT+click uses tostring)
+		local spellKey = tostring(data.spellId)
+		element.displayReasons[spellKey] = {}
 
 		local function AddDisplayReason(reason)
 			debug('Adding display reason ' .. reason)
-			element.displayReasons[data.spellId][reason] = true
+			element.displayReasons[spellKey][reason] = true
 			ShouldDisplay = true
 		end
 
 		debug('----')
 		debug(data.spellId)
+
+		-- EXCLUSIVE: If showPlayers is enabled, ONLY show player-cast buffs
+		-- This check must happen BEFORE other rules that might set ShouldDisplay = true
+		if rules.showPlayers and data.sourceUnit ~= 'player' then
+			debug('showPlayers enabled but sourceUnit is not player, rejecting')
+			return false
+		end
 
 		for k, v in pairs(rules) do
 			-- debug(k)
@@ -283,7 +282,9 @@ function Auras:Filter(element, unit, data, rules)
 				if v == spellIdNum then
 					debug('Removed ' .. data.spellId .. ' from the list of monitored buffs for ' .. unit)
 					table.remove(UF.MonitoredBuffs[unit], i)
-					UF.Log:debug('[UF.Auras] ----')
+					if UF.Log then
+						UF.Log.debug('[UF.Auras] ----')
+					end
 				end
 			end
 		end
@@ -523,6 +524,8 @@ end
 ---@param elementName string
 ---@param button any
 function Auras:PostCreateButton(elementName, button)
+	-- Register for clicks - oUF doesn't do this by default
+	button:RegisterForClicks('AnyUp')
 	button:SetScript('OnClick', function()
 		Auras:OnClick(button, elementName)
 	end)
@@ -663,12 +666,22 @@ function Auras:OnClick(button, elementName)
 		return
 	end
 
-	local data = button.data ---@type UnitAuraInfo
+	local data = button.data
+	-- Fallback: try to get data directly if button.data wasn't set
+	if not data and button.filter and button:GetID() then
+		local parent = button:GetParent()
+		local unit = parent and parent.__owner and parent.__owner.unit
+		if unit then
+			data = C_UnitAuras.GetAuraDataByIndex(unit, button:GetID(), button.filter)
+		end
+	end
 
 	if data and keyDown then
 		if keyDown == 'CTRL' then
-			-- Show aura properties in chat and logger
-			SUI:Print('=== Aura Properties ===')
+			-- Log aura properties to the logger (use /logs to view)
+			if UF.Log then
+				UF.Log.info('=== Aura Properties ===')
+			end
 
 			-- List of known aura data properties to check
 			local propsToCheck = {
@@ -719,27 +732,68 @@ function Auras:OnClick(button, elementName)
 				end)
 
 				if success and result then
-					SUI:Print('  ' .. k .. ' = ' .. result)
-					UF:debug('[Auras:OnClick] ' .. k .. ' = ' .. result)
+					if UF.Log then
+						UF.Log.info('  ' .. k .. ' = ' .. result)
+					end
 				elseif not success then
-					SUI:Print('  ' .. k .. ' = <ERROR: ' .. tostring(result) .. '>')
+					if UF.Log then
+						UF.Log.info('  ' .. k .. ' = <ERROR: ' .. tostring(result) .. '>')
+					end
 				end
 			end
 
-			SUI:Print('======================')
+			if UF.Log then
+				UF.Log.info('======================')
+			end
+			SUI:Print('Aura properties logged. Use /logs to view details.')
 		elseif keyDown == 'ALT' then
 			if not SUI.IsRetail then
-				-- WoW 12.0.0: Use string key for table index
+				-- Classic: Show display reasons
 				local spellKey = tostring(data.spellId)
-				if button:GetParent().displayReasons[spellKey] then
-					UF.Log:info('[UF.Auras] Reasons for display:')
-					for k, _ in pairs(button:GetParent().displayReasons[spellKey]) do
-						UF.Log:info('[UF.Auras]   ' .. k)
+				local parent = button:GetParent()
+				if parent and parent.displayReasons and parent.displayReasons[spellKey] then
+					if UF.Log then
+						UF.Log.info('Reasons for display (spellId: ' .. spellKey .. '):')
+						for k, _ in pairs(parent.displayReasons[spellKey]) do
+							UF.Log.info('  ' .. k)
+						end
 					end
 					SUI:Print('Display reasons logged. Use /logs to view details.')
+				else
+					SUI:Print('No display reasons found for this aura (spellId: ' .. spellKey .. ')')
+					if UF.Log then
+						UF.Log.info('No display reasons found for spellId: ' .. spellKey)
+						UF.Log.info('Parent element: ' .. tostring(parent and parent:GetName() or 'nil'))
+						UF.Log.info('displayReasons table exists: ' .. tostring(parent and parent.displayReasons ~= nil))
+						-- List all keys in displayReasons if it exists
+						if parent and parent.displayReasons then
+							local keyCount = 0
+							for k, _ in pairs(parent.displayReasons) do
+								keyCount = keyCount + 1
+								if keyCount <= 5 then
+									UF.Log.info('  Known spellKey: ' .. tostring(k))
+								end
+							end
+							UF.Log.info('Total tracked spells: ' .. keyCount)
+							-- Check if our spell exists with empty reasons
+							if parent.displayReasons[spellKey] then
+								local reasonCount = 0
+								for _ in pairs(parent.displayReasons[spellKey]) do
+									reasonCount = reasonCount + 1
+								end
+								UF.Log.info('SpellKey exists but with ' .. reasonCount .. ' reasons')
+							end
+						end
+					end
 				end
 			else
-				SUI:Print('Aura filtering details are not available in Retail due to API restrictions.')
+				-- Retail: Limited info due to API restrictions
+				SUI:Print('Aura filtering details are limited in Retail due to API restrictions.')
+				if UF.Log then
+					UF.Log.info('Retail aura filter check:')
+					UF.Log.info('  isPlayerAura = ' .. tostring(data.isPlayerAura))
+					UF.Log.info('  Element onlyShowPlayer = ' .. tostring(button:GetParent() and button:GetParent().onlyShowPlayer))
+				end
 			end
 		elseif keyDown == 'SHIFT' then
 			if not SUI.IsRetail then

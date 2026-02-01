@@ -152,28 +152,23 @@ end
 function AuraWatchSpells:GetDefaults()
 	local _, playerClass = UnitClass('player')
 	if not playerClass then
-		-- Fallback to basic raid buffs if class detection fails
+		-- Fallback: return empty watched list if class detection fails
 		return {
-			['**'] = { onlyIfCastable = false, anyUnit = true, onlyShowMissing = true, point = 'CENTER', xOffset = 0, yOffset = 0, displayInCombat = false },
-			[1126] = {}, -- Mark of the Wild
-			[1459] = {}, -- Arcane Intellect
-			[21562] = {}, -- Power Word: Fortitude
+			['**'] = { onlyIfCastable = true, anyUnit = true, onlyShowMissing = true, point = 'CENTER', xOffset = 0, yOffset = 0, displayInCombat = false },
 		}
 	end
 
 	local classSpells = self:GetClassSpells(playerClass)
 	local watched = {
-		['**'] = { onlyIfCastable = false, anyUnit = true, onlyShowMissing = true, point = 'CENTER', xOffset = 0, yOffset = 0, displayInCombat = false },
+		['**'] = { onlyIfCastable = true, anyUnit = true, onlyShowMissing = true, point = 'CENTER', xOffset = 0, yOffset = 0, displayInCombat = false },
 	}
 
 	for spellID, settings in pairs(classSpells) do
 		watched[spellID] = settings
 	end
 
-	-- Always include the basic raid buffs
-	watched[1126] = watched[1126] or {} -- Mark of the Wild
-	watched[1459] = watched[1459] or {} -- Arcane Intellect
-	watched[21562] = watched[21562] or {} -- Power Word: Fortitude
+	-- Class-specific spells are already added by GetClassSpells()
+	-- DO NOT add all raid buffs - this prevents showing "Arcane Int missing" on Druid, etc.
 
 	return watched
 end
