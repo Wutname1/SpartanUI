@@ -402,7 +402,7 @@ function CustomEditMode:StartDrag(mover)
 
 	-- Initialize magnetism for this drag session
 	local MagnetismManager = MoveIt.MagnetismManager
-	if MagnetismManager and MagnetismManager.enabled then
+	if MagnetismManager and MagnetismManager:IsActive() then
 		MagnetismManager:BeginDragSession(mover)
 	end
 
@@ -411,13 +411,17 @@ function CustomEditMode:StartDrag(mover)
 		mover.dragUpdateFrame = CreateFrame('Frame')
 	end
 	mover.dragUpdateFrame:SetScript('OnUpdate', function()
-		if MagnetismManager and MagnetismManager.enabled then
+		-- Check IsActive() each frame to handle Shift key toggle on Classic
+		if MagnetismManager and MagnetismManager:IsActive() then
 			local snapInfo = MagnetismManager:CheckForSnaps(mover)
 			if snapInfo then
 				MagnetismManager:ShowPreviewLines(snapInfo)
 			else
 				MagnetismManager:HidePreviewLines()
 			end
+		elseif MagnetismManager then
+			-- Hide preview lines when magnetism is disabled
+			MagnetismManager:HidePreviewLines()
 		end
 	end)
 
@@ -446,8 +450,11 @@ function CustomEditMode:StopDrag(mover)
 
 	-- Apply final snap if within range
 	local MagnetismManager = MoveIt.MagnetismManager
-	if MagnetismManager and MagnetismManager.enabled then
+	if MagnetismManager and MagnetismManager:IsActive() then
 		MagnetismManager:ApplyFinalSnap(mover)
+		MagnetismManager:EndDragSession()
+	elseif MagnetismManager then
+		-- Still need to end the session even if not snapping
 		MagnetismManager:EndDragSession()
 	end
 
