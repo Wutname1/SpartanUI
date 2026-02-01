@@ -369,8 +369,8 @@ function module:ToggleOptions(pages)
 				MoveIt:SetText(L['Toggle movers'])
 				MoveIt:SetPoint('BOTTOM', -190, 10) -- Start at -190 to center the 5 buttons
 				MoveIt:HookScript('OnClick', function()
-					-- On Retail, open Blizzard's EditMode; on Classic, use legacy MoveIt
-					if EditModeManagerFrame then
+					-- On Retail/TBC 2.5.5+, open Blizzard's EditMode; on other Classic versions, use legacy MoveIt
+					if SUI.MoveIt and SUI.MoveIt.HasEditMode and SUI.MoveIt.HasEditMode() then
 						ShowUIPanel(EditModeManagerFrame)
 					else
 						SUI.MoveIt:MoveIt()

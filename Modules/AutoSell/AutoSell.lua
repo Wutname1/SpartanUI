@@ -3,6 +3,7 @@ local SUI, L, print = SUI, SUI.L, SUI.print
 local module = SUI:NewModule('AutoSell')
 module.DisplayName = L['Auto sell']
 module.description = 'Auto sells junk and more'
+module.log = nil
 
 ----------------------------------------------------------------------------------------------------
 -- Configuration constants
@@ -116,12 +117,9 @@ local DbDefaults = {
 ---@field Whitelist table<number, boolean> Character-specific whitelist items
 ---@field Blacklist table<number, boolean> Character-specific blacklist items
 
--- Setup logging for AutoSell module
-local logger = nil
-
 local function debugMsg(msg, level)
-	if logger then
-		logger.log(msg, level or 'debug')
+	if module.log then
+		module.log.log(msg, level or 'debug')
 	end
 end
 
@@ -914,7 +912,7 @@ function module:OnInitialize()
 
 	-- Setup logging system for AutoSell
 	if SUI.logger then
-		logger = SUI.logger:RegisterCategory('AutoSell')
+		module.log = SUI.logger:RegisterCategory('AutoSell')
 	end
 
 	-- Handle potential item level squish after DB is initialized

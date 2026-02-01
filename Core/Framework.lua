@@ -133,6 +133,10 @@ SUI.Lib.LSM:Register('statusbar', 'SpartanUI Default', [[Interface\AddOns\Sparta
 SUI.Lib.LSM:Register('statusbar', 'Glass', [[Interface\AddOns\SpartanUI\images\statusbars\glass.tga]])
 SUI.Lib.LSM:Register('statusbar', 'WGlass', [[Interface\AddOns\SpartanUI\images\statusbars\Wglass]])
 SUI.Lib.LSM:Register('statusbar', 'Blank', [[Interface\AddOns\SpartanUI\images\blank]])
+-- Blizzard's built-in textures for health prediction
+SUI.Lib.LSM:Register('statusbar', 'Blizzard', [[Interface\TargetingFrame\UI-StatusBar]])
+SUI.Lib.LSM:Register('statusbar', 'Blizzard Shield', [[Interface\RaidFrame\Shield-Fill]])
+SUI.Lib.LSM:Register('statusbar', 'Blizzard Absorb', [[Interface\RaidFrame\Absorb-Fill]])
 
 -- Add Background textures
 SUI.Lib.LSM:Register('background', 'Smoke', [[Interface\AddOns\SpartanUI\images\backgrounds\smoke]])
