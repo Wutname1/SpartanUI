@@ -87,7 +87,7 @@ Core\oUF_Plugins\oUF_RaidDebuffs.lua
 # oUF Plugins - Third-party
 libs\oUF_Plugins\oUF_AuraBars.lua [AllowLoadGameType vanilla, tbc, wrath, cata, mists]
 libs\oUF_Plugins\oUF_AuraHighlight.lua
-libs\oUF_Plugins\oUF_AuraWatch.lua [AllowLoadGameType vanilla, tbc, wrath, cata, mists]
+libs\oUF_Plugins\oUF_AuraWatch.lua
 libs\oUF_Plugins\oUF_ClassicAuraDurations.lua [AllowLoadGameType vanilla, tbc, wrath, cata, mists]
 libs\oUF_Plugins\oUF_Fader.lua
 libs\oUF_Plugins\oUF_PvPRoleIndicator.lua

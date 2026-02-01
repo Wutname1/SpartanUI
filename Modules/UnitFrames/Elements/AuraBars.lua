@@ -169,48 +169,46 @@ local function Build(frame, DB)
 		end
 	end
 
-	-- Retail filtering: Boolean properties only (no spellId access due to secret values)
+	-- Retail filtering: ONLY safe properties (isPlayerAura, isHarmfulAura from oUF)
+	-- ALL other aura data properties are SECRET VALUES in WoW 12.0+ and will crash if tested
 	---@param unit UnitId
 	---@param data UnitAuraInfo
 	function element:RetailAuraFilter(unit, data)
 		local DB = self.DB
 
-		-- Raider mode: always show boss auras regardless of role
-		if DB.raiderMode and data.isBossAura then
-			return true
-		end
+		-- In Retail 12.0+, we can ONLY safely use:
+		--   - isPlayerAura: created by oUF using C_UnitAuras.IsAuraFilteredOutByInstanceID
+		--   - isHarmfulAura: created by oUF from the filter string (not from data)
+		--   - auraInstanceID: integer, always safe
+		-- Properties like isBossAura, isFromPlayerOrPlayerPet, isHelpful, isHarmful, etc.
+		-- are SECRET VALUES and testing them will crash the addon!
 
-		-- Enhanced filtering with role presets using boolean-only properties
+		-- Filter mode determines what we show
+		-- Since we can't detect boss auras or specific types, we filter by player ownership only
 		if DB.filterMode == 'healer' then
-			-- Healer mode: Show player's helpful auras (HoTs, shields, buffs)
-			if data.isFromPlayerOrPlayerPet and data.isHelpful then
-				return true
-			end
-			-- Also show boss auras for healers
-			if data.isBossAura then
+			-- Healer mode: Show player's auras (we can't tell if they're HoTs)
+			-- isHarmfulAura is safe (from oUF filter string), so show helpful only
+			if data.isPlayerAura and not data.isHarmfulAura then
 				return true
 			end
 		elseif DB.filterMode == 'dps' then
-			-- DPS mode: Show player's harmful auras (DoTs, debuffs)
-			if data.isFromPlayerOrPlayerPet and data.isHarmful then
-				return true
-			end
-			-- Also show boss auras for DPS
-			if data.isBossAura then
+			-- DPS mode: Show player's harmful auras (DoTs)
+			if data.isPlayerAura and data.isHarmfulAura then
 				return true
 			end
 		elseif DB.filterMode == 'tank' then
-			-- Tank mode: Show player's helpful auras (defensive cooldowns)
-			if data.isFromPlayerOrPlayerPet and data.isHelpful then
-				return true
-			end
-			-- Also show boss auras for tanks
-			if data.isBossAura then
+			-- Tank mode: Show player's helpful auras
+			if data.isPlayerAura and not data.isHarmfulAura then
 				return true
 			end
 		elseif DB.filterMode == 'custom' then
-			-- Custom mode: Show player-cast auras and boss auras
-			if data.isBossAura or data.isFromPlayerOrPlayerPet then
+			-- Custom mode: Show player-cast auras only
+			if data.isPlayerAura then
+				return true
+			end
+		else
+			-- Default: Show player's own auras
+			if data.isPlayerAura then
 				return true
 			end
 		end

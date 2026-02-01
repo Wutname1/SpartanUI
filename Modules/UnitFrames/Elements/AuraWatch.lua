@@ -226,14 +226,10 @@ local function GetDefaultWatched()
 		return UF.AuraWatchSpells:GetDefaults()
 	end
 
-	-- Fallback to basic raid buffs
-	-- Note: onlyIfCastable = false so all classes see missing raid buffs
-	-- point = 'CENTER' to show missing buffs prominently in frame center
+	-- Fallback: empty watched list with onlyIfCastable = true
+	-- This ensures users only see missing buffs they can actually cast
 	return {
-		['**'] = { onlyIfCastable = false, anyUnit = true, onlyShowMissing = true, point = 'CENTER', xOffset = 0, yOffset = 0, displayInCombat = false },
-		[1126] = {}, -- Mark of the Wild
-		[1459] = {}, -- Arcane Intellect
-		[21562] = {}, -- Power Word: Fortitude
+		['**'] = { onlyIfCastable = true, anyUnit = true, onlyShowMissing = true, point = 'CENTER', xOffset = 0, yOffset = 0, displayInCombat = false },
 	}
 end
 
