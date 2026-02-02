@@ -546,8 +546,68 @@ function module:BuildOptions()
 						['always'] = L['Always'],
 						['mouseover'] = L['Mouseover'],
 						['never'] = L['Never'],
+						['bag'] = L['Button Bag'],
 					},
 				}
+
+				-- Add button bag specific options for addonButtons
+				if elementName == 'addonButtons' then
+					options.args.elements.args[elementName].args.bagSettings = {
+						name = L['Button Bag Settings'],
+						type = 'group',
+						order = 5,
+						inline = true,
+						hidden = function()
+							return module.Settings.elements.addonButtons.style ~= 'bag'
+						end,
+						args = {
+							excludeList = {
+								name = L['Exclude List'],
+								desc = L['Comma-separated list of addon names to exclude from the button bag (e.g., "BugSack,Bartender4")'],
+								type = 'input',
+								order = 1,
+								width = 'full',
+								get = function()
+									return module.Settings.elements.addonButtons.excludeList or ''
+								end,
+								set = function(_, value)
+									if not module.DB.customSettings[SUI.DB.Artwork.Style].elements then
+										module.DB.customSettings[SUI.DB.Artwork.Style].elements = {}
+									end
+									if not module.DB.customSettings[SUI.DB.Artwork.Style].elements.addonButtons then
+										module.DB.customSettings[SUI.DB.Artwork.Style].elements.addonButtons = {}
+									end
+									module.Settings.elements.addonButtons.excludeList = value
+									module.DB.customSettings[SUI.DB.Artwork.Style].elements.addonButtons.excludeList = value
+									module:Update(true)
+								end,
+							},
+							autoHideDelay = {
+								name = L['Auto-hide Delay'],
+								desc = L['Seconds before the button bag auto-hides when mouse leaves'],
+								type = 'range',
+								order = 2,
+								min = 0.5,
+								max = 10,
+								step = 0.5,
+								get = function()
+									return module.Settings.elements.addonButtons.autoHideDelay or 2
+								end,
+								set = function(_, value)
+									if not module.DB.customSettings[SUI.DB.Artwork.Style].elements then
+										module.DB.customSettings[SUI.DB.Artwork.Style].elements = {}
+									end
+									if not module.DB.customSettings[SUI.DB.Artwork.Style].elements.addonButtons then
+										module.DB.customSettings[SUI.DB.Artwork.Style].elements.addonButtons = {}
+									end
+									module.Settings.elements.addonButtons.autoHideDelay = value
+									module.DB.customSettings[SUI.DB.Artwork.Style].elements.addonButtons.autoHideDelay = value
+									module:Update(true)
+								end,
+							},
+						},
+					}
+				end
 			end
 		end
 	end -- end of if module.Settings.elements then

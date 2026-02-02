@@ -109,7 +109,10 @@ local BaseSettings = {
 		},
 		-- Addon Buttons
 		addonButtons = {
-			style = 'mouseover', -- 'always', 'mouseover', or 'never'
+			style = 'mouseover', -- 'always', 'mouseover', 'never', or 'bag'
+			bagEnabled = false, -- Enable button bag consolidation (alternative to style='bag')
+			excludeList = '', -- Comma-separated addon names to exclude from bag
+			autoHideDelay = 2, -- Seconds before auto-hiding bag
 		},
 	},
 }
@@ -175,7 +178,10 @@ local BaseSettingsClassic = {
 		scale = 0.85,
 	},
 	addonButtons = {
-		style = 'mouseover', -- 'always', 'mouseover', or 'never'
+		style = 'mouseover', -- 'always', 'mouseover', 'never', or 'bag'
+		bagEnabled = false,
+		excludeList = '',
+		autoHideDelay = 2,
 	},
 }
 
@@ -1229,6 +1235,294 @@ function module:UpdateAddonButtons()
 	end
 end
 
+-- Button Bag functionality
+local ButtonBag = {}
+ButtonBag.buttons = {}
+ButtonBag.isOpen = false
+ButtonBag.frame = nil
+ButtonBag.toggleButton = nil
+
+function module:SetupButtonBag()
+	local addonSettings = SUI.IsRetail and module.Settings.elements and module.Settings.elements.addonButtons or module.Settings.addonButtons
+	if not addonSettings or not addonSettings.bagEnabled then
+		return
+	end
+
+	local LDBIcon = LibStub and LibStub('LibDBIcon-1.0', true)
+	if not LDBIcon then
+		return
+	end
+
+	-- Create the bag container frame
+	if not ButtonBag.frame then
+		local bagFrame = CreateFrame('Frame', 'SUI_MinimapButtonBag', SUIMinimap, BackdropTemplateMixin and 'BackdropTemplate')
+		bagFrame:SetSize(200, 40)
+		bagFrame:SetPoint('TOPRIGHT', SUIMinimap, 'TOPLEFT', -5, 0)
+		bagFrame:SetFrameStrata('MEDIUM')
+		bagFrame:SetBackdrop({
+			bgFile = 'Interface\\Buttons\\WHITE8X8',
+			edgeFile = 'Interface\\Buttons\\WHITE8X8',
+			edgeSize = 1,
+		})
+		bagFrame:SetBackdropColor(0.05, 0.05, 0.05, 0.9)
+		bagFrame:SetBackdropBorderColor(0, 0, 0, 1)
+		bagFrame:Hide()
+		bagFrame:EnableMouse(true)
+
+		-- Auto-hide timer
+		bagFrame.hideTimer = nil
+		bagFrame:SetScript('OnEnter', function(self)
+			if self.hideTimer then
+				self.hideTimer:Cancel()
+				self.hideTimer = nil
+			end
+		end)
+		bagFrame:SetScript('OnLeave', function(self)
+			local delay = addonSettings.autoHideDelay or 2
+			self.hideTimer = C_Timer.NewTimer(delay, function()
+				module:CloseButtonBag()
+			end)
+		end)
+
+		ButtonBag.frame = bagFrame
+	end
+
+	-- Create the toggle button (gear icon)
+	if not ButtonBag.toggleButton then
+		local toggleBtn = CreateFrame('Button', 'SUI_MinimapButtonBagToggle', SUIMinimap)
+		toggleBtn:SetSize(20, 20)
+		toggleBtn:SetPoint('TOPRIGHT', SUIMinimap, 'TOPRIGHT', -5, -5)
+		toggleBtn:SetFrameStrata('HIGH')
+
+		local icon = toggleBtn:CreateTexture(nil, 'ARTWORK')
+		icon:SetAllPoints()
+		icon:SetTexture('Interface\\WorldMap\\Gear_64')
+		icon:SetTexCoord(0, 0.5, 0, 0.5)
+		toggleBtn.icon = icon
+
+		local highlight = toggleBtn:CreateTexture(nil, 'HIGHLIGHT')
+		highlight:SetAllPoints()
+		highlight:SetTexture('Interface\\WorldMap\\Gear_64')
+		highlight:SetTexCoord(0, 0.5, 0, 0.5)
+		highlight:SetBlendMode('ADD')
+		highlight:SetAlpha(0.3)
+
+		toggleBtn:SetScript('OnClick', function()
+			if ButtonBag.isOpen then
+				module:CloseButtonBag()
+			else
+				module:OpenButtonBag()
+			end
+		end)
+
+		toggleBtn:SetScript('OnEnter', function(self)
+			GameTooltip:SetOwner(self, 'ANCHOR_LEFT')
+			GameTooltip:AddLine('Minimap Button Bag')
+			GameTooltip:AddLine('Click to toggle addon buttons', 1, 1, 1)
+			GameTooltip:Show()
+
+			-- Cancel bag hide timer if hovering toggle
+			if ButtonBag.frame and ButtonBag.frame.hideTimer then
+				ButtonBag.frame.hideTimer:Cancel()
+				ButtonBag.frame.hideTimer = nil
+			end
+		end)
+
+		toggleBtn:SetScript('OnLeave', function()
+			GameTooltip:Hide()
+
+			-- Start hide timer if bag is open
+			if ButtonBag.isOpen then
+				local delay = addonSettings.autoHideDelay or 2
+				ButtonBag.frame.hideTimer = C_Timer.NewTimer(delay, function()
+					module:CloseButtonBag()
+				end)
+			end
+		end)
+
+		ButtonBag.toggleButton = toggleBtn
+	end
+
+	-- Collect and hide all LibDBIcon buttons
+	module:CollectButtonBagButtons()
+
+	-- Register callback for newly created buttons
+	LDBIcon.RegisterCallback(ButtonBag, 'LibDBIcon_IconCreated', function(_, button, name)
+		C_Timer.After(0.1, function()
+			module:AddButtonToBag(button, name)
+		end)
+	end)
+end
+
+function module:IsButtonExcluded(buttonName)
+	local addonSettings = SUI.IsRetail and module.Settings.elements and module.Settings.elements.addonButtons or module.Settings.addonButtons
+	if not addonSettings then
+		return false
+	end
+
+	local excludeList = addonSettings.excludeList or ''
+	if excludeList == '' then
+		return false
+	end
+
+	-- Always exclude SpartanUI's own buttons
+	if buttonName and (buttonName:find('SpartanUI') or buttonName:find('SUI')) then
+		return true
+	end
+
+	-- Check exclude list (case insensitive)
+	for exclude in string.gmatch(excludeList, '[^,]+') do
+		exclude = strtrim(exclude):lower()
+		if exclude ~= '' and buttonName:lower():find(exclude) then
+			return true
+		end
+	end
+
+	return false
+end
+
+function module:CollectButtonBagButtons()
+	local LDBIcon = LibStub and LibStub('LibDBIcon-1.0', true)
+	if not LDBIcon then
+		return
+	end
+
+	wipe(ButtonBag.buttons)
+
+	local buttonList = LDBIcon:GetButtonList()
+	for _, name in ipairs(buttonList) do
+		local button = LDBIcon:GetMinimapButton(name)
+		if button and not module:IsButtonExcluded(name) then
+			module:AddButtonToBag(button, name)
+		end
+	end
+end
+
+function module:AddButtonToBag(button, name)
+	if not button or module:IsButtonExcluded(name) then
+		return
+	end
+
+	-- Store original parent for restoration
+	if not button.SUI_OriginalParent then
+		button.SUI_OriginalParent = button:GetParent()
+	end
+
+	-- Mark button as managed by bag (don't override Show to avoid taint)
+	button.SUI_InButtonBag = true
+
+	-- Use OnShow script hook instead of replacing Show (avoids taint)
+	if not button.SUI_OnShowHooked then
+		button:HookScript('OnShow', function(self)
+			-- If bag is not open and button is managed, hide it again
+			if self.SUI_InButtonBag and not ButtonBag.isOpen then
+				self:Hide()
+			end
+		end)
+		button.SUI_OnShowHooked = true
+	end
+
+	-- Hide the button
+	button:Hide()
+
+	-- Add to our list
+	ButtonBag.buttons[name] = button
+end
+
+function module:OpenButtonBag()
+	if not ButtonBag.frame then
+		return
+	end
+
+	ButtonBag.isOpen = true
+
+	-- Calculate grid layout
+	local buttons = {}
+	for name, button in pairs(ButtonBag.buttons) do
+		table.insert(buttons, { name = name, button = button })
+	end
+
+	local numButtons = #buttons
+	if numButtons == 0 then
+		return
+	end
+
+	-- Determine columns (max 10)
+	local columns = math.min(numButtons, 10)
+	local rows = math.ceil(numButtons / columns)
+
+	local buttonSize = 28
+	local padding = 4
+	local frameWidth = (buttonSize + padding) * columns + padding
+	local frameHeight = (buttonSize + padding) * rows + padding
+
+	ButtonBag.frame:SetSize(frameWidth, frameHeight)
+
+	-- Position buttons in grid
+	for i, data in ipairs(buttons) do
+		local button = data.button
+		local col = (i - 1) % columns
+		local row = math.floor((i - 1) / columns)
+
+		button:SetParent(ButtonBag.frame)
+		button:ClearAllPoints()
+		button:SetPoint('TOPLEFT', ButtonBag.frame, 'TOPLEFT', padding + col * (buttonSize + padding), -padding - row * (buttonSize + padding))
+		button:SetSize(buttonSize, buttonSize)
+
+		-- Show the button (OnShow hook will allow it since ButtonBag.isOpen is true)
+		button:Show()
+	end
+
+	ButtonBag.frame:Show()
+end
+
+function module:CloseButtonBag()
+	if not ButtonBag.frame then
+		return
+	end
+
+	ButtonBag.isOpen = false
+
+	-- Hide all buttons and return to original parent
+	for name, button in pairs(ButtonBag.buttons) do
+		button:Hide()
+		if button.SUI_OriginalParent then
+			button:SetParent(button.SUI_OriginalParent)
+		end
+	end
+
+	ButtonBag.frame:Hide()
+
+	if ButtonBag.frame.hideTimer then
+		ButtonBag.frame.hideTimer:Cancel()
+		ButtonBag.frame.hideTimer = nil
+	end
+end
+
+function module:DestroyButtonBag()
+	-- Restore all buttons to original state
+	for name, button in pairs(ButtonBag.buttons) do
+		-- Clear bag management flag so OnShow hook allows showing
+		button.SUI_InButtonBag = nil
+
+		if button.SUI_OriginalParent then
+			button:SetParent(button.SUI_OriginalParent)
+			button.SUI_OriginalParent = nil
+		end
+		button:Show()
+	end
+
+	wipe(ButtonBag.buttons)
+	ButtonBag.isOpen = false
+
+	if ButtonBag.frame then
+		ButtonBag.frame:Hide()
+	end
+	if ButtonBag.toggleButton then
+		ButtonBag.toggleButton:Hide()
+	end
+end
+
 function module:CreateMover()
 	-- Ensure SUIMinimap has a size before creating the mover
 	if SUIMinimap:GetWidth() == 0 or SUIMinimap:GetHeight() == 0 then
@@ -1650,6 +1944,9 @@ function module:OnEnable()
 			end
 		end, L['Toggle vehicle minimap mover'])
 	end
+
+	-- Setup Button Bag if enabled
+	module:SetupButtonBag()
 
 	-- Setup Options
 	module:BuildOptions()
