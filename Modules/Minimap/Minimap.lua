@@ -1424,8 +1424,8 @@ function module:SetupButtonBag()
 					module:OpenButtonBag()
 				end
 			elseif button == 'RightButton' then
-				-- Open SUI options to Minimap section
-				SUI.Options:Open('Minimap', 'elements', 'addonButtons')
+				-- Open SUI options to Modules > Minimap > Addon Buttons section
+				SUI.Options:ToggleOptions({ 'Modules', 'Minimap', 'elements', 'addonButtons' })
 			end
 		end)
 
