@@ -605,6 +605,30 @@ function module:BuildOptions()
 									module:Update(true)
 								end,
 							},
+							buttonsPerRow = {
+								name = L['Buttons Per Row'],
+								desc = L['Number of buttons to display per row in the button bag'],
+								type = 'range',
+								order = 3,
+								min = 2,
+								max = 12,
+								step = 1,
+								get = function()
+									return module.Settings.elements.addonButtons.buttonsPerRow or 6
+								end,
+								set = function(_, value)
+									if not module.DB.customSettings[SUI.DB.Artwork.Style].elements then
+										module.DB.customSettings[SUI.DB.Artwork.Style].elements = {}
+									end
+									if not module.DB.customSettings[SUI.DB.Artwork.Style].elements.addonButtons then
+										module.DB.customSettings[SUI.DB.Artwork.Style].elements.addonButtons = {}
+									end
+									module.Settings.elements.addonButtons.buttonsPerRow = value
+									module.DB.customSettings[SUI.DB.Artwork.Style].elements.addonButtons.buttonsPerRow = value
+									-- Refresh the bag if open
+									module:RefreshButtonBag()
+								end,
+							},
 						},
 					}
 				end
