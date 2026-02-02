@@ -465,15 +465,21 @@ function module:OnEnable()
 		SUI:Print('Leavers: ' .. LeaveCount)
 	end, 'Prints the number of leavers in the current battleground, addings anything after leavers will output to instance chat')
 
-	--Add chat command to clear chat history
+	--Add chat command to clear chat window and history
 	SUI:AddChatCommand('clearchat', function()
-		module:ClearChatLog()
-	end, 'Clears the chat log history (also available as /clearchat)')
+		module:ClearChat()
+	end, 'Clears the chat window and stored history (also available as /clearchat or /clear)')
 
 	--Register standalone /clearchat command
 	SLASH_CLEARCHAT1 = '/clearchat'
 	SlashCmdList['CLEARCHAT'] = function()
-		module:ClearChatLog()
+		module:ClearChat()
+	end
+
+	--Register /clear command as alias
+	SLASH_SUICLEAR1 = '/clear'
+	SlashCmdList['SUICLEAR'] = function()
+		module:ClearChat()
 	end
 
 	--Detect when we leave the battleground and reset the counter
@@ -615,6 +621,26 @@ end
 function module:ClearChatLog()
 	wipe(self.DB.chatLog.history)
 	SUI:Print(L['Chat log cleared'])
+end
+
+function module:ClearChat()
+	-- Clear all chat frames
+	for i = 1, NUM_CHAT_WINDOWS do
+		local chatFrame = _G['ChatFrame' .. i]
+		if chatFrame then
+			chatFrame:Clear()
+		end
+	end
+
+	-- Clear stored chat log history
+	wipe(self.DB.chatLog.history)
+
+	-- Clear edit box history
+	if SUI.CharDB.ChatEditHistory then
+		wipe(SUI.CharDB.ChatEditHistory)
+	end
+
+	SUI:Print(L['Chat cleared'])
 end
 
 function module:EditBoxPosition()
