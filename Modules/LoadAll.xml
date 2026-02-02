@@ -15,7 +15,7 @@
 	<!-- <Script file="ImprovedLFG.lua" /> -->
 	<Script file="Chatbox.lua" />
 	<Script file="AFKEffects.lua" />
-	<Script file="StopTalking.lua" />
+	<Include file="UICleanup\Load.xml" />
 	<Script file="MiniTom.lua" />
 	<Script file="LibsToolkit.lua" />
 	<Script file="BlizzUIFixes.lua" />
