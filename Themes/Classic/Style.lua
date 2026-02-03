@@ -82,7 +82,15 @@ local function CreateArtwork()
 		name = 'Classic',
 		height = 34,
 		point = 'BOTTOMRIGHT',
-		TexturePath = 'Interface\\AddOns\\SpartanUI\\Themes\\Classic\\Images\\bar-popup1',
+		TexturePath = 'Interface\\AddOns\\SpartanUI\\Themes\\Classic\\Images\\bar-popup1.png',
+		-- TexCoord = {0.23828125, 0.76171875, 0.09375, 0.8828125}
+	}
+
+	local PopupMask2 = {
+		name = 'Classic',
+		height = 34,
+		point = 'BOTTOMRIGHT',
+		TexturePath = 'Interface\\AddOns\\SpartanUI\\Themes\\Classic\\Images\\bar-popup2.png',
 		-- TexCoord = {0.23828125, 0.76171875, 0.09375, 0.8828125}
 	}
 
@@ -104,15 +112,12 @@ local function CreateArtwork()
 	plate.mask1 = Artwork_Core:CreateBarBG(PopupMask, 9, Classic_ActionBarPlate)
 	plate.mask1:SetFrameStrata('MEDIUM')
 	plate.mask1:SetFrameLevel(50)
-	plate.mask1:SetPoint('BOTTOMRIGHT', plate.POP1, 'BOTTOMRIGHT')
+	plate.mask1:SetPoint('BOTTOMRIGHT', plate.POP1, 'BOTTOMRIGHT', -2, 0)
 
-	plate.mask2 = Artwork_Core:CreateBarBG(PopupMask, 10, Classic_ActionBarPlate)
-	plate.mask2.BG:SetTexture('Interface\\AddOns\\SpartanUI\\Themes\\Classic\\Images\\bar-popup2')
+	plate.mask2 = Artwork_Core:CreateBarBG(PopupMask2, 10, Classic_ActionBarPlate)
 	plate.mask2:SetFrameStrata('MEDIUM')
 	plate.mask2:SetFrameLevel(50)
-	plate.mask2.BG:ClearAllPoints()
-	plate.mask2.BG:SetPoint('BOTTOMLEFT', plate.mask2)
-	plate.mask2:SetPoint('BOTTOMLEFT', plate.POP2, 'BOTTOMLEFT')
+	plate.mask2:SetPoint('BOTTOMLEFT', plate.POP2, 'BOTTOMLEFT', -1.5, 0)
 
 	-- Position Actionbar BG's
 	plate.BG1:SetPoint('BOTTOMRIGHT', plate, 'BOTTOM', -100, 70)
@@ -191,9 +196,9 @@ local function UnitFrameCallback(self, unit)
 		local base_ring1 = 'Interface\\AddOns\\SpartanUI\\Themes\\Classic\\Images\\ring1.png' -- Player and Target
 		local circle = 'Interface\\AddOns\\SpartanUI\\images\\circle'
 		local ring = CreateFrame('Frame', nil, self)
-		ring:SetFrameStrata('BACKGROUND')
+		ring:SetFrameStrata('MEDIUM')
 		ring:SetAllPoints(self.Portrait)
-		ring:SetFrameLevel(4)
+		ring:SetFrameLevel(55)
 
 		ring.bg = ring:CreateTexture(nil, 'BACKGROUND')
 		ring.bg:SetParent(ring)
@@ -222,6 +227,32 @@ local function UnitFrameCallback(self, unit)
 		self.Portrait:SetPoint('BOTTOMRIGHT', self, 'BOTTOMLEFT', -10, 0)
 
 		self.Art_Classic.bg:SetPoint('CENTER', self.Art_Classic, 'CENTER', -13, -2)
+
+		-- Configure RareElite for texture mode around portrait (Classic style)
+		if self.RareElite then
+			self.RareElite.mode = 'texture'
+			self.RareElite.alpha = 1 -- Full opacity for texture mode
+
+			-- Position the container frame above the ring
+			if self.RareElite.container then
+				self.RareElite.container:SetParent(self.Art_Classic)
+				self.RareElite.container:SetFrameLevel(self.Art_Classic:GetFrameLevel() + 2)
+				self.RareElite.container:SetAllPoints(self.Art_Classic)
+			end
+
+			self.RareElite:SetDrawLayer('ARTWORK')
+			self.RareElite:SetSize(150, 150)
+			self.RareElite:ClearAllPoints()
+			self.RareElite:SetPoint('CENTER', self.Art_Classic, 'CENTER', -18, -2)
+			-- Texture faces right by default, no flip needed for target on right side
+			self.RareElite:SetTexCoord(0, 1, 0, 1)
+			self.RareElite.texCoordSet = true
+			-- Set the texture explicitly
+			self.RareElite:SetTexture('Interface\\AddOns\\SpartanUI\\Images\\elite_rare')
+			if self.RareElite.ForceUpdate then
+				self.RareElite:ForceUpdate()
+			end
+		end
 	end
 end
 
