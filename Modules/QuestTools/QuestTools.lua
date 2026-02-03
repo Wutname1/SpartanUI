@@ -267,7 +267,7 @@ function module:OnEnable()
 		lastEvent = event
 
 		local QuestID = GetQuestID()
-		if QuestID ~= 0 then
+		if QuestID ~= 0 and C_CampaignInfo then
 			local CampaignId = C_CampaignInfo.GetCampaignID(QuestID)
 			debug(C_CampaignInfo.GetCurrentChapterID(CampaignId))
 			debug(C_CampaignInfo.IsCampaignQuest(QuestID))
