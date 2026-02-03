@@ -25,6 +25,7 @@ Supported class powers:
   - Mage    - Arcane Charges
   - Monk    - Chi Orbs
   - Paladin - Holy Power
+  - Priest  - Shadow Orbs (MoP)
   - Warlock - Soul Shards
 
 ## Examples
@@ -49,15 +50,20 @@ local oUF = ns.oUF
 
 local _, PlayerClass = UnitClass('player')
 
+-- Use C_SpecializationInfo.GetSpecialization if available (MoP 5.5.0+ / Retail 11.2.0+)
+local GetPlayerSpec = C_SpecializationInfo and C_SpecializationInfo.GetSpecialization
+
 -- sourced from FrameXML/Constants.lua
 local SPEC_MAGE_ARCANE = _G.SPEC_MAGE_ARCANE or 1
 local SPEC_MONK_WINDWALKER = _G.SPEC_MONK_WINDWALKER or 3
+local SPEC_PRIEST_SHADOW = _G.SPEC_PRIEST_SHADOW or 3
 -- local SPEC_WARLOCK_DESTRUCTION = _G.SPEC_WARLOCK_DESTRUCTION or 3
 local SPELL_POWER_ENERGY = Enum.PowerType.Energy or 3
 local SPELL_POWER_COMBO_POINTS = Enum.PowerType.ComboPoints or 4
 local SPELL_POWER_SOUL_SHARDS = Enum.PowerType.SoulShards or 7
 local SPELL_POWER_HOLY_POWER = Enum.PowerType.HolyPower or 9
 local SPELL_POWER_CHI = Enum.PowerType.Chi or 12
+local SPELL_POWER_SHADOW_ORBS = Enum.PowerType.ShadowOrbs -- nil if not supported
 local SPELL_POWER_ARCANE_CHARGES = Enum.PowerType.ArcaneCharges or 16
 local SPELL_POWER_ESSENCE = Enum.PowerType.Essence or 19
 
@@ -183,11 +189,11 @@ local function Visibility(self, event, unit)
 	local element = self.ClassPower
 	local shouldEnable
 
-	if (oUF.isRetail or oUF.isCata) and UnitHasVehicleUI('player') then
-		shouldEnable = oUF.isCata and UnitPowerType('vehicle') == SPELL_POWER_COMBO_POINTS or oUF.isRetail and PlayerVehicleHasComboPoints()
+	if UnitHasVehicleUI and UnitHasVehicleUI('player') then
+		shouldEnable = PlayerVehicleHasComboPoints and PlayerVehicleHasComboPoints() or UnitPowerType('vehicle') == SPELL_POWER_COMBO_POINTS
 		unit = 'vehicle'
 	elseif ClassPowerID then
-		if not RequireSpec or oUF.isRetail and (RequireSpec == GetSpecialization()) then
+		if not RequireSpec or (GetPlayerSpec and RequireSpec == GetPlayerSpec()) then
 			-- use 'player' instead of unit because 'SPELLS_CHANGED' is a unitless event
 			if not RequirePower or RequirePower == UnitPowerType('player') then
 				if not RequireSpell or IsPlayerSpell(RequireSpell) then
@@ -267,7 +273,7 @@ do
 
 		self.ClassPower.__isEnabled = true
 
-		if (oUF.isRetail or oUF.isCata) and UnitHasVehicleUI('player') then
+		if UnitHasVehicleUI and UnitHasVehicleUI('player') then
 			Path(self, 'ClassPowerEnable', 'vehicle', 'COMBO_POINTS')
 		else
 			Path(self, 'ClassPowerEnable', 'player', ClassPowerType)
@@ -315,6 +321,10 @@ do
 		ClassPowerID = SPELL_POWER_ARCANE_CHARGES
 		ClassPowerType = 'ARCANE_CHARGES'
 		RequireSpec = SPEC_MAGE_ARCANE
+	elseif PlayerClass == 'PRIEST' and SPELL_POWER_SHADOW_ORBS then
+		ClassPowerID = SPELL_POWER_SHADOW_ORBS
+		ClassPowerType = 'SHADOW_ORBS'
+		RequireSpec = SPEC_PRIEST_SHADOW
 	elseif PlayerClass == 'EVOKER' then
 		ClassPowerID = SPELL_POWER_ESSENCE
 		ClassPowerType = 'ESSENCE'
@@ -328,7 +338,7 @@ local function Enable(self, unit)
 		element.__max = #element
 		element.ForceUpdate = ForceUpdate
 
-		if (oUF.isRetail or oUF.isCata) and (RequireSpec or RequireSpell) then
+		if GetPlayerSpec and (RequireSpec or RequireSpell) then
 			self:RegisterEvent('PLAYER_TALENT_UPDATE', VisibilityPath, true)
 		end
 
@@ -358,7 +368,7 @@ local function Disable(self)
 	if self.ClassPower then
 		ClassPowerDisable(self)
 
-		if oUF.isRetail or oUF.isCata then
+		if GetPlayerSpec then
 			self:UnregisterEvent('PLAYER_TALENT_UPDATE', VisibilityPath)
 		end
 
