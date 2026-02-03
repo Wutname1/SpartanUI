@@ -1199,6 +1199,18 @@ function module:SetupAddonButtons()
 		MinimapBackdrop:HookScript('OnEnter', showAllButtons)
 		MinimapBackdrop:HookScript('OnLeave', hideAllButtons)
 	end
+
+	-- Register for LibDBIcon callback to catch icons created after initial setup
+	local LDBIcon = LibStub and LibStub('LibDBIcon-1.0', true)
+	if LDBIcon then
+		LDBIcon.RegisterCallback(module, 'LibDBIcon_IconCreated', function(_, button, name)
+			if button and not button.fadeInAnim and not isFrameIgnored(button) then
+				setupButtonFading(button)
+				button:HookScript('OnEnter', showAllButtons)
+				button:HookScript('OnLeave', hideAllButtons)
+			end
+		end)
+	end
 end
 
 function module:UpdateAddonButtons()
