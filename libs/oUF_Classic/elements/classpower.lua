@@ -109,7 +109,12 @@ local function UpdateColor(element, powerType)
 end
 
 local function Update(self, event, unit, powerType)
-	if not (unit and (UnitIsUnit(unit, 'player') and (not powerType or powerType == ClassPowerType) or unit == 'vehicle' and powerType == 'COMBO_POINTS')) then
+	-- UNIT_AURA doesn't pass powerType, so we allow it through for Shadow Orbs
+	if event == 'UNIT_AURA' then
+		if not (unit and UnitIsUnit(unit, 'player')) then
+			return
+		end
+	elseif not (unit and (UnitIsUnit(unit, 'player') and (not powerType or powerType == ClassPowerType) or unit == 'vehicle' and powerType == 'COMBO_POINTS')) then
 		return
 	end
 
@@ -293,6 +298,11 @@ do
 			self:RegisterEvent('UNIT_POWER_POINT_CHARGE', Path)
 		end
 
+		-- Shadow Orbs are lost when dropping Shadowform, so we need to listen for aura changes
+		if ClassPowerType == 'SHADOW_ORBS' then
+			self:RegisterEvent('UNIT_AURA', Path)
+		end
+
 		self.ClassPower.__isEnabled = true
 
 		if UnitHasVehicleUI and UnitHasVehicleUI('player') then
@@ -310,6 +320,11 @@ do
 			self:UnregisterEvent('UNIT_POWER_POINT_CHARGE', Path)
 		else
 			self:UnregisterEvent('PLAYER_TARGET_CHANGED', VisibilityPath)
+		end
+
+		-- Unregister UNIT_AURA if it was registered for Shadow Orbs
+		if ClassPowerType == 'SHADOW_ORBS' then
+			self:UnregisterEvent('UNIT_AURA', Path)
 		end
 
 		local element = self.ClassPower
