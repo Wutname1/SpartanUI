@@ -566,11 +566,11 @@ local function OnEnable()
 end
 
 function SUI:BT4RefreshConfig()
-	if BartenderChangesActive then
+	if BartenderChangesActive or not SUI.DB.SetupDone then
 		return
 	end
 
-	print('Bartender4 Profile changed to: ' .. Bartender4.db:GetCurrentProfile())
+	SUI:Print('Bartender4 Profile changed to: ' .. Bartender4.db:GetCurrentProfile())
 end
 
 module:AddBarSystem('Bartender4', OnInitialize, OnEnable, nil, Unlock, RefreshConfig)
