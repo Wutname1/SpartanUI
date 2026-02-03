@@ -1205,7 +1205,9 @@
     "EditModeSystemMixin",
     "EditModeSystemSettingsDialog",
     "CreateObjectPool",
-    "CompactUnitFrame_UpdateAuras"
+    "CompactUnitFrame_UpdateAuras",
+    "BossBanner",
+    "EventToastManagerFrame"
   ],
   "Lua.workspace.ignoreDir": [".vscode", "libs/*"],
   "Lua.diagnostics.enable": true,

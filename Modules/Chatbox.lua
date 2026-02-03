@@ -871,7 +871,10 @@ function module:SetupChatboxes()
 		local ChatFrame = _G[ChatFrameName]
 		local ChatFrameEdit = _G[ChatFrameName .. 'EditBox']
 
-		if IsAltKeyDown() then
+		if IsShiftKeyDown() and IsControlKeyDown() then
+			-- Shift+Control+Click to clear the chat tab
+			ChatFrame:Clear()
+		elseif IsAltKeyDown() then
 			local text = ''
 			-- Fix special pipe methods e.g. 5 |4hour:hours; Example: copying /played text
 			for i = 1, ChatFrame:GetNumMessages() do
@@ -907,6 +910,7 @@ function module:SetupChatboxes()
 		GameTooltip:SetOwner(frame, 'ANCHOR_TOP')
 		GameTooltip:AddLine('Alt+Click to copy', 0.8, 0, 0)
 		GameTooltip:AddLine('Shift+Click to toggle', 0, 0.1, 1)
+		GameTooltip:AddLine('Shift+Ctrl+Click to clear', 0.8, 0.4, 0)
 		GameTooltip:Show()
 	end
 	local TabHintLeave = function(frame)
