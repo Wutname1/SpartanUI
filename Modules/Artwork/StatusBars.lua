@@ -74,6 +74,20 @@ local function GetDBDefaults()
 					enabled = true,
 					showTooltip = true,
 				},
+				Left = {
+					ToolTip = 'hover',
+					text = Enums.TextDisplayMode.OnMouseOver,
+					alpha = 1,
+					enabled = true,
+					showTooltip = true,
+				},
+				Right = {
+					ToolTip = 'hover',
+					text = Enums.TextDisplayMode.OnMouseOver,
+					alpha = 1,
+					enabled = true,
+					showTooltip = true,
+				},
 			},
 		}
 	else
@@ -524,6 +538,11 @@ function module:CreateBarManager_Retail()
 	end
 
 	barManager.UpdateBarsShown = function(self)
+		-- Guard: ensure DB and DB.bars exist
+		if not DB or not DB.bars then
+			return
+		end
+
 		local function onFinishedAnimating(barContainer)
 			barContainer:UnsubscribeFromOnFinishedAnimating(self)
 			self:UpdateBarsShown()
@@ -540,7 +559,7 @@ function module:CreateBarManager_Retail()
 		-- Check if containers are enabled and hide disabled ones
 		for i, barContainer in ipairs(self.barContainers) do
 			local containerKey = i == 1 and 'Left' or 'Right'
-			if DB and DB.bars and not DB.bars[containerKey].enabled then
+			if DB.bars[containerKey] and not DB.bars[containerKey].enabled then
 				barContainer:SetShownBar(Enums.Bars.None)
 			end
 		end
@@ -562,7 +581,7 @@ function module:CreateBarManager_Retail()
 		local enabledContainers = {}
 		for i, barContainer in ipairs(self.barContainers) do
 			local containerKey = i == 1 and 'Left' or 'Right'
-			if containerKey ~= nil and DB.bars[containerKey] ~= nil and DB.bars[containerKey].enabled then
+			if DB.bars[containerKey] and DB.bars[containerKey].enabled then
 				table.insert(enabledContainers, { container = barContainer, index = i })
 			end
 		end
@@ -579,11 +598,11 @@ function module:CreateBarManager_Retail()
 			local newBarIndex = Enums.Bars.None
 
 			-- Only assign bars to enabled containers
-			if DB.bars[containerKey].enabled then
+			if DB.bars[containerKey] and DB.bars[containerKey].enabled then
 				local enabledIndex = 0
 				for j = 1, i do
 					local checkKey = j == 1 and 'Left' or 'Right'
-					if DB.bars[checkKey].enabled then
+					if DB.bars[checkKey] and DB.bars[checkKey].enabled then
 						enabledIndex = enabledIndex + 1
 					end
 				end
