@@ -78,6 +78,7 @@ local BaseSettings = {
 		zoomButtons = {
 			enabled = false,
 			scale = 1,
+			position = 'BOTTOMRIGHT,Minimap,BOTTOMRIGHT,-5,5',
 		},
 		-- Clock
 		clock = {
@@ -169,6 +170,7 @@ local BaseSettingsClassic = {
 	zoomButtons = {
 		enabled = false,
 		scale = 1,
+		position = 'BOTTOMRIGHT,Minimap,BOTTOMRIGHT,-5,5',
 	},
 	clock = {
 		enabled = false,
@@ -716,6 +718,14 @@ function module:SetupZoomButtons()
 		zoomOut:Show()
 		zoomIn:SetScale(zoomSettings.scale or 1)
 		zoomOut:SetScale(zoomSettings.scale or 1)
+
+		-- Position zoom buttons if position is specified
+		if zoomSettings.position then
+			module:PositionItem(zoomIn, zoomSettings.position)
+			-- Position zoom out relative to zoom in
+			zoomOut:ClearAllPoints()
+			zoomOut:SetPoint('TOP', zoomIn, 'BOTTOM', 0, -2)
+		end
 	else
 		zoomIn:Hide()
 		zoomOut:Hide()
