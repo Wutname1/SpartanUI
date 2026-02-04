@@ -40,6 +40,6 @@
 	<Script file="SummonIndicator.lua"/>
 	<Script file="TargetIndicator.lua"/>
 	<Script file="ThreatIndicator.lua"/>
-	<Script file="Totems.lua"/>
+	<!-- <Script file="Totems.lua"/> -->
 	<Script file="WidgetXPBar.lua"/>
 </Ui>
