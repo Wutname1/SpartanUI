@@ -41,12 +41,13 @@ local function SetupPage()
 			local count = 0
 			local row = 1
 			local Themes = {}
+			local width = 120
 			for i, v in pairs({ 'Classic', 'War', 'Fel', 'Digital', 'Arcane', 'Minimal', 'Tribal', 'Transparent' }) do
 				-- Create preview button
-				local control = CreateFrame('Button', nil, SUI_Win.Artwork)
-				control:SetSize(120, 60)
+				local control = CreateFrame('Button', 'SETUPART_' .. v, SUI_Win.Artwork)
+				control:SetSize(width, 60)
 				control:SetNormalTexture('interface\\addons\\SpartanUI\\images\\setup\\Style_' .. v)
-				control:SetHighlightTexture('Interface\\Buttons\\UI-Common-MouseHilight', 'ADD')
+				control:SetHighlightAtlas('UI-CharacterCreate-LargeButton-Blue-Highlight', 'ADD')
 				control:SetScript('OnClick', RadioButtons)
 
 				-- Create radio button below preview
@@ -63,7 +64,7 @@ local function SetupPage()
 				count = count + 1
 				if i == 1 then
 					-- Position the 1st row
-					control:SetPoint('TOP', SUI_Win, 'TOP', 0, -80)
+					control:SetPoint('TOP', SUI_Win, 'TOP', width * -1, -80)
 				elseif count == 1 then
 					control:SetPoint('TOP', Themes[i - 3], 'BOTTOM', 0, -30)
 				elseif count == 2 then
@@ -77,8 +78,8 @@ local function SetupPage()
 			end
 
 			local Popular = CreateFrame('Frame', nil, SUI_Win.Artwork, BackdropTemplateMixin and 'BackdropTemplate')
-			Popular:SetPoint('TOPLEFT', Themes[2], 'TOPLEFT', -5, 5)
-			Popular:SetPoint('BOTTOMRIGHT', Themes[4].radio, 'BOTTOMRIGHT', 5, -2)
+			Popular:SetPoint('TOPLEFT', 'SETUPART_Classic', 'TOPLEFT', -5, 5)
+			Popular:SetPoint('BOTTOMRIGHT', 'SETUPART_War', 'BOTTOMRIGHT', 5, -25)
 
 			Popular:SetBackdrop({
 				bgFile = 'Interface\\AddOns\\SpartanUI\\images\\blank.tga',
