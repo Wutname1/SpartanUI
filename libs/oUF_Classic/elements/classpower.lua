@@ -205,6 +205,7 @@ local function Visibility(self, event, unit)
 		if specCheck then
 			-- use 'player' instead of unit because 'SPELLS_CHANGED' is a unitless event
 			if not RequirePower or RequirePower == UnitPowerType('player') then
+				local IsPlayerSpell = C_SpellBook and C_SpellBook.IsPlayerSpell or IsPlayerSpell
 				if not RequireSpell or IsPlayerSpell(RequireSpell) then
 					self:UnregisterEvent('SPELLS_CHANGED', Visibility)
 					shouldEnable = true

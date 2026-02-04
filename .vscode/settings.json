@@ -1207,7 +1207,12 @@
     "CreateObjectPool",
     "CompactUnitFrame_UpdateAuras",
     "BossBanner",
-    "EventToastManagerFrame"
+    "EventToastManagerFrame",
+    "MERCHANT_ITEMS_PER_PAGE",
+    "StackSplitFrame",
+    "StaticPopup_FindVisible",
+    "LootAlertSystem",
+    "MerchantFrame"
   ],
   "Lua.workspace.ignoreDir": [".vscode", "libs/*"],
   "Lua.diagnostics.enable": true,
