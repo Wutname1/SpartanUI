@@ -735,8 +735,10 @@ function Options:AddAuraFilters(frameName, OptionSet, set, get)
 end
 
 ---@param frameName UnitFrameName
+---@param frameName UnitFrameName
 ---@param ElementOptSet AceConfig.OptionsTable
-function Options:TextBasicDisplay(frameName, ElementOptSet)
+---@param elementName SUI.UF.Elements.list
+function Options:TextBasicDisplay(frameName, ElementOptSet, elementName)
 	ElementOptSet.args.Text = {
 		name = '',
 		type = 'group',
@@ -787,6 +789,56 @@ function Options:TextBasicDisplay(frameName, ElementOptSet)
 			},
 		},
 	}
+
+	-- Add text color options if elementName is provided
+	if elementName then
+		ElementOptSet.args.TextColor = {
+			name = L['Text Color'],
+			type = 'group',
+			inline = true,
+			order = 11,
+			get = function(info)
+				local dbData = UF.CurrentSettings[frameName].elements[elementName].textColor[info[#info]]
+				if info.type == 'color' then
+					return unpack(dbData, 1, 4)
+				else
+					return dbData
+				end
+			end,
+			set = function(info, val, ...)
+				if info.type == 'color' then
+					--Update memory
+					UF.CurrentSettings[frameName].elements[elementName].textColor[info[#info]] = { val, ... }
+					--Update the DB
+					UF.DB.UserSettings[UF.DB.Style][frameName].elements[elementName].textColor[info[#info]] = { val, ... }
+				else
+					--Update memory
+					UF.CurrentSettings[frameName].elements[elementName].textColor[info[#info]] = val
+					--Update the DB
+					UF.DB.UserSettings[UF.DB.Style][frameName].elements[elementName].textColor[info[#info]] = val
+				end
+				--Update the screen
+				UF.Unit[frameName]:UpdateAll()
+			end,
+			args = {
+				useCustomColor = {
+					name = L['Use custom color'],
+					desc = L['Override tag-based coloring with a custom color'],
+					type = 'toggle',
+					order = 1,
+				},
+				color = {
+					name = L['Color'],
+					type = 'color',
+					order = 2,
+					hasAlpha = false,
+					disabled = function()
+						return not UF.CurrentSettings[frameName].elements[elementName].textColor.useCustomColor
+					end,
+				},
+			},
+		}
+	end
 end
 
 ---@param frameName UnitFrameName
