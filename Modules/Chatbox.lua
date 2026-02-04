@@ -4,6 +4,7 @@ local L = SUI.L
 ---@class SUI.Module.Chatbox : SUI.Module, AceHook-3.0
 local module = SUI:NewModule('Chatbox', 'AceHook-3.0')
 module.description = 'Lightweight quality of life chat improvements'
+module.logger = {}
 ----------------------------------------------------------------------------------------------------
 local popup = CreateFrame('Frame', nil, UIParent)
 local linkTypes = {
@@ -316,6 +317,8 @@ function module:OnInitialize()
 	module.Database = SUI.SpartanUIDB:RegisterNamespace('Chatbox', { profile = defaults })
 	module.DB = module.Database.profile ---@type SUI.Chat.DB
 
+	module.logger = SUI.logger:RegisterCategory('Chatbox')
+
 	if not SUI.CharDB.ChatHistory then
 		SUI.CharDB.ChatHistory = {}
 	end
@@ -423,6 +426,123 @@ function module:OnEnable()
 
 	-- Apply new convenience settings
 	module:ApplyChatSettings()
+
+	-- Hook chat frame Clear() to also clear SUI's chat history
+	if not module.clearHookApplied then
+		module.clearHookApplied = true
+		for i = 1, NUM_CHAT_WINDOWS do
+			local chatFrame = _G['ChatFrame' .. i]
+			if chatFrame and chatFrame.Clear then
+				hooksecurefunc(chatFrame, 'Clear', function()
+					if module.DB and module.DB.chatLog and module.DB.chatLog.history then
+						wipe(module.DB.chatLog.history)
+						if module.logger then
+							module.logger.debug('Chat frame cleared, wiped SUI chat log history')
+						end
+					end
+				end)
+			end
+		end
+	end
+
+	-- Debug timer to check chat frame state
+	if module.logger then
+		C_Timer.After(3, function()
+			local log = module.logger
+			log.debug('=== Chat Frame Debug (3 sec after enable) ===')
+			log.debug('ChatFrame1.isDocked: ' .. tostring(ChatFrame1.isDocked))
+			log.debug('ChatFrame1.buttonFrame exists: ' .. tostring(ChatFrame1.buttonFrame ~= nil))
+			if ChatFrame1.buttonFrame then
+				log.debug('ChatFrame1.buttonFrame:IsShown(): ' .. tostring(ChatFrame1.buttonFrame:IsShown()))
+				log.debug('ChatFrame1.buttonFrame:IsVisible(): ' .. tostring(ChatFrame1.buttonFrame:IsVisible()))
+				log.debug('ChatFrame1.buttonFrame:GetAlpha(): ' .. tostring(ChatFrame1.buttonFrame:GetAlpha()))
+			end
+			log.debug('ChatFrame1ButtonFrame exists: ' .. tostring(ChatFrame1ButtonFrame ~= nil))
+			if ChatFrame1ButtonFrame then
+				log.debug('ChatFrame1ButtonFrame:IsShown(): ' .. tostring(ChatFrame1ButtonFrame:IsShown()))
+				log.debug('ChatFrame1ButtonFrame:IsVisible(): ' .. tostring(ChatFrame1ButtonFrame:IsVisible()))
+				log.debug('ChatFrame1ButtonFrame:GetAlpha(): ' .. tostring(ChatFrame1ButtonFrame:GetAlpha()))
+				log.debug('ChatFrame1ButtonFrame children:')
+				for i, child in ipairs({ ChatFrame1ButtonFrame:GetChildren() }) do
+					local name = child:GetName() or child:GetObjectType()
+					local shown = child:IsShown()
+					local visible = child:IsVisible()
+					log.debug('  ' .. i .. ': ' .. name .. ' shown=' .. tostring(shown) .. ' visible=' .. tostring(visible))
+				end
+			end
+			log.debug('ChatFrameMenuButton exists: ' .. tostring(ChatFrameMenuButton ~= nil))
+			if ChatFrameMenuButton then
+				log.debug('ChatFrameMenuButton:IsShown(): ' .. tostring(ChatFrameMenuButton:IsShown()))
+				log.debug('ChatFrameMenuButton:IsVisible(): ' .. tostring(ChatFrameMenuButton:IsVisible()))
+				log.debug('ChatFrameMenuButton:GetParent(): ' .. tostring(ChatFrameMenuButton:GetParent() and ChatFrameMenuButton:GetParent():GetName()))
+				log.debug('ChatFrameMenuButton:GetAlpha(): ' .. tostring(ChatFrameMenuButton:GetAlpha()))
+				local point, relativeTo, relativePoint, x, y = ChatFrameMenuButton:GetPoint(1)
+				log.debug(
+					'ChatFrameMenuButton position: '
+						.. tostring(point)
+						.. ' '
+						.. tostring(relativeTo and relativeTo:GetName())
+						.. ' '
+						.. tostring(relativePoint)
+						.. ' x='
+						.. tostring(x)
+						.. ' y='
+						.. tostring(y)
+				)
+				local w, h = ChatFrameMenuButton:GetSize()
+				log.debug('ChatFrameMenuButton size: ' .. tostring(w) .. 'x' .. tostring(h))
+			end
+			log.debug('ChatFrameChannelButton exists: ' .. tostring(ChatFrameChannelButton ~= nil))
+			if ChatFrameChannelButton then
+				log.debug('ChatFrameChannelButton:IsShown(): ' .. tostring(ChatFrameChannelButton:IsShown()))
+				log.debug('ChatFrameChannelButton:IsVisible(): ' .. tostring(ChatFrameChannelButton:IsVisible()))
+				log.debug('ChatFrameChannelButton:GetAlpha(): ' .. tostring(ChatFrameChannelButton:GetAlpha()))
+			end
+			log.debug('GeneralDockManager exists: ' .. tostring(GeneralDockManager ~= nil))
+			if GeneralDockManager then
+				log.debug('GeneralDockManager:IsShown(): ' .. tostring(GeneralDockManager:IsShown()))
+				log.debug('GeneralDockManager:IsVisible(): ' .. tostring(GeneralDockManager:IsVisible()))
+				local point, relativeTo, relativePoint, x, y = GeneralDockManager:GetPoint(1)
+				log.debug(
+					'GeneralDockManager position: '
+						.. tostring(point)
+						.. ' '
+						.. tostring(relativeTo and relativeTo:GetName())
+						.. ' '
+						.. tostring(relativePoint)
+						.. ' x='
+						.. tostring(x)
+						.. ' y='
+						.. tostring(y)
+				)
+			end
+			if ChatFrameChannelButton then
+				local point, relativeTo, relativePoint, x, y = ChatFrameChannelButton:GetPoint(1)
+				log.debug(
+					'ChatFrameChannelButton position: '
+						.. tostring(point)
+						.. ' '
+						.. tostring(relativeTo and relativeTo:GetName())
+						.. ' '
+						.. tostring(relativePoint)
+						.. ' x='
+						.. tostring(x)
+						.. ' y='
+						.. tostring(y)
+				)
+			end
+			-- Check screen position
+			if ChatFrameMenuButton then
+				local left, bottom, width, height = ChatFrameMenuButton:GetRect()
+				log.debug('ChatFrameMenuButton screen rect: left=' .. tostring(left) .. ' bottom=' .. tostring(bottom) .. ' w=' .. tostring(width) .. ' h=' .. tostring(height))
+			end
+			if ChatFrameChannelButton then
+				local left, bottom, width, height = ChatFrameChannelButton:GetRect()
+				log.debug('ChatFrameChannelButton screen rect: left=' .. tostring(left) .. ' bottom=' .. tostring(bottom) .. ' w=' .. tostring(width) .. ' h=' .. tostring(height))
+			end
+			log.debug('=== End Debug ===')
+		end)
+	end
 
 	-- Setup Player level monitor
 	module.PLAYER_TARGET_CHANGED = function()
@@ -677,9 +797,18 @@ function module:ApplyChatSettings()
 end
 
 function module:ApplyHideChatButtons()
-	-- Hide/show the chat frame menu button and voice channel button
+	local log = module.logger
+	if log then
+		log.debug('ApplyHideChatButtons called, hideChatButtons=' .. tostring(module.DB.hideChatButtons))
+	end
+
+	-- Hide/show the chat frame menu button and voice channel button (Retail)
 	local ChatFrameMenuBtn = _G['ChatFrameMenuButton']
 	local VoiceChannelButton = _G['ChatFrameChannelButton']
+
+	if log then
+		log.debug('ChatFrameMenuButton=' .. tostring(ChatFrameMenuBtn ~= nil) .. ', ChatFrameChannelButton=' .. tostring(VoiceChannelButton ~= nil))
+	end
 
 	if module.DB.hideChatButtons then
 		if ChatFrameMenuBtn then
@@ -708,6 +837,73 @@ function module:ApplyHideChatButtons()
 			VoiceChannelButton:Show()
 		end
 	end
+
+	-- Hide/show the buttonFrame for each chat frame (Classic/TBC/Wrath/Cata)
+	-- The buttonFrame contains scroll buttons (up, down, bottom) and is per-chatframe
+	local buttonFrameCount = 0
+	for i = 1, NUM_CHAT_WINDOWS do
+		local ChatFrame = _G['ChatFrame' .. i]
+		if ChatFrame and ChatFrame.buttonFrame then
+			buttonFrameCount = buttonFrameCount + 1
+			if module.DB.hideChatButtons then
+				ChatFrame.buttonFrame:SetAlpha(0)
+				ChatFrame.buttonFrame:EnableMouse(false)
+			else
+				ChatFrame.buttonFrame:SetAlpha(1)
+				ChatFrame.buttonFrame:EnableMouse(true)
+			end
+		end
+	end
+	if log then
+		log.debug('Found ' .. buttonFrameCount .. ' buttonFrames out of ' .. NUM_CHAT_WINDOWS .. ' chat windows')
+	end
+
+	-- Hook FCF_FadeInChatFrame and FCF_FadeOutChatFrame to prevent buttonFrame from being shown
+	-- These functions control the buttonFrame alpha on mouse hover
+	if not module.chatButtonHooksApplied then
+		module.chatButtonHooksApplied = true
+		if log then
+			log.debug('Applying chat button hooks')
+		end
+
+		if FCF_FadeInChatFrame then
+			if log then
+				log.debug('Hooking FCF_FadeInChatFrame')
+			end
+			hooksecurefunc('FCF_FadeInChatFrame', function(chatFrame)
+				if module.DB.hideChatButtons and chatFrame and chatFrame.buttonFrame then
+					if log then
+						log.debug('FCF_FadeInChatFrame hook fired, hiding buttonFrame')
+					end
+					chatFrame.buttonFrame:SetAlpha(0)
+					chatFrame.buttonFrame:EnableMouse(false)
+				end
+			end)
+		else
+			if log then
+				log.warn('FCF_FadeInChatFrame not found')
+			end
+		end
+
+		if FCF_FadeOutChatFrame then
+			if log then
+				log.debug('Hooking FCF_FadeOutChatFrame')
+			end
+			hooksecurefunc('FCF_FadeOutChatFrame', function(chatFrame)
+				if module.DB.hideChatButtons and chatFrame and chatFrame.buttonFrame then
+					if log then
+						log.debug('FCF_FadeOutChatFrame hook fired, hiding buttonFrame')
+					end
+					chatFrame.buttonFrame:SetAlpha(0)
+					chatFrame.buttonFrame:EnableMouse(false)
+				end
+			end)
+		else
+			if log then
+				log.warn('FCF_FadeOutChatFrame not found')
+			end
+		end
+	end
 end
 
 function module:ApplyHideSocialButton()
@@ -731,15 +927,106 @@ function module:ApplyHideSocialButton()
 end
 
 function module:ApplyDisableChatFade()
+	local log = module.logger
+	if log then
+		log.debug('ApplyDisableChatFade called, disableChatFade=' .. tostring(module.DB.disableChatFade))
+	end
+
 	-- Enable/disable chat fade for all chat frames
-	for i = 1, NUM_CHAT_WINDOWS do
-		local ChatFrame = _G['ChatFrame' .. i]
-		if ChatFrame then
-			if module.DB.disableChatFade then
-				ChatFrame:SetFading(false)
-			else
-				ChatFrame:SetFading(true)
+	local function SetAllChatFading(shouldFade)
+		local count = 0
+		-- Use CHAT_FRAMES global for more reliable iteration (includes temporary frames)
+		if CHAT_FRAMES then
+			for _, frameName in ipairs(CHAT_FRAMES) do
+				local ChatFrame = _G[frameName]
+				if ChatFrame and ChatFrame.SetFading then
+					ChatFrame:SetFading(shouldFade)
+					count = count + 1
+				end
 			end
+		end
+		-- Also iterate numbered frames as fallback/additional coverage
+		for i = 1, 50 do
+			local ChatFrame = _G['ChatFrame' .. i]
+			if ChatFrame and ChatFrame.SetFading then
+				ChatFrame:SetFading(shouldFade)
+				count = count + 1
+			end
+		end
+		if log then
+			log.debug('SetAllChatFading(' .. tostring(shouldFade) .. ') applied to ' .. count .. ' frames')
+		end
+
+		-- Verify the setting was applied
+		if log and ChatFrame1 then
+			local currentFading = ChatFrame1:GetFading()
+			log.debug('ChatFrame1:GetFading() = ' .. tostring(currentFading) .. ' (expected ' .. tostring(shouldFade) .. ')')
+		end
+	end
+
+	-- Apply the setting now
+	SetAllChatFading(not module.DB.disableChatFade)
+
+	-- Hook various functions that might reset the fading state
+	if not module.chatFadeHooksApplied then
+		module.chatFadeHooksApplied = true
+		if log then
+			log.debug('Applying chat fade hooks')
+		end
+
+		-- Hook temporary chat windows
+		if FCF_OpenTemporaryWindow then
+			if log then
+				log.debug('Hooking FCF_OpenTemporaryWindow')
+			end
+			hooksecurefunc('FCF_OpenTemporaryWindow', function()
+				if module.DB.disableChatFade then
+					local cf = FCF_GetCurrentChatFrame and FCF_GetCurrentChatFrame()
+					if cf and cf.SetFading then
+						cf:SetFading(false)
+						if log then
+							log.debug('FCF_OpenTemporaryWindow hook: disabled fading on temp window')
+						end
+					end
+				end
+			end)
+		end
+
+		-- Hook FloatingChatFrame_Update which is called on UPDATE_CHAT_WINDOWS
+		if FloatingChatFrame_Update then
+			if log then
+				log.debug('Hooking FloatingChatFrame_Update')
+			end
+			hooksecurefunc('FloatingChatFrame_Update', function(id)
+				if module.DB.disableChatFade then
+					local ChatFrame = _G['ChatFrame' .. id]
+					if ChatFrame and ChatFrame.SetFading then
+						ChatFrame:SetFading(false)
+						if log then
+							log.debug('FloatingChatFrame_Update hook: disabled fading on ChatFrame' .. id)
+						end
+					end
+				end
+			end)
+		else
+			if log then
+				log.warn('FloatingChatFrame_Update not found')
+			end
+		end
+
+		-- Hook FCF_CopyChatSettings which copies settings between frames
+		if FCF_CopyChatSettings then
+			if log then
+				log.debug('Hooking FCF_CopyChatSettings')
+			end
+			hooksecurefunc('FCF_CopyChatSettings', function(copyTo)
+				if module.DB.disableChatFade and copyTo and copyTo.SetFading then
+					copyTo:SetFading(false)
+					if log then
+						log.debug('FCF_CopyChatSettings hook: disabled fading')
+					end
+				end
+			end)
 		end
 	end
 end
@@ -1007,24 +1294,47 @@ function module:SetupChatboxes()
 	hooksecurefunc(BNToastFrame, 'SetPoint', fixbnetpos)
 
 	local VoiceChannelButton = _G['ChatFrameChannelButton']
-	VoiceChannelButton:ClearAllPoints()
-	VoiceChannelButton:SetParent(GDM)
-	VoiceChannelButton:SetPoint('RIGHT', QJTB, 'LEFT', -1, 0)
-	StripTextures(VoiceChannelButton)
-	VoiceChannelButton:SetSize(18, 18)
-	VoiceChannelButton.Icon:SetTexture(icon)
-	VoiceChannelButton.Icon:SetTexCoord(0.1484375, 0.359375, 0.1484375, 0.359375)
-	VoiceChannelButton.Icon:SetScale(0.8)
+	if VoiceChannelButton then
+		VoiceChannelButton:ClearAllPoints()
+		VoiceChannelButton:SetParent(GDM)
+		-- Position relative to QJTB if it exists, otherwise to the right edge of GDM
+		if QJTB then
+			VoiceChannelButton:SetPoint('RIGHT', QJTB, 'LEFT', -1, 0)
+		else
+			VoiceChannelButton:SetPoint('TOPRIGHT', GDM, 'TOPRIGHT', -2, -3)
+		end
+		StripTextures(VoiceChannelButton)
+		VoiceChannelButton:SetSize(18, 18)
+		-- Create Icon if it doesn't exist (Classic/TBC)
+		if not VoiceChannelButton.Icon then
+			VoiceChannelButton.Icon = VoiceChannelButton:CreateTexture(nil, 'ARTWORK')
+			VoiceChannelButton.Icon:SetAllPoints(VoiceChannelButton)
+		end
+		VoiceChannelButton.Icon:SetTexture(icon)
+		VoiceChannelButton.Icon:SetTexCoord(0.1484375, 0.359375, 0.1484375, 0.359375)
+		VoiceChannelButton.Icon:SetScale(0.8)
+	end
 
-	ChatFrameMenuButton:ClearAllPoints()
-	ChatFrameMenuButton:SetParent(GDM)
-	ChatFrameMenuButton:SetPoint('RIGHT', VoiceChannelButton, 'LEFT', -1, -2)
-	ChatFrameMenuButton:SetSize(18, 18)
-	StripTextures(ChatFrameMenuButton)
-	ChatFrameMenuButton.Icon = ChatFrameMenuButton:CreateTexture(nil, 'ARTWORK')
-	ChatFrameMenuButton.Icon:SetAllPoints(ChatFrameMenuButton)
-	ChatFrameMenuButton.Icon:SetTexture(icon)
-	ChatFrameMenuButton.Icon:SetTexCoord(0.6, 0.9, 0.6, 0.9)
+	if ChatFrameMenuButton then
+		ChatFrameMenuButton:ClearAllPoints()
+		ChatFrameMenuButton:SetParent(GDM)
+		-- Position relative to VoiceChannelButton if it exists, otherwise to GDM
+		if VoiceChannelButton then
+			ChatFrameMenuButton:SetPoint('RIGHT', VoiceChannelButton, 'LEFT', -1, -2)
+		elseif QJTB then
+			ChatFrameMenuButton:SetPoint('RIGHT', QJTB, 'LEFT', -1, 0)
+		else
+			ChatFrameMenuButton:SetPoint('TOPRIGHT', GDM, 'TOPRIGHT', -2, -3)
+		end
+		ChatFrameMenuButton:SetSize(18, 18)
+		StripTextures(ChatFrameMenuButton)
+		if not ChatFrameMenuButton.Icon then
+			ChatFrameMenuButton.Icon = ChatFrameMenuButton:CreateTexture(nil, 'ARTWORK')
+			ChatFrameMenuButton.Icon:SetAllPoints(ChatFrameMenuButton)
+		end
+		ChatFrameMenuButton.Icon:SetTexture(icon)
+		ChatFrameMenuButton.Icon:SetTexCoord(0.6, 0.9, 0.6, 0.9)
+	end
 
 	for i = 1, 10 do
 		local ChatFrameName = ('%s%d'):format('ChatFrame', i)

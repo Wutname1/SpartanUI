@@ -21,18 +21,10 @@ function module:OnInitialize()
 			normaldungeon = false,
 			loggingActive = false,
 			FirstLaunch = true,
-			debug = false,
 		},
 	}
 	module.Database = SUI.SpartanUIDB:RegisterNamespace('CombatLog', defaults)
 	module.DB = module.Database.profile
-
-	-- Migrate old settings
-	if SUI.DB.CombatLog then
-		print('Combat log DB Migration')
-		module.DB = SUI:MergeData(module.DB, SUI.DB.CombatLog, true)
-		SUI.DB.CombatLog = nil
-	end
 end
 
 local function setLogging(on, msg)
@@ -119,14 +111,6 @@ function module:announce(msg) end
 
 function module:LogCheck(event)
 	local _, type, difficulty, _, maxPlayers = GetInstanceInfo()
-	if module.DB.debug then
-		print('LogCheck')
-		print('event: ' .. event)
-		print('type: ' .. type)
-		print('difficulty: ' .. difficulty)
-		print('maxPlayers: ' .. maxPlayers)
-	end
-
 	if module.DB.alwayson then
 		setLogging(true, 'Always on')
 	elseif module.DB.raidmythic and type == 'raid' and difficulty == 16 then
@@ -191,11 +175,6 @@ function module:Options()
 				type = 'toggle',
 				width = 'double',
 				order = 5,
-			},
-			debug = {
-				name = L['Debug mode'],
-				type = 'toggle',
-				order = 500,
 			},
 			raid = {
 				name = L['Raid settings'],
