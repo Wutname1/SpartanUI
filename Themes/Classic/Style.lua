@@ -228,26 +228,17 @@ local function UnitFrameCallback(self, unit)
 
 		self.Art_Classic.bg:SetPoint('CENTER', self.Art_Classic, 'CENTER', -13, -2)
 
-		-- Configure RareElite for texture mode around portrait (Classic style)
+		-- Configure RareElite for dragon mode around portrait (Classic style)
 		if self.RareElite then
-			self.RareElite.mode = 'texture'
-			self.RareElite.alpha = 1 -- Full opacity for texture mode
-
-			-- Position the container frame above the ring
-			if self.RareElite.container then
-				self.RareElite.container:SetParent(self.Art_Classic)
-				self.RareElite.container:SetFrameLevel(self.Art_Classic:GetFrameLevel() + 2)
-				self.RareElite.container:SetAllPoints(self.Art_Classic)
-			end
+			self.RareElite.mode = 'dragon'
+			self.RareElite.alpha = 1
 
 			self.RareElite:SetDrawLayer('ARTWORK')
 			self.RareElite:SetSize(150, 150)
 			self.RareElite:ClearAllPoints()
 			self.RareElite:SetPoint('CENTER', self.Art_Classic, 'CENTER', -18, -2)
-			-- Texture faces right by default, no flip needed for target on right side
 			self.RareElite:SetTexCoord(0, 1, 0, 1)
 			self.RareElite.texCoordSet = true
-			-- Set the texture explicitly
 			self.RareElite:SetTexture('Interface\\AddOns\\SpartanUI\\Images\\elite_rare')
 			if self.RareElite.ForceUpdate then
 				self.RareElite:ForceUpdate()

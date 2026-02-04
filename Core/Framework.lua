@@ -463,6 +463,10 @@ local DBdefault = {
 								graphic = 'Classic',
 							},
 						},
+						RareElite = {
+							mode = 'dragon',
+							alpha = 1,
+						},
 						CombatIndicator = {
 							enabled = true,
 							position = {
@@ -559,6 +563,10 @@ local DBdefault = {
 								enabled = true,
 								graphic = 'Classic',
 							},
+						},
+						RareElite = {
+							mode = 'dragon',
+							alpha = 1,
 						},
 					},
 				},

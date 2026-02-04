@@ -3,20 +3,11 @@ local UF = SUI.UF
 ---@param frame table
 ---@param DB table
 local function Build(frame, DB)
-	-- Create a frame container so we can control strata/level for texture mode
-	local container = CreateFrame('Frame', nil, frame.SpartanArt)
-	container:SetFrameStrata('BACKGROUND')
-	container:SetFrameLevel(5)
-	container:SetAllPoints(frame.SpartanArt)
+	-- Create texture directly on SpartanArt (simplified from container approach)
+	frame.RareElite = frame.SpartanArt:CreateTexture(nil, 'BORDER')
+	frame.RareElite:SetTexture('Interface\\Addons\\SpartanUI\\images\\blank')
 
-	local texture = container:CreateTexture(nil, 'ARTWORK')
-	texture:SetTexture('Interface\\Addons\\SpartanUI\\images\\blank')
-
-	-- Store references
-	frame.RareElite = texture
-	frame.RareElite.container = container
-
-	-- Apply mode setting if available (for oUF plugin)
+	-- Apply mode from DB if set
 	if DB and DB.mode then
 		frame.RareElite.mode = DB.mode
 	end
@@ -34,8 +25,8 @@ local function Update(frame)
 	end
 
 	-- Update mode on the element for oUF plugin
-	element.mode = DB.mode or 'background'
-	element.alpha = DB.alpha or 0.4
+	element.mode = DB.mode or 'minimal'
+	element.alpha = DB.alpha or 0.3
 
 	-- Force update the oUF element
 	if element.ForceUpdate then
@@ -62,11 +53,11 @@ local function Options(unitName, OptionSet)
 		type = 'select',
 		order = 10,
 		values = {
-			['background'] = 'Background Overlay',
-			['texture'] = 'Dragon Texture (Classic)',
+			['minimal'] = 'Minimal (Color Overlay)',
+			['dragon'] = 'Dragon Texture',
 		},
 		get = function()
-			return DB.mode or 'background'
+			return DB.mode or 'minimal'
 		end,
 		set = function(_, val)
 			OptUpdate('mode', val)
@@ -77,8 +68,8 @@ end
 ---@type SUI.UF.Elements.Settings
 local Settings = {
 	enabled = true,
-	alpha = 0.4,
-	mode = 'background', -- 'background' or 'texture'
+	alpha = 0.3,
+	mode = 'minimal', -- 'minimal' or 'dragon'
 	points = {
 		['1'] = {
 			anchor = 'TOPLEFT',

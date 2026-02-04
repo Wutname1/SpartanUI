@@ -2,10 +2,10 @@
 local _, ns = ...
 local oUF = ns.oUF or oUF
 
--- Rare / Elite dragon graphic as an oUF element
--- Displays elite/rare indicator - supports two modes:
--- Mode 'background': Colored background overlay (default)
--- Mode 'texture': Dragon texture wrapped around portrait (Classic style)
+-- Rare / Elite indicator as an oUF element
+-- Supports two display modes:
+-- Mode 'minimal': Solid colored overlay (default for most skins)
+-- Mode 'dragon': Dragon texture wrapped around portrait (Classic style)
 do
 	local Update = function(self, event, unit)
 		if self.unit ~= unit then
@@ -16,9 +16,9 @@ do
 		end
 		local c = UnitClassification(unit)
 		local element = self.RareElite
-		local mode = element.mode or 'background'
+		local mode = element.mode or 'minimal'
 
-		-- Determine colors based on classification
+		-- Determine classification
 		local isEliteOrBoss = c == 'worldboss' or c == 'elite'
 		local isRare = c == 'rare' or c == 'rareelite'
 
@@ -27,50 +27,44 @@ do
 			return
 		end
 
-		if mode == 'texture' then
-			-- Dragon texture mode (Classic style)
-			-- Always set the elite_rare texture for texture mode
-			if element:IsObjectType('Texture') then
-				element:SetTexture('Interface\\AddOns\\SpartanUI\\Images\\elite_rare')
-				-- Only set default texcoord if not already customized (e.g., by theme callback)
-				if not element.texCoordSet then
-					element:SetTexCoord(0, 1, 0, 1)
-				end
+		if mode == 'dragon' then
+			-- DRAGON MODE (Classic style)
+			-- Shows the dragon texture wrapped around portrait
+			element:SetTexture('Interface\\AddOns\\SpartanUI\\Images\\elite_rare')
+			-- Only set default texcoord if not already customized by theme callback
+			if not element.texCoordSet then
+				element:SetTexCoord(0, 1, 0, 1)
 			end
 
-			if isEliteOrBoss then
-				element:SetVertexColor(1, 0.9, 0) -- Gold for elite/boss
-			elseif isRare then
-				element:SetVertexColor(1, 1, 1) -- Silver/white for rare
-			end
-
-			-- Apply texture coord modifiers if set (overrides theme settings)
+			-- Apply texture coord modifiers if set
 			if element.short == true then
 				element:SetTexCoord(0, 1, 0, 0.7)
 			elseif element.small == true then
 				element:SetTexCoord(0, 1, 0, 0.4)
 			end
 
-			element:SetAlpha(element.alpha or 0.75)
-		else
-			-- Background overlay mode (default)
-			if element:IsObjectType('Texture') then
-				element:SetTexture('Interface\\AddOns\\SpartanUI\\Images\\elite_rare')
-				element:SetTexCoord(0, 1, 0, 1)
-				element:SetAlpha(element.alpha or 0.75)
-				if element.short == true then
-					element:SetTexCoord(0, 1, 0, 0.7)
-				end
-				if element.small == true then
-					element:SetTexCoord(0, 1, 0, 0.4)
-				end
+			-- Gold for elite, silver for rare
+			if isEliteOrBoss then
+				element:SetVertexColor(1, 0.9, 0)
+			else
+				element:SetVertexColor(1, 1, 1)
 			end
 
+			element:SetAlpha(element.alpha or 1)
+		else
+			-- MINIMAL MODE (default)
+			-- Shows a solid colored overlay without dragon texture
+			element:SetTexture('Interface\\AddOns\\SpartanUI\\images\\textures\\Smoothv2')
+			element:SetTexCoord(0, 1, 0, 1)
+
+			-- Gold for elite, silver for rare
 			if isEliteOrBoss then
-				element:SetVertexColor(1, 0.9, 0) -- Gold for elite/boss
-			elseif isRare then
-				element:SetVertexColor(1, 1, 1) -- Silver/white for rare
+				element:SetVertexColor(1, 0.8, 0)
+			else
+				element:SetVertexColor(0.8, 0.8, 0.8)
 			end
+
+			element:SetAlpha(element.alpha or 0.3)
 		end
 
 		element:Show()
