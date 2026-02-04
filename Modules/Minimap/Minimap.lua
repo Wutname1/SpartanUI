@@ -1840,6 +1840,11 @@ function module:Update(fullUpdate)
 
 	module:UpdateSettings()
 
+	-- Reapply layout modifications on full update (needed for skin changes)
+	if fullUpdate then
+		module:ModifyMinimapLayout()
+	end
+
 	-- Apply settings to elements
 	module:SetupBackground()
 	module:SetupZoneText()
@@ -1861,6 +1866,7 @@ function module:Update(fullUpdate)
 
 	-- Retail-only elements
 	if SUI.IsRetail then
+		module:SetupBorderTop()
 		module:SetupCalendarButton()
 		module:SetupExpansionButton()
 
