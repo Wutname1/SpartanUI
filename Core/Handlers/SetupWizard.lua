@@ -236,7 +236,7 @@ function module:SetupWizard(RequiredPagesOnly)
 	local UI = LibAT.UI
 	module.window = UI.CreateWindow({
 		name = 'SUI_SetupWizard',
-		title = 'Setup Wizard',
+		title = '|cffffffffSpartan|cffe21f1fUI|r Setup Wizard',
 		width = 650,
 		height = 500,
 		hidePortrait = true,
@@ -419,8 +419,8 @@ local function WelcomePage()
 	local PageData = {
 		ID = 'WelcomePage',
 		SubTitle = L['Welcome'],
-		Desc1 = "Welcome to SpartanUI, This setup wizard help guide you through the inital setup of the UI and it's modules.",
-		Desc2 = 'This setup wizard may be re-ran at any time via the SUI settings screen. You can access the SUI settings via the /sui chat command. For a full list of chat commands as well as common questions visit the wiki at http://wiki.spartanui.net or Join the SpartanUI Discord.',
+		Desc1 = "Welcome to SpartanUI, This setup wizard help guide you through inital setup of the UI and it's modules.",
+		Desc2 = 'This setup wizard may be re-ran at any time via the SUI settings screen. You can access the SUI settings via the /sui chat command. For a full list of chat commands see `/sui help`. For support join the SpartanUI Discord.',
 		Display = function()
 			local UI = LibAT.UI
 			local currentProfile = SUI.SpartanUIDB:GetCurrentProfile()
@@ -522,27 +522,12 @@ local function WelcomePage()
 			IntroPage:SetParent(module.window.content)
 			IntroPage:SetAllPoints(module.window.content)
 
-			-- Spartan Helm texture
-			IntroPage.Helm = IntroPage:CreateTexture(nil, 'ARTWORK')
-			IntroPage.Helm:SetTexture('Interface\\AddOns\\SpartanUI\\images\\Spartan-Helm')
-			IntroPage.Helm:SetSize(114, 114)
-			IntroPage.Helm:SetPoint('CENTER', IntroPage, 'CENTER', 0, 80)
-			IntroPage.Helm:SetAlpha(0.6)
-
-			if not SUI:IsAddonEnabled('Bartender4') then
-				module.window.BT4Warning = UI.CreateLabel(module.window, L['Bartender4 not detected! Please download and install Bartender4.'], 'GameFontNormalLarge')
-				module.window.BT4Warning:SetTextColor(1, 0.18, 0.18, 1)
-				module.window.BT4Warning:SetWidth(650)
-				module.window.BT4Warning:SetJustifyH('CENTER')
-				module.window.BT4Warning:SetPoint('BOTTOM', module.window, 'TOP', 0, 10)
-			end
-
 			-- Profile copy section
-			IntroPage.ProfileCopyLabel = UI.CreateLabel(IntroPage, 'If you would like to copy a profile do so below:')
+			IntroPage.ProfileCopyLabel = UI.CreateLabel(IntroPage, 'If you would like to copy a profile do so below:', 'GameFontNormal')
 			IntroPage.ProfileCopyLabel:SetWidth(500)
 			IntroPage.ProfileCopyLabel:SetJustifyH('CENTER')
 			IntroPage.ProfileCopyLabel:SetWordWrap(true)
-			IntroPage.ProfileCopyLabel:SetPoint('TOP', IntroPage.Helm, 'BOTTOM', 0, -15)
+			IntroPage.ProfileCopyLabel:SetPoint('TOP', IntroPage, 'TOP', 0, -50)
 
 			IntroPage.ProfileList = UI.CreateDropdown(IntroPage, 'Select Profile...', 200, 20)
 			IntroPage.ProfileList.selectedValue = nil
@@ -631,11 +616,11 @@ local function WelcomePage()
 			IntroPage.CopyProfileButton:SetPoint('LEFT', IntroPage.ProfileList, 'RIGHT', 4, 0)
 
 			-- Shared profile section
-			IntroPage.SharedProfileLabel = UI.CreateLabel(IntroPage, 'If you want to share a profile between characters you may select the profile you want to use below:')
+			IntroPage.SharedProfileLabel = UI.CreateLabel(IntroPage, 'If you want to share a profile between characters you may select the profile you want to use below:', 'GameFontNormal')
 			IntroPage.SharedProfileLabel:SetWidth(500)
 			IntroPage.SharedProfileLabel:SetJustifyH('CENTER')
 			IntroPage.SharedProfileLabel:SetWordWrap(true)
-			IntroPage.SharedProfileLabel:SetPoint('TOP', IntroPage.ProfileList, 'BOTTOM', 0, -20)
+			IntroPage.SharedProfileLabel:SetPoint('TOP', IntroPage.ProfileCopyLabel, 'BOTTOM', 0, -80)
 
 			-- Add info button next to shared profile label
 			IntroPage.SharedProfileInfoButton = UI.CreateInfoButton(
@@ -675,14 +660,14 @@ local function WelcomePage()
 
 			-- Create status label with appropriate message
 			IntroPage.CurrentProfileStatus = UI.CreateLabel(IntroPage, '')
-			IntroPage.CurrentProfileStatus:SetWidth(500)
+			-- IntroPage.CurrentProfileStatus:SetWidth(300)
 			IntroPage.CurrentProfileStatus:SetJustifyH('CENTER')
 			IntroPage.CurrentProfileStatus:SetWordWrap(true)
-			IntroPage.CurrentProfileStatus:SetPoint('TOP', IntroPage.SharedProfileList, 'BOTTOM', 0, -10)
+			IntroPage.CurrentProfileStatus:SetPoint('BOTTOM', IntroPage, 'BOTTOM', 0, 30)
 
 			if isCharProfile then
 				-- Character profile message
-				IntroPage.CurrentProfileStatus:SetText('Current: ' .. currentProfile)
+				IntroPage.CurrentProfileStatus:SetText('Current Profile: ' .. currentProfile)
 				IntroPage.CurrentProfileStatus:SetTextColor(1, 0.82, 0) -- Gold color
 
 				-- Add info button for character profile explanation
@@ -851,7 +836,7 @@ local function WelcomePage()
 			-- Add "OR" label below Skip All button
 			IntroPage.SkipOr = UI.CreateLabel(IntroPage, 'OR')
 			IntroPage.SkipOr:SetJustifyH('CENTER')
-			IntroPage.SkipOr:SetPoint('TOP', IntroPage.SkipAllButton, 'BOTTOM', 0, -5)
+			IntroPage.SkipOr:SetPoint('BOTTOM', module.window, 'BOTTOM', 0, 10)
 
 			module.window.content.WelcomePage = IntroPage
 		end,
