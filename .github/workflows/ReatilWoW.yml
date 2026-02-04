@@ -36,3 +36,12 @@ jobs:
       # Run the GitHub Action for the packager project
       - name: Package and release
         uses: BigWigsMods/packager@master
+
+      - name: Send Discord Release Notification
+        if: success() && startsWith(github.ref, 'refs/tags/')
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          GITHUB_REF: ${{ github.ref }}
+        run: |
+          chmod +x .github/scripts/send-discord-notification.sh
+          .github/scripts/send-discord-notification.sh CHANGELOG.md
