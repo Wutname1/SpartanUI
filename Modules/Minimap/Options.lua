@@ -76,9 +76,21 @@ local function GetRelativeToValues()
 		BorderTop = L['Border Top'],
 	}
 
-	-- Add other Minimap elements (only if elements table exists)
-	if module.Settings.elements then
-		for elementName, elementSettings in pairs(module.Settings.elements) do
+	-- Add other Minimap elements - handle both Retail and Classic structures
+	local elementsToCheck = module.Settings.elements
+	if not elementsToCheck and not SUI.IsRetail then
+		-- For Classic, check known element keys at top level
+		elementsToCheck = {}
+		local classicKeys = { 'background', 'ZoneText', 'coords', 'zoomButtons', 'clock', 'tracking', 'mailIcon', 'instanceDifficulty', 'queueStatus', 'addonButtons' }
+		for _, key in ipairs(classicKeys) do
+			if module.Settings[key] and type(module.Settings[key]) == 'table' then
+				elementsToCheck[key] = module.Settings[key]
+			end
+		end
+	end
+
+	if elementsToCheck then
+		for elementName, elementSettings in pairs(elementsToCheck) do
 			if elementSettings.enabled then
 				values[elementName] = L[elementName] or elementName
 			end
@@ -395,9 +407,95 @@ function module:BuildOptions()
 	}
 
 	-- Build options for each element
-	-- Only build element options if the elements table exists (Retail structure)
-	if module.Settings.elements then
-		for elementName, elementSettings in pairs(module.Settings.elements) do
+	-- Handle both Retail (nested .elements) and Classic (flat) structures
+	-- Define which keys are elements (not top-level settings) for Classic
+	local classicElementKeys = {
+		background = true,
+		ZoneText = true,
+		coords = true,
+		zoomButtons = true,
+		clock = true,
+		tracking = true,
+		mailIcon = true,
+		instanceDifficulty = true,
+		queueStatus = true,
+		addonButtons = true,
+	}
+
+	-- Helper to get the elements table (Retail) or extract elements from flat structure (Classic)
+	local elementsSource = module.Settings.elements
+	if not elementsSource and not SUI.IsRetail then
+		-- Build elements source from flat Classic structure
+		elementsSource = {}
+		for key, value in pairs(module.Settings) do
+			if classicElementKeys[key] and type(value) == 'table' then
+				elementsSource[key] = value
+			end
+		end
+	end
+
+	-- Helper functions to get/set element settings regardless of structure
+	local function getElementSettings(elName)
+		if SUI.IsRetail then
+			return module.Settings.elements and module.Settings.elements[elName]
+		else
+			return module.Settings[elName]
+		end
+	end
+
+	local function getBaseElementSettings(elName)
+		if SUI.IsRetail then
+			return module.BaseOpt.elements and module.BaseOpt.elements[elName]
+		else
+			return module.BaseOpt[elName]
+		end
+	end
+
+	local function getCustomElementSettings(elName)
+		local style = SUI.DB.Artwork.Style
+		if not module.DB.customSettings[style] then return nil end
+		if SUI.IsRetail then
+			return module.DB.customSettings[style].elements and module.DB.customSettings[style].elements[elName]
+		else
+			return module.DB.customSettings[style][elName]
+		end
+	end
+
+	local function ensureCustomElementPath(elName)
+		local style = SUI.DB.Artwork.Style
+		if not module.DB.customSettings[style] then
+			module.DB.customSettings[style] = {}
+		end
+		if SUI.IsRetail then
+			if not module.DB.customSettings[style].elements then
+				module.DB.customSettings[style].elements = {}
+			end
+			if not module.DB.customSettings[style].elements[elName] then
+				module.DB.customSettings[style].elements[elName] = {}
+			end
+			return module.DB.customSettings[style].elements[elName]
+		else
+			if not module.DB.customSettings[style][elName] then
+				module.DB.customSettings[style][elName] = {}
+			end
+			return module.DB.customSettings[style][elName]
+		end
+	end
+
+	local function clearCustomElement(elName)
+		local style = SUI.DB.Artwork.Style
+		if not module.DB.customSettings[style] then return end
+		if SUI.IsRetail then
+			if module.DB.customSettings[style].elements then
+				module.DB.customSettings[style].elements[elName] = nil
+			end
+		else
+			module.DB.customSettings[style][elName] = nil
+		end
+	end
+
+	if elementsSource then
+		for elementName, elementSettings in pairs(elementsSource) do
 			options.args.elements.args[elementName] = {
 				name = L[elementNaming[elementName] or elementName],
 				type = 'group',
@@ -409,12 +507,10 @@ function module:BuildOptions()
 						type = 'execute',
 						order = 0,
 						hidden = function()
-							return not SUI.Options:hasChanges(module.DB.customSettings[SUI.DB.Artwork.Style].elements[elementName], module.BaseOpt.elements[elementName])
+							return not SUI.Options:hasChanges(getCustomElementSettings(elementName), getBaseElementSettings(elementName))
 						end,
 						func = function()
-							if module.DB.customSettings[SUI.DB.Artwork.Style] then
-								module.DB.customSettings[SUI.DB.Artwork.Style].elements[elementName] = nil
-							end
+							clearCustomElement(elementName)
 							module:Update(true)
 						end,
 					},
@@ -423,7 +519,8 @@ function module:BuildOptions()
 						type = 'toggle',
 						order = 1,
 						get = function()
-							return module.Settings.elements[elementName].enabled
+							local elSettings = getElementSettings(elementName)
+							return elSettings and elSettings.enabled
 						end,
 						set = SetOption,
 					},
@@ -499,16 +596,39 @@ function module:BuildOptions()
 				}
 			end
 
+			if elementSettings.alpha then
+				options.args.elements.args[elementName].args.alpha = {
+					name = L['Alpha'],
+					type = 'range',
+					order = 3.5,
+					min = 0,
+					max = 1,
+					step = 0.05,
+					get = function()
+						return elementSettings.alpha
+					end,
+					set = SetOption,
+				}
+			end
+
 			if elementSettings.color then
 				options.args.elements.args[elementName].args.color = {
 					name = L['Color'],
 					type = 'color',
 					order = 3,
+					hasAlpha = true,
 					get = function()
-						return unpack(elementSettings.color)
+						local elSettings = getElementSettings(elementName)
+						return unpack(elSettings and elSettings.color or { 1, 1, 1, 1 })
 					end,
-					set = function(info, r, g, b, a)
-						module.DB.customSettings[SUI.DB.Artwork.Style].elements[elementName].color[info[#info]] = { r, g, b, a }
+					set = function(_, r, g, b, a)
+						local customPath = ensureCustomElementPath(elementName)
+						local elSettings = getElementSettings(elementName)
+						if elSettings then
+							elSettings.color = { r, g, b, a }
+						end
+						customPath.color = { r, g, b, a }
+						module:Update(true)
 					end,
 				}
 			end
@@ -558,7 +678,8 @@ function module:BuildOptions()
 						order = 5,
 						inline = true,
 						hidden = function()
-							return module.Settings.elements.addonButtons.style ~= 'bag'
+							local addonBtnSettings = getElementSettings('addonButtons')
+							return not addonBtnSettings or addonBtnSettings.style ~= 'bag'
 						end,
 						args = {
 							excludeList = {
@@ -568,17 +689,16 @@ function module:BuildOptions()
 								order = 1,
 								width = 'full',
 								get = function()
-									return module.Settings.elements.addonButtons.excludeList or ''
+									local addonBtnSettings = getElementSettings('addonButtons')
+									return addonBtnSettings and addonBtnSettings.excludeList or ''
 								end,
 								set = function(_, value)
-									if not module.DB.customSettings[SUI.DB.Artwork.Style].elements then
-										module.DB.customSettings[SUI.DB.Artwork.Style].elements = {}
+									local customPath = ensureCustomElementPath('addonButtons')
+									local addonBtnSettings = getElementSettings('addonButtons')
+									if addonBtnSettings then
+										addonBtnSettings.excludeList = value
 									end
-									if not module.DB.customSettings[SUI.DB.Artwork.Style].elements.addonButtons then
-										module.DB.customSettings[SUI.DB.Artwork.Style].elements.addonButtons = {}
-									end
-									module.Settings.elements.addonButtons.excludeList = value
-									module.DB.customSettings[SUI.DB.Artwork.Style].elements.addonButtons.excludeList = value
+									customPath.excludeList = value
 									module:Update(true)
 								end,
 							},
@@ -591,17 +711,16 @@ function module:BuildOptions()
 								max = 10,
 								step = 0.5,
 								get = function()
-									return module.Settings.elements.addonButtons.autoHideDelay or 2
+									local addonBtnSettings = getElementSettings('addonButtons')
+									return addonBtnSettings and addonBtnSettings.autoHideDelay or 2
 								end,
 								set = function(_, value)
-									if not module.DB.customSettings[SUI.DB.Artwork.Style].elements then
-										module.DB.customSettings[SUI.DB.Artwork.Style].elements = {}
+									local customPath = ensureCustomElementPath('addonButtons')
+									local addonBtnSettings = getElementSettings('addonButtons')
+									if addonBtnSettings then
+										addonBtnSettings.autoHideDelay = value
 									end
-									if not module.DB.customSettings[SUI.DB.Artwork.Style].elements.addonButtons then
-										module.DB.customSettings[SUI.DB.Artwork.Style].elements.addonButtons = {}
-									end
-									module.Settings.elements.addonButtons.autoHideDelay = value
-									module.DB.customSettings[SUI.DB.Artwork.Style].elements.addonButtons.autoHideDelay = value
+									customPath.autoHideDelay = value
 									module:Update(true)
 								end,
 							},
@@ -614,17 +733,16 @@ function module:BuildOptions()
 								max = 12,
 								step = 1,
 								get = function()
-									return module.Settings.elements.addonButtons.buttonsPerRow or 6
+									local addonBtnSettings = getElementSettings('addonButtons')
+									return addonBtnSettings and addonBtnSettings.buttonsPerRow or 6
 								end,
 								set = function(_, value)
-									if not module.DB.customSettings[SUI.DB.Artwork.Style].elements then
-										module.DB.customSettings[SUI.DB.Artwork.Style].elements = {}
+									local customPath = ensureCustomElementPath('addonButtons')
+									local addonBtnSettings = getElementSettings('addonButtons')
+									if addonBtnSettings then
+										addonBtnSettings.buttonsPerRow = value
 									end
-									if not module.DB.customSettings[SUI.DB.Artwork.Style].elements.addonButtons then
-										module.DB.customSettings[SUI.DB.Artwork.Style].elements.addonButtons = {}
-									end
-									module.Settings.elements.addonButtons.buttonsPerRow = value
-									module.DB.customSettings[SUI.DB.Artwork.Style].elements.addonButtons.buttonsPerRow = value
+									customPath.buttonsPerRow = value
 									-- Refresh the bag if open
 									module:RefreshButtonBag()
 								end,
@@ -634,7 +752,7 @@ function module:BuildOptions()
 				end
 			end
 		end
-	end -- end of if module.Settings.elements then
+	end -- end of if elementsSource then
 
 	SUI.Options:AddOptions(options, 'Minimap')
 end
