@@ -1071,25 +1071,24 @@ local function reloaduiWindow()
 	local UI = LibAT.UI
 	local popup = UI.CreateWindow({
 		name = 'SUI_ReloadUI',
-		title = 'SpartanUI',
+		title = '|cffffffffSpartan|cffe21f1fUI|r - Reload UI',
 		width = 400,
-		height = 140,
+		height = 100,
 		hidePortrait = true,
 	})
+	popup.Inset:Hide()
+
+	popup.Background = popup:CreateTexture(nil, 'BACKGROUND')
+	popup.Background:SetAtlas('auctionhouse-background-index', true)
+	popup.Background:SetPoint('TOPLEFT', popup, 'TOPLEFT', 5, -27)
+	popup.Background:SetPoint('BOTTOMRIGHT', popup, 'BOTTOMRIGHT', -5, 27)
+
 	popup:SetPoint('TOP', UIParent, 'TOP', 0, -20)
 	popup:SetFrameStrata('DIALOG')
 
-	-- SUI Logo
-	local logo = popup:CreateTexture(nil, 'ARTWORK')
-	logo:SetTexture('Interface\\AddOns\\SpartanUI\\images\\setup\\SUISetup')
-	logo:SetSize(156, 45)
-	logo:SetTexCoord(0, 0.611328125, 0, 0.6640625)
-	logo:SetPoint('TOP', popup, 'TOP', 0, -35)
-	logo:SetAlpha(0.8)
-
 	-- Message
 	local message = UI.CreateLabel(popup, 'A reload of your UI is required.', 'GameFontNormalLarge')
-	message:SetPoint('TOP', popup, 'TOP', 0, -85)
+	message:SetPoint('CENTER', popup.Background, 'CENTER', 0, 0)
 
 	-- Buttons
 	UI.CreateActionButtons(popup, {
@@ -1107,7 +1106,7 @@ local function reloaduiWindow()
 				SUI:SafeReloadUI()
 			end,
 		},
-	}, 5, 4, -3)
+	}, 5, 5, 5)
 
 	popup:Hide()
 	SUI.reloaduiWindow = popup
