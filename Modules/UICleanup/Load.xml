@@ -5,5 +5,7 @@
 	<Script file="ErrorMessages.lua" />
 	<Script file="FrameHiding.lua" />
 	<Script file="StopTalking.lua" />
+	<Script file="DecorMerchant.lua" />
+	<Script file="LootAlertPopup.lua" />
 	<Script file="Options.lua" />
 </Ui>

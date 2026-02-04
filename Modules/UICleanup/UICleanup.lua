@@ -12,6 +12,11 @@ local DBDefaults = {
 	hideAlerts = false,
 	hideBossBanner = false,
 	hideEventToasts = false,
+	decorMerchantBulkBuy = true,
+	lootAlertPopup = true,
+	lootAlertChat = true,
+	lootAlertSound = false,
+	lootAlertSoundName = 'None',
 }
 
 local DB
@@ -50,6 +55,8 @@ function module:OnEnable()
 	module:InitializeErrorMessages()
 	module:InitializeFrameHiding()
 	module:InitializeStopTalking()
+	module:InitializeDecorMerchant()
+	module:InitializeLootAlertPopup()
 
 	-- Build options
 	module:BuildOptions()
@@ -67,4 +74,6 @@ function module:OnDisable()
 	-- Restore default behavior for all hidden elements
 	module:RestoreErrorMessages()
 	module:RestoreFrameHiding()
+	module:RestoreDecorMerchant()
+	module:RestoreLootAlertPopup()
 end

@@ -116,6 +116,91 @@ function module:BuildOptions()
 							module:ApplyFrameHidingSettings()
 						end,
 					},
+					spacer1 = {
+						type = 'header',
+						name = L['Enhancements'],
+						order = 10,
+					},
+					decorMerchantBulkBuy = {
+						name = L['Decoration merchant bulk buy'],
+						desc = L['Shift+Right-click decoration merchant items to buy multiple at once'],
+						type = 'toggle',
+						order = 11,
+						width = 'full',
+						get = function()
+							return DB.decorMerchantBulkBuy
+						end,
+						set = function(_, val)
+							DB.decorMerchantBulkBuy = val
+							module:ApplyDecorMerchantSettings()
+						end,
+					},
+					lootAlertPopup = {
+						name = L['Loot alert popup'],
+						desc = L['Show item level comparison and one-click equip on loot alerts'],
+						type = 'toggle',
+						order = 12,
+						width = 'full',
+						get = function()
+							return DB.lootAlertPopup
+						end,
+						set = function(_, val)
+							DB.lootAlertPopup = val
+							module:ApplyLootAlertPopupSettings()
+						end,
+					},
+					lootAlertChat = {
+						name = L['Upgrade chat notification'],
+						desc = L['Print a message to chat when an upgrade is looted'],
+						type = 'toggle',
+						order = 13,
+						width = 'full',
+						disabled = function()
+							return not DB.lootAlertPopup
+						end,
+						get = function()
+							return DB.lootAlertChat
+						end,
+						set = function(_, val)
+							DB.lootAlertChat = val
+						end,
+					},
+					lootAlertSound = {
+						name = L['Upgrade sound notification'],
+						desc = L['Play a sound when an upgrade is looted'],
+						type = 'toggle',
+						order = 14,
+						width = 'full',
+						disabled = function()
+							return not DB.lootAlertPopup
+						end,
+						get = function()
+							return DB.lootAlertSound
+						end,
+						set = function(_, val)
+							DB.lootAlertSound = val
+						end,
+					},
+					lootAlertSoundName = {
+						name = L['Upgrade sound'],
+						desc = L['Sound to play when an upgrade is looted'],
+						type = 'select',
+						dialogControl = 'LSM30_Sound',
+						order = 15,
+						width = 'double',
+						disabled = function()
+							return not DB.lootAlertPopup or not DB.lootAlertSound
+						end,
+						values = function()
+							return SUI.Lib.LSM:HashTable('sound')
+						end,
+						get = function()
+							return DB.lootAlertSoundName
+						end,
+						set = function(_, val)
+							DB.lootAlertSoundName = val
+						end,
+					},
 				},
 			},
 		},
