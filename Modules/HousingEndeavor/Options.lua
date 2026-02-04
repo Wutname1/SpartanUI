@@ -174,22 +174,6 @@ function module:BuildOptions()
 					module:SendMessage('SUI_HOUSING_ENDEAVOR_SETTINGS_CHANGED')
 				end,
 			},
-			contributorsCount = {
-				type = 'range',
-				name = L['Number of Contributors'] or 'Number of Contributors',
-				desc = L['How many top contributors to display.'] or 'How many top contributors to display.',
-				order = 42,
-				min = 1,
-				max = 5,
-				step = 1,
-				get = function()
-					return module.DB.contributors.count
-				end,
-				set = function(_, val)
-					module.DB.contributors.count = val
-					module:SendMessage('SUI_HOUSING_ENDEAVOR_SETTINGS_CHANGED')
-				end,
-			},
 			contributorsShowScore = {
 				type = 'toggle',
 				name = L['Show Contribution Amount'] or 'Show Contribution Amount',

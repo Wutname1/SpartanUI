@@ -172,18 +172,19 @@ local function UpdateContributorPanel()
 	local contributors = module:GetTopContributors()
 	if not contributors or #contributors == 0 then
 		if module and module.logger then
-			module.logger.debug('ContributorDisplay: No contributor data')
+			module.logger.debug('ContributorDisplay: No contributor data, showing placeholders')
 		end
-		-- Show placeholder
 		for i, row in ipairs(contributorRows) do
-			if i <= 2 then
-				row.nameText:SetText('?')
+			if i == 1 then
+				row.nameText:SetText('Activate Endeavor')
+				row.nameText:SetTextColor(1, 1, 1)
 				row.scoreText:SetText('')
-				row.nameText:Show()
-				row.scoreText:Show()
+				row.scoreText:SetTextColor(1, 1, 1)
 			else
-				row.nameText:Hide()
-				row.scoreText:Hide()
+				row.nameText:SetText('To View')
+				row.nameText:SetTextColor(1, 1, 1)
+				row.scoreText:SetText('')
+				row.scoreText:SetTextColor(1, 1, 1)
 			end
 		end
 	else
@@ -586,19 +587,8 @@ function module:InitContributorDisplay()
 		end)
 	end
 
-	-- Listen for NEIGHBORHOOD_INITIATIVE_UPDATED - same as ProgressDisplay
-	self:RegisterEvent('NEIGHBORHOOD_INITIATIVE_UPDATED', function()
-		if self.logger then
-			self.logger.debug('ContributorDisplay: NEIGHBORHOOD_INITIATIVE_UPDATED event fired, hooked=' .. tostring(hooked))
-		end
-		if not hooked then
-			HookFrame()
-		end
-		-- Update panel if visible
-		if anchorFrame and anchorFrame:IsVisible() then
-			UpdateContributorPanel()
-		end
-	end)
+	-- Note: NEIGHBORHOOD_INITIATIVE_UPDATED is handled by main HousingEndeavor.lua
+	-- which clears caches, requests fresh data, and sends SUI_HOUSING_ENDEAVOR_UPDATED message
 
 	-- Watch for housing addons to load
 	local watchFrame = CreateFrame('Frame')
@@ -631,29 +621,23 @@ function module:InitContributorDisplay()
 		C_Timer.After(10, HookFrame)
 	end
 
-	-- Register for settings changes
-	self:RegisterMessage('SUI_HOUSING_ENDEAVOR_SETTINGS_CHANGED', UpdateContributorPanel)
-
-	-- Register for data updates
-	self:RegisterMessage('SUI_HOUSING_ENDEAVOR_UPDATED', function()
-		if anchorFrame and anchorFrame:IsVisible() then
-			UpdateContributorPanel()
-		end
-		if contributorListWindow and contributorListWindow:IsVisible() then
-			UpdateContributorListWindow()
-		end
-	end)
-
-	self:RegisterMessage('SUI_HOUSING_ENDEAVOR_CACHE_UPDATED', function()
-		if anchorFrame and anchorFrame:IsVisible() then
-			UpdateContributorPanel()
-		end
-		if contributorListWindow and contributorListWindow:IsVisible() then
-			UpdateContributorListWindow()
-		end
-	end)
+	-- Note: Message handlers are registered centrally in HousingEndeavor.lua OnEnable
+	-- to avoid multiple handlers overwriting each other
 
 	if self.logger then
 		self.logger.info('ContributorDisplay: Initialization complete')
+	end
+end
+
+---Public update function called by centralized message handler
+function module:UpdateContributorDisplay()
+	if self.logger then
+		self.logger.debug('ContributorDisplay: UpdateContributorDisplay called, anchorFrame=' .. tostring(anchorFrame ~= nil) .. ', visible=' .. tostring(anchorFrame and anchorFrame:IsVisible()))
+	end
+	if anchorFrame and anchorFrame:IsVisible() then
+		C_Timer.After(0.5, UpdateContributorPanel)
+	end
+	if contributorListWindow and contributorListWindow:IsVisible() then
+		C_Timer.After(0.5, UpdateContributorListWindow)
 	end
 end

@@ -424,7 +424,15 @@ end
 ----------------------------------------------------------------------------------------------------
 
 function module:OnEvent_NEIGHBORHOOD_INITIATIVE_UPDATED()
-	-- Just send the update message, don't rebuild cache
+	-- Clear caches for neighborhood switch
+	self.contributorCache = {}
+	self.contributorCacheTime = 0
+	self.taskXPCacheTime = 0 -- Allow immediate cache rebuild
+	-- Note: Don't call RequestInitiativeInfo() here - it triggers NEIGHBORHOOD_INITIATIVE_UPDATED
+	-- which would cause infinite recursion. The event means data is already updated.
+	-- Request activity log (this triggers INITIATIVE_ACTIVITY_LOG_UPDATED, not this event)
+	self:RequestActivityLog()
+	-- Send update message
 	self:SendMessage('SUI_HOUSING_ENDEAVOR_UPDATED')
 end
 
@@ -535,8 +543,51 @@ function module:OnEnable()
 		self:InitContributorDisplay()
 	end
 
+	-- Register centralized message handler AFTER all sub-systems init
+	-- This ensures we don't have conflicting handlers
+	self:RegisterMessage('SUI_HOUSING_ENDEAVOR_UPDATED', 'OnMessage_UPDATED')
+	self:RegisterMessage('SUI_HOUSING_ENDEAVOR_SETTINGS_CHANGED', 'OnMessage_SETTINGS_CHANGED')
+	self:RegisterMessage('SUI_HOUSING_ENDEAVOR_CACHE_UPDATED', 'OnMessage_CACHE_UPDATED')
+
 	if module.logger then
 		module.logger.info('Housing Endeavor module enabled')
+	end
+end
+
+---Centralized handler for SUI_HOUSING_ENDEAVOR_UPDATED message
+function module:OnMessage_UPDATED()
+	if self.logger then
+		self.logger.debug('HousingEndeavor: OnMessage_UPDATED - calling subsystem updates')
+	end
+	-- Call update functions from sub-systems if they exist
+	if self.UpdateProgressDisplay then
+		self:UpdateProgressDisplay()
+	end
+	if self.UpdateContributorDisplay then
+		self:UpdateContributorDisplay()
+	end
+end
+
+---Centralized handler for SUI_HOUSING_ENDEAVOR_SETTINGS_CHANGED message
+function module:OnMessage_SETTINGS_CHANGED()
+	if self.logger then
+		self.logger.debug('HousingEndeavor: OnMessage_SETTINGS_CHANGED')
+	end
+	if self.UpdateProgressDisplay then
+		self:UpdateProgressDisplay()
+	end
+	if self.UpdateContributorDisplay then
+		self:UpdateContributorDisplay()
+	end
+end
+
+---Centralized handler for SUI_HOUSING_ENDEAVOR_CACHE_UPDATED message
+function module:OnMessage_CACHE_UPDATED()
+	if self.logger then
+		self.logger.debug('HousingEndeavor: OnMessage_CACHE_UPDATED')
+	end
+	if self.UpdateContributorDisplay then
+		self:UpdateContributorDisplay()
 	end
 end
 

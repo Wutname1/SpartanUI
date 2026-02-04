@@ -16,26 +16,23 @@ if module and module.logger then
 end
 
 ----------------------------------------------------------------------------------------------------
--- Progress Overlay Frame
+-- Progress Display (on progress bar like EnhancedEndeavors)
 ----------------------------------------------------------------------------------------------------
 
-local overlay = nil ---@type Frame|nil
-local anchorFrame = nil ---@type Frame|nil
+local progressBar = nil ---@type StatusBar|nil
+local progressText = nil ---@type FontString|nil
+local contributionText = nil ---@type FontString|nil
+local overlayFrame = nil ---@type Frame|nil
 
----Create the progress overlay frame
+---Create the overlay frame with background (positioned on the progress bar)
+---@param parent Frame
 ---@return Frame
-local function CreateOverlay()
-	if module and module.logger then
-		module.logger.debug('ProgressDisplay: CreateOverlay called')
-	end
+local function CreateOverlayFrame(parent)
+	local frame = CreateFrame('Frame', 'SUI_HousingEndeavor_ProgressOverlay', parent, 'BackdropTemplate')
+	frame:SetAllPoints(parent)
+	frame:SetFrameLevel(parent:GetFrameLevel() + 5)
 
-	local frame = CreateFrame('Frame', 'SUI_HousingEndeavor_ProgressOverlay', UIParent, 'BackdropTemplate')
-	frame:SetFrameStrata('HIGH')
-	frame:SetFrameLevel(50)
-	frame:SetClampedToScreen(true)
-	frame:Hide()
-
-	-- Backdrop styling (tooltip-like)
+	-- Backdrop styling with 30% alpha
 	frame:SetBackdrop({
 		bgFile = 'Interface\\Tooltips\\UI-Tooltip-Background',
 		edgeFile = 'Interface\\Tooltips\\UI-Tooltip-Border',
@@ -44,84 +41,154 @@ local function CreateOverlay()
 		edgeSize = 16,
 		insets = { left = 4, right = 4, top = 4, bottom = 4 },
 	})
-	frame:SetBackdropColor(0, 0, 0, 0.9)
-	frame:SetBackdropBorderColor(0.6, 0.6, 0.6, 1)
-
-	-- Text display
-	frame.text = frame:CreateFontString(nil, 'OVERLAY')
-	frame.text:SetPoint('CENTER', frame, 'CENTER', 0, 0)
-	SUI.Font:Format(frame.text, 12, 'HousingEndeavor')
-	frame.text:SetJustifyH('CENTER')
+	frame:SetBackdropColor(0, 0, 0, 0.3)
+	frame:SetBackdropBorderColor(0.6, 0.6, 0.6, 0.5)
 
 	return frame
 end
 
----Update the overlay text and size
-local function UpdateOverlay()
+---Create the progress text FontString (on the progress bar)
+---@param parent Frame
+---@return FontString
+local function CreateProgressText(parent)
+	local text = parent:CreateFontString('SUI_HousingEndeavor_ProgressText', 'OVERLAY')
+	text:SetPoint('RIGHT', parent, 'RIGHT', -15, 0)
+	text:SetFontObject(GameFontHighlight)
+	text:SetJustifyH('RIGHT')
+	text:SetShadowColor(0, 0, 0, 1)
+	text:SetShadowOffset(1, -1)
+	return text
+end
+
+---Create the contribution text FontString (above the progress bar)
+---@param parent Frame
+---@return FontString
+local function CreateContributionText(parent)
+	local text = parent:CreateFontString('SUI_HousingEndeavor_ContributionText', 'OVERLAY')
+	text:SetPoint('BOTTOM', parent, 'TOP', 0, 3)
+	text:SetFontObject(GameFontHighlight)
+	text:SetJustifyH('CENTER')
+	text:SetShadowColor(0, 0, 0, 1)
+	text:SetShadowOffset(1, -1)
+	return text
+end
+
+---Update the progress display
+local function UpdateDisplay()
 	if module and module.logger then
-		module.logger.debug('ProgressDisplay: UpdateOverlay called')
+		module.logger.debug('ProgressDisplay: UpdateDisplay called')
 	end
 
-	if not overlay then
-		overlay = CreateOverlay()
+	if not progressBar then
+		if module and module.logger then
+			module.logger.debug('ProgressDisplay: No progress bar')
+		end
+		return
 	end
 
 	if not module or not module.DB or not module.DB.progressOverlay or not module.DB.progressOverlay.enabled then
 		if module and module.logger then
 			module.logger.debug('ProgressDisplay: Disabled or no DB')
 		end
-		overlay:Hide()
+		if progressText then
+			progressText:Hide()
+		end
+		if contributionText then
+			contributionText:Hide()
+		end
+		if overlayFrame then
+			overlayFrame:Hide()
+		end
 		return
 	end
 
-	-- Check if anchor frame is still valid and visible
-	if not anchorFrame or not anchorFrame:IsVisible() then
-		if module and module.logger then
-			module.logger.debug('ProgressDisplay: No anchor frame or not visible')
-		end
-		overlay:Hide()
-		return
+	-- Create elements if needed
+	if not overlayFrame then
+		overlayFrame = CreateOverlayFrame(progressBar)
+	end
+	if not progressText then
+		progressText = CreateProgressText(progressBar)
+	end
+	if not contributionText then
+		contributionText = CreateContributionText(progressBar)
 	end
 
-	local progress = module:GetCurrentProgress()
-	if not progress then
+	-- Get initiative info (data should already be current when event fires)
+	local info = module:GetInitiativeInfo()
+	if not info then
 		if module and module.logger then
-			module.logger.debug('ProgressDisplay: No progress data')
+			module.logger.debug('ProgressDisplay: No initiative info')
 		end
-		overlay.text:SetText(L['No data available'])
-		overlay:SetSize(150, 30)
-		overlay:Show()
+		progressText:SetText('...')
+		contributionText:SetText('')
+		overlayFrame:Show()
+		progressText:Show()
+		contributionText:Show()
 		return
 	end
 
 	-- Get user settings
-	local format = module.DB.progressOverlay.format or 'detailed'
 	local color = module.DB.progressOverlay.color or { r = 1, g = 1, b = 1 }
 
-	-- Format and set text
-	local text = module:FormatProgressText(format, progress)
-	overlay.text:SetTextColor(color.r, color.g, color.b)
-	overlay.text:SetText(text)
+	-- Calculate progress values (like EnhancedEndeavors)
+	local currentProgress = (info.currentProgress or 0) * 100
+	local maxProgress = (info.progressRequired or 10) * 100
+	local contribution = (info.playerTotalContribution or 0) * 100
 
-	-- Auto-size frame to fit text
-	local textWidth = overlay.text:GetStringWidth()
-	local textHeight = overlay.text:GetStringHeight()
-	overlay:SetSize(textWidth + 24, textHeight + 16)
+	-- Clamp current to max
+	if currentProgress >= maxProgress then
+		currentProgress = maxProgress
+	end
 
-	-- Anchor to the frame
-	overlay:ClearAllPoints()
-	overlay:SetPoint('BOTTOM', anchorFrame, 'TOP', 80, -5)
-	overlay:Show()
+	-- Calculate percentages
+	local percent = 0
+	if maxProgress > 0 then
+		percent = (currentProgress / maxProgress) * 100
+	end
+
+	local contributionPercent = 0
+	if currentProgress > 0 then
+		contributionPercent = (contribution / currentProgress) * 100
+	end
+
+	-- Format progress text: "(50.0%) 500/1,000"
+	local progressStr
+	if currentProgress >= maxProgress then
+		progressStr = L['All milestones completed!'] or 'All milestones completed!'
+	else
+		progressStr = string.format('(%.1f%%) %s/%s', percent, BreakUpLargeNumbers(currentProgress), BreakUpLargeNumbers(maxProgress))
+	end
+
+	-- Format contribution text: "Your Contribution: 150 (3.0%)"
+	local contributionStr = string.format('%s: %s (%.1f%%)', L['Your Contribution'] or 'Your Contribution', BreakUpLargeNumbers(contribution), contributionPercent)
+
+	-- Apply text
+	progressText:SetText(progressStr)
+	progressText:SetTextColor(color.r, color.g, color.b)
+
+	contributionText:SetText(contributionStr)
+	contributionText:SetTextColor(color.r, color.g, color.b)
+
+	-- Show elements
+	overlayFrame:Show()
+	progressText:Show()
+	contributionText:Show()
 
 	if module and module.logger then
-		module.logger.debug('ProgressDisplay: Overlay shown with text: ' .. text)
+		module.logger.debug('ProgressDisplay: Display updated - ' .. progressStr)
 	end
 end
 
----Hide the overlay
-local function HideOverlay()
-	if overlay then
-		overlay:Hide()
+---Hide the display
+local function HideDisplay()
+	if progressText then
+		progressText:Hide()
+	end
+	if contributionText then
+		contributionText:Hide()
+	end
+	if overlayFrame then
+		overlayFrame:Hide()
 	end
 end
 
@@ -176,13 +243,13 @@ local function CollectProgressBarCandidates(parent, depth, maxDepth, candidates)
 end
 
 ---Find the endeavor progress bar frame
----@return Frame|nil
+---@return StatusBar|nil
 local function FindProgressBar()
 	if module and module.logger then
 		module.logger.debug('ProgressDisplay: FindProgressBar called')
 	end
 
-	-- First try the specific path you mentioned
+	-- First try the specific path
 	local initiativesFrame = HousingDashboardFrame
 		and HousingDashboardFrame.HouseInfoContent
 		and HousingDashboardFrame.HouseInfoContent.ContentFrame
@@ -206,52 +273,6 @@ local function FindProgressBar()
 				return candidate.obj
 			end
 		end
-
-		-- If no StatusBar found, use the InitiativesFrame itself as anchor
-		if module and module.logger then
-			module.logger.debug('ProgressDisplay: No StatusBar found, using InitiativesFrame as anchor')
-		end
-		return initiativesFrame
-	end
-
-	-- Fallback: Try known frame names
-	local KNOWN_FRAME_NAMES = {
-		'HousingDashboardFrame',
-		'NeighborhoodInitiativeFrame',
-		'NeighborhoodFrame',
-		'HousingFrame',
-	}
-
-	for _, frameName in ipairs(KNOWN_FRAME_NAMES) do
-		local frame = _G[frameName]
-		if frame and not frame:IsForbidden() then
-			if module and module.logger then
-				module.logger.debug('ProgressDisplay: Searching in ' .. frameName)
-			end
-			-- Search for progress bar within this frame
-			local candidates = {}
-			CollectProgressBarCandidates(frame, 1, 10, candidates)
-
-			-- Prioritize StatusBar types
-			for _, candidate in ipairs(candidates) do
-				if candidate.type == 'StatusBar' and candidate.depth > 2 then
-					if module and module.logger then
-						module.logger.debug('ProgressDisplay: Found StatusBar at depth ' .. candidate.depth)
-					end
-					return candidate.obj
-				end
-			end
-
-			-- Fall back to any candidate with good depth
-			for _, candidate in ipairs(candidates) do
-				if candidate.depth > 3 then
-					if module and module.logger then
-						module.logger.debug('ProgressDisplay: Using fallback candidate at depth ' .. candidate.depth)
-					end
-					return candidate.obj
-				end
-			end
-		end
 	end
 
 	if module and module.logger then
@@ -260,7 +281,7 @@ local function FindProgressBar()
 	return nil
 end
 
----Hook the progress bar to show overlay when visible
+---Hook the progress bar to show display when visible
 local function HookProgressBar()
 	if hooked then
 		return true
@@ -270,43 +291,43 @@ local function HookProgressBar()
 		module.logger.debug('ProgressDisplay: HookProgressBar called')
 	end
 
-	local progressBar = FindProgressBar()
-	if not progressBar then
+	local bar = FindProgressBar()
+	if not bar then
 		if module and module.logger then
 			module.logger.debug('ProgressDisplay: No progress bar to hook')
 		end
 		return false
 	end
 
-	anchorFrame = progressBar
+	progressBar = bar
 
 	if module and module.logger then
 		module.logger.debug('ProgressDisplay: Hooking progress bar OnShow/OnHide')
 	end
 
 	-- Hook OnShow/OnHide
-	progressBar:HookScript('OnShow', function()
+	bar:HookScript('OnShow', function()
 		if module and module.logger then
 			module.logger.debug('ProgressDisplay: OnShow triggered')
 		end
-		UpdateOverlay()
+		UpdateDisplay()
 	end)
 
-	progressBar:HookScript('OnHide', function()
+	bar:HookScript('OnHide', function()
 		if module and module.logger then
 			module.logger.debug('ProgressDisplay: OnHide triggered')
 		end
-		HideOverlay()
+		HideDisplay()
 	end)
 
 	hooked = true
 
 	-- If already visible, show now
-	if progressBar:IsVisible() then
+	if bar:IsVisible() then
 		if module and module.logger then
-			module.logger.debug('ProgressDisplay: Progress bar already visible, updating overlay')
+			module.logger.debug('ProgressDisplay: Progress bar already visible, updating display')
 		end
-		UpdateOverlay()
+		UpdateDisplay()
 	end
 
 	if module and module.logger then
@@ -326,68 +347,46 @@ function module:InitProgressDisplay()
 		self.logger.debug('ProgressDisplay: InitProgressDisplay called')
 	end
 
-	-- TEST HOOKS: Try various events to find the fastest trigger
 	-- Hook HousingDashboardFrame if it exists
 	if HousingDashboardFrame then
 		if self.logger then
-			self.logger.debug('TEST: HousingDashboardFrame exists at init')
+			self.logger.debug('ProgressDisplay: HousingDashboardFrame exists at init')
 		end
 		HousingDashboardFrame:HookScript('OnShow', function()
 			if self.logger then
-				self.logger.debug('TEST: HousingDashboardFrame OnShow fired')
+				self.logger.debug('ProgressDisplay: HousingDashboardFrame OnShow fired')
 			end
 			C_Timer.After(0.1, HookProgressBar)
 		end)
 	end
 
-	self:RegisterEvent('NEIGHBORHOOD_INITIATIVE_UPDATED', function()
-		if self.logger then
-			self.logger.debug('TEST: NEIGHBORHOOD_INITIATIVE_UPDATED event fired, hooked=' .. tostring(hooked))
-		end
-		-- Always try to update when this fires - it's our fastest trigger
-		if not hooked then
-			HookProgressBar()
-		end
-		-- Update overlay immediately since data changed
-		UpdateOverlay()
-	end)
-
-	-- Try UIParent child added approach
-	if self.logger then
-		self.logger.debug('TEST: Setting up frame watch')
-	end
+	-- Note: NEIGHBORHOOD_INITIATIVE_UPDATED is handled by main HousingEndeavor.lua
+	-- which sends SUI_HOUSING_ENDEAVOR_UPDATED message that we listen for below
 
 	-- Watch for HousingDashboardFrame to appear
 	local watchFrame = CreateFrame('Frame')
 	watchFrame:RegisterEvent('ADDON_LOADED')
-	watchFrame:RegisterEvent('PLAYER_ENTERING_WORLD')
 	watchFrame:SetScript('OnEvent', function(_, event, arg1)
-		if self.logger then
-			self.logger.debug('TEST: watchFrame event: ' .. event .. ' arg=' .. tostring(arg1))
-		end
-
 		if event == 'ADDON_LOADED' then
-			if arg1 == 'Blizzard_HousingUI' or arg1 == 'Blizzard_HousingDashboardUI' then
+			if arg1 == 'Blizzard_HousingUI' or arg1 == 'Blizzard_HousingDashboard' then
 				if self.logger then
-					self.logger.debug('TEST: Housing addon loaded: ' .. arg1)
+					self.logger.debug('ProgressDisplay: Housing addon loaded: ' .. arg1)
 				end
-				-- Try hooking after a short delay
 				C_Timer.After(0.1, function()
 					if HousingDashboardFrame then
 						if self.logger then
-							self.logger.debug('TEST: HousingDashboardFrame now exists after addon load')
+							self.logger.debug('ProgressDisplay: HousingDashboardFrame now exists after addon load')
 						end
 						if not hooked then
 							HousingDashboardFrame:HookScript('OnShow', function()
 								if self.logger then
-									self.logger.debug('TEST: HousingDashboardFrame OnShow (post-addon-load hook)')
+									self.logger.debug('ProgressDisplay: HousingDashboardFrame OnShow (post-addon-load hook)')
 								end
 								C_Timer.After(0.1, HookProgressBar)
 							end)
-							-- If already visible
 							if HousingDashboardFrame:IsVisible() then
 								if self.logger then
-									self.logger.debug('TEST: HousingDashboardFrame already visible')
+									self.logger.debug('ProgressDisplay: HousingDashboardFrame already visible')
 								end
 								HookProgressBar()
 							end
@@ -404,29 +403,26 @@ function module:InitProgressDisplay()
 			self.logger.debug('ProgressDisplay: Initial hook failed, setting up retries')
 		end
 
-		-- Retry when housing UI might become available
-		self:RegisterEvent('ADDON_LOADED', function(_, addonName)
-			if addonName == 'Blizzard_HousingUI' or addonName == 'Blizzard_NeighborhoodFrame' or addonName == 'Blizzard_HousingDashboardUI' then
-				if self.logger then
-					self.logger.debug('ProgressDisplay: ADDON_LOADED for ' .. addonName)
-				end
-				C_Timer.After(0.5, HookProgressBar)
-			end
-		end)
-
-		-- Also retry a few times with delays
+		-- Retry with delays
 		C_Timer.After(3, HookProgressBar)
 		C_Timer.After(10, HookProgressBar)
 	end
 
-	-- Register for settings changes
-	self:RegisterMessage('SUI_HOUSING_ENDEAVOR_SETTINGS_CHANGED', UpdateOverlay)
-
-	-- Register for data updates
-	self:RegisterMessage('SUI_HOUSING_ENDEAVOR_UPDATED', UpdateOverlay)
+	-- Note: Message handlers are registered centrally in HousingEndeavor.lua OnEnable
+	-- to avoid multiple handlers overwriting each other
 
 	if self.logger then
 		self.logger.info('ProgressDisplay: Initialization complete')
+	end
+end
+
+---Public update function called by centralized message handler
+function module:UpdateProgressDisplay()
+	if self.logger then
+		self.logger.debug('ProgressDisplay: UpdateProgressDisplay called, progressBar=' .. tostring(progressBar ~= nil) .. ', visible=' .. tostring(progressBar and progressBar:IsVisible()))
+	end
+	if progressBar and progressBar:IsVisible() then
+		C_Timer.After(0.3, UpdateDisplay)
 	end
 end
 
