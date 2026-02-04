@@ -131,6 +131,7 @@ local BaseSettings = {
 			autoHideDelay = 2, -- Seconds before auto-hiding bag
 			buttonsPerRow = 6, -- Number of buttons per row in the bag
 			bagButtonAngle = 45, -- Angle position of bag toggle button on minimap (degrees)
+			hiddenButtons = {}, -- Table of button names that are manually hidden
 		},
 	},
 }
@@ -203,6 +204,7 @@ local BaseSettingsClassic = {
 		autoHideDelay = 2,
 		buttonsPerRow = 6,
 		bagButtonAngle = 45,
+		hiddenButtons = {}, -- Table of button names that are manually hidden
 	},
 }
 
@@ -1330,6 +1332,9 @@ function module:UpdateAddonButtons()
 			end
 		end
 	end
+
+	-- Apply manual button visibility settings (hide individually disabled buttons)
+	module:ApplyAllButtonVisibility()
 end
 
 -- Button Bag functionality
@@ -1532,6 +1537,139 @@ function module:SetupButtonBag()
 	end)
 end
 
+---Get all available LibDBIcon buttons for the options panel
+---@return table<string, boolean> buttonList Table of button names mapped to their hidden state
+function module:GetAvailableButtons()
+	local buttons = {}
+	local LDBIcon = LibStub and LibStub('LibDBIcon-1.0', true)
+	if not LDBIcon then
+		return buttons
+	end
+
+	local buttonList = LDBIcon:GetButtonList()
+	for _, name in ipairs(buttonList) do
+		-- Skip SpartanUI's own buttons
+		if not name:find('SpartanUI') and not name:find('SUI_') then
+			buttons[name] = module:IsButtonHidden(name)
+		end
+	end
+
+	return buttons
+end
+
+---Check if a specific button is hidden via the hiddenButtons setting
+---@param buttonName string The button name to check
+---@return boolean isHidden Whether the button is hidden
+function module:IsButtonHidden(buttonName)
+	if not buttonName then
+		return false
+	end
+
+	local addonSettings = SUI.IsRetail and module.Settings.elements and module.Settings.elements.addonButtons or module.Settings.addonButtons
+	if not addonSettings or not addonSettings.hiddenButtons then
+		return false
+	end
+
+	return addonSettings.hiddenButtons[buttonName] == true
+end
+
+---Set the hidden state of a specific button
+---@param buttonName string The button name
+---@param hidden boolean Whether to hide the button
+function module:SetButtonHidden(buttonName, hidden)
+	if not buttonName then
+		return
+	end
+
+	local addonSettings = SUI.IsRetail and module.Settings.elements and module.Settings.elements.addonButtons or module.Settings.addonButtons
+	if not addonSettings then
+		return
+	end
+
+	-- Ensure hiddenButtons table exists in settings
+	if not addonSettings.hiddenButtons then
+		addonSettings.hiddenButtons = {}
+	end
+	addonSettings.hiddenButtons[buttonName] = hidden or nil -- nil to remove from table when not hidden
+
+	-- Save to custom settings
+	local style = SUI.DB.Artwork.Style
+	if not module.DB.customSettings[style] then
+		module.DB.customSettings[style] = {}
+	end
+
+	if SUI.IsRetail then
+		if not module.DB.customSettings[style].elements then
+			module.DB.customSettings[style].elements = {}
+		end
+		if not module.DB.customSettings[style].elements.addonButtons then
+			module.DB.customSettings[style].elements.addonButtons = {}
+		end
+		if not module.DB.customSettings[style].elements.addonButtons.hiddenButtons then
+			module.DB.customSettings[style].elements.addonButtons.hiddenButtons = {}
+		end
+		module.DB.customSettings[style].elements.addonButtons.hiddenButtons[buttonName] = hidden or nil
+	else
+		if not module.DB.customSettings[style].addonButtons then
+			module.DB.customSettings[style].addonButtons = {}
+		end
+		if not module.DB.customSettings[style].addonButtons.hiddenButtons then
+			module.DB.customSettings[style].addonButtons.hiddenButtons = {}
+		end
+		module.DB.customSettings[style].addonButtons.hiddenButtons[buttonName] = hidden or nil
+	end
+
+	-- Apply the change immediately
+	module:ApplyButtonVisibility(buttonName, hidden)
+end
+
+---Apply visibility change to a specific button
+---@param buttonName string The button name
+---@param hidden boolean Whether the button should be hidden
+function module:ApplyButtonVisibility(buttonName, hidden)
+	local LDBIcon = LibStub and LibStub('LibDBIcon-1.0', true)
+	if not LDBIcon then
+		return
+	end
+
+	local button = LDBIcon:GetMinimapButton(buttonName)
+	if not button then
+		return
+	end
+
+	if hidden then
+		button:Hide()
+		button.SUI_ManuallyHidden = true
+	else
+		button.SUI_ManuallyHidden = nil
+		-- Only show if not in button bag mode or if bag is open
+		local addonSettings = SUI.IsRetail and module.Settings.elements and module.Settings.elements.addonButtons or module.Settings.addonButtons
+		local style = addonSettings and addonSettings.style or 'mouseover'
+		if style ~= 'bag' or ButtonBag.isOpen then
+			button:Show()
+		end
+	end
+end
+
+---Apply all button visibility settings (called during Update)
+function module:ApplyAllButtonVisibility()
+	local LDBIcon = LibStub and LibStub('LibDBIcon-1.0', true)
+	if not LDBIcon then
+		return
+	end
+
+	local buttonList = LDBIcon:GetButtonList()
+	for _, name in ipairs(buttonList) do
+		if module:IsButtonHidden(name) then
+			local button = LDBIcon:GetMinimapButton(name)
+			if button then
+				button:Hide()
+				button.SUI_ManuallyHidden = true
+			end
+		end
+	end
+end
+
 function module:IsButtonExcluded(buttonName)
 	if not buttonName then
 		return true
@@ -1539,6 +1677,11 @@ function module:IsButtonExcluded(buttonName)
 
 	-- Always exclude SpartanUI's own buttons
 	if buttonName:find('SpartanUI') or buttonName:find('SUI_') then
+		return true
+	end
+
+	-- Check if manually hidden via the button visibility settings
+	if module:IsButtonHidden(buttonName) then
 		return true
 	end
 
@@ -1896,12 +2039,12 @@ function module:Update(fullUpdate)
 end
 
 function module:SetActiveStyle(style)
-	if Registry[style] then
-		module.styleOverride = style
+	-- Always update when style changes, even if the style isn't registered in the minimap Registry
+	-- This ensures shape, position, and other settings are refreshed properly
+	module.styleOverride = style
 
-		module:UpdateSettings()
-		module:Update(true)
-	end
+	module:UpdateSettings()
+	module:Update(true)
 end
 
 function module:UpdatePosition()

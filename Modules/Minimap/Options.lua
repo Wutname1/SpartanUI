@@ -454,7 +454,9 @@ function module:BuildOptions()
 
 	local function getCustomElementSettings(elName)
 		local style = SUI.DB.Artwork.Style
-		if not module.DB.customSettings[style] then return nil end
+		if not module.DB.customSettings[style] then
+			return nil
+		end
 		if SUI.IsRetail then
 			return module.DB.customSettings[style].elements and module.DB.customSettings[style].elements[elName]
 		else
@@ -485,7 +487,9 @@ function module:BuildOptions()
 
 	local function clearCustomElement(elName)
 		local style = SUI.DB.Artwork.Style
-		if not module.DB.customSettings[style] then return end
+		if not module.DB.customSettings[style] then
+			return
+		end
 		if SUI.IsRetail then
 			if module.DB.customSettings[style].elements then
 				module.DB.customSettings[style].elements[elName] = nil
@@ -707,7 +711,7 @@ function module:BuildOptions()
 								name = L['Auto-hide Delay'],
 								desc = L['Seconds before the button bag auto-hides when mouse leaves'],
 								type = 'range',
-								order = 2,
+								order = 1,
 								min = 0.5,
 								max = 10,
 								step = 0.5,
@@ -729,7 +733,7 @@ function module:BuildOptions()
 								name = L['Buttons Per Row'],
 								desc = L['Number of buttons to display per row in the button bag'],
 								type = 'range',
-								order = 3,
+								order = 2,
 								min = 2,
 								max = 12,
 								step = 1,
@@ -746,6 +750,97 @@ function module:BuildOptions()
 									customPath.buttonsPerRow = value
 									-- Refresh the bag if open
 									module:RefreshButtonBag()
+								end,
+							},
+						},
+					}
+
+					-- Add button visibility options (list of detected buttons with toggles)
+					options.args.elements.args[elementName].args.buttonVisibility = {
+						name = L['Button Visibility'],
+						type = 'group',
+						order = 6,
+						inline = true,
+						args = {
+							description = {
+								name = L['Toggle visibility of individual addon buttons. Disabled buttons will be hidden from the minimap.'],
+								type = 'description',
+								order = 0,
+								fontSize = 'medium',
+							},
+							refreshList = {
+								name = L['Refresh Button List'],
+								desc = L['Scan for newly loaded addon buttons'],
+								type = 'execute',
+								order = 0.5,
+								func = function()
+									-- Force options rebuild to refresh button list
+									module:BuildOptions()
+								end,
+							},
+						},
+					}
+
+					-- Dynamically add toggles for each detected button
+					local availableButtons = module:GetAvailableButtons()
+					local buttonOrder = 1
+					for buttonName, isHidden in pairs(availableButtons) do
+						options.args.elements.args[elementName].args.buttonVisibility.args['btn_' .. buttonName] = {
+							name = buttonName,
+							desc = L['Toggle visibility of '] .. buttonName,
+							type = 'toggle',
+							order = buttonOrder,
+							width = 'full',
+							get = function()
+								return not module:IsButtonHidden(buttonName)
+							end,
+							set = function(_, value)
+								module:SetButtonHidden(buttonName, not value)
+							end,
+						}
+						buttonOrder = buttonOrder + 1
+					end
+
+					-- Add a message if no buttons found
+					if buttonOrder == 1 then
+						options.args.elements.args[elementName].args.buttonVisibility.args.noButtons = {
+							name = L['No addon buttons detected. Buttons will appear here after addons with minimap buttons are loaded.'],
+							type = 'description',
+							order = 1,
+							fontSize = 'medium',
+						}
+					end
+
+					-- Add advanced exclude list option (text input for pattern matching)
+					options.args.elements.args[elementName].args.advancedExclude = {
+						name = L['Advanced Exclude List'],
+						type = 'group',
+						order = 7,
+						inline = true,
+						args = {
+							excludeListDesc = {
+								name = L['Enter comma-separated patterns to exclude buttons by partial name match (e.g., "Questie,HandyNotes"). This is in addition to the individual button toggles above.'],
+								type = 'description',
+								order = 0,
+								fontSize = 'medium',
+							},
+							excludeList = {
+								name = L['Exclude Patterns'],
+								type = 'input',
+								order = 1,
+								width = 'full',
+								get = function()
+									local addonBtnSettings = getElementSettings('addonButtons')
+									return addonBtnSettings and addonBtnSettings.excludeList or ''
+								end,
+								set = function(_, value)
+									local customPath = ensureCustomElementPath('addonButtons')
+									local addonBtnSettings = getElementSettings('addonButtons')
+									if addonBtnSettings then
+										addonBtnSettings.excludeList = value
+									end
+									customPath.excludeList = value
+									module:Update(true)
 								end,
 							},
 						},
