@@ -94,8 +94,10 @@ local function HasContributionLine(tooltip)
 	for i = 1, tooltip:NumLines() do
 		local line = _G[tooltipName .. 'TextLeft' .. i]
 		if line then
-			local text = line:GetText()
-			if text and text:find('Endeavor Contribution') then
+			local success, text = pcall(function()
+				return line:GetText()
+			end)
+			if success and text and type(text) == 'string' and text:find('Endeavor Contribution') then
 				return true
 			end
 		end
