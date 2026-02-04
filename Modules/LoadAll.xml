@@ -41,6 +41,7 @@
 	<Script file="HousingEndeavor\HousingEndeavor.lua" />
 	<Script file="HousingEndeavor\Options.lua" />
 	<Script file="HousingEndeavor\ProgressDisplay.lua" />
+	<Script file="HousingEndeavor\ContributorDisplay.lua" />
 	<Script file="HousingEndeavor\TaskTooltips.lua" />
 	<Script file="HousingEndeavor\DataBroker.lua" />
 </Ui>

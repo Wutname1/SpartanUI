@@ -33,6 +33,14 @@ end
 module.taskXPCache = {} ---@type table<number, SUI.HousingEndeavor.TaskXPEntry>
 module.taskXPCacheTime = 0 ---@type number
 
+---@class SUI.HousingEndeavor.ContributorEntry
+---@field name string Player name
+---@field contribution number Total contribution amount
+
+-- Contributor cache
+module.contributorCache = {} ---@type SUI.HousingEndeavor.ContributorEntry[]
+module.contributorCacheTime = 0 ---@type number
+
 -- Default milestone thresholds (fallback if API doesn't provide them)
 local DEFAULT_MILESTONES = { 250, 500, 750, 1000 }
 
@@ -305,6 +313,57 @@ end
 function module:ClearCache()
 	self.taskXPCache = {}
 	self.taskXPCacheTime = 0
+	self.contributorCache = {}
+	self.contributorCacheTime = 0
+end
+
+----------------------------------------------------------------------------------------------------
+-- Contributor Tracking
+----------------------------------------------------------------------------------------------------
+
+---Parse activity log and return sorted contributor list
+---@param forceRefresh? boolean Force cache rebuild
+---@return SUI.HousingEndeavor.ContributorEntry[]
+function module:GetTopContributors(forceRefresh)
+	local now = GetTime()
+
+	-- Check cache freshness (use same cooldown as task cache)
+	if not forceRefresh and self.contributorCacheTime > 0 and (now - self.contributorCacheTime) < CACHE_REBUILD_COOLDOWN then
+		return self.contributorCache
+	end
+
+	local logInfo = self:GetActivityLogInfo()
+	if not logInfo or not logInfo.taskActivity then
+		return self.contributorCache
+	end
+
+	-- Aggregate contributions by player name
+	local ranking = {}
+	for _, entry in pairs(logInfo.taskActivity) do
+		local playerName = entry.playerName
+		-- Try multiple possible field names for the contribution amount
+		local amount = entry.amount or entry.xpAmount or entry.contribution or entry.progressContributionAmount or 0
+		if playerName and amount > 0 then
+			if not ranking[playerName] then
+				ranking[playerName] = 0
+			end
+			ranking[playerName] = ranking[playerName] + amount
+		end
+	end
+
+	-- Convert to sorted array
+	local sorted = {}
+	for name, contribution in pairs(ranking) do
+		table.insert(sorted, { name = name, contribution = contribution })
+	end
+	table.sort(sorted, function(a, b)
+		return a.contribution > b.contribution
+	end)
+
+	self.contributorCache = sorted
+	self.contributorCacheTime = now
+
+	return sorted
 end
 
 ----------------------------------------------------------------------------------------------------
@@ -418,6 +477,13 @@ function module:OnInitialize()
 				enabled = true,
 				format = 'short',
 			},
+			contributors = {
+				enabled = true,
+				count = 2,
+				showScore = true,
+				useRankColors = true,
+				fullListEnabled = true,
+			},
 		},
 	}
 
@@ -464,6 +530,9 @@ function module:OnEnable()
 	end
 	if self.InitDataBroker then
 		self:InitDataBroker()
+	end
+	if self.InitContributorDisplay then
+		self:InitContributorDisplay()
 	end
 
 	if module.logger then

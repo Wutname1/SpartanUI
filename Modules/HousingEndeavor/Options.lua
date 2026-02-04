@@ -150,6 +150,85 @@ function module:BuildOptions()
 					module:SendMessage('SUI_HOUSING_ENDEAVOR_SETTINGS_CHANGED')
 				end,
 			},
+			spacer4 = {
+				type = 'description',
+				name = ' ',
+				order = 35,
+			},
+			contributorsHeader = {
+				type = 'header',
+				name = L['Top Contributors'] or 'Top Contributors',
+				order = 40,
+			},
+			contributorsEnabled = {
+				type = 'toggle',
+				name = L['Enable Contributor Display'] or 'Enable Contributor Display',
+				desc = L['Show top contributors on the Housing Dashboard.'] or 'Show top contributors on the Housing Dashboard.',
+				order = 41,
+				width = 'full',
+				get = function()
+					return module.DB.contributors.enabled
+				end,
+				set = function(_, val)
+					module.DB.contributors.enabled = val
+					module:SendMessage('SUI_HOUSING_ENDEAVOR_SETTINGS_CHANGED')
+				end,
+			},
+			contributorsCount = {
+				type = 'range',
+				name = L['Number of Contributors'] or 'Number of Contributors',
+				desc = L['How many top contributors to display.'] or 'How many top contributors to display.',
+				order = 42,
+				min = 1,
+				max = 5,
+				step = 1,
+				get = function()
+					return module.DB.contributors.count
+				end,
+				set = function(_, val)
+					module.DB.contributors.count = val
+					module:SendMessage('SUI_HOUSING_ENDEAVOR_SETTINGS_CHANGED')
+				end,
+			},
+			contributorsShowScore = {
+				type = 'toggle',
+				name = L['Show Contribution Amount'] or 'Show Contribution Amount',
+				desc = L['Display the XP contribution amount next to each name.'] or 'Display the XP contribution amount next to each name.',
+				order = 43,
+				get = function()
+					return module.DB.contributors.showScore
+				end,
+				set = function(_, val)
+					module.DB.contributors.showScore = val
+					module:SendMessage('SUI_HOUSING_ENDEAVOR_SETTINGS_CHANGED')
+				end,
+			},
+			contributorsUseRankColors = {
+				type = 'toggle',
+				name = L['Use Rank Colors'] or 'Use Rank Colors',
+				desc = L['Color-code contributions by rank (1st: Orange, 2nd: Purple, etc).'] or 'Color-code contributions by rank (1st: Orange, 2nd: Purple, etc).',
+				order = 44,
+				get = function()
+					return module.DB.contributors.useRankColors
+				end,
+				set = function(_, val)
+					module.DB.contributors.useRankColors = val
+					module:SendMessage('SUI_HOUSING_ENDEAVOR_SETTINGS_CHANGED')
+				end,
+			},
+			contributorsFullListEnabled = {
+				type = 'toggle',
+				name = L['Show View More Button'] or 'Show View More Button',
+				desc = L['Show a button to open the full contributor list.'] or 'Show a button to open the full contributor list.',
+				order = 45,
+				get = function()
+					return module.DB.contributors.fullListEnabled
+				end,
+				set = function(_, val)
+					module.DB.contributors.fullListEnabled = val
+					module:SendMessage('SUI_HOUSING_ENDEAVOR_SETTINGS_CHANGED')
+				end,
+			},
 		},
 	}
 
