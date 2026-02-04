@@ -21,19 +21,65 @@ end
 
 local tooltipHooked = false
 
+---Calculate the contribution scale from activity log data
+---Scale = actual_amount / progressContributionAmount
+---@return number scale (0 if unable to calculate)
+local function CalculateContributionScale()
+	local info = module:GetInitiativeInfo()
+	local activityLog = module:GetActivityLogInfo()
+
+	if not info or not info.tasks or not activityLog or not activityLog.taskActivity then
+		return 0
+	end
+
+	-- Build a map of taskID to progressContributionAmount
+	local taskIDToDisplayXP = {}
+	for _, task in ipairs(info.tasks) do
+		if task.ID and task.progressContributionAmount then
+			taskIDToDisplayXP[task.ID] = task.progressContributionAmount
+		end
+	end
+
+	-- Find a recent activity entry where we can calculate scale
+	-- (needs both amount > 0 and matching task with progressContributionAmount)
+	for _, entry in ipairs(activityLog.taskActivity) do
+		local displayXP = taskIDToDisplayXP[entry.taskID]
+		if displayXP and displayXP > 0 and entry.amount and entry.amount > 0 then
+			local scale = entry.amount / displayXP
+			if module and module.logger then
+				module.logger.debug(string.format('TaskTooltips: Calculated scale=%.6f from task %s (amount=%.2f, displayXP=%d)', scale, entry.taskName or 'unknown', entry.amount, displayXP))
+			end
+			return scale
+		end
+	end
+
+	return 0
+end
+
 ---Build a lookup table of task names to XP amounts from API data
----@return table<string, number>
+---@return table<string, number> map of taskName -> estimated actual contribution
 local function GetTaskNameToXPMap()
 	local map = {}
 	local info = module:GetInitiativeInfo()
-	if info and info.tasks then
-		for _, task in ipairs(info.tasks) do
-			if task.taskName and task.progressContributionAmount then
+	if not info or not info.tasks then
+		return map
+	end
+
+	-- Calculate the scale factor
+	local scale = CalculateContributionScale()
+
+	for _, task in ipairs(info.tasks) do
+		if task.taskName and task.progressContributionAmount then
+			if scale > 0 then
+				-- Apply scale to get estimated actual contribution
+				map[task.taskName] = task.progressContributionAmount * scale
+			else
+				-- No scale available, show raw value with indicator
 				map[task.taskName] = task.progressContributionAmount
 			end
 		end
 	end
-	return map
+	return map, scale
 end
 
 ---Check if tooltip already has our contribution line
@@ -68,8 +114,8 @@ local function EnhanceTaskTooltip(tooltip)
 		return
 	end
 
-	-- Get task name to XP mapping
-	local taskMap = GetTaskNameToXPMap()
+	-- Get task name to XP mapping (with scale applied)
+	local taskMap, scale = GetTaskNameToXPMap()
 	if not next(taskMap) then
 		return
 	end
@@ -89,7 +135,13 @@ local function EnhanceTaskTooltip(tooltip)
 				for taskName, xpAmount in pairs(taskMap) do
 					if text == taskName or text:find(taskName, 1, true) then
 						tooltip:AddLine(' ')
-						tooltip:AddDoubleLine(L['Endeavor Contribution'] .. ':', string.format('%.1f XP', xpAmount), 1, 0.82, 0, 1, 1, 1)
+						if scale and scale > 0 then
+							-- Show estimated actual contribution
+							tooltip:AddDoubleLine(L['Endeavor Contribution'] .. ':', string.format('~%.1f', xpAmount), 1, 0.82, 0, 1, 1, 1)
+						else
+							-- No scale available, show raw value with note
+							tooltip:AddDoubleLine(L['Endeavor Contribution'] .. ':', string.format('%d (base)', xpAmount), 1, 0.82, 0, 0.7, 0.7, 0.7)
+						end
 						tooltip:Show()
 						return
 					end

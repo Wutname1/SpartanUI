@@ -47,12 +47,27 @@ local function CreateOverlayFrame(parent)
 	return frame
 end
 
----Create the progress text FontString (on the progress bar)
+-- Text container frame (sits above overlay, doesn't inherit its alpha)
+local textContainerFrame = nil ---@type Frame|nil
+
+---Create a text container frame that sits above the overlay
 ---@param parent Frame
+---@return Frame
+local function CreateTextContainer(parent)
+	local frame = CreateFrame('Frame', 'SUI_HousingEndeavor_TextContainer', parent)
+	frame:SetAllPoints(parent)
+	-- Set frame level higher than overlay so text is on top
+	frame:SetFrameLevel(parent:GetFrameLevel() + 10)
+	return frame
+end
+
+---Create the progress text FontString (on text container, above overlay)
+---@param container Frame The text container frame
+---@param bar StatusBar The progress bar for positioning
 ---@return FontString
-local function CreateProgressText(parent)
-	local text = parent:CreateFontString('SUI_HousingEndeavor_ProgressText', 'OVERLAY')
-	text:SetPoint('RIGHT', parent, 'RIGHT', -15, 0)
+local function CreateProgressText(container, bar)
+	local text = container:CreateFontString('SUI_HousingEndeavor_ProgressText', 'OVERLAY')
+	text:SetPoint('RIGHT', bar, 'RIGHT', -15, 0)
 	text:SetFontObject(GameFontHighlight)
 	text:SetJustifyH('RIGHT')
 	text:SetShadowColor(0, 0, 0, 1)
@@ -60,12 +75,13 @@ local function CreateProgressText(parent)
 	return text
 end
 
----Create the contribution text FontString (above the progress bar)
----@param parent Frame
+---Create the contribution text FontString (on text container, above overlay)
+---@param container Frame The text container frame
+---@param bar StatusBar The progress bar for positioning
 ---@return FontString
-local function CreateContributionText(parent)
-	local text = parent:CreateFontString('SUI_HousingEndeavor_ContributionText', 'OVERLAY')
-	text:SetPoint('BOTTOM', parent, 'TOP', 0, 3)
+local function CreateContributionText(container, bar)
+	local text = container:CreateFontString('SUI_HousingEndeavor_ContributionText', 'OVERLAY')
+	text:SetPoint('BOTTOM', bar, 'TOP', 0, 3)
 	text:SetFontObject(GameFontHighlight)
 	text:SetJustifyH('CENTER')
 	text:SetShadowColor(0, 0, 0, 1)
@@ -99,6 +115,9 @@ local function UpdateDisplay()
 		if overlayFrame then
 			overlayFrame:Hide()
 		end
+		if textContainerFrame then
+			textContainerFrame:Hide()
+		end
 		return
 	end
 
@@ -106,11 +125,14 @@ local function UpdateDisplay()
 	if not overlayFrame then
 		overlayFrame = CreateOverlayFrame(progressBar)
 	end
+	if not textContainerFrame then
+		textContainerFrame = CreateTextContainer(progressBar)
+	end
 	if not progressText then
-		progressText = CreateProgressText(progressBar)
+		progressText = CreateProgressText(textContainerFrame, progressBar)
 	end
 	if not contributionText then
-		contributionText = CreateContributionText(progressBar)
+		contributionText = CreateContributionText(textContainerFrame, progressBar)
 	end
 
 	-- Get initiative info (data should already be current when event fires)
@@ -130,10 +152,10 @@ local function UpdateDisplay()
 	-- Get user settings
 	local color = module.DB.progressOverlay.color or { r = 1, g = 1, b = 1 }
 
-	-- Calculate progress values (like EnhancedEndeavors)
-	local currentProgress = (info.currentProgress or 0) * 100
-	local maxProgress = (info.progressRequired or 10) * 100
-	local contribution = (info.playerTotalContribution or 0) * 100
+	-- Calculate progress values (raw API values, no scaling)
+	local currentProgress = info.currentProgress or 0
+	local maxProgress = info.progressRequired or 10
+	local contribution = info.playerTotalContribution or 0
 
 	-- Clamp current to max
 	if currentProgress >= maxProgress then
@@ -171,6 +193,7 @@ local function UpdateDisplay()
 
 	-- Show elements
 	overlayFrame:Show()
+	textContainerFrame:Show()
 	progressText:Show()
 	contributionText:Show()
 
@@ -189,6 +212,9 @@ local function HideDisplay()
 	end
 	if overlayFrame then
 		overlayFrame:Hide()
+	end
+	if textContainerFrame then
+		textContainerFrame:Hide()
 	end
 end
 

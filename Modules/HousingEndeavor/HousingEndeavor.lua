@@ -115,6 +115,47 @@ function module:RequestActivityLog()
 	end
 end
 
+---Debug: Dump first task and initiative info to understand scaling
+function module:DebugDumpTaskInfo()
+	if not self.logger then
+		return
+	end
+
+	local info = self:GetInitiativeInfo()
+	if info then
+		self.logger.debug('=== Initiative Info ===')
+		self.logger.debug('currentProgress: ' .. tostring(info.currentProgress))
+		self.logger.debug('progressRequired: ' .. tostring(info.progressRequired))
+		self.logger.debug('playerTotalContribution: ' .. tostring(info.playerTotalContribution))
+		self.logger.debug('title: ' .. tostring(info.title))
+
+		if info.tasks and #info.tasks > 0 then
+			local task = info.tasks[1]
+			self.logger.debug('=== First Task ===')
+			for k, v in pairs(task) do
+				if type(v) ~= 'table' then
+					self.logger.debug('  ' .. tostring(k) .. ': ' .. tostring(v))
+				else
+					self.logger.debug('  ' .. tostring(k) .. ': [table]')
+				end
+			end
+		end
+	end
+
+	local activityLog = self:GetActivityLogInfo()
+	if activityLog and activityLog.taskActivity and #activityLog.taskActivity > 0 then
+		local entry = activityLog.taskActivity[1]
+		self.logger.debug('=== First Activity Log Entry ===')
+		for k, v in pairs(entry) do
+			if type(v) ~= 'table' then
+				self.logger.debug('  ' .. tostring(k) .. ': ' .. tostring(v))
+			else
+				self.logger.debug('  ' .. tostring(k) .. ': [table]')
+			end
+		end
+	end
+end
+
 ----------------------------------------------------------------------------------------------------
 -- Milestone & Progress Calculations
 ----------------------------------------------------------------------------------------------------
@@ -432,6 +473,8 @@ function module:OnEvent_NEIGHBORHOOD_INITIATIVE_UPDATED()
 	-- which would cause infinite recursion. The event means data is already updated.
 	-- Request activity log (this triggers INITIATIVE_ACTIVITY_LOG_UPDATED, not this event)
 	self:RequestActivityLog()
+	-- Debug dump task info to understand scaling
+	self:DebugDumpTaskInfo()
 	-- Send update message
 	self:SendMessage('SUI_HOUSING_ENDEAVOR_UPDATED')
 end

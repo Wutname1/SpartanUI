@@ -81,7 +81,7 @@ local function CreateContributorPanel()
 	frame.title = frame:CreateFontString(nil, 'ARTWORK')
 	frame.title:SetPoint('TOP', frame, 'TOP', 0, -8)
 	frame.title:SetFontObject(GameFontNormal)
-	frame.title:SetText(L['Top Contributors'] or 'Top Contributors')
+	frame.title:SetText(L['Top Contributors'])
 	frame.title:SetJustifyH('CENTER')
 
 	-- Create contributor rows (dynamically based on count setting)
@@ -169,6 +169,8 @@ local function UpdateContributorPanel()
 		return
 	end
 
+	contributorPanel.title:SetText(L['Top Contributors'])
+
 	local contributors = module:GetTopContributors()
 	if not contributors or #contributors == 0 then
 		if module and module.logger then
@@ -202,7 +204,7 @@ local function UpdateContributorPanel()
 
 				if showScore then
 					-- Format score (multiply by 100 like EnhancedEndeavors)
-					row.scoreText:SetText(BreakUpLargeNumbers(contributor.contribution * 100))
+					row.scoreText:SetText(BreakUpLargeNumbers(contributor.contribution))
 					row.scoreText:SetTextColor(color.r, color.g, color.b)
 					row.scoreText:Show()
 				else
@@ -337,7 +339,7 @@ local function CreateContributorListWindow()
 	window:SetScript('OnDragStop', window.StopMovingOrSizing)
 
 	-- Set title
-	window:SetTitle('|cffffffffSpartan|cffe21f1fUI|r ' .. (L['Top Contributors'] or 'Top Contributors'))
+	window:SetTitle('|cffffffffSpartan|cffe21f1fUI|r ' .. L['Top Contributors'])
 
 	-- Create main content area
 	window.MainContent = CreateFrame('Frame', nil, window)
@@ -435,7 +437,7 @@ local function UpdateContributorListWindow()
 		row.name:SetText(contributor.name)
 		row.name:SetTextColor(1, 1, 1)
 
-		row.score:SetText(BreakUpLargeNumbers(contributor.contribution * 100))
+		row.score:SetText(BreakUpLargeNumbers(contributor.contribution))
 		row.score:SetTextColor(color.r, color.g, color.b)
 
 		row:Show()
@@ -450,6 +452,14 @@ end
 function module:ShowContributorListWindow()
 	if not contributorListWindow then
 		contributorListWindow = CreateContributorListWindow()
+	end
+
+	-- Update window title with zone name (e.g., "46 Stormy Shores Top Contributors")
+	local info = self:GetInitiativeInfo()
+	if info and info.title then
+		contributorListWindow:SetTitle(info.title .. ' ' .. L['Top Contributors'])
+	else
+		contributorListWindow:SetTitle(L['Top Contributors'])
 	end
 
 	UpdateContributorListWindow()
@@ -544,6 +554,10 @@ local function HookFrame()
 			module.logger.debug('ContributorDisplay: OnHide triggered')
 		end
 		HideContributorPanel()
+		-- Also hide the full contributor list window
+		if contributorListWindow and contributorListWindow:IsVisible() then
+			contributorListWindow:Hide()
+		end
 	end)
 
 	hooked = true
