@@ -36,7 +36,6 @@ libs\LibDBIcon-1.0\lib.xml
 # LIBRARIES - RETAIL ONLY
 # ============================================
 libs\TaintLess\TaintLess.xml [AllowLoadGameType mainline]
-libs\LibEditMode\embed.xml [AllowLoadGameType mainline]
 libs\LibEditModeOverride\LibEditModeOverride.xml [AllowLoadGameType mainline]
 libs\LibDualSpec-1.0\LibDualSpec-1.0.lua [AllowLoadGameType mainline]
 libs\LibQTip-1.0\lib.xml [AllowLoadGameType mainline]
@@ -82,17 +81,18 @@ Core\oUF_Plugins\LevelSkull.lua
 Core\oUF_Plugins\RareElite.lua
 Core\oUF_Plugins\SUI_RaidGroup.lua
 Core\oUF_Plugins\oUF_SpartanArt.lua
+Core\oUF_Plugins\oUF_DefensiveIndicator.lua [AllowLoadGameType mainline]
+Core\oUF_Plugins\oUF_RaidDebuffs.lua
 
 # oUF Plugins - Third-party
 libs\oUF_Plugins\oUF_AuraBars.lua [AllowLoadGameType vanilla, tbc, wrath, cata, mists]
 libs\oUF_Plugins\oUF_AuraHighlight.lua
-libs\oUF_Plugins\oUF_AuraWatch.lua [AllowLoadGameType vanilla, tbc, wrath, cata, mists]
+libs\oUF_Plugins\oUF_AuraWatch.lua
 libs\oUF_Plugins\oUF_ClassicAuraDurations.lua [AllowLoadGameType vanilla, tbc, wrath, cata, mists]
 libs\oUF_Plugins\oUF_Fader.lua
 libs\oUF_Plugins\oUF_PvPRoleIndicator.lua
 libs\oUF_Plugins\oUF_QuestMob.lua
 libs\oUF_Plugins\oUF_PVPSpecIcons.lua
-libs\oUF_Plugins\oUF_RaidDebuffs.lua
 libs\oUF_Plugins\oUF_WidgetXPBar.lua
 
 # ============================================

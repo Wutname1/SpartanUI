@@ -285,6 +285,11 @@ function module:OnInitialize()
 		playerlevel = nil,
 		ChatCopyTip = true,
 		fontSize = 12,
+		-- New convenience options
+		hideChatButtons = false,
+		hideSocialButton = false,
+		disableChatFade = false,
+		chatHistoryLines = 128, -- Default WoW value, can go up to 4096
 		chatLog = {
 			enabled = true,
 			maxEntries = 50,
@@ -416,6 +421,9 @@ function module:OnEnable()
 		return
 	end
 
+	-- Apply new convenience settings
+	module:ApplyChatSettings()
+
 	-- Setup Player level monitor
 	module.PLAYER_TARGET_CHANGED = function()
 		if UnitIsPlayer('target') and UnitIsFriend('player', 'target') then
@@ -457,15 +465,21 @@ function module:OnEnable()
 		SUI:Print('Leavers: ' .. LeaveCount)
 	end, 'Prints the number of leavers in the current battleground, addings anything after leavers will output to instance chat')
 
-	--Add chat command to clear chat history
+	--Add chat command to clear chat window and history
 	SUI:AddChatCommand('clearchat', function()
-		module:ClearChatLog()
-	end, 'Clears the chat log history (also available as /clearchat)')
+		module:ClearChat()
+	end, 'Clears the chat window and stored history (also available as /clearchat or /clear)')
 
 	--Register standalone /clearchat command
 	SLASH_CLEARCHAT1 = '/clearchat'
 	SlashCmdList['CLEARCHAT'] = function()
-		module:ClearChatLog()
+		module:ClearChat()
+	end
+
+	--Register /clear command as alias
+	SLASH_SUICLEAR1 = '/clear'
+	SlashCmdList['SUICLEAR'] = function()
+		module:ClearChat()
 	end
 
 	--Detect when we leave the battleground and reset the counter
@@ -609,6 +623,26 @@ function module:ClearChatLog()
 	SUI:Print(L['Chat log cleared'])
 end
 
+function module:ClearChat()
+	-- Clear all chat frames
+	for i = 1, NUM_CHAT_WINDOWS do
+		local chatFrame = _G['ChatFrame' .. i]
+		if chatFrame then
+			chatFrame:Clear()
+		end
+	end
+
+	-- Clear stored chat log history
+	wipe(self.DB.chatLog.history)
+
+	-- Clear edit box history
+	if SUI.CharDB.ChatEditHistory then
+		wipe(SUI.CharDB.ChatEditHistory)
+	end
+
+	SUI:Print(L['Chat cleared'])
+end
+
 function module:EditBoxPosition()
 	for i = 1, 10 do
 		local ChatFrameName = ('%s%d'):format('ChatFrame', i)
@@ -624,6 +658,100 @@ function module:EditBoxPosition()
 		else
 			ChatFrameEdit:SetPoint('TOPLEFT', ChatFrame.Background, 'BOTTOMLEFT', -1, -1)
 			ChatFrameEdit:SetPoint('TOPRIGHT', ChatFrame.Background, 'BOTTOMRIGHT', 1, -1)
+		end
+	end
+end
+
+function module:ApplyChatSettings()
+	-- Apply hide chat buttons setting
+	module:ApplyHideChatButtons()
+
+	-- Apply hide social button setting
+	module:ApplyHideSocialButton()
+
+	-- Apply disable chat fade setting
+	module:ApplyDisableChatFade()
+
+	-- Apply chat history lines setting
+	module:ApplyChatHistoryLines()
+end
+
+function module:ApplyHideChatButtons()
+	-- Hide/show the chat frame menu button and voice channel button
+	local ChatFrameMenuBtn = _G['ChatFrameMenuButton']
+	local VoiceChannelButton = _G['ChatFrameChannelButton']
+
+	if module.DB.hideChatButtons then
+		if ChatFrameMenuBtn then
+			ChatFrameMenuBtn:Hide()
+			ChatFrameMenuBtn:SetScript('OnShow', function(self)
+				if module.DB.hideChatButtons then
+					self:Hide()
+				end
+			end)
+		end
+		if VoiceChannelButton then
+			VoiceChannelButton:Hide()
+			VoiceChannelButton:SetScript('OnShow', function(self)
+				if module.DB.hideChatButtons then
+					self:Hide()
+				end
+			end)
+		end
+	else
+		if ChatFrameMenuBtn then
+			ChatFrameMenuBtn:SetScript('OnShow', nil)
+			ChatFrameMenuBtn:Show()
+		end
+		if VoiceChannelButton then
+			VoiceChannelButton:SetScript('OnShow', nil)
+			VoiceChannelButton:Show()
+		end
+	end
+end
+
+function module:ApplyHideSocialButton()
+	-- Hide/show the quick join toast button (social button)
+	local QJTB = _G['QuickJoinToastButton']
+	if not QJTB then
+		return
+	end
+
+	if module.DB.hideSocialButton then
+		QJTB:Hide()
+		QJTB:SetScript('OnShow', function(self)
+			if module.DB.hideSocialButton then
+				self:Hide()
+			end
+		end)
+	else
+		QJTB:SetScript('OnShow', nil)
+		QJTB:Show()
+	end
+end
+
+function module:ApplyDisableChatFade()
+	-- Enable/disable chat fade for all chat frames
+	for i = 1, NUM_CHAT_WINDOWS do
+		local ChatFrame = _G['ChatFrame' .. i]
+		if ChatFrame then
+			if module.DB.disableChatFade then
+				ChatFrame:SetFading(false)
+			else
+				ChatFrame:SetFading(true)
+			end
+		end
+	end
+end
+
+function module:ApplyChatHistoryLines()
+	-- Set the maximum number of history lines for all chat frames
+	-- Default WoW is 128, max is 4096
+	local lines = module.DB.chatHistoryLines or 128
+	for i = 1, NUM_CHAT_WINDOWS do
+		local ChatFrame = _G['ChatFrame' .. i]
+		if ChatFrame then
+			ChatFrame:SetMaxLines(lines)
 		end
 	end
 end
@@ -743,7 +871,10 @@ function module:SetupChatboxes()
 		local ChatFrame = _G[ChatFrameName]
 		local ChatFrameEdit = _G[ChatFrameName .. 'EditBox']
 
-		if IsAltKeyDown() then
+		if IsShiftKeyDown() and IsControlKeyDown() then
+			-- Shift+Control+Click to clear the chat tab
+			ChatFrame:Clear()
+		elseif IsAltKeyDown() then
 			local text = ''
 			-- Fix special pipe methods e.g. 5 |4hour:hours; Example: copying /played text
 			for i = 1, ChatFrame:GetNumMessages() do
@@ -779,6 +910,7 @@ function module:SetupChatboxes()
 		GameTooltip:SetOwner(frame, 'ANCHOR_TOP')
 		GameTooltip:AddLine('Alt+Click to copy', 0.8, 0, 0)
 		GameTooltip:AddLine('Shift+Click to toggle', 0, 0.1, 1)
+		GameTooltip:AddLine('Shift+Ctrl+Click to clear', 0.8, 0.4, 0)
 		GameTooltip:Show()
 	end
 	local TabHintLeave = function(frame)
@@ -1191,6 +1323,54 @@ function module:BuildOptions()
 				name = L['Hoveable game links'],
 				type = 'toggle',
 				order = 21,
+			},
+			convenienceHeader = {
+				name = L['Convenience'],
+				type = 'header',
+				order = 30,
+			},
+			hideChatButtons = {
+				name = L['Hide chat buttons'],
+				desc = L['Hide the menu and voice channel buttons'],
+				type = 'toggle',
+				order = 31,
+				set = function(info, val)
+					module.DB.hideChatButtons = val
+					module:ApplyHideChatButtons()
+				end,
+			},
+			hideSocialButton = {
+				name = L['Hide social button'],
+				desc = L['Hide the quick-join/social button'],
+				type = 'toggle',
+				order = 32,
+				set = function(info, val)
+					module.DB.hideSocialButton = val
+					module:ApplyHideSocialButton()
+				end,
+			},
+			disableChatFade = {
+				name = L['Disable chat fade'],
+				desc = L['Keep chat text visible indefinitely'],
+				type = 'toggle',
+				order = 33,
+				set = function(info, val)
+					module.DB.disableChatFade = val
+					module:ApplyDisableChatFade()
+				end,
+			},
+			chatHistoryLines = {
+				name = L['Chat history lines'],
+				desc = L['Maximum number of lines to keep in chat history (default 128, max 4096)'],
+				type = 'range',
+				order = 34,
+				min = 128,
+				max = 4096,
+				step = 128,
+				set = function(info, val)
+					module.DB.chatHistoryLines = val
+					module:ApplyChatHistoryLines()
+				end,
 			},
 			chatLog = {
 				name = L['Chat Log'],

@@ -87,8 +87,6 @@ SUI.AddLib('Base64', 'LibBase64-1.0-SUI')
 SUI.AddLib('LSM', 'LibSharedMedia-3.0')
 -- Retail and TBC libraries (loaded conditionally via TOC)
 if SUI.IsRetail or SUI.IsTBC then
-	SUI.AddLib('LEM', 'LibEditMode', true)
-	SUI.AddLib('LibEditMode', 'LibEditMode', true)
 	SUI.AddLib('EditModeOverride', 'LibEditModeOverride-1.0', true)
 end
 -- Retail-only libraries (loaded conditionally via TOC)
@@ -135,6 +133,10 @@ SUI.Lib.LSM:Register('statusbar', 'SpartanUI Default', [[Interface\AddOns\Sparta
 SUI.Lib.LSM:Register('statusbar', 'Glass', [[Interface\AddOns\SpartanUI\images\statusbars\glass.tga]])
 SUI.Lib.LSM:Register('statusbar', 'WGlass', [[Interface\AddOns\SpartanUI\images\statusbars\Wglass]])
 SUI.Lib.LSM:Register('statusbar', 'Blank', [[Interface\AddOns\SpartanUI\images\blank]])
+-- Blizzard's built-in textures for health prediction
+SUI.Lib.LSM:Register('statusbar', 'Blizzard', [[Interface\TargetingFrame\UI-StatusBar]])
+SUI.Lib.LSM:Register('statusbar', 'Blizzard Shield', [[Interface\RaidFrame\Shield-Fill]])
+SUI.Lib.LSM:Register('statusbar', 'Blizzard Absorb', [[Interface\RaidFrame\Absorb-Fill]])
 
 -- Add Background textures
 SUI.Lib.LSM:Register('background', 'Smoke', [[Interface\AddOns\SpartanUI\images\backgrounds\smoke]])
@@ -209,12 +211,15 @@ local DBdefault = {
 				['TalkingHead'] = 'TOP,SpartanUI,TOP,0,-18',
 				['AltPowerBar'] = 'TOP,SpartanUI,TOP,0,-18',
 				['WidgetPowerBarContainer'] = 'TOP,SpartanUI,TOP,0,-50',
-				['ZoneAbility'] = 'BOTTOM,SpartanUI,BOTTOM,0,210',
-				['ExtraActionBar'] = 'BOTTOM,SpartanUI,BOTTOM,0,280',
+				['ZoneAbility'] = 'BOTTOM,UIParent,BOTTOM,0,350',
+				['ExtraActionBar'] = 'BOTTOM,UIParent,BOTTOM,0,350',
 				['BossButton'] = 'BOTTOM,SpartanUI,BOTTOM,0,210',
 				['AlertFrame'] = 'BOTTOM,SpartanUI,BOTTOM,0,215',
 				['VehicleLeaveButton'] = 'BOTTOM,SpartanUI,BOTTOM,0,180',
 				['FramerateFrame'] = 'BOTTOM,SpartanUI,BOTTOM,0,210',
+				['EncounterBar'] = 'TOP,UIParent,TOP,0,-90',
+				['TopCenterContainer'] = 'TOP,UIParent,TOP,0,-50',
+				['ArchaeologyBar'] = 'TOP,UIParent,TOP,0,-50',
 			},
 			Color = {
 				Art = false,
@@ -458,6 +463,10 @@ local DBdefault = {
 								graphic = 'Classic',
 							},
 						},
+						RareElite = {
+							mode = 'dragon',
+							alpha = 1,
+						},
 						CombatIndicator = {
 							enabled = true,
 							position = {
@@ -554,6 +563,10 @@ local DBdefault = {
 								enabled = true,
 								graphic = 'Classic',
 							},
+						},
+						RareElite = {
+							mode = 'dragon',
+							alpha = 1,
 						},
 					},
 				},
@@ -1058,25 +1071,24 @@ local function reloaduiWindow()
 	local UI = LibAT.UI
 	local popup = UI.CreateWindow({
 		name = 'SUI_ReloadUI',
-		title = 'SpartanUI',
+		title = '|cffffffffSpartan|cffe21f1fUI|r - Reload UI',
 		width = 400,
-		height = 140,
+		height = 100,
 		hidePortrait = true,
 	})
+	popup.Inset:Hide()
+
+	popup.Background = popup:CreateTexture(nil, 'BACKGROUND')
+	popup.Background:SetAtlas('auctionhouse-background-index', true)
+	popup.Background:SetPoint('TOPLEFT', popup, 'TOPLEFT', 5, -27)
+	popup.Background:SetPoint('BOTTOMRIGHT', popup, 'BOTTOMRIGHT', -5, 27)
+
 	popup:SetPoint('TOP', UIParent, 'TOP', 0, -20)
 	popup:SetFrameStrata('DIALOG')
 
-	-- SUI Logo
-	local logo = popup:CreateTexture(nil, 'ARTWORK')
-	logo:SetTexture('Interface\\AddOns\\SpartanUI\\images\\setup\\SUISetup')
-	logo:SetSize(156, 45)
-	logo:SetTexCoord(0, 0.611328125, 0, 0.6640625)
-	logo:SetPoint('TOP', popup, 'TOP', 0, -35)
-	logo:SetAlpha(0.8)
-
 	-- Message
 	local message = UI.CreateLabel(popup, 'A reload of your UI is required.', 'GameFontNormalLarge')
-	message:SetPoint('TOP', popup, 'TOP', 0, -85)
+	message:SetPoint('CENTER', popup.Background, 'CENTER', 0, 0)
 
 	-- Buttons
 	UI.CreateActionButtons(popup, {
@@ -1094,7 +1106,7 @@ local function reloaduiWindow()
 				SUI:SafeReloadUI()
 			end,
 		},
-	}, 5, 4, -3)
+	}, 5, 5, 5)
 
 	popup:Hide()
 	SUI.reloaduiWindow = popup

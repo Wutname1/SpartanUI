@@ -1,8 +1,8 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\..\FrameXML\UI.xsd">
-	<Script file="MoveIt.lua" />
-	<Script file="AutoTurnIn.lua" />
+	<Include file="MoveIt\Load.xml" />
+	<Include file="QuestTools\Load.xml" />
 	<Include file="AutoSell\Loader.xml" />
 	<Script file="Minimap\Minimap.lua" />
 	<Script file="Minimap\Options.lua" />
@@ -15,7 +15,8 @@
 	<!-- <Script file="ImprovedLFG.lua" /> -->
 	<Script file="Chatbox.lua" />
 	<Script file="AFKEffects.lua" />
-	<Script file="StopTalking.lua" />
+	<Include file="UICleanup\Load.xml" />
+	<Include file="Convenience\Load.xml" />
 	<Script file="MiniTom.lua" />
 	<Script file="LibsToolkit.lua" />
 	<Script file="BlizzUIFixes.lua" />
@@ -35,4 +36,12 @@
 	<!-- Load UnitFrames -->
 	<Include file="UnitFrames\Load.xml"/>
 	<Script file="Nameplates.lua" />
+
+	<!-- Load Housing Endeavor (Retail only - files self-check SUI.IsRetail) -->
+	<Script file="HousingEndeavor\HousingEndeavor.lua" />
+	<Script file="HousingEndeavor\Options.lua" />
+	<Script file="HousingEndeavor\ProgressDisplay.lua" />
+	<Script file="HousingEndeavor\ContributorDisplay.lua" />
+	<Script file="HousingEndeavor\TaskTooltips.lua" />
+	<Script file="HousingEndeavor\DataBroker.lua" />
 </Ui>

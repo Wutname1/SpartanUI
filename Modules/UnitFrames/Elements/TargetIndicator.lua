@@ -187,7 +187,18 @@ local function CreateBorderDisplay(element, DB)
 	local id = 'TargetIndicator_' .. frame:GetName()
 	element.borderInstance = SUI.Handlers.BackgroundBorder:Create(frame, id, borderSettings)
 	element.borderInstanceId = id
-	SUI.Handlers.BackgroundBorder:SetVisible(id, false)
+
+	-- Force-set enabled=true on the instance since MergeData doesn't override existing false values
+	local instance = SUI.Handlers.BackgroundBorder.instances[id]
+	if instance then
+		instance.settings.enabled = true
+		instance.settings.border.enabled = true
+		instance.settings.background.enabled = false -- We don't want background
+		instance.visible = false -- Start hidden until target is selected
+	end
+
+	-- Update to apply the corrected settings (starts hidden because visible=false)
+	SUI.Handlers.BackgroundBorder:Update(id)
 end
 
 ---Rebuild display based on current mode settings
@@ -308,12 +319,9 @@ local function Options(unitName, OptionSet)
 		set = function(_, val)
 			OptUpdate('mode', val)
 			-- Rebuild display when mode changes
-			local frames = UF.Unit[unitName]:GetFrames()
-			if frames then
-				for _, frame in pairs(frames) do
-					if frame.TargetIndicator then
-						RebuildDisplay(frame.TargetIndicator, UF.CurrentSettings[unitName].elements.TargetIndicator)
-					end
+			for _, frame in pairs(UF.Unit:GetFrames(unitName)) do
+				if frame.TargetIndicator then
+					RebuildDisplay(frame.TargetIndicator, UF.CurrentSettings[unitName].elements.TargetIndicator)
 				end
 			end
 		end,
@@ -341,12 +349,9 @@ local function Options(unitName, OptionSet)
 				set = function(_, val)
 					OptUpdate('textureKey', val, 'texture')
 					-- Rebuild display when texture changes
-					local frames = UF.Unit[unitName]:GetFrames()
-					if frames then
-						for _, frame in pairs(frames) do
-							if frame.TargetIndicator then
-								RebuildDisplay(frame.TargetIndicator, UF.CurrentSettings[unitName].elements.TargetIndicator)
-							end
+					for _, frame in pairs(UF.Unit:GetFrames(unitName)) do
+						if frame.TargetIndicator then
+							RebuildDisplay(frame.TargetIndicator, UF.CurrentSettings[unitName].elements.TargetIndicator)
 						end
 					end
 				end,
@@ -374,12 +379,9 @@ local function Options(unitName, OptionSet)
 				set = function(_, val)
 					OptUpdate('placement', val, 'texture')
 					-- Rebuild display when placement changes
-					local frames = UF.Unit[unitName]:GetFrames()
-					if frames then
-						for _, frame in pairs(frames) do
-							if frame.TargetIndicator then
-								RebuildDisplay(frame.TargetIndicator, UF.CurrentSettings[unitName].elements.TargetIndicator)
-							end
+					for _, frame in pairs(UF.Unit:GetFrames(unitName)) do
+						if frame.TargetIndicator then
+							RebuildDisplay(frame.TargetIndicator, UF.CurrentSettings[unitName].elements.TargetIndicator)
 						end
 					end
 				end,
@@ -397,12 +399,9 @@ local function Options(unitName, OptionSet)
 				set = function(_, val)
 					OptUpdate('scale', val, 'texture')
 					-- Rebuild display when scale changes
-					local frames = UF.Unit[unitName]:GetFrames()
-					if frames then
-						for _, frame in pairs(frames) do
-							if frame.TargetIndicator then
-								RebuildDisplay(frame.TargetIndicator, UF.CurrentSettings[unitName].elements.TargetIndicator)
-							end
+					for _, frame in pairs(UF.Unit:GetFrames(unitName)) do
+						if frame.TargetIndicator then
+							RebuildDisplay(frame.TargetIndicator, UF.CurrentSettings[unitName].elements.TargetIndicator)
 						end
 					end
 				end,
@@ -447,14 +446,11 @@ local function Options(unitName, OptionSet)
 				set = function(_, val)
 					OptUpdate('size', val, 'border')
 					-- Update border when size changes
-					local frames = UF.Unit[unitName]:GetFrames()
-					if frames then
-						for _, frame in pairs(frames) do
-							if frame.TargetIndicator and frame.TargetIndicator.borderInstance then
-								SUI.Handlers.BackgroundBorder:Update('TargetIndicator_' .. frame:GetName(), {
-									border = { size = val },
-								})
-							end
+					for _, frame in pairs(UF.Unit:GetFrames(unitName)) do
+						if frame.TargetIndicator and frame.TargetIndicator.borderInstance then
+							SUI.Handlers.BackgroundBorder:Update('TargetIndicator_' .. frame:GetName(), {
+								border = { size = val },
+							})
 						end
 					end
 				end,
@@ -472,21 +468,18 @@ local function Options(unitName, OptionSet)
 					local color = { r, g, b, a }
 					OptUpdate('color', color, 'border')
 					-- Update border when color changes
-					local frames = UF.Unit[unitName]:GetFrames()
-					if frames then
-						for _, frame in pairs(frames) do
-							if frame.TargetIndicator and frame.TargetIndicator.borderInstance then
-								SUI.Handlers.BackgroundBorder:Update('TargetIndicator_' .. frame:GetName(), {
-									border = {
-										colors = {
-											top = color,
-											bottom = color,
-											left = color,
-											right = color,
-										},
+					for _, frame in pairs(UF.Unit:GetFrames(unitName)) do
+						if frame.TargetIndicator and frame.TargetIndicator.borderInstance then
+							SUI.Handlers.BackgroundBorder:Update('TargetIndicator_' .. frame:GetName(), {
+								border = {
+									colors = {
+										top = color,
+										bottom = color,
+										left = color,
+										right = color,
 									},
-								})
-							end
+								},
+							})
 						end
 					end
 				end,
@@ -509,12 +502,9 @@ local function Options(unitName, OptionSet)
 					sides[key] = val
 					OptUpdate('sides', sides, 'border')
 					-- Update border when sides change
-					local frames = UF.Unit[unitName]:GetFrames()
-					if frames then
-						for _, frame in pairs(frames) do
-							if frame.TargetIndicator and frame.TargetIndicator.borderInstance then
-								SUI.Handlers.BackgroundBorder:Update('TargetIndicator_' .. frame:GetName(), { border = { sides = sides } })
-							end
+					for _, frame in pairs(UF.Unit:GetFrames(unitName)) do
+						if frame.TargetIndicator and frame.TargetIndicator.borderInstance then
+							SUI.Handlers.BackgroundBorder:Update('TargetIndicator_' .. frame:GetName(), { border = { sides = sides } })
 						end
 					end
 				end,

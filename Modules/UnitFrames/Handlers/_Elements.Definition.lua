@@ -82,7 +82,7 @@ local ElementTextData = {
 ---|"ClassPower"
 ---|"CombatIndicator"
 ---|"Debuffs"
----|"DispelHighlight"
+---|"Dispel"
 ---|"GroupRoleIndicator"
 ---|"HappinessIndicator"
 ---|"Health"
@@ -118,7 +118,7 @@ local ElementTextData = {
 ---@field ClassPower ElementProps
 ---@field CombatIndicator ElementProps
 ---@field Debuffs ElementProps
----@field DispelHighlight ElementProps
+---@field Dispel ElementProps
 ---@field GroupRoleIndicator ElementProps
 ---@field HappinessIndicator ElementProps
 ---@field Health ElementProps

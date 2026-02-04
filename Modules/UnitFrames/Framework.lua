@@ -7,6 +7,7 @@ UF.DisplayName = L['Unit frames']
 UF.description = 'CORE: SUI Unitframes'
 UF.Core = true
 UF.CurrentSettings = {}
+UF.BuildDebug = false -- Set to true to enable verbose build logging
 
 ---@class SUI.UF.FramePositions
 local UFPositionDefaults = {
@@ -191,6 +192,34 @@ function UF:OnEnable()
 		end
 	end
 
+	-- Register frame relationships for magnetism after movers are created
+	if MoveIt.MagnetismManager then
+		local positionData = UFPositionDefaults
+		local posData = UF.Style:Get(SUI.DB.Artwork.Style).positions
+		if SUI:IsModuleEnabled('Artwork') and posData then
+			positionData = SUI:CopyData(posData, UFPositionDefaults)
+		end
+
+		for unit, config in pairs(UF.Unit:GetBuiltFrameList()) do
+			if not config.isChild then
+				local posString = positionData[unit]
+				if posString then
+					local _, anchor = strsplit(',', posString)
+					if anchor and anchor ~= 'UIParent' then
+						-- Convert anchor string to frame
+						local anchorFrame = _G[anchor]
+						if anchorFrame and anchorFrame.mover then
+							local unitFrame = UF.Unit:Get(unit)
+							if unitFrame and unitFrame.mover then
+								MoveIt.MagnetismManager:RegisterFrameRelationship(unitFrame.mover, anchorFrame.mover)
+							end
+						end
+					end
+				end
+			end
+		end
+	end
+
 	-- Edit Mode integration (Retail and TBC+)
 	if EditModeManagerFrame and (SUI.IsRetail or SUI.IsTBC) then
 		local CheckedItems = {}
@@ -221,7 +250,7 @@ function UF:OnEnable()
 		local unit, spellId = strsplit(' ', args)
 
 		if not spellId then
-			print('Please specify a SpellID')
+			SUI:Print('Please specify a SpellID')
 			return
 		end
 
@@ -231,14 +260,20 @@ function UF:OnEnable()
 
 		for i, v in ipairs(SUI.UF.MonitoredBuffs[unit]) do
 			if v == tonumber(spellId) then
-				print('Removed ' .. spellId .. ' from the list of monitored buffs')
+				SUI:Print('Removed ' .. spellId .. ' from the list of monitored buffs')
+				if UF.Log then
+					UF.Log.info('Removed ' .. spellId .. ' from monitored buffs for ' .. unit)
+				end
 				table.remove(SUI.UF.MonitoredBuffs[unit], i)
 				return
 			end
 		end
 
 		table.insert(SUI.UF.MonitoredBuffs[unit], tonumber(spellId))
-		print('Added ' .. spellId .. ' to the list of monitored buffs')
+		SUI:Print('Added ' .. spellId .. ' to the list of monitored buffs')
+		if UF.Log then
+			UF.Log.info('Added ' .. spellId .. ' to monitored buffs for ' .. unit)
+		end
 	end, 'Add/Remove a spellID to the list of spells to debug')
 end
 

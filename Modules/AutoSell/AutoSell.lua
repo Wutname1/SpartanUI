@@ -3,6 +3,7 @@ local SUI, L, print = SUI, SUI.L, SUI.print
 local module = SUI:NewModule('AutoSell')
 module.DisplayName = L['Auto sell']
 module.description = 'Auto sells junk and more'
+module.log = nil
 
 ----------------------------------------------------------------------------------------------------
 -- Configuration constants
@@ -18,6 +19,21 @@ local blacklistLookup = {
 	types = {},
 	valid = false,
 }
+local highestILVL = function()
+	local CurrentHighestILVL = 0
+	for bag = 0, MAX_BAG_SLOTS do
+		for slot = 1, C_Container.GetContainerNumSlots(bag) do
+			local itemInfo = C_Container.GetContainerItemInfo(bag, slot)
+			if itemInfo then
+				local iLevel = SUI:GetiLVL(itemInfo.hyperlink)
+				if iLevel and iLevel > CurrentHighestILVL then
+					CurrentHighestILVL = iLevel
+				end
+			end
+		end
+	end
+	return CurrentHighestILVL
+end
 
 ---@class SUI.Module.AutoSell.DB
 local DbDefaults = {
@@ -26,7 +42,7 @@ local DbDefaults = {
 	NotConsumables = true,
 	NotInGearset = true,
 	MaximumiLVL = 500,
-	MaxILVL = 200,
+	MaxILVL = highestILVL() * 0.8,
 	LastWowProjectID = WOW_PROJECT_ID,
 	Gray = true,
 	White = false,
@@ -116,12 +132,9 @@ local DbDefaults = {
 ---@field Whitelist table<number, boolean> Character-specific whitelist items
 ---@field Blacklist table<number, boolean> Character-specific blacklist items
 
--- Setup logging for AutoSell module
-local logger = nil
-
 local function debugMsg(msg, level)
-	if logger then
-		logger.log(msg, level or 'debug')
+	if module.log then
+		module.log.log(msg, level or 'debug')
 	end
 end
 
@@ -344,7 +357,7 @@ function module:SellTrash()
 	--Reset Locals
 	totalValue = 0
 	local ItemToSell = {}
-	local highestILVL = 0
+	local highestILVL = highestILVL()
 	local blizzardSoldItems = false
 
 	-- First, try to use Blizzard's sell junk function if available
@@ -518,18 +531,7 @@ local function HandleItemLevelSquish()
 		debugMsg('Detected WOW_PROJECT_ID change from ' .. (module.DB.LastWowProjectID or 'unknown') .. ' to ' .. WOW_PROJECT_ID, 'info')
 
 		-- Scan all items to find the new highest item level
-		local newHighestILVL = 0
-		for bag = 0, MAX_BAG_SLOTS do
-			for slot = 1, C_Container.GetContainerNumSlots(bag) do
-				local itemInfo = C_Container.GetContainerItemInfo(bag, slot)
-				if itemInfo then
-					local iLevel = SUI:GetiLVL(itemInfo.hyperlink)
-					if iLevel and iLevel > newHighestILVL then
-						newHighestILVL = iLevel
-					end
-				end
-			end
-		end
+		local newHighestILVL = highestILVL()
 
 		-- Add buffer to new highest level
 		local newMaximumiLVL = newHighestILVL + 50
@@ -914,7 +916,7 @@ function module:OnInitialize()
 
 	-- Setup logging system for AutoSell
 	if SUI.logger then
-		logger = SUI.logger:RegisterCategory('AutoSell')
+		module.log = SUI.logger:RegisterCategory('AutoSell')
 	end
 
 	-- Handle potential item level squish after DB is initialized

@@ -43,6 +43,7 @@ local ElementList = {
 	'Name',
 	'Runes',
 	'ClassPower',
+	'TargetIndicator',
 }
 ---@type table<SUI.UF.Elements.list, SUI.UF.Elements.Settings>
 local ElementDefaults = {
@@ -174,18 +175,23 @@ local UpdateElementState = function(frame)
 	-- Power
 	frame.Power:ClearAllPoints()
 	if elements.Health.enabled then
-		frame.Power:SetPoint('TOP', frame.Health, 'BOTTOM', 0, 0)
+		frame.Power:SetPoint('TOPLEFT', frame.Health, 'BOTTOMLEFT', 0, 0)
+		frame.Power:SetPoint('TOPRIGHT', frame.Health, 'BOTTOMRIGHT', 0, 0)
 	else
-		frame.Power:SetPoint('BOTTOM', frame)
+		frame.Power:SetPoint('BOTTOMLEFT', frame, 'BOTTOMLEFT', 0, 0)
+		frame.Power:SetPoint('BOTTOMRIGHT', frame, 'BOTTOMRIGHT', 0, 0)
 	end
 	-- Castbar
 	frame.Castbar:ClearAllPoints()
 	if elements.Power.enabled then
-		frame.Castbar:SetPoint('TOP', frame.Power, 'BOTTOM', 0, 0)
+		frame.Castbar:SetPoint('TOPLEFT', frame.Power, 'BOTTOMLEFT', 0, 0)
+		frame.Castbar:SetPoint('TOPRIGHT', frame.Power, 'BOTTOMRIGHT', 0, 0)
 	elseif elements.Health.enabled then
-		frame.Castbar:SetPoint('TOP', frame.Health, 'BOTTOM', 0, 0)
+		frame.Castbar:SetPoint('TOPLEFT', frame.Health, 'BOTTOMLEFT', 0, 0)
+		frame.Castbar:SetPoint('TOPRIGHT', frame.Health, 'BOTTOMRIGHT', 0, 0)
 	else
-		frame.Castbar:SetPoint('BOTTOM', frame)
+		frame.Castbar:SetPoint('BOTTOMLEFT', frame, 'BOTTOMLEFT', 0, 0)
+		frame.Castbar:SetPoint('BOTTOMRIGHT', frame, 'BOTTOMRIGHT', 0, 0)
 	end
 end
 
@@ -497,8 +503,10 @@ local NameplateCallback = function(self, event, unit)
 	end
 
 	for element, _ in pairs(self.elementList) do
-		self[element].DB = elementDB[element]
-		UF.Elements:Update(self, element, elementDB[element])
+		if self[element] and elementDB[element] then
+			self[element].DB = elementDB[element]
+			UF.Elements:Update(self, element, elementDB[element])
+		end
 	end
 
 	-- Update elements
@@ -589,7 +597,7 @@ function module:OnInitialize()
 				colorMode = 'reaction',
 				alpha = 0.35,
 			},
-			DispelHighlight = {},
+			Dispel = {},
 			RareElite = {},
 			Name = {
 				enabled = true,
@@ -771,6 +779,24 @@ function module:OnInitialize()
 					y = -2,
 				},
 			},
+			TargetIndicator = {
+				enabled = true,
+				ShowTarget = true,
+				mode = 'texture',
+				texture = {
+					textureKey = 'DoubleArrow',
+					placement = 'sides',
+					scale = 1.0,
+					color = { 1, 1, 1, 1 },
+					alpha = 1.0,
+				},
+				border = {
+					size = 2,
+					color = { 1, 1, 0, 1 },
+					sides = { top = true, bottom = true, left = true, right = true },
+					displayLevel = 5,
+				},
+			},
 		},
 	}
 	module.Database = SUI.SpartanUIDB:RegisterNamespace('Nameplates', { profile = defaults })
@@ -807,6 +833,15 @@ function module:OnEnable()
 		end
 	end
 
+	--Make sure we start fresh before spawning nameplates
+	CurrentSettings = {}
+	for _, v in ipairs(ElementList) do
+		--Import base options
+		CurrentSettings[v] = SUI:CopyData(ElementDefaults[v], SUI.UF.Elements:GetConfig(v))
+		--Import User settings from elements table
+		SUI:CopyData(CurrentSettings[v], module.DB.elements[v] or {})
+	end
+
 	if not oUF_NamePlateDriver then
 		SUIUF:SetActiveStyle('Spartan_NamePlates')
 		SUIUF:SpawnNamePlates(nil, NameplateCallback)
@@ -817,15 +852,6 @@ function module:OnEnable()
 				ClassNameplateManaBarFrame:Hide()
 			end)
 		end
-	end
-
-	--Make sure we start fresh
-	CurrentSettings = {}
-	for _, v in ipairs(ElementList) do
-		--Import base options
-		CurrentSettings[v] = SUI:CopyData(ElementDefaults[v], SUI.UF.Elements:GetConfig(v))
-		--Import User settings
-		SUI:CopyData(CurrentSettings[v], module.DB[v] or {})
 	end
 end
 

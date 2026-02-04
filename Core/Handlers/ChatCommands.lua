@@ -22,9 +22,16 @@ function SUI:ChatCommand(input)
 		return
 	end
 
-	-- If no special handling needed, execute the command directly
-	if SUIChatCommands[input] then
-		SUIChatCommands[input]()
+	-- Parse command and arguments (e.g., "move reset" -> command="move", arg="reset")
+	local command, arg = strsplit(' ', input, 2)
+	command = command:trim()
+	if arg then
+		arg = arg:trim()
+	end
+
+	-- Execute the command with its argument
+	if SUIChatCommands[command] then
+		SUIChatCommands[command](arg)
 	else
 		SUI:Print('Unknown command: ' .. input)
 		SUI:Print('Try /sui > Artwork to navigate to a specific options page')
@@ -39,7 +46,12 @@ if AddonCompartmentFrame then
 		notCheckable = true,
 		func = function(btn, arg1, arg2, checked, mouseButton)
 			if IsShiftKeyDown() then
-				SUI.MoveIt:MoveIt()
+				-- On Retail/TBC 2.5.5+, open Blizzard's EditMode; on other Classic versions, use legacy MoveIt
+				if SUI.MoveIt and SUI.MoveIt.HasEditMode and SUI.MoveIt.HasEditMode() then
+					ShowUIPanel(EditModeManagerFrame)
+				else
+					SUI.MoveIt:MoveIt()
+				end
 				return
 			end
 			-- if mouseButton == 'LeftButton' then

@@ -74,11 +74,12 @@ do
 	end
 
 	local Enable = function(self)
-		local icon = self.TargetIndicator
-		if icon then
-			icon.__owner = self
-			icon.ForceUpdate = ForceUpdate
+		local element = self.TargetIndicator
+		if element then
+			element.__owner = self
+			element.ForceUpdate = ForceUpdate
 			self:RegisterEvent('PLAYER_TARGET_CHANGED', Update, true)
+			return true
 		end
 	end
 

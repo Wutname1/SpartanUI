@@ -319,6 +319,12 @@ if [ "$IS_TAG" = true ] && [ "${RECENT_TAGS[0]}" = "$CURRENT_TAG" ]; then
     echo "" >> "$OUTPUT_FILE"
 fi
 
+# Build a full sorted tag list for proper previous tag lookup
+ALL_TAGS_ARRAY=()
+while IFS= read -r tag; do
+    ALL_TAGS_ARRAY+=("$tag")
+done <<< "$ALL_TAGS"
+
 # Process each recent tag
 for i in "${!RECENT_TAGS[@]}"; do
     TAG="${RECENT_TAGS[$i]}"
@@ -326,20 +332,29 @@ for i in "${!RECENT_TAGS[@]}"; do
 
     log_info "Processing version $TAG ($TAG_DATE)..."
 
-    # Get previous tag
-    if [ $i -lt $((${#RECENT_TAGS[@]} - 1)) ]; then
-        PREV_TAG="${RECENT_TAGS[$((i + 1))]}"
-    else
-        # Last tag in our month range - find the one before it
-        PREV_TAG=$(git describe --abbrev=0 "$TAG^" 2>/dev/null || echo "")
-    fi
+    # Get previous tag by finding position in full sorted tag list
+    PREV_TAG=""
+    for j in "${!ALL_TAGS_ARRAY[@]}"; do
+        if [ "${ALL_TAGS_ARRAY[$j]}" = "$TAG" ]; then
+            # Next index in the sorted list is the previous version
+            NEXT_IDX=$((j + 1))
+            if [ $NEXT_IDX -lt ${#ALL_TAGS_ARRAY[@]} ]; then
+                PREV_TAG="${ALL_TAGS_ARRAY[$NEXT_IDX]}"
+            fi
+            break
+        fi
+    done
+
+    log_debug "Tag $TAG -> Previous tag: ${PREV_TAG:-NONE}"
 
     # Get commits for this range
     TEMP_TAG_COMMITS=$(mktemp)
     if [ -n "$PREV_TAG" ]; then
         git log "$PREV_TAG..$TAG" --pretty=format:"%s" --no-merges > "$TEMP_TAG_COMMITS"
     else
-        git log "$TAG" --pretty=format:"%s" --no-merges > "$TEMP_TAG_COMMITS"
+        # No previous tag found - this is the first tag ever, skip it to avoid years of history
+        log_warn "No previous tag found for $TAG, skipping to avoid full history"
+        echo "" > "$TEMP_TAG_COMMITS"
     fi
 
     # Check commit count (count non-empty lines, handles files without trailing newline)

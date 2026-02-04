@@ -10,7 +10,7 @@ local elementList = {
 	'Castbar',
 	'Power',
 	'Portrait',
-	'DispelHighlight',
+	'Dispel',
 	'SpartanArt',
 	'Buffs',
 	'Debuffs',

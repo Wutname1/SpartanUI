@@ -6,7 +6,7 @@ local elementList = {
 	'Castbar',
 	'Power',
 	'Portrait',
-	'DispelHighlight',
+	'Dispel',
 	'SpartanArt',
 	'Buffs',
 	'Debuffs',
@@ -28,6 +28,8 @@ local elementList = {
 	'StatusText',
 	'SUI_RaidGroup',
 	'AuraWatch',
+	'DefensiveIndicator',
+	'RaidDebuffs',
 }
 
 local function GroupBuilder(holder)
@@ -176,6 +178,7 @@ local Settings = {
 		Buffs = {
 			enabled = true,
 			onlyShowPlayer = true,
+			healingMode = true,
 			size = 15,
 			position = {
 				relativePoint = 'BOTTOMRIGHT',
@@ -272,6 +275,30 @@ local Settings = {
 				color = { 1, 1, 0, 1 },
 				sides = { top = true, bottom = true, left = true, right = true },
 				displayLevel = 5,
+			},
+		},
+		DefensiveIndicator = {
+			enabled = true,
+			size = 24,
+			showSwipe = true,
+			showDuration = true,
+			showBorder = true,
+			borderSize = 2,
+			borderColor = { 0, 0.8, 0, 1 },
+			position = {
+				anchor = 'CENTER',
+				x = 0,
+				y = 0,
+			},
+		},
+		RaidDebuffs = {
+			enabled = true,
+			size = 32,
+			showDuration = true,
+			position = {
+				anchor = 'CENTER',
+				x = 0,
+				y = 0,
 			},
 		},
 	},

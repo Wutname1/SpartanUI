@@ -360,7 +360,9 @@ function Options:CreateFrameOptionSet(frameName, get, set)
 				type = 'group',
 				childGroups = 'tree',
 				order = 50,
-				args = {},
+				args = {
+					-- Presets will be added here by AddAuraPresetsToFrame
+				},
 			},
 		},
 	} ---@type AceConfig.OptionsTable
@@ -494,6 +496,74 @@ function Options:AddAuraLayout(frameName, OptionSet)
 end
 
 ---@param frameName UnitFrameName
+---@param FrameOptSet AceConfig.OptionsTable
+function Options:AddAuraPresets(frameName, FrameOptSet)
+	-- Only add presets if the AuraPresets system is loaded
+	if not UF.AuraPresets then
+		return
+	end
+
+	-- Add presets group at the top of the Auras section
+	FrameOptSet.args.Auras.args.Presets = {
+		name = L['Quick Presets'],
+		type = 'group',
+		order = 0,
+		args = {
+			desc = {
+				type = 'description',
+				name = L['Apply a preset configuration optimized for your role. This will update both Buff and Debuff display settings for this frame.'],
+				order = 0,
+				fontSize = 'medium',
+			},
+			preset = {
+				name = L['Apply Preset'],
+				desc = L['Choose a preset to apply to this unit frame'],
+				type = 'select',
+				width = 'double',
+				order = 1,
+				values = function()
+					return UF.AuraPresets:GetPresetList()
+				end,
+				get = function()
+					return 'custom'
+				end,
+				set = function(_, presetKey)
+					if presetKey ~= 'custom' then
+						UF.AuraPresets:ApplyPreset(frameName, presetKey)
+						-- Refresh the options UI
+						LibStub('AceConfigRegistry-3.0'):NotifyChange('SpartanUI')
+					end
+				end,
+			},
+			spacer = {
+				type = 'description',
+				name = '\n',
+				order = 2,
+			},
+			presetInfo = {
+				type = 'description',
+				order = 3,
+				fontSize = 'small',
+				name = function()
+					local presetDescriptions = {
+						healer = '|cff00ff00Healer Focus:|r Shows your HoTs, defensive cooldowns, and dispellable debuffs prominently.',
+						raider = '|cff00ff00Raider:|r Prioritizes boss debuffs, raid cooldowns, and personal defensive buffs.',
+						dps = '|cff00ff00DPS:|r Shows your DoTs, offensive buffs, and procs. Sorted by time remaining.',
+						tank = '|cff00ff00Tank:|r Shows defensive cooldowns, mitigation buffs, and threat-related debuffs.',
+						minimal = '|cff00ff00Minimal:|r Clean, minimal display showing only the most important auras.',
+					}
+					local text = '|cffffffffAvailable Presets:|r\n'
+					for key, desc in pairs(presetDescriptions) do
+						text = text .. '\n' .. desc
+					end
+					return text
+				end,
+			},
+		},
+	}
+end
+
+---@param frameName UnitFrameName
 ---@param OptionSet AceConfig.OptionsTable
 ---@param create function
 function Options:AddAuraWhitelistBlacklist(frameName, OptionSet, create)
@@ -571,54 +641,36 @@ function Options:AddAuraFilters(frameName, OptionSet, set, get)
 	}
 
 	if SUI.IsRetail then
-		-- RETAIL: Add API restriction notice
+		-- RETAIL (12.0+): Most aura properties are "secret values" that cannot be tested
+		-- Only these filters actually work:
+		--   - isFromPlayerOrPlayerPet (via isPlayerAura computed by oUF)
+		-- All other filter properties (isBossAura, isStealable, duration, etc.) are SECRET VALUES
+		-- and cannot be used for filtering in Retail.
+
 		OptionSet.args.Filters.args.retailNotice = {
 			type = 'description',
-			name = '|cffFFFF00Note:|r WoW 12.0+ restricts aura filtering to prevent automation. Advanced filters (whitelist/blacklist, duration) are not available in Retail.',
+			name = '|cffFF6600WoW 12.0 API Restrictions|r\n\n'
+				.. 'Blizzard has restricted most aura properties to prevent automation. '
+				.. 'In Retail, only the "Your auras only" filter works. '
+				.. 'Duration text is also unavailable (the cooldown spiral still shows duration).\n\n'
+				.. 'Full filtering (duration, whitelist/blacklist, boss auras, etc.) is available in Classic/Wrath/Cata.',
 			order = 0,
 			fontSize = 'medium',
 		}
 
-		-- RETAIL: Boolean filters only
-		OptionSet.args.Filters.args.sourceFilters = {
-			name = 'Source filters',
-			type = 'multiselect',
+		-- RETAIL: Only filter that actually works
+		OptionSet.args.Filters.args.workingFilters = {
+			name = L['Available Filters'],
+			type = 'group',
 			order = 1,
-			values = {
-				isFromPlayerOrPlayerPet = 'Your auras only',
-				isBossAura = 'Boss auras',
-			},
-		}
-
-		OptionSet.args.Filters.args.typeFilters = {
-			name = 'Type filters',
-			type = 'multiselect',
-			order = 2,
-			values = {
-				isHelpful = 'Buffs',
-				isHarmful = 'Debuffs',
-				isStealable = 'Stealable',
-				isRaid = 'Raid-wide',
-			},
-		}
-
-		OptionSet.args.Filters.args.nameplateFilters = {
-			name = 'Nameplate filters',
-			type = 'multiselect',
-			order = 3,
-			values = {
-				nameplateShowPersonal = 'Personal nameplate',
-				nameplateShowAll = 'All nameplates',
-				isNameplateOnly = 'Nameplate-only',
-			},
-		}
-
-		OptionSet.args.Filters.args.otherFilters = {
-			name = 'Other filters',
-			type = 'multiselect',
-			order = 4,
-			values = {
-				canApplyAura = 'Can apply',
+			inline = true,
+			args = {
+				isFromPlayerOrPlayerPet = {
+					name = L['Your auras only'],
+					desc = L['Only show auras cast by you or your pet'],
+					type = 'toggle',
+					order = 1,
+				},
 			},
 		}
 	else
@@ -1394,6 +1446,7 @@ function Options:Initialize()
 		end)
 		Options:AddGeneral(FrameOptSet)
 		Options:AddFrameBackground(frameName, FrameOptSet)
+		Options:AddAuraPresets(frameName, FrameOptSet)
 
 		-- Add Element Options
 		local builtFrame = UF.Unit:Get(frameName)
@@ -1437,7 +1490,7 @@ function Options:Initialize()
 							UF:Update()
 
 							-- Refresh the options UI
-							SUI.Lib.AceConfigRegistry:NotifyChange('SpartanUI')
+							LibStub('AceConfigRegistry-3.0'):NotifyChange('SpartanUI')
 						end,
 					},
 				},

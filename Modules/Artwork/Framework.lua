@@ -41,12 +41,13 @@ local function SetupPage()
 			local count = 0
 			local row = 1
 			local Themes = {}
+			local width = 120
 			for i, v in pairs({ 'Classic', 'War', 'Fel', 'Digital', 'Arcane', 'Minimal', 'Tribal', 'Transparent' }) do
 				-- Create preview button
-				local control = CreateFrame('Button', nil, SUI_Win.Artwork)
-				control:SetSize(120, 60)
+				local control = CreateFrame('Button', 'SETUPART_' .. v, SUI_Win.Artwork)
+				control:SetSize(width, 60)
 				control:SetNormalTexture('interface\\addons\\SpartanUI\\images\\setup\\Style_' .. v)
-				control:SetHighlightTexture('Interface\\Buttons\\UI-Common-MouseHilight', 'ADD')
+				control:SetHighlightAtlas('UI-CharacterCreate-LargeButton-Blue-Highlight', 'ADD')
 				control:SetScript('OnClick', RadioButtons)
 
 				-- Create radio button below preview
@@ -63,7 +64,7 @@ local function SetupPage()
 				count = count + 1
 				if i == 1 then
 					-- Position the 1st row
-					control:SetPoint('TOP', SUI_Win, 'TOP', 0, -80)
+					control:SetPoint('TOP', SUI_Win, 'TOP', width * -1, -80)
 				elseif count == 1 then
 					control:SetPoint('TOP', Themes[i - 3], 'BOTTOM', 0, -30)
 				elseif count == 2 then
@@ -77,8 +78,8 @@ local function SetupPage()
 			end
 
 			local Popular = CreateFrame('Frame', nil, SUI_Win.Artwork, BackdropTemplateMixin and 'BackdropTemplate')
-			Popular:SetPoint('TOPLEFT', Themes[2], 'TOPLEFT', -5, 5)
-			Popular:SetPoint('BOTTOMRIGHT', Themes[4].radio, 'BOTTOMRIGHT', 5, -2)
+			Popular:SetPoint('TOPLEFT', 'SETUPART_Classic', 'TOPLEFT', -5, 5)
+			Popular:SetPoint('BOTTOMRIGHT', 'SETUPART_War', 'BOTTOMRIGHT', 5, -25)
 
 			Popular:SetBackdrop({
 				bgFile = 'Interface\\AddOns\\SpartanUI\\images\\blank.tga',
@@ -712,50 +713,50 @@ function module:RegisterThemeTextures()
 		return
 	end
 
-	-- Define theme texture mappings
-	local themeTextures = {
-		War = {
-			{ name = 'SUI War - StatusBar Alliance', file = 'Interface\\AddOns\\SpartanUI\\Themes\\War\\Images\\StatusBar-Alliance.blp' },
-			{ name = 'SUI War - StatusBar Horde', file = 'Interface\\AddOns\\SpartanUI\\Themes\\War\\Images\\StatusBar-Horde.blp' },
-			{ name = 'SUI War - StatusBar Neutral', file = 'Interface\\AddOns\\SpartanUI\\Themes\\War\\Images\\StatusBar-Neutral.blp' },
-			{ name = 'SUI War - Bar Background', file = 'Interface\\AddOns\\SpartanUI\\Themes\\War\\Images\\Barbg.blp' },
-			{ name = 'SUI War - Bar Background Alliance', file = 'Interface\\AddOns\\SpartanUI\\Themes\\War\\Images\\Barbg-Alliance.blp' },
-			{ name = 'SUI War - Bar Background Horde', file = 'Interface\\AddOns\\SpartanUI\\Themes\\War\\Images\\Barbg-Horde.blp' },
-		},
-		Fel = {
-			{ name = 'SUI Fel - StatusBar', file = 'Interface\\AddOns\\SpartanUI\\Themes\\Fel\\Images\\StatusBar.png' },
-			{ name = 'SUI Fel - Status Fill', file = 'Interface\\AddOns\\SpartanUI\\Themes\\Fel\\Images\\Status_bar_Fill.blp' },
-		},
-		Tribal = {
-			{ name = 'SUI Tribal - StatusBar', file = 'Interface\\AddOns\\SpartanUI\\Themes\\Tribal\\images\\Statusbar.blp' },
-			{ name = 'SUI Tribal - Bar Background', file = 'Interface\\AddOns\\SpartanUI\\Themes\\Tribal\\images\\Barbg.tga' },
-		},
-		Digital = {
-			{ name = 'SUI Digital - Bar Background', file = 'Interface\\AddOns\\SpartanUI\\Themes\\Digital\\Images\\BarBG.blp' },
-		},
-		Classic = {
-			{ name = 'SUI Classic - Bar Backdrop 0', file = 'Interface\\AddOns\\SpartanUI\\Themes\\Classic\\Images\\bar-backdrop0.blp' },
-			{ name = 'SUI Classic - Bar Backdrop 1', file = 'Interface\\AddOns\\SpartanUI\\Themes\\Classic\\Images\\bar-backdrop1.blp' },
-			{ name = 'SUI Classic - Bar Backdrop 3', file = 'Interface\\AddOns\\SpartanUI\\Themes\\Classic\\Images\\bar-backdrop3.blp' },
-		},
-		Minimal = {
-			{ name = 'SUI Minimal - Bar Backdrop 1', file = 'Interface\\AddOns\\SpartanUI\\Themes\\Minimal\\Images\\bar-backdrop1.blp' },
-			{ name = 'SUI Minimal - Bar Backdrop 3', file = 'Interface\\AddOns\\SpartanUI\\Themes\\Minimal\\Images\\bar-backdrop3.blp' },
-		},
-		Transparent = {
-			{ name = 'SUI Transparent - Bar Backdrop 0', file = 'Interface\\AddOns\\SpartanUI\\Themes\\Transparent\\Images\\bar-backdrop0.blp' },
-			{ name = 'SUI Transparent - Bar Backdrop 1', file = 'Interface\\AddOns\\SpartanUI\\Themes\\Transparent\\Images\\bar-backdrop1.blp' },
-			{ name = 'SUI Transparent - Bar Backdrop 3', file = 'Interface\\AddOns\\SpartanUI\\Themes\\Transparent\\Images\\bar-backdrop3.blp' },
-		},
-		Arcane = {
-			{ name = 'SUI Arcane - StatusBar', file = 'Interface\\AddOns\\SpartanUI\\Themes\\Arcane\\Images\\StatusBar.tga' },
-		},
-	}
+	-- -- Define theme texture mappings
+	-- local themeTextures = {
+	-- 	War = {
+	-- 		{ name = 'SUI War - StatusBar Alliance', file = 'Interface\\AddOns\\SpartanUI\\Themes\\War\\Images\\StatusBar-Alliance.blp' },
+	-- 		{ name = 'SUI War - StatusBar Horde', file = 'Interface\\AddOns\\SpartanUI\\Themes\\War\\Images\\StatusBar-Horde.blp' },
+	-- 		{ name = 'SUI War - StatusBar Neutral', file = 'Interface\\AddOns\\SpartanUI\\Themes\\War\\Images\\StatusBar-Neutral.blp' },
+	-- 		{ name = 'SUI War - Bar Background', file = 'Interface\\AddOns\\SpartanUI\\Themes\\War\\Images\\Barbg.blp' },
+	-- 		{ name = 'SUI War - Bar Background Alliance', file = 'Interface\\AddOns\\SpartanUI\\Themes\\War\\Images\\Barbg-Alliance.blp' },
+	-- 		{ name = 'SUI War - Bar Background Horde', file = 'Interface\\AddOns\\SpartanUI\\Themes\\War\\Images\\Barbg-Horde.blp' },
+	-- 	},
+	-- 	Fel = {
+	-- 		{ name = 'SUI Fel - StatusBar', file = 'Interface\\AddOns\\SpartanUI\\Themes\\Fel\\Images\\StatusBar.png' },
+	-- 		{ name = 'SUI Fel - Status Fill', file = 'Interface\\AddOns\\SpartanUI\\Themes\\Fel\\Images\\Status_bar_Fill.blp' },
+	-- 	},
+	-- 	Tribal = {
+	-- 		{ name = 'SUI Tribal - StatusBar', file = 'Interface\\AddOns\\SpartanUI\\Themes\\Tribal\\images\\Statusbar.blp' },
+	-- 		{ name = 'SUI Tribal - Bar Background', file = 'Interface\\AddOns\\SpartanUI\\Themes\\Tribal\\images\\Barbg.tga' },
+	-- 	},
+	-- 	Digital = {
+	-- 		{ name = 'SUI Digital - Bar Background', file = 'Interface\\AddOns\\SpartanUI\\Themes\\Digital\\Images\\BarBG.blp' },
+	-- 	},
+	-- 	Classic = {
+	-- 		{ name = 'SUI Classic - Bar Backdrop 0', file = 'Interface\\AddOns\\SpartanUI\\Themes\\Classic\\Images\\bar-backdrop0.blp' },
+	-- 		{ name = 'SUI Classic - Bar Backdrop 1', file = 'Interface\\AddOns\\SpartanUI\\Themes\\Classic\\Images\\bar-backdrop1.blp' },
+	-- 		{ name = 'SUI Classic - Bar Backdrop 3', file = 'Interface\\AddOns\\SpartanUI\\Themes\\Classic\\Images\\bar-backdrop3.blp' },
+	-- 	},
+	-- 	Minimal = {
+	-- 		{ name = 'SUI Minimal - Bar Backdrop 1', file = 'Interface\\AddOns\\SpartanUI\\Themes\\Minimal\\Images\\bar-backdrop1.blp' },
+	-- 		{ name = 'SUI Minimal - Bar Backdrop 3', file = 'Interface\\AddOns\\SpartanUI\\Themes\\Minimal\\Images\\bar-backdrop3.blp' },
+	-- 	},
+	-- 	Transparent = {
+	-- 		{ name = 'SUI Transparent - Bar Backdrop 0', file = 'Interface\\AddOns\\SpartanUI\\Themes\\Transparent\\Images\\bar-backdrop0.blp' },
+	-- 		{ name = 'SUI Transparent - Bar Backdrop 1', file = 'Interface\\AddOns\\SpartanUI\\Themes\\Transparent\\Images\\bar-backdrop1.blp' },
+	-- 		{ name = 'SUI Transparent - Bar Backdrop 3', file = 'Interface\\AddOns\\SpartanUI\\Themes\\Transparent\\Images\\bar-backdrop3.blp' },
+	-- 	},
+	-- 	Arcane = {
+	-- 		{ name = 'SUI Arcane - StatusBar', file = 'Interface\\AddOns\\SpartanUI\\Themes\\Arcane\\Images\\StatusBar.tga' },
+	-- 	},
+	-- }
 
-	-- Register all textures with LibSharedMedia
-	for themeName, textures in pairs(themeTextures) do
-		for _, texture in pairs(textures) do
-			LSM:Register('statusbar', texture.name, texture.file)
-		end
-	end
+	-- -- Register all textures with LibSharedMedia
+	-- for themeName, textures in pairs(themeTextures) do
+	-- 	for _, texture in pairs(textures) do
+	-- 		LSM:Register('statusbar', texture.name, texture.file)
+	-- 	end
+	-- end
 end

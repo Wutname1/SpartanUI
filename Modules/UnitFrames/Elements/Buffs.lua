@@ -36,6 +36,8 @@ local function Build(frame, DB)
 	element.PostUpdateButton = function(self, button, unit, data, position)
 		button.data = data
 		button.unit = unit
+		-- Update duration display setting from element DB
+		button.showDuration = self.DB and self.DB.showDuration
 	end
 	element.PostCreateButton = function(self, button)
 		UF.Auras:PostCreateButton('Buffs', button)
@@ -48,11 +50,15 @@ local function Build(frame, DB)
 	end
 	local PreUpdate = function(self)
 		updateSettings(element)
+		-- Update sort function based on settings
+		local sortMode = element.DB and element.DB.sortMode
+		element.SortBuffs = UF.Auras:CreateSortFunction(sortMode)
 	end
 
+	-- Set FilterAura for both Retail and Classic
+	element.FilterAura = FilterAura
 	if not SUI.IsRetail then
 		element.displayReasons = {}
-		element.FilterAura = FilterAura
 	end
 	element.PreUpdate = PreUpdate
 	element.SizeChange = SizeChange
@@ -77,6 +83,9 @@ end
 ---@param unitName string
 ---@param OptionSet AceConfig.OptionsTable
 local function Options(unitName, OptionSet)
+	local L = SUI.L
+	local ElementSettings = UF.CurrentSettings[unitName].elements.Buffs
+
 	local function OptUpdate(option, val)
 		--Update memory
 		UF.CurrentSettings[unitName].elements.Buffs[option] = val
@@ -85,7 +94,78 @@ local function Options(unitName, OptionSet)
 		--Update the screen
 		UF.Unit[unitName]:ElementUpdate('Buffs')
 	end
-	--local DB = UF.CurrentSettings[unitName].elements.Buffs
+
+	OptionSet.args.Display = OptionSet.args.Display or {
+		name = L['Display'],
+		type = 'group',
+		order = 10,
+		inline = true,
+		args = {},
+	}
+
+	-- Duration text only works in Classic (Retail uses cooldown spiral instead due to secret values)
+	OptionSet.args.Display.args.showDuration = {
+		name = L['Show Duration'],
+		desc = SUI.IsRetail and L['Duration text unavailable in Retail - cooldown spiral shows duration instead'] or L['Display remaining duration text on aura icons'],
+		type = 'toggle',
+		order = 5,
+		disabled = SUI.IsRetail,
+		get = function()
+			return ElementSettings.showDuration
+		end,
+		set = function(_, val)
+			OptUpdate('showDuration', val)
+		end,
+	}
+
+	OptionSet.args.Display.args.sortMode = {
+		name = L['Sort Mode'],
+		desc = SUI.IsRetail and L['Sort by priority (player auras first). Time/Name sorting unavailable in Retail.']
+			or L['How to sort auras. Priority sorts by importance (boss > dispellable > player), Time sorts by remaining duration, Name sorts alphabetically.'],
+		type = 'select',
+		order = 6,
+		values = SUI.IsRetail and {
+			priority = L['Priority (Recommended)'],
+		} or {
+			priority = L['Priority (Recommended)'],
+			time = L['Time Remaining'],
+			name = L['Alphabetical'],
+		},
+		get = function()
+			return ElementSettings.sortMode or 'priority'
+		end,
+		set = function(_, val)
+			OptUpdate('sortMode', val)
+		end,
+	}
+
+	OptionSet.args.Display.args.onlyShowPlayer = {
+		name = L['Only Show Your Auras'],
+		desc = L['Only display buffs cast by you'],
+		type = 'toggle',
+		order = 7,
+		get = function()
+			return ElementSettings.onlyShowPlayer
+		end,
+		set = function(_, val)
+			OptUpdate('onlyShowPlayer', val)
+		end,
+	}
+
+	-- Healing Mode - only available in Retail 12.1+ with RAID_IN_COMBAT filter
+	OptionSet.args.Display.args.healingMode = {
+		name = L['Healing Mode'],
+		desc = L['Show HoTs and combat-relevant buffs (Rejuvenation, Renew, etc). Uses RAID_IN_COMBAT filter. Retail 12.1+ only.'],
+		type = 'toggle',
+		order = 8,
+		hidden = not SUI.IsRetail,
+		get = function()
+			return ElementSettings.healingMode
+		end,
+		set = function(_, val)
+			OptUpdate('healingMode', val)
+		end,
+	}
 end
 
 ---@type SUI.UF.Elements.Settings
@@ -94,6 +174,10 @@ local Settings = {
 	size = 20,
 	spacing = 1,
 	showType = true,
+	showDuration = true, -- Show duration text on aura icons
+	sortMode = 'priority', -- Sort mode: 'priority', 'time', 'name', or nil for default
+	onlyShowPlayer = false, -- Only show buffs cast by the player
+	healingMode = false, -- Retail 12.1+: Use RAID_IN_COMBAT filter to show HoTs
 	width = false,
 	growthx = 'RIGHT',
 	growthy = 'DOWN',

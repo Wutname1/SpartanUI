@@ -9,11 +9,15 @@ local lastMarkTime = 0
 local MARK_THROTTLE = 0.5 -- Minimum time between marking operations (in seconds)
 local vendorOpen = false
 local markingTimer = nil -- Ace3 timer handle
+local markinglogs = nil
 
 local function debugMsg(msg, level)
 	-- Use the BagMarking component of the AutoSell
 	-- This creates the hierarchy: AutoSell -> BagMarking
-	SUI.ModuleLog(module, msg, 'BagMarking', level or 'debug')
+	if not markinglogs then
+		markinglogs = module.log:RegisterCategory('BagMarking')
+	end
+	markinglogs.log(module, msg, 'BagMarking', level or 'debug')
 end
 
 -- Function to show the sell icon on an item button

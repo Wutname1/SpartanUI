@@ -152,6 +152,11 @@ local onShow = function(self)
 		return
 	end
 
+	-- Ensure module.DB is initialized before accessing settings
+	if not module.DB or not module.DB.Color then
+		return
+	end
+
 	-- Clear tooltip backdrop - SUITip layer provides the background
 	if self.SetBackdrop then
 		self:SetBackdrop(nil)
@@ -246,7 +251,9 @@ local function ApplySkin(tooltip)
 		end
 
 		-- Apply color based on settings
-		local r, g, b, a = unpack(module.DB.Color)
+		-- Ensure Color exists with fallback default
+		local colorTable = module.DB.Color or { 0, 0, 0, 0.9 }
+		local r, g, b, a = unpack(colorTable)
 		if module.DB.Background == 'none' or module.DB.ColorOverlay then
 			-- Color overlay mode: apply user's color at full opacity (the color itself provides darkness)
 			SUITip.bgTexture:SetVertexColor(r, g, b, 1)
@@ -336,7 +343,7 @@ local TooltipSetSpell = function(self, tooltipData)
 	ApplySkin(self)
 
 	-- Add spell ID if enabled and conditions are met
-	if module.DB.SpellID.enabled and tooltipData and tooltipData.id then
+	if module.DB and module.DB.SpellID and module.DB.SpellID.enabled and tooltipData and tooltipData.id then
 		local shouldShowID = IsModifierConditionMet(module.DB.SpellID.modifierKey)
 
 		if shouldShowID then
@@ -363,8 +370,6 @@ local TooltipSetItem = function(tooltip, tooltipData)
 		local quality
 		if C_Item and C_Item.GetItemInfo then
 			quality = select(3, C_Item.GetItemInfo(itemLink))
-		else
-			quality = select(3, GetItemInfo(itemLink))
 		end
 
 		-- Update SUITip background texture for special item types
@@ -405,8 +410,6 @@ local TooltipSetItem = function(tooltip, tooltipData)
 			local r, g, b
 			if C_Item and C_Item.GetItemQualityColor then
 				r, g, b = C_Item.GetItemQualityColor(quality)
-			else
-				r, g, b = GetItemQualityColor(quality)
 			end
 
 			if r and g and b then
@@ -417,7 +420,7 @@ local TooltipSetItem = function(tooltip, tooltipData)
 		tooltip.itemCleared = true
 
 		-- Add item ID if enabled and conditions are met
-		if module.DB.SpellID.enabled and tooltipData and tooltipData.id then
+		if module.DB and module.DB.SpellID and module.DB.SpellID.enabled and tooltipData and tooltipData.id then
 			local shouldShowID = IsModifierConditionMet(module.DB.SpellID.modifierKey)
 
 			if shouldShowID then

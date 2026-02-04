@@ -1,0 +1,14 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/">
+	<!-- Core MoveIt system -->
+	<Script file="Core.lua"/>
+	<Script file="Options.lua"/>
+	<Script file="MoverFactory.lua"/>
+
+	<!-- Sub-modules -->
+	<Script file="PositionCalculator.lua"/>
+	<Script file="MagnetismManager.lua"/>
+	<Script file="BlizzardEditMode.lua"/>
+	<Script file="CustomEditMode.lua"/>
+	<Script file="SettingsPanel.lua"/>
+	<Script file="WizardPage.lua"/>
+</Ui>

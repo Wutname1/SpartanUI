@@ -11,6 +11,14 @@ module.styleOverride = nil ---@type string|nil
 local Registry = {}
 local MinimapUpdater = CreateFrame('Frame')
 
+-- Button Bag state (for consolidating addon minimap buttons)
+local ButtonBag = {
+	buttons = {},
+	isOpen = false,
+	frame = nil,
+	toggleButton = nil,
+}
+
 -- Create a secure vehicle UI watcher frame similar to oUF's PetBattleFrameHider
 local VehicleUIWatcher = CreateFrame('Frame', 'SUI_Minimap_VehicleUIWatcher', UIParent, 'SecureHandlerStateTemplate')
 VehicleUIWatcher:SetAllPoints()
@@ -109,7 +117,12 @@ local BaseSettings = {
 		},
 		-- Addon Buttons
 		addonButtons = {
-			style = 'mouseover', -- 'always', 'mouseover', or 'never'
+			style = 'mouseover', -- 'always', 'mouseover', 'never', or 'bag'
+			bagEnabled = false, -- Enable button bag consolidation (alternative to style='bag')
+			excludeList = '', -- Comma-separated addon names to exclude from bag
+			autoHideDelay = 2, -- Seconds before auto-hiding bag
+			buttonsPerRow = 6, -- Number of buttons per row in the bag
+			bagButtonAngle = 45, -- Angle position of bag toggle button on minimap (degrees)
 		},
 	},
 }
@@ -175,7 +188,12 @@ local BaseSettingsClassic = {
 		scale = 0.85,
 	},
 	addonButtons = {
-		style = 'mouseover', -- 'always', 'mouseover', or 'never'
+		style = 'mouseover', -- 'always', 'mouseover', 'never', or 'bag'
+		bagEnabled = false,
+		excludeList = '',
+		autoHideDelay = 2,
+		buttonsPerRow = 6,
+		bagButtonAngle = 45,
 	},
 }
 
@@ -256,7 +274,7 @@ function module:UpdateSettings()
 
 	module.BaseOpt = SUI:CopyTable({}, module.Settings)
 	-- Apply user custom settings
-	if module.DB.customSettings[currentStyle] then
+	if module.DB and module.DB.customSettings and module.DB.customSettings[currentStyle] then
 		SUI:MergeData(module.Settings, module.DB.customSettings[currentStyle], true)
 	end
 
@@ -1047,6 +1065,13 @@ local isFrameIgnored = function(item)
 end
 
 function module:SetupAddonButtons()
+	-- Check if bag mode is active - if so, don't set up fading
+	local addonSettings = SUI.IsRetail and module.Settings.elements and module.Settings.elements.addonButtons or module.Settings.addonButtons
+	if addonSettings and addonSettings.style == 'bag' then
+		-- Bag mode handles buttons differently, skip fading setup
+		return
+	end
+
 	local function setupButtonFading(button)
 		local name = button:GetName()
 		if button.fadeInAnim then
@@ -1174,6 +1199,18 @@ function module:SetupAddonButtons()
 		MinimapBackdrop:HookScript('OnEnter', showAllButtons)
 		MinimapBackdrop:HookScript('OnLeave', hideAllButtons)
 	end
+
+	-- Register for LibDBIcon callback to catch icons created after initial setup
+	local LDBIcon = LibStub and LibStub('LibDBIcon-1.0', true)
+	if LDBIcon then
+		LDBIcon.RegisterCallback(module, 'LibDBIcon_IconCreated', function(_, button, name)
+			if button and not button.fadeInAnim and not isFrameIgnored(button) then
+				setupButtonFading(button)
+				button:HookScript('OnEnter', showAllButtons)
+				button:HookScript('OnLeave', hideAllButtons)
+			end
+		end)
+	end
 end
 
 function module:UpdateAddonButtons()
@@ -1183,6 +1220,23 @@ function module:UpdateAddonButtons()
 	end
 
 	local style = addonSettings.style or 'mouseover'
+
+	-- Handle button bag mode
+	if style == 'bag' then
+		-- Setup button bag (will check if already setup)
+		module:SetupButtonBag()
+		-- Show the toggle button if it exists
+		if ButtonBag.toggleButton then
+			ButtonBag.toggleButton:Show()
+		end
+		return
+	else
+		-- If switching away from bag mode, destroy the bag
+		if ButtonBag.frame or ButtonBag.toggleButton then
+			module:DestroyButtonBag()
+		end
+	end
+
 	if style == 'always' then
 		for _, child in ipairs({ Minimap:GetChildren() }) do
 			if child:IsObjectType('Button') and not isFrameIgnored(child) then
@@ -1226,6 +1280,454 @@ function module:UpdateAddonButtons()
 				end
 			end
 		end
+	end
+end
+
+-- Button Bag functionality
+function module:SetupButtonBag()
+	local addonSettings = SUI.IsRetail and module.Settings.elements and module.Settings.elements.addonButtons or module.Settings.addonButtons
+	if not addonSettings then
+		if module.logger then
+			module.logger.debug('ButtonBag: No addonSettings found')
+		end
+		return
+	end
+
+	-- Button bag is enabled either via style='bag' or bagEnabled=true
+	local bagEnabled = addonSettings.style == 'bag' or addonSettings.bagEnabled
+	if module.logger then
+		module.logger.info('ButtonBag: Setup called - style=' .. tostring(addonSettings.style) .. ', bagEnabled=' .. tostring(bagEnabled))
+	end
+
+	if not bagEnabled then
+		-- If bag is disabled, destroy it if it was previously active
+		if ButtonBag.frame and ButtonBag.frame:IsShown() then
+			module:DestroyButtonBag()
+		end
+		return
+	end
+
+	local LDBIcon = LibStub and LibStub('LibDBIcon-1.0', true)
+	if not LDBIcon then
+		if module.logger then
+			module.logger.warning('ButtonBag: LibDBIcon-1.0 not available')
+		end
+		return
+	end
+
+	-- Create the bag container frame
+	if not ButtonBag.frame then
+		local bagFrame = CreateFrame('Frame', 'SUI_MinimapButtonBag', UIParent, BackdropTemplateMixin and 'BackdropTemplate')
+		bagFrame:SetSize(200, 40)
+		bagFrame:SetFrameStrata('MEDIUM')
+		bagFrame:SetFrameLevel(1)
+		bagFrame:SetBackdrop({
+			bgFile = 'Interface\\Buttons\\WHITE8X8',
+			edgeFile = 'Interface\\Buttons\\WHITE8X8',
+			edgeSize = 1,
+		})
+		bagFrame:SetBackdropColor(0.05, 0.05, 0.05, 0.9)
+		bagFrame:SetBackdropBorderColor(0, 0, 0, 1)
+		bagFrame:Hide()
+		bagFrame:EnableMouse(true)
+
+		-- Auto-hide timer
+		bagFrame.hideTimer = nil
+		bagFrame:SetScript('OnEnter', function(self)
+			if self.hideTimer then
+				self.hideTimer:Cancel()
+				self.hideTimer = nil
+			end
+		end)
+		bagFrame:SetScript('OnLeave', function(self)
+			local delay = addonSettings.autoHideDelay or 2
+			self.hideTimer = C_Timer.NewTimer(delay, function()
+				module:CloseButtonBag()
+			end)
+		end)
+
+		ButtonBag.frame = bagFrame
+	end
+
+	-- Create the toggle button - use LibDBIcon style positioning
+	if not ButtonBag.toggleButton then
+		local toggleBtn = CreateFrame('Button', 'SUI_MinimapButtonBagToggle', Minimap)
+		toggleBtn:SetSize(32, 32)
+		toggleBtn:SetFrameStrata('MEDIUM')
+		toggleBtn:SetFrameLevel(8)
+		toggleBtn:SetHighlightTexture(136477) -- Interface\\Minimap\\UI-Minimap-ZoomButton-Highlight
+		toggleBtn:RegisterForDrag('LeftButton')
+		toggleBtn:SetMovable(true)
+
+		-- Use simple icon approach like most minimap buttons
+		local icon = toggleBtn:CreateTexture(nil, 'ARTWORK')
+		icon:SetSize(20, 20)
+		icon:SetPoint('CENTER')
+		icon:SetTexture('Interface\\Icons\\INV_Misc_Bag_07') -- Bag icon
+		toggleBtn.icon = icon
+
+		-- Create overlay/border
+		local overlay = toggleBtn:CreateTexture(nil, 'OVERLAY')
+		overlay:SetSize(54, 54)
+		overlay:SetPoint('TOPLEFT')
+		overlay:SetTexture('Interface\\Minimap\\MiniMap-TrackingBorder')
+		toggleBtn.overlay = overlay
+
+		-- Position on minimap edge using angle
+		local function UpdateButtonPosition()
+			local angle = addonSettings.bagButtonAngle or 45
+			local radius = (Minimap:GetWidth() / 2) + 5
+			local rads = math.rad(angle)
+			local x = math.cos(rads) * radius
+			local y = math.sin(rads) * radius
+			toggleBtn:ClearAllPoints()
+			toggleBtn:SetPoint('CENTER', Minimap, 'CENTER', x, y)
+		end
+
+		-- Dragging to reposition around minimap edge
+		toggleBtn:SetScript('OnDragStart', function(self)
+			self.isDragging = true
+		end)
+
+		toggleBtn:SetScript('OnDragStop', function(self)
+			self.isDragging = false
+			-- Calculate angle from center of minimap
+			local mx, my = Minimap:GetCenter()
+			local px, py = self:GetCenter()
+			local angle = math.deg(math.atan2(py - my, px - mx))
+
+			-- Save the angle
+			addonSettings.bagButtonAngle = angle
+			if not module.DB.customSettings[SUI.DB.Artwork.Style].elements then
+				module.DB.customSettings[SUI.DB.Artwork.Style].elements = {}
+			end
+			if not module.DB.customSettings[SUI.DB.Artwork.Style].elements.addonButtons then
+				module.DB.customSettings[SUI.DB.Artwork.Style].elements.addonButtons = {}
+			end
+			module.DB.customSettings[SUI.DB.Artwork.Style].elements.addonButtons.bagButtonAngle = angle
+
+			UpdateButtonPosition()
+		end)
+
+		toggleBtn:SetScript('OnUpdate', function(self)
+			if self.isDragging then
+				local mx, my = Minimap:GetCenter()
+				local px, py = GetCursorPosition()
+				local scale = Minimap:GetEffectiveScale()
+				px, py = px / scale, py / scale
+
+				local angle = math.atan2(py - my, px - mx)
+				local radius = (Minimap:GetWidth() / 2) + 5
+				local x = math.cos(angle) * radius
+				local y = math.sin(angle) * radius
+
+				self:ClearAllPoints()
+				self:SetPoint('CENTER', Minimap, 'CENTER', x, y)
+			end
+		end)
+
+		toggleBtn:RegisterForClicks('LeftButtonUp', 'RightButtonUp')
+
+		toggleBtn:SetScript('OnClick', function(self, button)
+			if button == 'LeftButton' and not self.isDragging then
+				if ButtonBag.isOpen then
+					module:CloseButtonBag()
+				else
+					module:OpenButtonBag()
+				end
+			elseif button == 'RightButton' then
+				-- Open SUI options to Modules > Minimap > Addon Buttons section
+				SUI.Options:ToggleOptions({ 'Modules', 'Minimap', 'elements', 'addonButtons' })
+			end
+		end)
+
+		toggleBtn:SetScript('OnEnter', function(self)
+			GameTooltip:SetOwner(self, 'ANCHOR_LEFT')
+			GameTooltip:AddLine('Minimap Button Bag')
+			GameTooltip:AddLine('Left-click to toggle addon buttons', 1, 1, 1)
+			GameTooltip:AddLine('Right-click for options', 1, 1, 1)
+			GameTooltip:AddLine('Drag to reposition', 0.7, 0.7, 0.7)
+			GameTooltip:Show()
+
+			-- Cancel bag hide timer if hovering toggle
+			if ButtonBag.frame and ButtonBag.frame.hideTimer then
+				ButtonBag.frame.hideTimer:Cancel()
+				ButtonBag.frame.hideTimer = nil
+			end
+		end)
+
+		toggleBtn:SetScript('OnLeave', function()
+			GameTooltip:Hide()
+
+			-- Start hide timer if bag is open
+			if ButtonBag.isOpen then
+				local delay = addonSettings.autoHideDelay or 2
+				ButtonBag.frame.hideTimer = C_Timer.NewTimer(delay, function()
+					module:CloseButtonBag()
+				end)
+			end
+		end)
+
+		ButtonBag.toggleButton = toggleBtn
+		UpdateButtonPosition()
+	end
+
+	-- Collect and hide all LibDBIcon buttons
+	module:CollectButtonBagButtons()
+
+	-- Register callback for newly created buttons
+	LDBIcon.RegisterCallback(ButtonBag, 'LibDBIcon_IconCreated', function(_, button, name)
+		C_Timer.After(0.1, function()
+			module:AddButtonToBag(button, name)
+		end)
+	end)
+end
+
+function module:IsButtonExcluded(buttonName)
+	if not buttonName then
+		return true
+	end
+
+	-- Always exclude SpartanUI's own buttons
+	if buttonName:find('SpartanUI') or buttonName:find('SUI_') then
+		return true
+	end
+
+	local addonSettings = SUI.IsRetail and module.Settings.elements and module.Settings.elements.addonButtons or module.Settings.addonButtons
+	if not addonSettings then
+		return false
+	end
+
+	local excludeList = addonSettings.excludeList or ''
+	if excludeList == '' then
+		return false
+	end
+
+	-- Check exclude list (case insensitive)
+	for exclude in string.gmatch(excludeList, '[^,]+') do
+		exclude = strtrim(exclude):lower()
+		if exclude ~= '' and buttonName:lower():find(exclude) then
+			return true
+		end
+	end
+
+	return false
+end
+
+function module:CollectButtonBagButtons()
+	local LDBIcon = LibStub and LibStub('LibDBIcon-1.0', true)
+	if not LDBIcon then
+		if module.logger then
+			module.logger.warning('ButtonBag: LibDBIcon-1.0 not found')
+		end
+		return
+	end
+
+	wipe(ButtonBag.buttons)
+
+	local buttonList = LDBIcon:GetButtonList()
+	if module.logger then
+		module.logger.info('ButtonBag: Found ' .. #buttonList .. ' LibDBIcon buttons')
+	end
+
+	for _, name in ipairs(buttonList) do
+		local button = LDBIcon:GetMinimapButton(name)
+		if button and not module:IsButtonExcluded(name) then
+			module:AddButtonToBag(button, name)
+			if module.logger then
+				module.logger.debug('ButtonBag: Added button: ' .. name)
+			end
+		elseif module.logger then
+			module.logger.debug('ButtonBag: Skipped button: ' .. name .. ' (excluded or nil)')
+		end
+	end
+
+	if module.logger then
+		local count = 0
+		for _ in pairs(ButtonBag.buttons) do
+			count = count + 1
+		end
+		module.logger.info('ButtonBag: Total buttons in bag: ' .. count)
+	end
+end
+
+function module:AddButtonToBag(button, name)
+	if not button or module:IsButtonExcluded(name) then
+		return
+	end
+
+	-- Store original parent and strata for restoration
+	if not button.SUI_OriginalParent then
+		button.SUI_OriginalParent = button:GetParent()
+		button.SUI_OriginalStrata = button:GetFrameStrata()
+		button.SUI_OriginalLevel = button:GetFrameLevel()
+	end
+
+	-- Mark button as managed by bag (don't override Show to avoid taint)
+	button.SUI_InButtonBag = true
+
+	-- Use OnShow script hook instead of replacing Show (avoids taint)
+	if not button.SUI_OnShowHooked then
+		button:HookScript('OnShow', function(self)
+			-- If bag is not open and button is managed, hide it again
+			if self.SUI_InButtonBag and not ButtonBag.isOpen then
+				self:Hide()
+			end
+		end)
+		button.SUI_OnShowHooked = true
+	end
+
+	-- Hide the button
+	button:Hide()
+
+	-- Add to our list
+	ButtonBag.buttons[name] = button
+end
+
+function module:OpenButtonBag()
+	if not ButtonBag.frame then
+		if module.logger then
+			module.logger.warning('ButtonBag: Cannot open - frame is nil')
+		end
+		return
+	end
+
+	ButtonBag.isOpen = true
+
+	-- Calculate grid layout
+	local buttons = {}
+	for name, button in pairs(ButtonBag.buttons) do
+		table.insert(buttons, { name = name, button = button })
+	end
+
+	local numButtons = #buttons
+	if module.logger then
+		module.logger.info('ButtonBag: Opening with ' .. numButtons .. ' buttons')
+	end
+
+	if numButtons == 0 then
+		if module.logger then
+			module.logger.warning('ButtonBag: No buttons to display')
+		end
+		ButtonBag.isOpen = false
+		return
+	end
+
+	-- Get settings for buttons per row
+	local addonSettings = SUI.IsRetail and module.Settings.elements and module.Settings.elements.addonButtons or module.Settings.addonButtons
+	local buttonsPerRow = addonSettings and addonSettings.buttonsPerRow or 6
+
+	-- Determine columns based on setting
+	local columns = math.min(numButtons, buttonsPerRow)
+	local rows = math.ceil(numButtons / columns)
+
+	local buttonSize = 28
+	local padding = 4
+	local frameWidth = (buttonSize + padding) * columns + padding
+	local frameHeight = (buttonSize + padding) * rows + padding
+
+	ButtonBag.frame:SetSize(frameWidth, frameHeight)
+
+	-- Position the bag frame relative to the toggle button
+	ButtonBag.frame:ClearAllPoints()
+	ButtonBag.frame:SetPoint('TOPRIGHT', ButtonBag.toggleButton, 'BOTTOMLEFT', 0, -5)
+
+	-- Position buttons in grid
+	for i, data in ipairs(buttons) do
+		local button = data.button
+		local col = (i - 1) % columns
+		local row = math.floor((i - 1) / columns)
+
+		button:SetParent(ButtonBag.frame)
+		button:ClearAllPoints()
+		button:SetPoint('TOPLEFT', ButtonBag.frame, 'TOPLEFT', padding + col * (buttonSize + padding), -padding - row * (buttonSize + padding))
+		button:SetSize(buttonSize, buttonSize)
+
+		-- Ensure button is above the bag backdrop
+		button:SetFrameStrata('MEDIUM')
+		button:SetFrameLevel(ButtonBag.frame:GetFrameLevel() + 5)
+
+		-- Stop any fade animations and ensure button is visible
+		if button.fadeInAnim then
+			button.fadeInAnim:Stop()
+		end
+		if button.fadeOutAnim then
+			button.fadeOutAnim:Stop()
+		end
+		button:SetAlpha(1)
+
+		-- Show the button (OnShow hook will allow it since ButtonBag.isOpen is true)
+		button:Show()
+	end
+
+	ButtonBag.frame:Show()
+end
+
+function module:CloseButtonBag()
+	if not ButtonBag.frame then
+		return
+	end
+
+	ButtonBag.isOpen = false
+
+	-- Hide all buttons and return to original parent/strata
+	for name, button in pairs(ButtonBag.buttons) do
+		button:Hide()
+		if button.SUI_OriginalParent then
+			button:SetParent(button.SUI_OriginalParent)
+		end
+		if button.SUI_OriginalStrata then
+			button:SetFrameStrata(button.SUI_OriginalStrata)
+		end
+		if button.SUI_OriginalLevel then
+			button:SetFrameLevel(button.SUI_OriginalLevel)
+		end
+	end
+
+	ButtonBag.frame:Hide()
+
+	if ButtonBag.frame.hideTimer then
+		ButtonBag.frame.hideTimer:Cancel()
+		ButtonBag.frame.hideTimer = nil
+	end
+end
+
+function module:DestroyButtonBag()
+	-- Restore all buttons to original state
+	for name, button in pairs(ButtonBag.buttons) do
+		-- Clear bag management flag so OnShow hook allows showing
+		button.SUI_InButtonBag = nil
+
+		if button.SUI_OriginalParent then
+			button:SetParent(button.SUI_OriginalParent)
+			button.SUI_OriginalParent = nil
+		end
+		if button.SUI_OriginalStrata then
+			button:SetFrameStrata(button.SUI_OriginalStrata)
+			button.SUI_OriginalStrata = nil
+		end
+		if button.SUI_OriginalLevel then
+			button:SetFrameLevel(button.SUI_OriginalLevel)
+			button.SUI_OriginalLevel = nil
+		end
+		button:Show()
+	end
+
+	wipe(ButtonBag.buttons)
+	ButtonBag.isOpen = false
+
+	if ButtonBag.frame then
+		ButtonBag.frame:Hide()
+	end
+	if ButtonBag.toggleButton then
+		ButtonBag.toggleButton:Hide()
+	end
+end
+
+function module:RefreshButtonBag()
+	if ButtonBag.isOpen then
+		module:CloseButtonBag()
+		module:OpenButtonBag()
 	end
 end
 
@@ -1277,7 +1779,6 @@ function module:RegisterEvents()
 	MinimapUpdater:RegisterEvent('ZONE_CHANGED_INDOORS')
 	MinimapUpdater:RegisterEvent('ZONE_CHANGED_NEW_AREA')
 	MinimapUpdater:RegisterEvent('MINIMAP_UPDATE_TRACKING')
-	MinimapUpdater:RegisterEvent('MINIMAP_PING')
 	MinimapUpdater:RegisterEvent('PLAYER_REGEN_ENABLED')
 
 	module:ScheduleRepeatingTimer(module.Update, 30, module, true)
@@ -1403,11 +1904,13 @@ function module:InitializeVehicleMover()
 			module.Settings.vehiclePosition = position
 
 			-- Save to user settings
-			local currentStyle = SUI.DB.Artwork.Style
-			if not module.DB.customSettings[currentStyle] then
-				module.DB.customSettings[currentStyle] = {}
+			local currentStyle = SUI.DB.Artwork and SUI.DB.Artwork.Style
+			if currentStyle and module.DB and module.DB.customSettings then
+				if not module.DB.customSettings[currentStyle] then
+					module.DB.customSettings[currentStyle] = {}
+				end
+				module.DB.customSettings[currentStyle].vehiclePosition = position
 			end
-			module.DB.customSettings[currentStyle].vehiclePosition = position
 		end,
 	})
 
@@ -1450,8 +1953,8 @@ function module:ResetVehiclePosition()
 	VehicleMover:SetPoint(point, _G[anchor], secondaryPoint, x, y)
 
 	module.Settings.vehiclePosition = module.BaseOpt.vehiclePosition
-	local currentStyle = SUI.DB.Artwork.Style
-	if module.DB.customSettings[currentStyle] then
+	local currentStyle = SUI.DB.Artwork and SUI.DB.Artwork.Style
+	if currentStyle and module.DB and module.DB.customSettings and module.DB.customSettings[currentStyle] then
 		module.DB.customSettings[currentStyle].vehiclePosition = nil
 	end
 
@@ -1516,7 +2019,13 @@ function module:CheckOverrideActionBar()
 		if IsVehicleUIActive() then
 			if not module.Settings.firstVehicleDetected and module.Settings.UnderVehicleUI and module.Settings.useVehicleMover ~= false then
 				module.Settings.firstVehicleDetected = true
-				module.DB.customSettings[SUI.DB.Artwork.Style].firstVehicleDetected = true
+				local currentStyle = SUI.DB.Artwork and SUI.DB.Artwork.Style
+				if currentStyle and module.DB and module.DB.customSettings then
+					if not module.DB.customSettings[currentStyle] then
+						module.DB.customSettings[currentStyle] = {}
+					end
+					module.DB.customSettings[currentStyle].firstVehicleDetected = true
+				end
 
 				StaticPopupDialogs['SUI_MINIMAP_VEHICLE_POSITION'] = {
 					text = L['Would you like to set a custom position for your minimap when in a vehicle?'],
@@ -1546,6 +2055,11 @@ function module:CheckOverrideActionBar()
 end
 
 function module:OnInitialize()
+	-- Register logger
+	if SUI.logger then
+		module.logger = SUI.logger:RegisterCategory('Minimap')
+	end
+
 	---@class SUI.Minimap.Database
 	local defaults = {
 		enabled = true,
@@ -1570,8 +2084,14 @@ function module:OnInitialize()
 	-- Check for other addons modifying the minimap
 	module:DetectMinimapAddons()
 
-	if C_CVar.GetCVar('rotateMinimap') == '1' and not module.DB.customSettings[SUI.DB.Artwork.Style].rotate then
-		module.DB.customSettings[SUI.DB.Artwork.Style].rotate = true
+	local currentStyle = SUI.DB.Artwork and SUI.DB.Artwork.Style
+	if currentStyle and module.DB and module.DB.customSettings then
+		if not module.DB.customSettings[currentStyle] then
+			module.DB.customSettings[currentStyle] = {}
+		end
+		if C_CVar.GetCVar('rotateMinimap') == '1' and not module.DB.customSettings[currentStyle].rotate then
+			module.DB.customSettings[currentStyle].rotate = true
+		end
 	end
 end
 

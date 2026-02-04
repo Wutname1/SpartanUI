@@ -86,25 +86,48 @@ function BlizzAPI.HasEditMode()
 	return C_EditMode ~= nil
 end
 
+-- ============================================
+-- SECRET VALUE API (Retail 12.0.0+)
+-- ============================================
+-- In Retail WoW 12.0.0+, certain aura properties become "secret values" during combat
+-- when viewing other players' auras. These functions provide safe access patterns.
+--
+-- Classic/TBC/Wrath/Cata/MoP do NOT have secret values - all aura data is accessible.
+-- These wrappers return safe defaults when the API doesn't exist.
+--
+-- Blizzard API reference: https://warcraft.wiki.gg/wiki/API_issecretvalue
+-- ============================================
+
+---Check if a value is a "secret value" (inaccessible during combat in Retail)
+---Secret values cannot be used in comparisons, arithmetic, or string concatenation.
+---@param value any The value to check
+---@return boolean isSecret True if the value is secret and cannot be accessed
 function BlizzAPI.issecretvalue(value)
 	if not issecretvalue then
-		return false
+		return false -- Classic: no secret values exist, value is NOT secret
 	end
 	return issecretvalue(value)
 end
 
+---Check if a single value can be accessed (not a secret value)
+---@param value any The value to check
+---@return boolean canAccess True if the value can be safely read and used
 function BlizzAPI.canaccessvalue(value)
 	if not canaccessvalue then
-		return true
+		return true -- Classic: no secret values exist, value IS accessible
 	end
 	return canaccessvalue(value)
 end
 
-function BlizzAPI.canaccesstable(table)
+---Check if a table's contents can be accessed (no secret values within)
+---Used primarily for aura data tables from C_UnitAuras functions.
+---@param tbl table The table to check
+---@return boolean canAccess True if the table contents can be safely read
+function BlizzAPI.canaccesstable(tbl)
 	if not canaccesstable then
-		return false
+		return true -- Classic: no secret values exist, table IS accessible
 	end
-	return canaccesstable(table)
+	return canaccesstable(tbl)
 end
 
 SUI.BlizzAPI = BlizzAPI
