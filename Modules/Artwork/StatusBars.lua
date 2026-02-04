@@ -55,6 +55,7 @@ local COLORS = {
 local function GetDBDefaults()
 	if SUI.IsRetail then
 		-- Retail database structure: named bars with priority system
+		-- Only store user-configurable options that differ from StyleSettingsBase defaults
 		return {
 			AllowRep = true,
 			PriorityDirection = 'ltr',
@@ -70,21 +71,18 @@ local function GetDBDefaults()
 				['**'] = {
 					ToolTip = 'hover',
 					text = Enums.TextDisplayMode.OnMouseOver,
-					alpha = 1,
 					enabled = true,
 					showTooltip = true,
 				},
 				Left = {
 					ToolTip = 'hover',
 					text = Enums.TextDisplayMode.OnMouseOver,
-					alpha = 1,
 					enabled = true,
 					showTooltip = true,
 				},
 				Right = {
 					ToolTip = 'hover',
 					text = Enums.TextDisplayMode.OnMouseOver,
-					alpha = 1,
 					enabled = true,
 					showTooltip = true,
 				},
@@ -92,12 +90,12 @@ local function GetDBDefaults()
 		}
 	else
 		-- Classic database structure: indexed bars with display modes
+		-- Only store user-configurable options that differ from StyleSettingsBase defaults
 		return {
 			[1] = {
 				display = 'xp',
 				text = true,
 				ToolTip = 'hover',
-				alpha = 1,
 				AutoColor = true,
 				CustomColor = { r = 0, g = 0.1, b = 1, a = 0.7 },
 				CustomColor2 = { r = 0, g = 0.5, b = 1, a = 0.7 },
@@ -106,7 +104,6 @@ local function GetDBDefaults()
 				display = 'rep',
 				text = true,
 				ToolTip = 'hover',
-				alpha = 1,
 				AutoColor = true,
 				CustomColor = { r = 0, g = 1, b = 0.3, a = 0.7 },
 				CustomColor2 = { r = 0, g = 0.5, b = 1, a = 0.7 },
@@ -125,6 +122,7 @@ end
 local StyleSettingsBase = {
 	size = { 400, 15 },
 	alpha = 1,
+	scale = 1,
 	MaxWidth = 0,
 	texCords = { 0, 1, 0, 1 },
 	tooltip = {
@@ -171,11 +169,41 @@ end
 ---@param ContainerKey string
 ---@return SUI.Style.Settings.StatusBars
 local function GetStyleSettings(ContainerKey)
-	if StyleSetting.skinsettings[SUI.DB.Artwork.Style] then
-		return SUI:CopyData(StyleSetting.skinsettings[SUI.DB.Artwork.Style][ContainerKey], StyleSetting[ContainerKey])
-	else
-		return StyleSetting[ContainerKey]
+	-- Start with base defaults
+	local settings = SUI:CopyData({}, StyleSetting[ContainerKey])
+
+	-- Layer theme settings on top
+	if StyleSetting.skinsettings[SUI.DB.Artwork.Style] and StyleSetting.skinsettings[SUI.DB.Artwork.Style][ContainerKey] then
+		settings = SUI:CopyData(StyleSetting.skinsettings[SUI.DB.Artwork.Style][ContainerKey], settings)
 	end
+
+	-- Layer user DB settings on top
+	if DB then
+		if SUI.IsRetail then
+			-- Retail uses named containers
+			if DB.bars and DB.bars[ContainerKey] then
+				if DB.bars[ContainerKey].alpha then
+					settings.alpha = DB.bars[ContainerKey].alpha
+				end
+				if DB.bars[ContainerKey].scale then
+					settings.scale = DB.bars[ContainerKey].scale
+				end
+			end
+		else
+			-- Classic uses indexed containers
+			local i = ContainerKey == 'Left' and 1 or 2
+			if DB[i] then
+				if DB[i].alpha then
+					settings.alpha = DB[i].alpha
+				end
+				if DB[i].scale then
+					settings.scale = DB[i].scale
+				end
+			end
+		end
+	end
+
+	return settings
 end
 
 ---@param style string
@@ -467,10 +495,14 @@ function module:UpdateBars()
 		self:UpdateBarTextVisibility('Left')
 		self:UpdateBarTextVisibility('Right')
 
-		-- Update container alphas and visibility
+		-- Update container alphas, scale, and visibility
 		for _, key in ipairs({ 'Left', 'Right' }) do
 			local barContainer = module.bars[key]
 			if barContainer then
+				-- Refresh the merged style settings
+				local mergedSettings = GetStyleSettings(key)
+				barContainer.settings = mergedSettings
+
 				if DB.bars[key].enabled then
 					-- Check if this container actually has a bar to show
 					local hasActiveBar = false
@@ -482,7 +514,8 @@ function module:UpdateBars()
 					end
 
 					if hasActiveBar then
-						barContainer:SetAlpha(DB.bars[key].alpha or 1)
+						barContainer:SetAlpha(mergedSettings.alpha or 1)
+						barContainer:SetScale(mergedSettings.scale or 1)
 						barContainer:Show()
 					else
 						barContainer:Hide()
@@ -714,10 +747,12 @@ function module:SetupBarContainerPosition(barContainer, barStyle, index)
 	barContainer:SetPoint(point, anchor, secondaryPoint, x, y)
 	local containerKey = index == 1 and 'Left' or 'Right'
 
-	-- Set initial visibility and alpha based on enabled state
+	-- Set initial visibility, alpha, and scale based on enabled state
 	-- Note: We start hidden and let UpdateBars() show containers that have content
+	-- barStyle already contains merged settings (Defaults > Theme > User)
 	if DB.bars[containerKey].enabled then
-		barContainer:SetAlpha(DB.bars[containerKey].alpha or 1)
+		barContainer:SetAlpha(barStyle.alpha or 1)
+		barContainer:SetScale(barStyle.scale or 1)
 	end
 	barContainer:Hide() -- Start hidden, UpdateBars will show if there's content
 end
@@ -1279,7 +1314,8 @@ function module:factory_Classic()
 		local point, anchor, secondaryPoint, x, y = strsplit(',', StyleSetting.Position)
 		statusbar:ClearAllPoints()
 		statusbar:SetPoint(point, anchor, secondaryPoint, x, y)
-		statusbar:SetAlpha(DB[i].alpha or 1)
+		statusbar:SetAlpha(StyleSetting.alpha or 1)
+		statusbar:SetScale(StyleSetting.scale or 1)
 
 		-- Setup Actions
 		statusbar:RegisterEvent('PLAYER_ENTERING_WORLD')
@@ -1355,19 +1391,27 @@ function module:factory_Classic()
 
 		-- MoveIt integration
 		if SUI.MoveIt then
+			-- Set dirtyWidth/dirtyHeight to match the visual statusbar size (with padding)
+			statusbar.dirtyWidth = StyleSetting.size[1] - 30
+			statusbar.dirtyHeight = StyleSetting.size[2] - 5
 			SUI.MoveIt:CreateMover(statusbar, 'StatusBar_' .. key, key .. ' Status Bar', nil, 'StatusBars')
 		end
 	end
 
 	SUI:RegisterMessage('StatusBarUpdate', function()
 		for i, key in ipairs({ 'Left', 'Right' }) do
+			-- Refresh the merged style settings
+			local mergedSettings = GetStyleSettings(key)
+			module.bars[key].settings = mergedSettings
+
 			if DB[i].display ~= 'disabled' then
 				module.bars[key]:Show()
 				updateText_Classic(module.bars[key])
 			else
 				module.bars[key]:Hide()
 			end
-			module.bars[key]:SetAlpha(DB[i].alpha or 1)
+			module.bars[key]:SetAlpha(mergedSettings.alpha or 1)
+			module.bars[key]:SetScale(mergedSettings.scale or 1)
 		end
 	end)
 end
@@ -1721,14 +1765,36 @@ function module:BuildOptions_Classic()
 				alpha = {
 					name = 'Transparency',
 					type = 'range',
+					order = 10,
 					min = 0,
 					max = 1,
 					step = 0.01,
 					get = function(info)
-						return DB[i].alpha or 1
+						-- Show the effective value (merged from defaults > theme > user)
+						local key = i == 1 and 'Left' or 'Right'
+						local settings = GetStyleSettings(key)
+						return settings.alpha or 1
 					end,
 					set = function(info, val)
 						DB[i].alpha = val
+						SUI:SendMessage('StatusBarUpdate')
+					end,
+				},
+				scale = {
+					name = 'Scale',
+					type = 'range',
+					order = 11,
+					min = 0.5,
+					max = 2,
+					step = 0.01,
+					get = function(info)
+						-- Show the effective value (merged from defaults > theme > user)
+						local key = i == 1 and 'Left' or 'Right'
+						local settings = GetStyleSettings(key)
+						return settings.scale or 1
+					end,
+					set = function(info, val)
+						DB[i].scale = val
 						SUI:SendMessage('StatusBarUpdate')
 					end,
 				},
@@ -1787,10 +1853,32 @@ function module:CreateContainerOptions(containerKey, order)
 					return not DB.bars[containerKey].enabled
 				end,
 				get = function()
-					return DB.bars[containerKey].alpha
+					-- Show the effective value (merged from defaults > theme > user)
+					local settings = GetStyleSettings(containerKey)
+					return settings.alpha or 1
 				end,
 				set = function(_, value)
 					DB.bars[containerKey].alpha = value
+					self:UpdateBars()
+				end,
+			},
+			scale = {
+				name = 'Scale',
+				type = 'range',
+				order = 2.5,
+				min = 0.5,
+				max = 2,
+				step = 0.01,
+				disabled = function()
+					return not DB.bars[containerKey].enabled
+				end,
+				get = function()
+					-- Show the effective value (merged from defaults > theme > user)
+					local settings = GetStyleSettings(containerKey)
+					return settings.scale or 1
+				end,
+				set = function(_, value)
+					DB.bars[containerKey].scale = value
 					self:UpdateBars()
 				end,
 			},

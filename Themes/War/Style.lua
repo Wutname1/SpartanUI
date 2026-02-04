@@ -149,7 +149,7 @@ function module:OnInitialize()
 			texCords = { 0.0546875, 0.9140625, 0.5555555555555556, 0 },
 			GlowPoint = { x = 1, y = 0 },
 			MaxWidth = 18,
-			Position = 'BOTTOMRIGHT,SUI_BottomAnchor,BOTTOM,-80,-2', -- Example: adjust position for Classic
+			Position = SUI.IsRetail and 'BOTTOMRIGHT,SUI_BottomAnchor,BOTTOM,-40,-2' or 'BOTTOMRIGHT,SUI_BottomAnchor,BOTTOM,-80,-2',
 		},
 		Right = {
 			bgTexture = 'Interface\\AddOns\\SpartanUI\\Themes\\War\\Images\\StatusBar-' .. UnitFactionGroup('Player'),
@@ -160,7 +160,7 @@ function module:OnInitialize()
 			texCords = { 0.0546875, 0.9140625, 0.5555555555555556, 0 },
 			GlowPoint = { x = 1, y = 0 },
 			MaxWidth = 18,
-			Position = 'BOTTOMLEFT,SUI_BottomAnchor,BOTTOM,100,-2',
+			Position = SUI.IsRetail and 'BOTTOMLEFT,SUI_BottomAnchor,BOTTOM,100,-2' or 'BOTTOMLEFT,SUI_BottomAnchor,BOTTOM,90,-2',
 		},
 	}
 	if statusBarModule then

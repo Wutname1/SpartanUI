@@ -831,13 +831,16 @@ function module:OnInitialize()
 		Left = {
 			size = { 370, 32 },
 			bgTexture = 'Interface\\AddOns\\SpartanUI\\Themes\\Classic\\Images\\status-plate-exp',
+			Position = SUI.IsRetail and 'BOTTOMRIGHT,SUI_BottomAnchor,BOTTOM,-75,-5' or 'BOTTOMRIGHT,SUI_BottomAnchor,BOTTOM,-90,-5',
+			scale = SUI.IsRetail and 1 or 0.85,
 			texCords = { 0.150390625, 0.96875, 0, 1 },
 			MaxWidth = 15,
 		},
 		Right = {
 			size = { 370, 32 },
 			bgTexture = 'Interface\\AddOns\\SpartanUI\\Themes\\Classic\\Images\\status-plate-rep',
-			Position = 'BOTTOMLEFT,SUI_BottomAnchor,BOTTOM,79,0',
+			Position = SUI.IsRetail and 'BOTTOMLEFT,SUI_BottomAnchor,BOTTOM,69,-5' or 'BOTTOMLEFT,SUI_BottomAnchor,BOTTOM,73,-5',
+			scale = SUI.IsRetail and 1 or 0.85,
 			texCords = { 0, 0.849609375, 0, 1 },
 			MaxWidth = 50,
 		},
@@ -846,7 +849,7 @@ function module:OnInitialize()
 
 	if SUI.UF then
 		local function StyleChange()
-			for unit, frame in pairs(SkinnedFrames) do
+			for _, frame in pairs(SkinnedFrames) do
 				if SUI.UF.DB.Style ~= 'Classic' then
 					frame.Art_Classic:Hide()
 				elseif SUI.UF.DB.Style == 'Classic' and not frame.Art_Classic:IsVisible() then
