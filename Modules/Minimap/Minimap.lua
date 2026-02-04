@@ -338,17 +338,7 @@ function module:ModifyMinimapLayout()
 
 	-- BorderTop and ZoneTextButton positioning (retail only)
 	if SUI.IsRetail then
-		if MinimapCluster.BorderTop then
-			MinimapCluster.BorderTop:ClearAllPoints()
-			MinimapCluster.BorderTop:SetPoint('TOP', Minimap, 'BOTTOM', 0, -5)
-			MinimapCluster.BorderTop:SetAlpha(0.8)
-		end
-
-		if MinimapCluster.ZoneTextButton and MinimapCluster.BorderTop then
-			MinimapCluster.ZoneTextButton:ClearAllPoints()
-			MinimapCluster.ZoneTextButton:SetPoint('TOPLEFT', MinimapCluster.BorderTop, 'TOPLEFT', 4, -4)
-			MinimapCluster.ZoneTextButton:SetPoint('TOPRIGHT', MinimapCluster.BorderTop, 'TOPRIGHT', -15, -4)
-		end
+		module:SetupBorderTop()
 	else
 		-- Classic-specific modifications
 		-- Hide the toggle button
