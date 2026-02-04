@@ -67,14 +67,6 @@ local SPELL_POWER_SHADOW_ORBS = Enum.PowerType.ShadowOrbs -- nil if not supporte
 local SPELL_POWER_ARCANE_CHARGES = Enum.PowerType.ArcaneCharges or 16
 local SPELL_POWER_ESSENCE = Enum.PowerType.Essence or 19
 
--- DEBUG: ClassPower initialization logging (remove after testing)
-print('[oUF ClassPower DEBUG] PlayerClass:', PlayerClass)
-print('[oUF ClassPower DEBUG] GetPlayerSpec exists:', GetPlayerSpec ~= nil)
-print('[oUF ClassPower DEBUG] Enum.PowerType.Chi:', Enum.PowerType.Chi)
-print('[oUF ClassPower DEBUG] Enum.PowerType.ShadowOrbs:', Enum.PowerType.ShadowOrbs)
-print('[oUF ClassPower DEBUG] SPEC_MONK_WINDWALKER:', SPEC_MONK_WINDWALKER)
-print('[oUF ClassPower DEBUG] SPEC_PRIEST_SHADOW:', SPEC_PRIEST_SHADOW)
-
 -- Holds the class specific stuff.
 local ClassPowerID, ClassPowerType
 local ClassPowerEnable, ClassPowerDisable
@@ -204,14 +196,12 @@ local function Visibility(self, event, unit)
 
 	-- DEBUG: Visibility check
 	local currentSpec = GetPlayerSpec and GetPlayerSpec()
-	print('[oUF ClassPower DEBUG] Visibility called - event:', event, 'ClassPowerID:', ClassPowerID, 'RequireSpec:', RequireSpec, 'currentSpec:', currentSpec)
 
 	if UnitHasVehicleUI and UnitHasVehicleUI('player') then
 		shouldEnable = PlayerVehicleHasComboPoints and PlayerVehicleHasComboPoints() or UnitPowerType('vehicle') == SPELL_POWER_COMBO_POINTS
 		unit = 'vehicle'
 	elseif ClassPowerID then
 		local specCheck = not RequireSpec or (GetPlayerSpec and RequireSpec == GetPlayerSpec())
-		print('[oUF ClassPower DEBUG] specCheck:', specCheck, '(RequireSpec:', RequireSpec, 'GetPlayerSpec():', GetPlayerSpec and GetPlayerSpec(), ')')
 		if specCheck then
 			-- use 'player' instead of unit because 'SPELLS_CHANGED' is a unitless event
 			if not RequirePower or RequirePower == UnitPowerType('player') then
@@ -219,19 +209,11 @@ local function Visibility(self, event, unit)
 					self:UnregisterEvent('SPELLS_CHANGED', Visibility)
 					shouldEnable = true
 					unit = 'player'
-					print('[oUF ClassPower DEBUG] shouldEnable = true')
 				else
 					self:RegisterEvent('SPELLS_CHANGED', Visibility, true)
-					print('[oUF ClassPower DEBUG] RequireSpell check failed, registering SPELLS_CHANGED')
 				end
-			else
-				print('[oUF ClassPower DEBUG] RequirePower check failed')
 			end
-		else
-			print('[oUF ClassPower DEBUG] specCheck failed')
 		end
-	else
-		print('[oUF ClassPower DEBUG] No ClassPowerID set')
 	end
 
 	local isEnabled = element.__isEnabled
@@ -343,11 +325,9 @@ do
 		if oUF.isRetail then
 			RequireSpec = SPEC_MONK_WINDWALKER
 		end
-		print('[oUF ClassPower DEBUG] MONK setup: ClassPowerID=', ClassPowerID, 'RequireSpec=', RequireSpec, 'isRetail=', oUF.isRetail)
 	elseif PlayerClass == 'PALADIN' then
 		ClassPowerID = SPELL_POWER_HOLY_POWER
 		ClassPowerType = 'HOLY_POWER'
-		print('[oUF ClassPower DEBUG] PALADIN setup: ClassPowerID=', ClassPowerID)
 	elseif PlayerClass == 'WARLOCK' then
 		ClassPowerID = SPELL_POWER_SOUL_SHARDS
 		ClassPowerType = 'SOUL_SHARDS'
@@ -367,14 +347,10 @@ do
 		ClassPowerID = SPELL_POWER_SHADOW_ORBS
 		ClassPowerType = 'SHADOW_ORBS'
 		RequireSpec = SPEC_PRIEST_SHADOW
-		print('[oUF ClassPower DEBUG] PRIEST setup: ClassPowerID=', ClassPowerID, 'RequireSpec=', RequireSpec)
 	elseif PlayerClass == 'EVOKER' then
 		ClassPowerID = SPELL_POWER_ESSENCE
 		ClassPowerType = 'ESSENCE'
 	end
-
-	-- DEBUG: Final class power configuration
-	print('[oUF ClassPower DEBUG] Final config: ClassPowerID=', ClassPowerID, 'ClassPowerType=', ClassPowerType, 'RequireSpec=', RequireSpec)
 end
 
 local function Enable(self, unit)
