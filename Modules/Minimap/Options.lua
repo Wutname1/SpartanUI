@@ -16,6 +16,7 @@ local elementNaming = {
 	['queueStatus'] = 'Queue Status',
 	['addonButtons'] = 'Addon Buttons',
 	['background'] = 'Background',
+	['BorderTop'] = 'Border Top',
 }
 
 local function GetOption(info)
