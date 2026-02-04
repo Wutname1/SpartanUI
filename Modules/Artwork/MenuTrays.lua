@@ -26,16 +26,19 @@ local SetBarVisibility = function(side, state)
 		return
 	end
 
-	-- Handle default BT4 frames (only if not moved by user)
-	for k, v in pairs(bt4Positions) do
-		if _G[k] and v == side then
-			-- Check if frame has been moved by user - if so, don't manage its visibility
-			local isMoved = (_G[k].isMoved and _G[k].isMoved()) or false
-			if not isMoved then
-				if state == 'hide' then
-					_G[k]:Hide()
-				elseif state == 'show' then
-					_G[k]:Show()
+	-- Handle default BT4 frames (only if Bartender4 is installed and not moved by user)
+	-- Without BT4, these frames aren't positioned in the trays, so don't touch them
+	if SUI:IsAddonEnabled('Bartender4') then
+		for k, v in pairs(bt4Positions) do
+			if _G[k] and v == side then
+				-- Check if frame has been moved by user - if so, don't manage its visibility
+				local isMoved = (_G[k].isMoved and _G[k].isMoved()) or false
+				if not isMoved then
+					if state == 'hide' then
+						_G[k]:Hide()
+					elseif state == 'show' then
+						_G[k]:Show()
+					end
 				end
 			end
 		end
@@ -1126,6 +1129,17 @@ function module:GetCombinedFrameList(side)
 	-- Get user custom frames from DB
 	userFrames = module:GetTraySettings(side).customFrames or ''
 
+	-- Frames that should only be managed when Bartender4 is installed
+	-- These are BT4 bars or Blizzard frames that BT4 positions
+	local bt4OnlyFrames = {
+		['BT4BarStanceBar'] = true,
+		['BT4BarPetBar'] = true,
+		['BT4BarBagBar'] = true,
+		['BT4BarMicroMenu'] = true,
+		['MultiCastActionBarFrame'] = true,
+	}
+	local hasBT4 = SUI:IsAddonEnabled('Bartender4')
+
 	-- Filter out moved frames from skin frames
 	local filteredSkinFrames = {}
 	if skinFrames ~= '' then
@@ -1133,10 +1147,15 @@ function module:GetCombinedFrameList(side)
 		for _, frameName in ipairs(frames) do
 			local trimmed = strtrim(frameName)
 			if trimmed ~= '' and _G[trimmed] then
-				-- Check if frame has been moved by user
-				local isMoved = (_G[trimmed].isMoved and _G[trimmed].isMoved()) or false
-				if not isMoved then
-					table.insert(filteredSkinFrames, trimmed)
+				-- Skip BT4-only frames when Bartender4 is not installed
+				if bt4OnlyFrames[trimmed] and not hasBT4 then
+					-- Don't include this frame
+				else
+					-- Check if frame has been moved by user
+					local isMoved = (_G[trimmed].isMoved and _G[trimmed].isMoved()) or false
+					if not isMoved then
+						table.insert(filteredSkinFrames, trimmed)
+					end
 				end
 			end
 		end
