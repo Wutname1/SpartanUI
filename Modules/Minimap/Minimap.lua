@@ -51,6 +51,13 @@ local BaseSettings = {
 			BlendMode = 'ADD',
 			alpha = 1,
 		},
+		-- BorderTop (Retail only - the bar below the minimap)
+		BorderTop = {
+			enabled = true,
+			position = 'TOP,Minimap,BOTTOM,0,-5',
+			alpha = 0.8,
+			scale = 1,
+		},
 		-- Zone Text
 		ZoneText = {
 			enabled = true,
@@ -656,6 +663,48 @@ function module:SetupBackground()
 			SUIMinimap.BG:SetAlpha(bgSettings.alpha)
 		end
 		SUIMinimap.BG:Show()
+	end
+end
+
+function module:SetupBorderTop()
+	-- BorderTop is Retail only
+	if not SUI.IsRetail or not MinimapCluster.BorderTop then
+		return
+	end
+
+	local borderSettings = module.Settings.elements and module.Settings.elements.BorderTop
+	if not borderSettings then
+		return
+	end
+
+	if borderSettings.enabled == false then
+		MinimapCluster.BorderTop:Hide()
+		return
+	end
+
+	-- Position BorderTop
+	if borderSettings.position then
+		module:PositionItem(MinimapCluster.BorderTop, borderSettings.position)
+	else
+		MinimapCluster.BorderTop:ClearAllPoints()
+		MinimapCluster.BorderTop:SetPoint('TOP', Minimap, 'BOTTOM', 0, -5)
+	end
+
+	-- Set alpha
+	local alpha = borderSettings.alpha or 0.8
+	MinimapCluster.BorderTop:SetAlpha(alpha)
+
+	-- Set scale
+	local scale = borderSettings.scale or 1
+	MinimapCluster.BorderTop:SetScale(scale)
+
+	MinimapCluster.BorderTop:Show()
+
+	-- Position ZoneTextButton relative to BorderTop
+	if MinimapCluster.ZoneTextButton then
+		MinimapCluster.ZoneTextButton:ClearAllPoints()
+		MinimapCluster.ZoneTextButton:SetPoint('TOPLEFT', MinimapCluster.BorderTop, 'TOPLEFT', 4, -4)
+		MinimapCluster.ZoneTextButton:SetPoint('TOPRIGHT', MinimapCluster.BorderTop, 'TOPRIGHT', -15, -4)
 	end
 end
 
