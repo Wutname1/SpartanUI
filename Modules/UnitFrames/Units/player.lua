@@ -36,6 +36,7 @@ local function Builder(frame)
 		'RestingIndicator',
 		'ClassPower',
 		'AdditionalPower',
+		'EclipseBar', -- MOP Classic Balance Druid eclipse power bar (#565)
 		-- 'AuraBars' -- DECOMMISSIONED: Not maintaining if unavailable in retail
 	}
 
