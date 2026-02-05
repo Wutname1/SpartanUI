@@ -848,7 +848,14 @@ end
 
 -- This is the main inpoint
 function module.BlizzMovers()
+	-- Log version info for debugging (#564)
+	if SUI.logger then
+		local versionInfo = SUI.IsRetail and 'Retail' or (SUI.IsTBC and 'TBC' or (SUI.IsWrath and 'Wrath' or (SUI.IsCata and 'Cata' or (SUI.IsMOP and 'MOP' or 'Classic'))))
+		SUI.logger.debug('BlizzMovers: Initializing for ' .. versionInfo .. ', EditModeManagerFrame=' .. tostring(EditModeManagerFrame ~= nil))
+	end
+
 	-- Frames using LibEditModeOverride (Retail only):
+	-- In TBC/Classic, these will fall back to custom holder-based movers
 	TalkingHead() -- TalkingHeadFrame (systemID 13)
 	VehicleLeaveButton() -- MainMenuBarVehicleLeaveButton (systemID 14)
 	AbilityBars() -- ExtraActionBarFrame + ZoneAbilityFrame (systemID 11)
