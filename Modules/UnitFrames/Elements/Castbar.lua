@@ -182,41 +182,67 @@ local function Update(frame, settings)
 	element.Icon:SetSize(DB.Icon.size, DB.Icon.size)
 
 	if frame.unitOnCreate == 'player' then
+		-- Helper function to hide a castbar frame
+		local function HideCastbar(castFrame, frameName)
+			if not castFrame then
+				return
+			end
+			if SUI.logger then
+				SUI.logger.debug('Hiding Blizzard castbar: ' .. (frameName or 'unknown'))
+			end
+			castFrame.showCastbar = false
+			-- SetUnit doesn't exist in Classic
+			if castFrame.SetUnit then
+				castFrame:SetUnit(nil)
+			end
+			castFrame:UnregisterAllEvents()
+			castFrame:Hide()
+			castFrame:HookScript('OnShow', function(self)
+				self:Hide()
+				self.showCastbar = false
+				if self.SetUnit then
+					self:SetUnit(nil)
+				end
+			end)
+		end
+
 		-- EditModeManagerFrame.AccountSettings is Retail-only (10.0+)
 		if EditModeManagerFrame and EditModeManagerFrame.AccountSettings then
 			function EditModeManagerFrame.AccountSettings.SettingsContainer.CastBar:ShouldEnable()
 				return false
 			end
 		end
-		for _, k in ipairs({ 'PlayerCastingBarFrame', 'PetCastingBarFrame' }) do
-			local castFrame = _G[k]
-			-- Classic uses different frame names (CastingBarFrame, not PlayerCastingBarFrame)
-			if castFrame then
-				castFrame.showCastbar = false
-				-- SetUnit doesn't exist in Classic
-				if castFrame.SetUnit then
-					castFrame:SetUnit(nil)
-				end
-				castFrame:UnregisterAllEvents()
-				castFrame:Hide()
-				castFrame:HookScript('OnShow', function(self)
-					self:Hide()
-					self.showCastbar = false
-					if self.SetUnit then
-						self:SetUnit(nil)
+
+		-- MOP Classic Edit Mode castbar handling
+		-- MOP uses EditModeManagerFrame but may have different structure
+		if SUI.IsMOP and EditModeManagerFrame then
+			if SUI.logger then
+				SUI.logger.debug('MOP Edit Mode detected, attempting to disable castbar')
+			end
+			-- Try to disable via EditMode settings if available
+			if EditModeManagerFrame.GetSettingValue then
+				-- Hook into the setting getter to always return disabled for castbar
+				local origGetSettingValue = EditModeManagerFrame.GetSettingValue
+				EditModeManagerFrame.GetSettingValue = function(self, setting, ...)
+					if setting and tostring(setting):find('CastBar') then
+						return false
 					end
-				end)
+					return origGetSettingValue(self, setting, ...)
+				end
 			end
 		end
 
-		-- Classic-specific castbar frames
-		if CastingBarFrame then
-			CastingBarFrame:UnregisterAllEvents()
-			CastingBarFrame:Hide()
-			CastingBarFrame:HookScript('OnShow', function(self)
-				self:Hide()
-			end)
+		-- Retail/Modern frame names
+		for _, k in ipairs({ 'PlayerCastingBarFrame', 'PetCastingBarFrame' }) do
+			HideCastbar(_G[k], k)
 		end
+
+		-- Classic-specific castbar frames (Classic/TBC/Wrath/Cata/MOP)
+		HideCastbar(_G['CastingBarFrame'], 'CastingBarFrame')
+
+		-- MOP may also use these frame names
+		HideCastbar(_G['PlayerCastBar'], 'PlayerCastBar')
+		HideCastbar(_G['CastingBar'], 'CastingBar')
 	end
 end
 
