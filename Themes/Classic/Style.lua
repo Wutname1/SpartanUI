@@ -814,8 +814,9 @@ function module:OnInitialize()
 					zoomButtons = {
 						enabled = true,
 						scale = 0.8,
-						-- Position zoom buttons to the right side of minimap, inside the frame area
-						position = 'RIGHT,Minimap,RIGHT,12,0',
+						position = 'TOPLEFT,Minimap,BOTTOMRIGHT,-15,50',
+						spacing = 5,
+						xOffset = -10,
 					},
 				},
 			}
@@ -829,8 +830,9 @@ function module:OnInitialize()
 			zoomButtons = {
 				enabled = true,
 				scale = 0.8,
-				-- Position zoom buttons to the right side of minimap for Classic clients
-				position = 'RIGHT,Minimap,RIGHT,12,0',
+				position = 'TOPLEFT,Minimap,BOTTOMRIGHT,-15,50',
+				spacing = 5,
+				xOffset = -10,
 			},
 		}
 	SUI.Minimap:Register('Classic', minimapSettings)

@@ -638,27 +638,53 @@ function module:BuildOptions()
 				}
 			end
 
-			-- local order = 4
-			-- for settingName, settingValue in pairs(elementSettings) do
-			-- 	if not options.args.elements.args[elementName].args[settingName] then
-			-- 		local optionType = type(settingValue)
-			-- 		options.args.elements.args[elementName].args[settingName] = {
-			-- 			name = L[settingName] or settingName,
-			-- 			type = optionType == 'boolean' and 'toggle' or optionType == 'number' and 'range' or 'input',
-			-- 			order = order,
-			-- 			get = GetOption,
-			-- 			set = SetOption,
-			-- 		}
-
-			-- 		if optionType == 'number' then
-			-- 			options.args.elements.args[elementName].args[settingName].min = 0
-			-- 			options.args.elements.args[elementName].args[settingName].max = 2
-			-- 			options.args.elements.args[elementName].args[settingName].step = 0.01
-			-- 		end
-
-			-- 		order = order + 1
-			-- 	end
-			-- end
+			-- Zoom buttons specific options - spacing and xOffset for second button
+			if elementName == 'zoomButtons' then
+				options.args.elements.args[elementName].args.spacing = {
+					name = L['Button Spacing'],
+					desc = L['Vertical gap between zoom in and zoom out buttons'],
+					type = 'range',
+					order = 4,
+					min = 0,
+					max = 30,
+					step = 1,
+					get = function()
+						local elSettings = getElementSettings(elementName)
+						return elSettings and elSettings.spacing or 2
+					end,
+					set = function(_, val)
+						local customPath = ensureCustomElementPath(elementName)
+						local elSettings = getElementSettings(elementName)
+						if elSettings then
+							elSettings.spacing = val
+						end
+						customPath.spacing = val
+						module:Update(true)
+					end,
+				}
+				options.args.elements.args[elementName].args.xOffset = {
+					name = L['Second Button X Offset'],
+					desc = L['Horizontal offset for the zoom out button relative to zoom in'],
+					type = 'range',
+					order = 5,
+					min = -30,
+					max = 30,
+					step = 1,
+					get = function()
+						local elSettings = getElementSettings(elementName)
+						return elSettings and elSettings.xOffset or 0
+					end,
+					set = function(_, val)
+						local customPath = ensureCustomElementPath(elementName)
+						local elSettings = getElementSettings(elementName)
+						if elSettings then
+							elSettings.xOffset = val
+						end
+						customPath.xOffset = val
+						module:Update(true)
+					end,
+				}
+			end
 
 			if elementSettings.style then
 				options.args.elements.args[elementName].args.enabled.hidden = true

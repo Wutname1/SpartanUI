@@ -172,6 +172,8 @@ local BaseSettingsClassic = {
 		enabled = false,
 		scale = 1,
 		position = 'BOTTOMRIGHT,Minimap,BOTTOMRIGHT,-5,5',
+		spacing = 2, -- Y gap between zoom in and zoom out buttons
+		xOffset = 0, -- Additional X offset for the second button
 	},
 	clock = {
 		enabled = false,
@@ -724,9 +726,11 @@ function module:SetupZoomButtons()
 		-- Position zoom buttons if position is specified
 		if zoomSettings.position then
 			module:PositionItem(zoomIn, zoomSettings.position)
-			-- Position zoom out relative to zoom in
+			-- Position zoom out relative to zoom in with spacing and xOffset
+			local spacing = zoomSettings.spacing or 2
+			local xOffset = zoomSettings.xOffset or 0
 			zoomOut:ClearAllPoints()
-			zoomOut:SetPoint('TOP', zoomIn, 'BOTTOM', 0, -2)
+			zoomOut:SetPoint('TOP', zoomIn, 'BOTTOM', xOffset, -spacing)
 		end
 	else
 		zoomIn:Hide()
