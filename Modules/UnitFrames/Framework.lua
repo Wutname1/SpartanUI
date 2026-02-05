@@ -220,8 +220,8 @@ function UF:OnEnable()
 		end
 	end
 
-	-- Edit Mode integration (Retail and TBC+)
-	if EditModeManagerFrame and (SUI.IsRetail or SUI.IsTBC) then
+	-- Edit Mode integration (Retail only - TBC has incomplete EditModeManagerFrame)
+	if EditModeManagerFrame and SUI.IsRetail then
 		local CheckedItems = {}
 		local frames = { ['boss'] = 'Boss', ['raid'] = 'Raid', ['arena'] = 'Arena', ['party'] = 'Party' }
 		for k, v in pairs(frames) do

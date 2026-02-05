@@ -125,6 +125,19 @@ function MoveIt:CreateMover(parent, name, DisplayName, postdrag, groupName, widg
 		MovedText:Show()
 		point, anchor, secondaryPoint, x, y = strsplit(',', MoveIt.DB.movers[name].MovedPoints)
 	end
+
+	-- Validate anchor frame exists (it may reference a disabled unit frame's mover)
+	-- If the anchor is a string and doesn't exist as a global frame, fall back to UIParent
+	if type(anchor) == 'string' and anchor ~= 'UIParent' and not _G[anchor] then
+		if MoveIt.logger then
+			MoveIt.logger.debug(('CreateMover %s: anchor %s does not exist, falling back to UIParent'):format(name, anchor))
+		end
+		anchor = 'UIParent'
+		-- Clear the invalid saved position so it doesn't persist
+		MoveIt.DB.movers[name].MovedPoints = nil
+		MovedText:Hide()
+	end
+
 	f:ClearAllPoints()
 	f:SetPoint(point, anchor, secondaryPoint, x, y)
 
@@ -457,6 +470,14 @@ function MoveIt:CreateMover(parent, name, DisplayName, postdrag, groupName, widg
 		x = tonumber(x) or 0
 		y = tonumber(y) or 0
 
+		-- Validate anchor frame exists (it may reference a disabled unit frame's mover)
+		if type(anchor) == 'string' and anchor ~= 'UIParent' and not _G[anchor] then
+			if MoveIt.logger then
+				MoveIt.logger.debug(('scale() for %s: anchor %s does not exist, falling back to UIParent'):format(name, anchor))
+			end
+			anchor = 'UIParent'
+		end
+
 		if MoveIt.logger then
 			MoveIt.logger.debug(('scale() for %s: repositioning to %s,%s,%s,%.1f,%.1f'):format(name, point or 'nil', anchor or 'nil', secondaryPoint or 'nil', x, y))
 		end
@@ -623,8 +644,16 @@ function MoveIt:CreateCustomMover(displayName, defaultPosition, config)
 
 	-- Set initial position from saved settings
 	local point, anchor, secondaryPoint, x, y = strsplit(',', defaultPosition)
+	-- Validate anchor frame exists, fall back to UIParent if not
+	local anchorFrame = _G[anchor]
+	if not anchorFrame then
+		if MoveIt.logger then
+			MoveIt.logger.debug(('CreateCustomMover %s: anchor %s does not exist, falling back to UIParent'):format(name, anchor or 'nil'))
+		end
+		anchorFrame = UIParent
+	end
 	mover:ClearAllPoints()
-	mover:SetPoint(point, _G[anchor], secondaryPoint, x, y)
+	mover:SetPoint(point, anchorFrame, secondaryPoint, x, y)
 
 	-- Script handlers for dragging
 	local isDraggingCustom = false
@@ -699,8 +728,13 @@ function MoveIt:CreateCustomMover(displayName, defaultPosition, config)
 		if button == 'RightButton' then
 			-- Reset to default position
 			local point, anchor, secondaryPoint, x, y = strsplit(',', self.defaultPoint)
+			-- Validate anchor frame exists, fall back to UIParent if not
+			local anchorFrame = _G[anchor]
+			if not anchorFrame then
+				anchorFrame = UIParent
+			end
 			self:ClearAllPoints()
-			self:SetPoint(point, _G[anchor], secondaryPoint, x, y)
+			self:SetPoint(point, anchorFrame, secondaryPoint, x, y)
 
 			self.savedPosition = nil
 
