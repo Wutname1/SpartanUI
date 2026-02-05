@@ -16,7 +16,7 @@ set -e
 
 # === CONFIGURATION ===
 CHANGELOG_FILE="${1:-CHANGELOG.md}"
-MAX_DESC_LENGTH=1800  # Discord limit is 2048, leave buffer for formatting
+MAX_DESC_LENGTH=4000  # Discord embed description limit is 4096
 
 # Project URLs
 CF_URL="https://www.curseforge.com/wow/addons/spartan-ui"
@@ -170,6 +170,7 @@ truncate_content() {
 build_description() {
     python3 << PYEOF
 import sys
+import re
 
 # Read the changelog file with proper encoding
 with open("$CHANGELOG_FILE", 'r', encoding='utf-8') as f:
@@ -189,21 +190,48 @@ replacements = {
     '\U0001F4C5': ':calendar:',  # 📅
 }
 
-# Extract "This Release" or "Alpha Build" section
 lines = content.split('\n')
-in_section = False
-section_content = []
+description_parts = []
 
+# 1. Extract AI summary from "This Release" section
+in_this_release = False
+ai_summary = []
 for line in lines:
     if '## ' in line and ('This Release' in line or 'Alpha Build' in line):
-        in_section = True
+        in_this_release = True
         continue
-    if in_section and line.startswith('## ') and not line.startswith('### '):
+    if in_this_release and line.startswith('## ') and not line.startswith('### '):
         break
-    if in_section:
-        section_content.append(line)
+    if in_this_release and line.strip() and not line.startswith('#'):
+        ai_summary.append(line)
 
-description = '\n'.join(section_content).strip()
+if ai_summary:
+    description_parts.append('\n'.join(ai_summary).strip())
+
+# 2. Extract the version section matching VERSION
+version = "$VERSION"
+in_version = False
+version_content = []
+for line in lines:
+    # Match "## Version X.X.X" header
+    if line.startswith('## Version') and version in line:
+        in_version = True
+        continue
+    # Stop at next ## section (but not ###)
+    if in_version and line.startswith('## ') and not line.startswith('### '):
+        break
+    if in_version:
+        version_content.append(line)
+
+if version_content:
+    # Join and clean up excessive blank lines
+    version_text = '\n'.join(version_content).strip()
+    # Remove more than 2 consecutive newlines
+    version_text = re.sub(r'\n{3,}', '\n\n', version_text)
+    description_parts.append(version_text)
+
+# Combine summary + changelog
+description = '\n\n'.join(description_parts)
 
 # Apply emoji replacements
 for emoji, shortcode in replacements.items():
@@ -213,11 +241,23 @@ for emoji, shortcode in replacements.items():
 max_len = $MAX_DESC_LENGTH
 if len(description) > max_len:
     description = description[:max_len]
-    # Find last newline
+    # Find last newline for clean break
     last_nl = description.rfind('\n')
     if last_nl > max_len // 2:
         description = description[:last_nl]
-    description += '\n\n*... [View full changelog]($GH_RELEASES)*'
+
+    # Count remaining items we're cutting off
+    full_lines = content.split('\n')
+    truncated_lines = description.split('\n')
+    # Count bullet points (lines starting with -)
+    full_count = sum(1 for l in full_lines if l.strip().startswith('-'))
+    shown_count = sum(1 for l in truncated_lines if l.strip().startswith('-'))
+    remaining = full_count - shown_count
+
+    if remaining > 0:
+        description += f'\n\n### [(+{remaining} more changes...)](https://github.com/Wutname1/SpartanUI/releases/tag/$VERSION)'
+    else:
+        description += f'\n\n### [View full changelog](https://github.com/Wutname1/SpartanUI/releases/tag/$VERSION)'
 
 # Default message if empty
 if not description.strip():

@@ -286,12 +286,12 @@ generate_ai_summary_gemini() {
 
     # Create prompt based on type
     if [ "$prompt_type" = "month" ]; then
-        local prompt="You are writing release notes for a World of Warcraft addon. Summarize the following changelog from the last month in 2-3 short sentences. Write for a 6th grade reading level. Focus on the most important changes users care about. Be concise and friendly.
+        local prompt="You are writing release notes for a World of Warcraft addon called SpartanUI. Summarize the following changelog from the last month in 2-3 short sentences. Be direct and get straight to the details - no greetings, no filler phrases like 'Hey everyone' or 'This update brings'. Just state what was added, fixed, or changed. Write for a 6th grade reading level.
 
 Changes from last month:
 $commits_text"
     else
-        local prompt="You are writing release notes for a World of Warcraft addon. Summarize this specific release in 1-2 short sentences. Write for a 6th grade reading level. Focus on what changed in THIS release only. Be concise and friendly.
+        local prompt="You are writing release notes for a World of Warcraft addon called SpartanUI. Summarize this specific release in 1-2 short sentences. Be direct and get straight to the details - no greetings, no filler phrases like 'Hey everyone' or 'This update brings'. Just state what was added, fixed, or changed. Write for a 6th grade reading level.
 
 Changes in this release:
 $commits_text"
