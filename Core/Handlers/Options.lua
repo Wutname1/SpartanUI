@@ -391,8 +391,10 @@ function module:ToggleOptions(pages)
 					Logging:SetPoint('BOTTOM', -190, 10)
 				end
 				Logging:HookScript('OnClick', function()
-					-- Use the /logs slash command to toggle the Logger window
-					SlashCmdList['LIBATLOGS']()
+					-- Use the LibAT.Logger API to toggle the Logger window
+					if LibAT and LibAT.Logger and LibAT.Logger.ToggleWindow then
+						LibAT.Logger.ToggleWindow()
+					end
 				end)
 				SUI.Skins.SkinObj('Button', Logging, 'Light', 'Ace3')
 				-- Make it more transparent/darker by adjusting the background after skinning
