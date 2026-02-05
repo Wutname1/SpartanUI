@@ -45,6 +45,31 @@ SUI.releaseType = 'DEV Build'
 SUI.Version = ''
 --@end-do-not-package@
 
+---------------  Font Compatibility Fix ---------------
+-- TBC Classic 2.5.5+ has EditModeManagerFrame but uses Retail-only fonts
+-- Create missing font objects to prevent errors when Blizzard's EditMode code runs
+if not SUI.IsRetail then
+	-- List of fonts that EditMode tries to use but don't exist in Classic
+	local missingFonts = {
+		'GameFontDisableMed2',
+		'GameFontHighlightMed2',
+		'GameFontNormalMed2',
+	}
+
+	-- Check what similar fonts we have available as fallbacks
+	local fallbackFont = GameFontDisable or GameFontNormal
+
+	for _, fontName in ipairs(missingFonts) do
+		if not _G[fontName] and fallbackFont then
+			-- Create the missing font as an alias to an existing similar font
+			local newFont = CreateFont(fontName)
+			if newFont and newFont.CopyFontObject then
+				newFont:CopyFontObject(fallbackFont)
+			end
+		end
+	end
+end
+
 ---------------  Add Libraries ---------------
 
 ---@class SUI.Lib
@@ -85,8 +110,8 @@ SUI.AddLib('AceGUI', 'AceGUI-3.0')
 SUI.AddLib('Compress', 'LibCompress')
 SUI.AddLib('Base64', 'LibBase64-1.0-SUI')
 SUI.AddLib('LSM', 'LibSharedMedia-3.0')
--- Retail and TBC libraries (loaded conditionally via TOC)
-if SUI.IsRetail or SUI.IsTBC then
+-- Retail-only libraries (EditMode is only complete on Retail)
+if SUI.IsRetail then
 	SUI.AddLib('EditModeOverride', 'LibEditModeOverride-1.0', true)
 end
 -- Retail-only libraries (loaded conditionally via TOC)

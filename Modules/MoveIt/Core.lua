@@ -330,6 +330,8 @@ function MoveIt:OnEnable()
 		-- Log EditModeManagerFrame diagnostics
 		MoveIt.logger.info('=== EditMode Diagnostics ===')
 		MoveIt.logger.info('Game Version: ' .. (SUI.wowVersion or 'Unknown'))
+		MoveIt.logger.info('IsRetail: ' .. tostring(SUI.IsRetail))
+		MoveIt.logger.info('IsTBC: ' .. tostring(SUI.IsTBC))
 		MoveIt.logger.info('EditModeManagerFrame exists: ' .. tostring(EditModeManagerFrame ~= nil))
 		if EditModeManagerFrame then
 			MoveIt.logger.info('  Type: ' .. type(EditModeManagerFrame))
@@ -341,6 +343,14 @@ function MoveIt:OnEnable()
 			MoveIt.logger.info('  GetAttribute: ' .. tostring(type(EditModeManagerFrame.GetAttribute)))
 		end
 		MoveIt.logger.info('HasEditMode() result: ' .. tostring(HasEditMode()))
+
+		-- Log font availability for debugging Classic font issues
+		local testFonts = { 'GameFontDisableMed2', 'GameFontHighlightMed2', 'GameFontNormalMed2', 'GameFontDisable', 'GameFontNormal' }
+		MoveIt.logger.info('=== Font Availability ===')
+		for _, fontName in ipairs(testFonts) do
+			local fontObj = _G[fontName]
+			MoveIt.logger.info(('  %s: %s'):format(fontName, fontObj and 'EXISTS' or 'MISSING'))
+		end
 		MoveIt.logger.info('=== End EditMode Diagnostics ===')
 	end
 
