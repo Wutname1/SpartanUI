@@ -1490,7 +1490,15 @@ function module:SetupChatboxes()
 			hooksecurefunc(EBFocusMid, 'Hide', EditBoxFocusHide)
 		end
 
-		disable(_G[ChatFrameName .. 'ButtonFrame'])
+		-- Only disable the ButtonFrame if hideChatButtons is enabled
+		-- The ButtonFrame contains scroll buttons (up, down, bottom) that users may want
+		local buttonFrame = _G[ChatFrameName .. 'ButtonFrame']
+		if buttonFrame then
+			if module.DB.hideChatButtons then
+				disable(buttonFrame)
+			end
+			-- Note: If hideChatButtons is false, ApplyHideChatButtons() will handle visibility
+		end
 	end
 
 	module:EditBoxPosition()
