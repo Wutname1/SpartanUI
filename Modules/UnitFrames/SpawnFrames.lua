@@ -247,13 +247,31 @@ local function CreateUnitFrame(self, unit)
 end
 
 local function VisibilityCheck(group)
-	if UF.CurrentSettings[group].showParty and (IsInGroup() and not IsInRaid()) then
+	local settings = UF.CurrentSettings[group]
+
+	-- First check if the frame is enabled at all
+	if not settings.enabled then
+		return false
+	end
+
+	-- For boss/arena frames that don't use party/raid/solo visibility settings,
+	-- just return enabled state (they show when the unit exists via oUF)
+	if group == 'boss' or group == 'arena' then
+		-- Log for debugging boss frame visibility
+		if SUI.logger then
+			SUI.logger.debug('VisibilityCheck: ' .. group .. ' frame enabled=' .. tostring(settings.enabled))
+		end
+		return settings.enabled
+	end
+
+	-- For party/raid group frames, check the group-specific visibility settings
+	if settings.showParty and (IsInGroup() and not IsInRaid()) then
 		return true
 	end
-	if UF.CurrentSettings[group].showRaid and IsInRaid() then
+	if settings.showRaid and IsInRaid() then
 		return true
 	end
-	if UF.CurrentSettings[group].showSolo and not (IsInGroup() or IsInRaid()) then
+	if settings.showSolo and not (IsInGroup() or IsInRaid()) then
 		return true
 	end
 
@@ -311,9 +329,22 @@ function UF:SpawnFrames()
 				local firstElement = groupElement.header or groupElement.frames[1] or groupElement
 				if firstElement then
 					local function GroupFrameUpdateAll(groupFrame)
-						UnregisterAttributeDriver(firstElement, 'state-visibility')
-						if VisibilityCheck(frameName) and UF.CurrentSettings[frameName].enabled then
-							firstElement:Show()
+						-- Only unregister attribute driver if we're going to manage visibility ourselves
+						if not InCombatLockdown() then
+							UnregisterAttributeDriver(firstElement, 'state-visibility')
+						end
+
+						local shouldShow = VisibilityCheck(frameName)
+
+						-- Log for debugging group frame visibility
+						if SUI.logger then
+							SUI.logger.debug('GroupFrameUpdateAll: ' .. frameName .. ' shouldShow=' .. tostring(shouldShow))
+						end
+
+						if shouldShow then
+							if not InCombatLockdown() then
+								firstElement:Show()
+							end
 
 							for _, f in pairs(groupFrame.frames) do
 								if f.UpdateAll then
@@ -321,7 +352,15 @@ function UF:SpawnFrames()
 								end
 							end
 						else
-							firstElement:Hide()
+							if not InCombatLockdown() then
+								firstElement:Hide()
+							end
+							-- Also disable individual frames when group is hidden
+							for _, f in pairs(groupFrame.frames) do
+								if f.Disable then
+									f:Disable()
+								end
+							end
 						end
 					end
 
