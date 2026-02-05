@@ -169,6 +169,17 @@ function UF:OnEnable()
 	-- Spawn Frames
 	UF:SpawnFrames()
 
+	-- Register pet battle hiding for SUI_FramesAnchor (#542)
+	-- This ensures unit frames hide during pet battles in MOP and other clients
+	if SUI_FramesAnchor and RegisterStateDriver then
+		-- Make SUI_FramesAnchor hide during pet battles
+		-- Note: [petbattle] is a secure conditional that works in Classic clients with pet battles
+		RegisterStateDriver(SUI_FramesAnchor, 'visibility', '[petbattle] hide; show')
+		if SUI.logger then
+			SUI.logger.debug('UnitFrames: Registered pet battle visibility driver for SUI_FramesAnchor')
+		end
+	end
+
 	-- Build options
 	UF.Options:Initialize()
 
