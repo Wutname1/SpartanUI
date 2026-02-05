@@ -1148,9 +1148,29 @@ function module:SetupAddonButtons()
 		button:SetAlpha(0)
 	end
 
+	-- Check if a button is a disabled zoom button
+	local function isDisabledZoomButton(button)
+		local zoomIn = Minimap.ZoomIn or MinimapZoomIn
+		local zoomOut = Minimap.ZoomOut or MinimapZoomOut
+		if button == zoomIn or button == zoomOut then
+			local zoomSettings = SUI.IsRetail and module.Settings.elements and module.Settings.elements.zoomButtons or module.Settings.zoomButtons
+			if zoomSettings and not zoomSettings.enabled then
+				return true
+			end
+		end
+		return false
+	end
+
 	local function showAllButtons()
+		-- Check the current style - only show on hover for 'mouseover' mode
+		local currentSettings = SUI.IsRetail and module.Settings.elements and module.Settings.elements.addonButtons or module.Settings.addonButtons
+		local style = currentSettings and currentSettings.style or 'mouseover'
+		if style ~= 'mouseover' then
+			return
+		end
+
 		for _, child in ipairs({ Minimap:GetChildren() }) do
-			if child:IsObjectType('Button') and child.fadeInAnim then
+			if child:IsObjectType('Button') and child.fadeInAnim and not isDisabledZoomButton(child) then
 				child.fadeInAnim:Stop()
 				child.fadeOutAnim:Stop()
 				child:SetAlpha(1)
@@ -1160,8 +1180,7 @@ function module:SetupAddonButtons()
 		-- Process MinimapBackdrop children for Classic
 		if not SUI.IsRetail and MinimapBackdrop then
 			for _, child in ipairs({ MinimapBackdrop:GetChildren() }) do
-				-- if child:IsObjectType('Button') and child.fadeInAnim then
-				if child.fadeInAnim then
+				if child.fadeInAnim and not isDisabledZoomButton(child) then
 					child.fadeInAnim:Stop()
 					child.fadeOutAnim:Stop()
 					child:SetAlpha(1)
@@ -1171,8 +1190,15 @@ function module:SetupAddonButtons()
 	end
 
 	local function hideAllButtons()
+		-- Check the current style - only hide on mouse leave for 'mouseover' mode
+		local currentSettings = SUI.IsRetail and module.Settings.elements and module.Settings.elements.addonButtons or module.Settings.addonButtons
+		local style = currentSettings and currentSettings.style or 'mouseover'
+		if style ~= 'mouseover' then
+			return
+		end
+
 		for _, child in ipairs({ Minimap:GetChildren() }) do
-			if child:IsObjectType('Button') and child.fadeOutAnim then
+			if child:IsObjectType('Button') and child.fadeOutAnim and not isDisabledZoomButton(child) then
 				child.fadeInAnim:Stop()
 				child.fadeOutAnim:Play()
 			end
@@ -1181,7 +1207,7 @@ function module:SetupAddonButtons()
 		-- Process MinimapBackdrop children for Classic
 		if not SUI.IsRetail and MinimapBackdrop then
 			for _, child in ipairs({ MinimapBackdrop:GetChildren() }) do
-				if child.fadeOutAnim then
+				if child.fadeOutAnim and not isDisabledZoomButton(child) then
 					child.fadeInAnim:Stop()
 					child.fadeOutAnim:Play()
 				end
