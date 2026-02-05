@@ -3,9 +3,17 @@ local UF = SUI.UF
 ---@param frame table
 ---@param DB table
 local function Build(frame, DB)
-	-- Create texture directly on SpartanArt (simplified from container approach)
-	frame.RareElite = frame.SpartanArt:CreateTexture(nil, 'BORDER')
-	frame.RareElite:SetTexture('Interface\\Addons\\SpartanUI\\images\\blank')
+	-- Create a container frame so we can control strata/level for dragon mode
+	-- This is needed for Classic skin where the dragon texture must be above the ring
+	local container = CreateFrame('Frame', nil, frame.SpartanArt)
+	container:SetAllPoints(frame.SpartanArt)
+
+	local texture = container:CreateTexture(nil, 'ARTWORK')
+	texture:SetTexture('Interface\\Addons\\SpartanUI\\images\\blank')
+
+	-- Store references
+	frame.RareElite = texture
+	frame.RareElite.container = container
 
 	-- Apply mode from DB if set
 	if DB and DB.mode then
@@ -13,6 +21,18 @@ local function Build(frame, DB)
 	end
 	if DB and DB.alpha then
 		frame.RareElite.alpha = DB.alpha
+	end
+
+	-- Set initial strata/level based on mode
+	local mode = DB and DB.mode or 'minimal'
+	if mode == 'dragon' then
+		-- Dragon mode needs higher frame level to appear above portrait ring
+		container:SetFrameStrata('MEDIUM')
+		container:SetFrameLevel(80)
+	else
+		-- Minimal mode uses background overlay
+		container:SetFrameStrata('BACKGROUND')
+		container:SetFrameLevel(1)
 	end
 end
 
@@ -27,6 +47,19 @@ local function Update(frame)
 	-- Update mode on the element for oUF plugin
 	element.mode = DB.mode or 'minimal'
 	element.alpha = DB.alpha or 0.3
+
+	-- Update container strata/level based on mode
+	if element.container then
+		if element.mode == 'dragon' then
+			-- Dragon mode needs higher frame level to appear above portrait ring
+			element.container:SetFrameStrata('MEDIUM')
+			element.container:SetFrameLevel(80)
+		else
+			-- Minimal mode uses background overlay
+			element.container:SetFrameStrata('BACKGROUND')
+			element.container:SetFrameLevel(1)
+		end
+	end
 
 	-- Force update the oUF element
 	if element.ForceUpdate then

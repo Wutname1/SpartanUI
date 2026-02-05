@@ -732,6 +732,62 @@ function module:SetupZoomButtons()
 			zoomOut:ClearAllPoints()
 			zoomOut:SetPoint('TOP', zoomIn, 'BOTTOM', xOffset, -spacing)
 		end
+
+		-- Store references to zoom buttons for fade handling
+		module.zoomIn = zoomIn
+		module.zoomOut = zoomOut
+
+		-- Ensure zoom buttons respect the addonButtons style setting
+		local addonSettings = SUI.IsRetail and module.Settings.elements and module.Settings.elements.addonButtons or module.Settings.addonButtons
+		local style = addonSettings and addonSettings.style or 'mouseover'
+		module.logger.debug('SetupZoomButtons - addonButtons style: ' .. tostring(style))
+
+		if style == 'always' then
+			-- Always visible - ensure alpha is 1 and stop any fade animations
+			zoomIn:SetAlpha(1)
+			zoomOut:SetAlpha(1)
+			if zoomIn.fadeOutAnim then
+				zoomIn.fadeOutAnim:Stop()
+			end
+			if zoomOut.fadeOutAnim then
+				zoomOut.fadeOutAnim:Stop()
+			end
+
+			-- In Retail, Blizzard's MinimapMixin:OnLeave() calls Hide() on zoom buttons
+			-- We need to override this behavior for 'always' mode
+			if SUI.IsRetail then
+				-- Hook the Hide method to prevent hiding when style is 'always'
+				if not zoomIn.SUI_HideHooked then
+					zoomIn.SUI_OriginalHide = zoomIn.Hide
+					zoomIn.Hide = function(self)
+						local currentAddonSettings = module.Settings.elements and module.Settings.elements.addonButtons or module.Settings.addonButtons
+						local currentStyle = currentAddonSettings and currentAddonSettings.style or 'mouseover'
+						if currentStyle == 'always' then
+							return -- Don't hide when style is 'always'
+						end
+						zoomIn.SUI_OriginalHide(self)
+					end
+					zoomIn.SUI_HideHooked = true
+				end
+				if not zoomOut.SUI_HideHooked then
+					zoomOut.SUI_OriginalHide = zoomOut.Hide
+					zoomOut.Hide = function(self)
+						local currentAddonSettings = module.Settings.elements and module.Settings.elements.addonButtons or module.Settings.addonButtons
+						local currentStyle = currentAddonSettings and currentAddonSettings.style or 'mouseover'
+						if currentStyle == 'always' then
+							return -- Don't hide when style is 'always'
+						end
+						zoomOut.SUI_OriginalHide(self)
+					end
+					zoomOut.SUI_HideHooked = true
+				end
+			end
+		elseif style == 'never' then
+			-- Never visible
+			zoomIn:SetAlpha(0)
+			zoomOut:SetAlpha(0)
+		end
+		-- For 'mouseover', let the normal fade handling work
 	else
 		zoomIn:Hide()
 		zoomOut:Hide()
@@ -1122,7 +1178,9 @@ end
 function module:SetupAddonButtons()
 	-- Check if bag mode is active - if so, don't set up fading
 	local addonSettings = SUI.IsRetail and module.Settings.elements and module.Settings.elements.addonButtons or module.Settings.addonButtons
-	if addonSettings and addonSettings.style == 'bag' then
+	local style = addonSettings and addonSettings.style or 'mouseover'
+
+	if style == 'bag' then
 		-- Bag mode handles buttons differently, skip fading setup
 		return
 	end
@@ -1148,8 +1206,13 @@ function module:SetupAddonButtons()
 		fadeOut:SetStartDelay(0.5)
 		button.fadeOutAnim:SetToFinalAlpha(true)
 
-		-- Initially hide the button
-		button:SetAlpha(0)
+		-- Set initial alpha based on style setting
+		if style == 'always' then
+			button:SetAlpha(1)
+		else
+			-- For 'mouseover' and 'never', start hidden
+			button:SetAlpha(0)
+		end
 	end
 
 	-- Check if a button is a disabled zoom button
@@ -1166,10 +1229,14 @@ function module:SetupAddonButtons()
 	end
 
 	local function showAllButtons()
-		-- Check the current style - only show on hover for 'mouseover' mode
+		-- Check the current style
 		local currentSettings = SUI.IsRetail and module.Settings.elements and module.Settings.elements.addonButtons or module.Settings.addonButtons
-		local style = currentSettings and currentSettings.style or 'mouseover'
-		if style ~= 'mouseover' then
+		local currentStyle = currentSettings and currentSettings.style or 'mouseover'
+
+		-- For 'always' mode, ensure buttons stay visible by stopping any fade animations
+		-- For 'mouseover' mode, show buttons on hover
+		-- For 'never' mode, do nothing (buttons stay hidden)
+		if currentStyle == 'never' then
 			return
 		end
 
@@ -1178,6 +1245,29 @@ function module:SetupAddonButtons()
 				child.fadeInAnim:Stop()
 				child.fadeOutAnim:Stop()
 				child:SetAlpha(1)
+			end
+		end
+
+		-- Explicitly handle zoom buttons (they may be parented to MinimapCluster, not Minimap)
+		local zoomSettings = SUI.IsRetail and module.Settings.elements and module.Settings.elements.zoomButtons or module.Settings.zoomButtons
+		if zoomSettings and zoomSettings.enabled then
+			if module.zoomIn then
+				if module.zoomIn.fadeInAnim then
+					module.zoomIn.fadeInAnim:Stop()
+				end
+				if module.zoomIn.fadeOutAnim then
+					module.zoomIn.fadeOutAnim:Stop()
+				end
+				module.zoomIn:SetAlpha(1)
+			end
+			if module.zoomOut then
+				if module.zoomOut.fadeInAnim then
+					module.zoomOut.fadeInAnim:Stop()
+				end
+				if module.zoomOut.fadeOutAnim then
+					module.zoomOut.fadeOutAnim:Stop()
+				end
+				module.zoomOut:SetAlpha(1)
 			end
 		end
 
@@ -1196,15 +1286,71 @@ function module:SetupAddonButtons()
 	local function hideAllButtons()
 		-- Check the current style - only hide on mouse leave for 'mouseover' mode
 		local currentSettings = SUI.IsRetail and module.Settings.elements and module.Settings.elements.addonButtons or module.Settings.addonButtons
-		local style = currentSettings and currentSettings.style or 'mouseover'
-		if style ~= 'mouseover' then
+		local currentStyle = currentSettings and currentSettings.style or 'mouseover'
+
+		-- For 'always' mode, ensure buttons stay visible - stop any fade animations and keep alpha at 1
+		if currentStyle == 'always' then
+			for _, child in ipairs({ Minimap:GetChildren() }) do
+				if child:IsObjectType('Button') and child.fadeOutAnim and not isDisabledZoomButton(child) then
+					child.fadeInAnim:Stop()
+					child.fadeOutAnim:Stop()
+					child:SetAlpha(1)
+				end
+			end
+
+			-- Explicitly handle zoom buttons for 'always' mode
+			local zoomSettings = SUI.IsRetail and module.Settings.elements and module.Settings.elements.zoomButtons or module.Settings.zoomButtons
+			if zoomSettings and zoomSettings.enabled then
+				if module.zoomIn then
+					if module.zoomIn.fadeOutAnim then
+						module.zoomIn.fadeOutAnim:Stop()
+					end
+					module.zoomIn:SetAlpha(1)
+				end
+				if module.zoomOut then
+					if module.zoomOut.fadeOutAnim then
+						module.zoomOut.fadeOutAnim:Stop()
+					end
+					module.zoomOut:SetAlpha(1)
+				end
+			end
+
+			-- Process MinimapBackdrop children for Classic
+			if not SUI.IsRetail and MinimapBackdrop then
+				for _, child in ipairs({ MinimapBackdrop:GetChildren() }) do
+					if child.fadeOutAnim and not isDisabledZoomButton(child) then
+						child.fadeInAnim:Stop()
+						child.fadeOutAnim:Stop()
+						child:SetAlpha(1)
+					end
+				end
+			end
 			return
 		end
 
+		-- For 'never' mode, keep buttons hidden
+		if currentStyle == 'never' then
+			return
+		end
+
+		-- For 'mouseover' mode, fade out buttons
 		for _, child in ipairs({ Minimap:GetChildren() }) do
 			if child:IsObjectType('Button') and child.fadeOutAnim and not isDisabledZoomButton(child) then
 				child.fadeInAnim:Stop()
 				child.fadeOutAnim:Play()
+			end
+		end
+
+		-- For mouseover mode, also fade out zoom buttons
+		local zoomSettings = SUI.IsRetail and module.Settings.elements and module.Settings.elements.zoomButtons or module.Settings.zoomButtons
+		if zoomSettings and zoomSettings.enabled then
+			if module.zoomIn and module.zoomIn.fadeOutAnim then
+				module.zoomIn.fadeInAnim:Stop()
+				module.zoomIn.fadeOutAnim:Play()
+			end
+			if module.zoomOut and module.zoomOut.fadeOutAnim then
+				module.zoomOut.fadeInAnim:Stop()
+				module.zoomOut.fadeOutAnim:Play()
 			end
 		end
 

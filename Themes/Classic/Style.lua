@@ -198,7 +198,7 @@ local function UnitFrameCallback(self, unit)
 		local ring = CreateFrame('Frame', nil, self)
 		ring:SetFrameStrata('MEDIUM')
 		ring:SetAllPoints(self.Portrait)
-		ring:SetFrameLevel(55)
+		ring:SetFrameLevel(2)
 
 		ring.bg = ring:CreateTexture(nil, 'BACKGROUND')
 		ring.bg:SetParent(ring)
