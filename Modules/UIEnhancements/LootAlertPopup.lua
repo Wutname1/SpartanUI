@@ -565,7 +565,7 @@ local function SetItemComparisonState(comparisonValue, isPawnValue, scaleName)
 	elseif atVendor then
 		instructionText = L['At Vendor']
 	else
-		instructionText = L['Click to Equip']
+		instructionText = '|A:newplayertutorial-icon-mouse-leftbutton:16:12|a ' .. L['Click to Equip']
 	end
 	popupFrame.InstructionText:SetText(instructionText)
 	popupFrame.InstructionText:SetTextColor(isBlocked and 1 or 1, isBlocked and 0.3 or 1, isBlocked and 0.3 or 1)
