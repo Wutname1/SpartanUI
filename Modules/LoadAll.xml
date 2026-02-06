@@ -17,6 +17,7 @@
 	<Script file="AFKEffects.lua" />
 	<Include file="UICleanup\Load.xml" />
 	<Include file="Convenience\Load.xml" />
+	<Include file="EasyDelete\Load.xml" />
 	<Script file="MiniTom.lua" />
 	<Script file="LibsToolkit.lua" />
 	<Script file="BlizzUIFixes.lua" />
