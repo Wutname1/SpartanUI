@@ -744,6 +744,13 @@ local function LootAlertFrame_OnClick(frame, button)
 end
 
 local function LootAlertFrame_OnHide(frame)
+	-- Prevent hiding if we have an active upgrade timer
+	if frame.__suiUpgradeHideTimer then
+		-- Timer is still running, keep the alert visible
+		frame:Show()
+		return
+	end
+
 	if GetOwner() == frame then
 		ResetState()
 		UpdatePopupState()
@@ -837,9 +844,27 @@ local function UpdateUpgradeBadge(alertFrame, isUpgrade)
 	if isUpgrade then
 		badge:Show()
 		badge.glowAnim:Play()
+
+		-- Cancel any existing hide timer
+		if alertFrame.__suiUpgradeHideTimer then
+			alertFrame.__suiUpgradeHideTimer:Cancel()
+			alertFrame.__suiUpgradeHideTimer = nil
+		end
+
+		-- Extend the alert display time for upgrades by 20 seconds
+		alertFrame.__suiUpgradeHideTimer = C_Timer.NewTimer(20, function()
+			-- Allow the alert to hide normally after the extended time
+			alertFrame.__suiUpgradeHideTimer = nil
+		end)
 	else
 		badge:Hide()
 		badge.glowAnim:Stop()
+
+		-- Cancel upgrade timer if switching from upgrade to non-upgrade
+		if alertFrame.__suiUpgradeHideTimer then
+			alertFrame.__suiUpgradeHideTimer:Cancel()
+			alertFrame.__suiUpgradeHideTimer = nil
+		end
 	end
 end
 
