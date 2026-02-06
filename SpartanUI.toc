@@ -104,6 +104,7 @@ lang\localization.xml
 # CORE FRAMEWORK
 # ============================================
 Core\Framework.lua
+Core\Handlers\Database.lua
 Core\BlizzAPI.lua
 Core\UI\Helpers.lua
 

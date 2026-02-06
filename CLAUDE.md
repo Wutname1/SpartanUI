@@ -22,6 +22,198 @@ The addon uses a modular architecture where each feature is a separate module:
 - **Core/Handlers/**: Core functionality handlers (Events, Options, Profiles, etc.)
 - Each module typically has its own Options.lua file for configuration
 
+#### Creating New Modules
+
+When creating a new module in SpartanUI, follow these standards:
+
+##### 1. Module Structure
+
+```lua
+---@class SUI.Module.ModuleName : SUI.Module
+local module = SUI:NewModule('ModuleName')
+module.DisplayName = L['Display Name']
+module.description = 'Brief description of module functionality'
+```
+
+##### 2. Logging
+
+**REQUIRED**: All modules must use the Libs-AddonTools Logger system:
+
+```lua
+function module:OnInitialize()
+	-- Register logger as subcategory under SUI
+	if SUI.logger then
+		module.logger = SUI.logger:RegisterCategory('ModuleName')
+	end
+end
+
+-- Usage throughout module:
+if module.logger then
+	module.logger.info('System initialized')
+	module.logger.debug('Debug value: ' .. tostring(value))
+	module.logger.warning('Deprecated function called')
+	module.logger.error('Critical error occurred')
+end
+```
+
+**Never use `print()` statements**. Use `/logs` in-game to view all logged output.
+
+##### 3. Database (Configuration Override Pattern)
+
+**REQUIRED**: Use the unified Database API (`SUI.DBM`) for all module settings:
+
+```lua
+---@class SUI.Module.ModuleName.DB
+local DBDefaults = {
+	enabled = true,
+	scale = 1.0,
+	position = { x = 0, y = 0 },
+	nested = {
+		setting = true,
+	},
+}
+
+---@class SUI.Module.ModuleName.DBGlobal
+local DBGlobalDefaults = {
+	favorites = {},
+}
+
+function module:OnInitialize()
+	-- Setup database with Configuration Override Pattern
+	SUI.DBM:SetupModule(self, DBDefaults, DBGlobalDefaults, {
+		autoCalculateDepth = true, -- Auto-detect nesting depth
+	})
+
+	-- Now available:
+	-- module.DB - stores ONLY user changes (sparse)
+	-- module.DBG - global settings (cross-character)
+	-- module.DBDefaults - your default values
+	-- module.CurrentSettings - merged defaults + user changes
+end
+```
+
+**Critical Rules:**
+- **Read from** `module.CurrentSettings` (merged defaults + user changes)
+- **Write to** `module.DB` (only stores changes from defaults)
+- **Call** `SUI.DBM:RefreshSettings(module)` after any DB write
+
+See `Core/Handlers/Database.md` for full documentation.
+
+##### 4. Ace3 Module Lifecycle
+
+All modules inherit from Ace3's module system with standard lifecycle hooks:
+
+```lua
+function module:OnInitialize()
+	-- Setup DB, logger, constants
+	-- Called once when addon loads
+end
+
+function module:OnEnable()
+	-- Register events, create UI, start timers
+	-- Called when module is enabled
+
+	-- Check if disabled:
+	if SUI:IsModuleDisabled('ModuleName') then
+		return
+	end
+end
+
+function module:OnDisable()
+	-- Cleanup: unregister events, hide UI, stop timers
+	-- Called when module is disabled
+end
+```
+
+##### 5. Options UI
+
+Options should integrate with SUI's AceConfig system:
+
+```lua
+function module:BuildOptions()
+	local options = {
+		type = 'group',
+		name = module.DisplayName,
+		disabled = function()
+			return SUI:IsModuleDisabled(module)
+		end,
+		args = {
+			setting = {
+				name = L['Setting Name'],
+				type = 'toggle',
+				order = 1,
+				get = function()
+					return module.CurrentSettings.enabled -- Read from CurrentSettings
+				end,
+				set = function(_, val)
+					module.DB.enabled = val -- Write to DB
+					SUI.DBM:RefreshSettings(module)
+				end,
+			},
+		},
+	}
+
+	-- Register with SUI options system
+	SUI.Options:AddOptions(options, 'ModuleName')
+end
+```
+
+**Helper alternative:**
+
+```lua
+get = function()
+	return SUI.DBM:Get(module, 'enabled')
+end,
+set = function(_, val)
+	SUI.DBM:Set(module, 'enabled', val, function()
+		-- Optional callback after refresh
+	end)
+end,
+```
+
+##### 6. File Organization
+
+Standard module structure:
+```
+Modules/ModuleName/
+├── ModuleName.lua      # Main logic, lifecycle hooks
+├── Options.lua         # AceConfig options table
+├── Data.lua           # Static data tables (optional)
+└── Load.xml           # File load order (if needed)
+```
+
+##### 7. Type Annotations
+
+Use LuaLS annotations for all public APIs and DB structures:
+
+```lua
+---@class SUI.Module.ModuleName.DB
+---@field enabled boolean Enable the module
+---@field scale number UI scale (0.5-2.0)
+
+---Function description
+---@param paramName type Parameter description
+---@return type Description of return value
+function module:PublicFunction(paramName)
+	-- implementation
+end
+```
+
+##### 8. Localization
+
+Use `SUI.L` for all user-facing strings:
+
+```lua
+local L = SUI.L
+module.DisplayName = L['Module Display Name']
+
+-- In Options:
+name = L['Setting Name'],
+desc = L['Setting description for tooltip'],
+```
+
+Add new strings to `lang/enUS.lua` (default fallback)
+
 ### Theme System
 
 - **Themes/**: Multiple visual themes (Classic, War, Fel, Digital, etc.)
