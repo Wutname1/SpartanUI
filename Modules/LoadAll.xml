@@ -19,6 +19,7 @@
 	<Include file="UIEnhancements\Load.xml" />
 	<Include file="Convenience\Load.xml" />
 	<Include file="EasyDelete\Load.xml" />
+	<Include file="TeleportAssist\Load.xml" />
 	<Script file="MiniTom.lua" />
 	<Script file="BlizzUIFixes.lua" />
 

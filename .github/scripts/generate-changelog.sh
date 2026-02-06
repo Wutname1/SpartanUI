@@ -18,7 +18,7 @@
 # Configuration
 OUTPUT_FILE="${1:-CHANGELOG.md}"
 AI_PROVIDER="${AI_PROVIDER:-gemini}"
-MONTH_AGO_SECONDS=$((5 * 24 * 60 * 60)) # 30 days in seconds
+MONTH_AGO_SECONDS=$((16 * 24 * 60 * 60)) # 30 days in seconds
 
 # Colors for output
 RED='\033[0;31m'

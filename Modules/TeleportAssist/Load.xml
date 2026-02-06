@@ -1,0 +1,11 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\..\FrameXML\UI.xsd">
+	<Script file="TeleportAPI.lua" />
+	<Script file="TeleportData.lua" />
+	<Script file="TeleportAssist.lua" />
+	<Script file="SpellBookTab.lua" />
+	<Script file="DataBroker.lua" />
+	<Script file="WorldMapIntegration.lua" />
+	<Script file="Options.lua" />
+</Ui>
