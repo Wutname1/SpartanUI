@@ -1,6 +1,6 @@
 local SUI, L = SUI, SUI.L
----@class SUI.Module.UICleanup
-local module = SUI:GetModule('UICleanup')
+---@class SUI.Module.UIEnhancements
+local module = SUI:GetModule('UIEnhancements')
 ----------------------------------------------------------------------------------------------------
 
 -- Check if LootAlertSystem exists (may not in Classic versions)

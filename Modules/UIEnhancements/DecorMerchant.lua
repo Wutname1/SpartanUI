@@ -1,6 +1,6 @@
 local SUI, L = SUI, SUI.L
----@class SUI.Module.UICleanup
-local module = SUI:GetModule('UICleanup')
+---@class SUI.Module.UIEnhancements
+local module = SUI:GetModule('UIEnhancements')
 ----------------------------------------------------------------------------------------------------
 
 -- Housing Decoration Vendor NPC IDs

@@ -1,6 +1,6 @@
 local SUI, L = SUI, SUI.L
----@class SUI.Module.UICleanup
-local module = SUI:GetModule('UICleanup')
+---@class SUI.Module.UIEnhancements
+local module = SUI:GetModule('UIEnhancements')
 ----------------------------------------------------------------------------------------------------
 
 -- Constants
@@ -14,15 +14,56 @@ local DENSITY_PRESETS = {
 
 local MIN_MOVE_DISTANCE_SQ = 25 -- 5^2, minimum cursor movement squared to spawn trail element
 local MAX_POOL_SIZE = 75
+local GCD_SPELL_ID = 61304 -- Global cooldown detection spell
+
+-- Circle style definitions: 1=file texture, 2-4=atlas textures
+local CIRCLE_STYLES = {
+	[1] = { type = 'file', texture = 'Interface\\AddOns\\SpartanUI\\images\\circle' },
+	[2] = { type = 'atlas', atlas = 'ChallengeMode-KeystoneSlotFrameGlow' },
+	[3] = { type = 'atlas', atlas = 'GarrLanding-CircleGlow' },
+	[4] = { type = 'atlas', atlas = 'ShipMission-RedGlowRing' },
+}
 
 -- State
 local mouseRingFrame = nil
+local gcdCooldown = nil
 local trailPool = {}
 local activeTrailElements = {}
 local lastCursorX, lastCursorY = 0, 0
 local timeAccumulator = 0
 local isOnUpdateActive = false
 local updateFrame = nil
+
+---Apply circle style to a texture object
+---@param tex Texture The texture to apply the style to
+---@param styleNum number The circle style number (1-4)
+local function ApplyCircleStyle(tex, styleNum)
+	local style = CIRCLE_STYLES[styleNum] or CIRCLE_STYLES[1]
+	if style.type == 'atlas' then
+		tex:SetAtlas(style.atlas)
+	else
+		tex:SetTexture(style.texture)
+	end
+end
+
+---Update ring and trail textures to match current circle style setting
+function module:UpdateCircleStyle()
+	local DB = module:GetDB()
+	local styleNum = DB.mouseRing.circleStyle or 1
+
+	-- Update ring texture
+	if mouseRingFrame and mouseRingFrame.ring then
+		ApplyCircleStyle(mouseRingFrame.ring, styleNum)
+	end
+
+	-- Update all trail elements (both pooled and active)
+	for _, element in ipairs(trailPool) do
+		ApplyCircleStyle(element.texture, styleNum)
+	end
+	for _, element in ipairs(activeTrailElements) do
+		ApplyCircleStyle(element.texture, styleNum)
+	end
+end
 
 ---Get color based on settings
 ---@param colorSettings table Color settings with mode, r, g, b
@@ -53,7 +94,57 @@ local function ShouldShowEffect(settings)
 	return true
 end
 
--- Mouse Ring Implementation
+-- ==================== GCD HELPER FUNCTIONS ====================
+
+---Read spell cooldown with compatibility for different API versions
+---@param spellID number
+---@return number|nil start
+---@return number|nil duration
+---@return number|nil modRate
+local function ReadSpellCooldown(spellID)
+	if C_Spell and C_Spell.GetSpellCooldown then
+		local result = C_Spell.GetSpellCooldown(spellID)
+		if type(result) == 'table' then
+			return result.startTime or result.start, result.duration, result.modRate
+		else
+			-- Older tuple format
+			local start, duration, _, modRate = C_Spell.GetSpellCooldown(spellID)
+			return start, duration, modRate
+		end
+	end
+	if GetSpellCooldown then
+		local start, duration = GetSpellCooldown(spellID)
+		return start, duration, nil
+	end
+	return nil, nil, nil
+end
+
+---Check if a cooldown is currently active (handles secret values in 12.0+)
+---@param start number|nil
+---@param duration number|nil
+---@return boolean
+local function IsCooldownActive(start, duration)
+	if not start or not duration then
+		return false
+	end
+
+	-- Use pcall to safely handle "secret" cooldown values in 12.0+
+	local ok, result = pcall(function()
+		if duration == 0 or start == 0 then
+			return false
+		end
+		return true
+	end)
+
+	if not ok then
+		-- Comparison failed due to secret values, treat as active
+		return true
+	end
+
+	return result and true or false
+end
+
+-- ==================== MOUSE RING IMPLEMENTATION ====================
 
 ---Initialize the mouse ring frame
 function module:InitializeMouseRing()
@@ -67,7 +158,8 @@ function module:InitializeMouseRing()
 
 	-- Ring texture
 	mouseRingFrame.ring = mouseRingFrame:CreateTexture(nil, 'OVERLAY')
-	mouseRingFrame.ring:SetTexture('Interface\\AddOns\\SpartanUI\\images\\circle')
+	local DB = module:GetDB()
+	ApplyCircleStyle(mouseRingFrame.ring, DB.mouseRing.circleStyle or 1)
 	mouseRingFrame.ring:SetAllPoints()
 	mouseRingFrame.ring:SetBlendMode('ADD')
 
@@ -77,7 +169,62 @@ function module:InitializeMouseRing()
 	mouseRingFrame.dot:SetPoint('CENTER')
 	mouseRingFrame.dot:Hide()
 
+	-- GCD Cooldown overlay (uses Blizzard's CooldownFrameTemplate for swipe animation)
+	gcdCooldown = CreateFrame('Cooldown', 'SUI_MouseRing_GCD', mouseRingFrame, 'CooldownFrameTemplate')
+	gcdCooldown:SetAllPoints()
+	gcdCooldown:EnableMouse(false)
+	gcdCooldown:SetDrawSwipe(true)
+	gcdCooldown:SetDrawEdge(false)
+	gcdCooldown:SetHideCountdownNumbers(true)
+	if gcdCooldown.SetDrawBling then
+		gcdCooldown:SetDrawBling(false)
+	end
+	if gcdCooldown.SetUseCircularEdge then
+		gcdCooldown:SetUseCircularEdge(true)
+	end
+	gcdCooldown:SetFrameLevel(mouseRingFrame:GetFrameLevel() + 1)
+	gcdCooldown:Hide()
+
 	mouseRingFrame:Hide()
+end
+
+---Update GCD cooldown display
+function module:UpdateGCDCooldown()
+	local DB = module:GetDB()
+
+	if not gcdCooldown or not DB.mouseRing or not DB.mouseRing.gcdEnabled then
+		if gcdCooldown then
+			gcdCooldown:Hide()
+		end
+		return
+	end
+
+	local start, duration, modRate = ReadSpellCooldown(GCD_SPELL_ID)
+
+	if IsCooldownActive(start, duration) then
+		-- Set swipe color to match ring color
+		local r, g, b = GetEffectColor(DB.mouseRing.color)
+		gcdCooldown:SetSwipeColor(r, g, b, DB.mouseRing.gcdAlpha or 0.8)
+
+		-- Set swipe texture to match ring
+		if gcdCooldown.SetSwipeTexture then
+			gcdCooldown:SetSwipeTexture('Interface\\AddOns\\SpartanUI\\images\\circle')
+		end
+
+		-- Apply reverse setting
+		if gcdCooldown.SetReverse then
+			gcdCooldown:SetReverse(DB.mouseRing.gcdReverse or false)
+		end
+
+		gcdCooldown:Show()
+		if modRate then
+			gcdCooldown:SetCooldown(start, duration, modRate)
+		else
+			gcdCooldown:SetCooldown(start, duration)
+		end
+	else
+		gcdCooldown:Hide()
+	end
 end
 
 -- Mouse Trail Implementation (Object Pool Pattern)
@@ -90,7 +237,8 @@ local function CreateTrailElement()
 	element:SetFrameLevel(9998)
 
 	element.texture = element:CreateTexture(nil, 'OVERLAY')
-	element.texture:SetTexture('Interface\\AddOns\\SpartanUI\\images\\circle')
+	local DB = module:GetDB()
+	ApplyCircleStyle(element.texture, DB.mouseRing.circleStyle or 1)
 	element.texture:SetAllPoints()
 	element.texture:SetBlendMode('ADD')
 
@@ -218,7 +366,7 @@ end
 
 -- Public API
 
----Initialize mouse effects (called from UICleanup OnEnable)
+---Initialize mouse effects (called from UIEnhancements OnEnable)
 function module:InitializeMouseEffects()
 	module:InitializeMouseRing()
 	module:InitializeMouseTrail()
@@ -228,11 +376,24 @@ function module:InitializeMouseEffects()
 		updateFrame = CreateFrame('Frame')
 	end
 
-	-- Register combat events for combat-only mode
+	-- Register events
 	updateFrame:RegisterEvent('PLAYER_REGEN_DISABLED')
 	updateFrame:RegisterEvent('PLAYER_REGEN_ENABLED')
-	updateFrame:SetScript('OnEvent', function()
-		module:ApplyMouseEffectSettings()
+	updateFrame:RegisterEvent('SPELL_UPDATE_COOLDOWN')
+	updateFrame:RegisterEvent('ACTIONBAR_UPDATE_COOLDOWN')
+	if updateFrame.RegisterUnitEvent then
+		updateFrame:RegisterUnitEvent('UNIT_SPELLCAST_SUCCEEDED', 'player')
+	end
+
+	updateFrame:SetScript('OnEvent', function(_, event, unit, _, spellID)
+		if event == 'PLAYER_REGEN_DISABLED' or event == 'PLAYER_REGEN_ENABLED' then
+			module:ApplyMouseEffectSettings()
+		elseif event == 'SPELL_UPDATE_COOLDOWN' or event == 'ACTIONBAR_UPDATE_COOLDOWN' then
+			module:UpdateGCDCooldown()
+		elseif event == 'UNIT_SPELLCAST_SUCCEEDED' and unit == 'player' then
+			-- Update GCD based on the spell we just cast
+			module:UpdateGCDCooldown()
+		end
 	end)
 end
 
@@ -260,7 +421,7 @@ function module:ApplyMouseEffectSettings()
 	end
 end
 
----Restore mouse effects to default state (called from UICleanup OnDisable)
+---Restore mouse effects to default state (called from UIEnhancements OnDisable)
 function module:RestoreMouseEffects()
 	if updateFrame then
 		updateFrame:SetScript('OnUpdate', nil)

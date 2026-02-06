@@ -614,6 +614,15 @@ L['Next: %.1f XP | Final: %.1f XP'] = true
 L['M%d Progress: %.1f/%.1f (%.1f%%)'] = true
 L['Endeavor Contribution'] = true
 
+-- UI Enhancements
+L['UI Enhancements'] = true
+L['Loot Alerts'] = true
+
+-- Tooltip Upgrade Quality Icons
+L['Upgrade Quality Icons'] = true
+L['Show Upgrade Quality Icons'] = true
+L['Display quality tier icons next to item level for upgradeable items'] = true
+
 -- Mouse Effects
 L['Mouse Effects'] = true
 L['Mouse Ring'] = true
@@ -640,6 +649,13 @@ L['Size of the center dot in pixels'] = true
 L['Combat Only'] = true
 L['Only show the ring while in combat'] = true
 L['Only show the trail while in combat'] = true
+L['GCD Indicator'] = true
+L['Enable GCD Swipe'] = true
+L['Show a cooldown swipe on the ring during the global cooldown'] = true
+L['GCD Swipe Opacity'] = true
+L['Opacity of the GCD swipe overlay'] = true
+L['Reverse Swipe'] = true
+L['Swipe fills instead of emptying'] = true
 L['Trail Density'] = true
 L['How many trail elements to spawn'] = true
 L['Very Low'] = true
