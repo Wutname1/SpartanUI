@@ -61,6 +61,17 @@ local function IsModifierConditionMet(setting)
 	return false
 end
 
+-- Upgrade quality tier data for tooltip icons (Retail only)
+local UPGRADE_CATEGORY_DATA = {
+	[970] = { name = 'Explorer', tier = 1 },
+	[971] = { name = 'Adventurer', tier = 2 },
+	[972] = { name = 'Veteran', tier = 3 },
+	[973] = { name = 'Champion', tier = 4 },
+	[974] = { name = 'Hero', tier = 5 },
+	[978] = { name = 'Myth', tier = 5 },
+	[998] = { name = 'Awakened', tier = 5 },
+}
+
 local function SkinCompareHeader(tooltip)
 	if not tooltip.CompareHeader then
 		return
@@ -141,6 +152,9 @@ function module:OnInitialize()
 		SpellID = {
 			enabled = false,
 			modifierKey = 'NONE',
+		},
+		UpgradeQualityIcons = {
+			enabled = true,
 		},
 	}
 	module.Database = SUI.SpartanUIDB:RegisterNamespace('Tooltips', { profile = defaults })
@@ -428,6 +442,30 @@ local TooltipSetItem = function(tooltip, tooltipData)
 				local IDLine = '|cFFCA3C3C%s:|r %d'
 				tooltip:AddLine(string.format(IDLine, 'ID', tooltipData.id))
 				tooltip:Show()
+			end
+		end
+
+		-- Add upgrade quality icon if enabled (Retail only)
+		if SUI.IsRetail and module.DB and module.DB.UpgradeQualityIcons and module.DB.UpgradeQualityIcons.enabled then
+			if C_Item and C_Item.GetItemUpgradeInfo then
+				local upgradeInfo = C_Item.GetItemUpgradeInfo(itemLink)
+				if upgradeInfo and upgradeInfo.currTrack then
+					local categoryData = UPGRADE_CATEGORY_DATA[upgradeInfo.currTrack]
+					if categoryData and categoryData.tier then
+						local icon = CreateAtlasMarkup('Professions-Icon-Quality-Tier' .. categoryData.tier, 16, 16)
+						-- Find and modify the item level line
+						for i = 2, tooltip:NumLines() do
+							local line = _G[tooltip:GetName() .. 'TextLeft' .. i]
+							if line then
+								local text = line:GetText()
+								if text and text:find(ITEM_LEVEL:gsub('%%d', '%%d+')) then
+									line:SetText(icon .. ' ' .. text)
+									break
+								end
+							end
+						end
+					end
+				end
 			end
 		end
 	end
@@ -785,6 +823,30 @@ function module:BuildOptions()
 						disabled = function()
 							return not module.DB.SpellID.enabled
 						end,
+					},
+				},
+			},
+			upgradeQualityGroup = {
+				name = L['Upgrade Quality Icons'],
+				type = 'group',
+				order = 25,
+				inline = true,
+				hidden = function()
+					return not SUI.IsRetail
+				end,
+				get = function(info)
+					return module.DB.UpgradeQualityIcons[info[#info]]
+				end,
+				set = function(info, val)
+					module.DB.UpgradeQualityIcons[info[#info]] = val
+				end,
+				args = {
+					enabled = {
+						name = L['Show Upgrade Quality Icons'],
+						desc = L['Display quality tier icons next to item level for upgradeable items'],
+						type = 'toggle',
+						order = 1,
+						width = 'full',
 					},
 				},
 			},
