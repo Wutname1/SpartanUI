@@ -7,5 +7,6 @@
 	<Script file="StopTalking.lua" />
 	<Script file="DecorMerchant.lua" />
 	<Script file="LootAlertPopup.lua" />
+	<Script file="MouseEffects.lua" />
 	<Script file="Options.lua" />
 </Ui>

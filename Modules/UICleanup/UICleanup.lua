@@ -17,6 +17,25 @@ local DBDefaults = {
 	lootAlertChat = true,
 	lootAlertSound = false,
 	lootAlertSoundName = 'None',
+	-- Mouse Ring Settings
+	mouseRing = {
+		enabled = false,
+		size = 32,
+		alpha = 0.8,
+		color = { mode = 'class', r = 1, g = 1, b = 1 },
+		showCenterDot = false,
+		centerDotSize = 4,
+		combatOnly = false,
+	},
+	-- Mouse Trail Settings
+	mouseTrail = {
+		enabled = false,
+		density = 'medium',
+		size = 8,
+		alpha = 0.6,
+		color = { mode = 'class', r = 1, g = 1, b = 1 },
+		combatOnly = false,
+	},
 }
 
 local DB
@@ -57,6 +76,7 @@ function module:OnEnable()
 	module:InitializeStopTalking()
 	module:InitializeDecorMerchant()
 	module:InitializeLootAlertPopup()
+	module:InitializeMouseEffects()
 
 	-- Build options
 	module:BuildOptions()
@@ -68,6 +88,7 @@ end
 function module:ApplySettings()
 	module:ApplyErrorMessageSettings()
 	module:ApplyFrameHidingSettings()
+	module:ApplyMouseEffectSettings()
 end
 
 function module:OnDisable()
@@ -76,4 +97,5 @@ function module:OnDisable()
 	module:RestoreFrameHiding()
 	module:RestoreDecorMerchant()
 	module:RestoreLootAlertPopup()
+	module:RestoreMouseEffects()
 end

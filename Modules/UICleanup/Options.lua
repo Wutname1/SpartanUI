@@ -472,5 +472,284 @@ function module:BuildOptions()
 		buildStopTalkingList('whitelist', 'Whitelist')
 	end
 
+	-- Add Mouse Effects options
+	OptionTable.args.mouseEffects = {
+		type = 'group',
+		name = L['Mouse Effects'],
+		order = 3,
+		args = {
+			mouseRingHeader = {
+				type = 'header',
+				name = L['Mouse Ring'],
+				order = 1,
+			},
+			mouseRingEnabled = {
+				name = L['Enable Mouse Ring'],
+				desc = L['Show a ring around your cursor'],
+				type = 'toggle',
+				order = 2,
+				width = 'full',
+				get = function()
+					return DB.mouseRing.enabled
+				end,
+				set = function(_, val)
+					DB.mouseRing.enabled = val
+					module:ApplyMouseEffectSettings()
+				end,
+			},
+			mouseRingSize = {
+				name = L['Ring Size'],
+				desc = L['Size of the ring in pixels'],
+				type = 'range',
+				order = 3,
+				min = 16,
+				max = 64,
+				step = 1,
+				disabled = function()
+					return not DB.mouseRing.enabled
+				end,
+				get = function()
+					return DB.mouseRing.size
+				end,
+				set = function(_, val)
+					DB.mouseRing.size = val
+				end,
+			},
+			mouseRingAlpha = {
+				name = L['Ring Opacity'],
+				desc = L['Opacity of the ring'],
+				type = 'range',
+				order = 4,
+				min = 0.1,
+				max = 1.0,
+				step = 0.1,
+				disabled = function()
+					return not DB.mouseRing.enabled
+				end,
+				get = function()
+					return DB.mouseRing.alpha
+				end,
+				set = function(_, val)
+					DB.mouseRing.alpha = val
+				end,
+			},
+			mouseRingColorMode = {
+				name = L['Color Mode'],
+				desc = L['How to color the ring'],
+				type = 'select',
+				order = 5,
+				disabled = function()
+					return not DB.mouseRing.enabled
+				end,
+				values = {
+					class = L['Class Color'],
+					custom = L['Custom Color'],
+				},
+				get = function()
+					return DB.mouseRing.color.mode
+				end,
+				set = function(_, val)
+					DB.mouseRing.color.mode = val
+				end,
+			},
+			mouseRingColor = {
+				name = L['Custom Color'],
+				desc = L['Custom ring color'],
+				type = 'color',
+				order = 6,
+				disabled = function()
+					return not DB.mouseRing.enabled or DB.mouseRing.color.mode ~= 'custom'
+				end,
+				get = function()
+					return DB.mouseRing.color.r, DB.mouseRing.color.g, DB.mouseRing.color.b
+				end,
+				set = function(_, r, g, b)
+					DB.mouseRing.color.r = r
+					DB.mouseRing.color.g = g
+					DB.mouseRing.color.b = b
+				end,
+			},
+			mouseRingShowDot = {
+				name = L['Show Center Dot'],
+				desc = L['Show a small dot at the cursor center'],
+				type = 'toggle',
+				order = 7,
+				disabled = function()
+					return not DB.mouseRing.enabled
+				end,
+				get = function()
+					return DB.mouseRing.showCenterDot
+				end,
+				set = function(_, val)
+					DB.mouseRing.showCenterDot = val
+				end,
+			},
+			mouseRingDotSize = {
+				name = L['Center Dot Size'],
+				desc = L['Size of the center dot in pixels'],
+				type = 'range',
+				order = 8,
+				min = 2,
+				max = 12,
+				step = 1,
+				disabled = function()
+					return not DB.mouseRing.enabled or not DB.mouseRing.showCenterDot
+				end,
+				get = function()
+					return DB.mouseRing.centerDotSize
+				end,
+				set = function(_, val)
+					DB.mouseRing.centerDotSize = val
+				end,
+			},
+			mouseRingCombatOnly = {
+				name = L['Combat Only'],
+				desc = L['Only show the ring while in combat'],
+				type = 'toggle',
+				order = 9,
+				disabled = function()
+					return not DB.mouseRing.enabled
+				end,
+				get = function()
+					return DB.mouseRing.combatOnly
+				end,
+				set = function(_, val)
+					DB.mouseRing.combatOnly = val
+					module:ApplyMouseEffectSettings()
+				end,
+			},
+			mouseTrailHeader = {
+				type = 'header',
+				name = L['Mouse Trail'],
+				order = 20,
+			},
+			mouseTrailEnabled = {
+				name = L['Enable Mouse Trail'],
+				desc = L['Show a fading trail behind your cursor'],
+				type = 'toggle',
+				order = 21,
+				width = 'full',
+				get = function()
+					return DB.mouseTrail.enabled
+				end,
+				set = function(_, val)
+					DB.mouseTrail.enabled = val
+					module:ApplyMouseEffectSettings()
+				end,
+			},
+			mouseTrailDensity = {
+				name = L['Trail Density'],
+				desc = L['How many trail elements to spawn'],
+				type = 'select',
+				order = 22,
+				disabled = function()
+					return not DB.mouseTrail.enabled
+				end,
+				values = {
+					verylow = L['Very Low'],
+					low = L['Low'],
+					medium = L['Medium'],
+					high = L['High'],
+					veryhigh = L['Very High'],
+				},
+				sorting = { 'verylow', 'low', 'medium', 'high', 'veryhigh' },
+				get = function()
+					return DB.mouseTrail.density
+				end,
+				set = function(_, val)
+					DB.mouseTrail.density = val
+				end,
+			},
+			mouseTrailSize = {
+				name = L['Element Size'],
+				desc = L['Size of trail elements in pixels'],
+				type = 'range',
+				order = 23,
+				min = 4,
+				max = 16,
+				step = 1,
+				disabled = function()
+					return not DB.mouseTrail.enabled
+				end,
+				get = function()
+					return DB.mouseTrail.size
+				end,
+				set = function(_, val)
+					DB.mouseTrail.size = val
+				end,
+			},
+			mouseTrailAlpha = {
+				name = L['Trail Opacity'],
+				desc = L['Starting opacity of trail elements'],
+				type = 'range',
+				order = 24,
+				min = 0.1,
+				max = 1.0,
+				step = 0.1,
+				disabled = function()
+					return not DB.mouseTrail.enabled
+				end,
+				get = function()
+					return DB.mouseTrail.alpha
+				end,
+				set = function(_, val)
+					DB.mouseTrail.alpha = val
+				end,
+			},
+			mouseTrailColorMode = {
+				name = L['Color Mode'],
+				desc = L['How to color the trail'],
+				type = 'select',
+				order = 25,
+				disabled = function()
+					return not DB.mouseTrail.enabled
+				end,
+				values = {
+					class = L['Class Color'],
+					custom = L['Custom Color'],
+				},
+				get = function()
+					return DB.mouseTrail.color.mode
+				end,
+				set = function(_, val)
+					DB.mouseTrail.color.mode = val
+				end,
+			},
+			mouseTrailColor = {
+				name = L['Custom Color'],
+				desc = L['Custom trail color'],
+				type = 'color',
+				order = 26,
+				disabled = function()
+					return not DB.mouseTrail.enabled or DB.mouseTrail.color.mode ~= 'custom'
+				end,
+				get = function()
+					return DB.mouseTrail.color.r, DB.mouseTrail.color.g, DB.mouseTrail.color.b
+				end,
+				set = function(_, r, g, b)
+					DB.mouseTrail.color.r = r
+					DB.mouseTrail.color.g = g
+					DB.mouseTrail.color.b = b
+				end,
+			},
+			mouseTrailCombatOnly = {
+				name = L['Combat Only'],
+				desc = L['Only show the trail while in combat'],
+				type = 'toggle',
+				order = 27,
+				disabled = function()
+					return not DB.mouseTrail.enabled
+				end,
+				get = function()
+					return DB.mouseTrail.combatOnly
+				end,
+				set = function(_, val)
+					DB.mouseTrail.combatOnly = val
+					module:ApplyMouseEffectSettings()
+				end,
+			},
+		},
+	}
+
 	SUI.Options:AddOptions(OptionTable, 'UICleanup')
 end
