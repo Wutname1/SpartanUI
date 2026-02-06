@@ -532,7 +532,11 @@ local TooltipSetUnit = function(self, data)
 			end
 			GameTooltipTextLeft2:SetText(('|cff008000%s|r'):format(gName))
 
-			local iLvl = ilvlTempData[uName .. '-' .. (uRealm or GetRealmName())] or C_PaperDollInfo.GetInspectItemLevel('mouseover')
+			-- GetInspectItemLevel is only available in Mainline/Retail
+			local iLvl = ilvlTempData[uName .. '-' .. (uRealm or GetRealmName())]
+			if not iLvl and C_PaperDollInfo and C_PaperDollInfo.GetInspectItemLevel then
+				iLvl = C_PaperDollInfo.GetInspectItemLevel('mouseover')
+			end
 			if iLvl == 0 then
 				NotifyInspect('mouseover')
 			elseif iLvl then
@@ -660,9 +664,12 @@ end
 function module:INSPECT_READY()
 	if UnitIsPlayer('mouseover') then
 		local uName, uRealm = UnitName('mouseover')
-		local ilvl = C_PaperDollInfo.GetInspectItemLevel('mouseover')
-		if ilvl ~= 0 then
-			ilvlTempData[uName .. '-' .. (uRealm or GetRealmName())] = ilvl
+		-- GetInspectItemLevel is only available in Mainline/Retail
+		if C_PaperDollInfo and C_PaperDollInfo.GetInspectItemLevel then
+			local ilvl = C_PaperDollInfo.GetInspectItemLevel('mouseover')
+			if ilvl ~= 0 then
+				ilvlTempData[uName .. '-' .. (uRealm or GetRealmName())] = ilvl
+			end
 		end
 	end
 end
