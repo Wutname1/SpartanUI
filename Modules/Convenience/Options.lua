@@ -53,6 +53,32 @@ function module:BuildOptions()
 					DB.autoReleaseInPvP = val
 				end,
 			},
+			tweaksHeader = {
+				name = 'Game Tweaks',
+				type = 'header',
+				order = 10,
+			},
+			tweaksDesc = {
+				name = 'These settings adjust game CVars. They are normally applied during first-run setup but can be re-applied here.',
+				type = 'description',
+				order = 11,
+				fontSize = 'medium',
+				width = 'full',
+			},
+			applyTweaks = {
+				name = 'Apply Recommended Tweaks',
+				desc = 'Disables personal nameplate, enables all nameplates, and disables all tutorials',
+				type = 'execute',
+				order = 12,
+				width = 'full',
+				func = function()
+					SetCVar('nameplateShowSelf', 0)
+					SetCVar('nameplateShowAll', 1)
+					SetCVar('nameplateMotion', 0)
+					SetCVar('showTutorials', 0)
+					SUI:Print('Recommended game tweaks applied.')
+				end,
+			},
 		},
 	}
 

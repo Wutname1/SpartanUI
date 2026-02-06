@@ -161,25 +161,32 @@ enabled = false                           # Don't auto-sort require statements
 
 **IMPORTANT**: Always use the Libs-AddonTools Logger system for debug output and testing. Never use `print()` statements.
 
-- **Logger Integration**: See [Libs-AddonTools Logger Documentation](Libs-AddonTools/Logger-TechDoc.md) for complete integration guide
-- **Registration**: Register your addon during initialization using `LibAT.Logger.RegisterAddon(addonName)`
+- **SpartanUI Logger**: SUI registers a top-level logger as `SUI.logger` in `Core/Framework.lua`
+- **Module Logging**: Each module should register a category via `SUI.logger:RegisterCategory(moduleName)` — this creates a subcategory under "SpartanUI" in the `/logs` UI
 - **Usage**: Use logger functions with appropriate log levels (debug, info, warning, error, critical)
 - **Access Logs**: Use `/logs` in-game to view all logged output in a searchable UI
 - **Why**: Print statements overflow the chat window and make debugging difficult. The logger provides persistent, searchable, filterable output.
 
-**Example:**
+**Module Logger Setup (required pattern):**
 
 ```lua
--- In main addon file
-if LibAT and LibAT.Logger then
-    MyAddon.logger = LibAT.Logger.RegisterAddon('MyAddon')
+-- In OnInitialize, register a category under SUI's logger
+function module:OnInitialize()
+    -- ... DB setup ...
+    if SUI.logger then
+        module.logger = SUI.logger:RegisterCategory('ModuleName')
+    end
 end
 
--- Throughout your code
-MyAddon.logger.info("System initialized")
-MyAddon.logger.debug("Debug value: " .. tostring(value))
-MyAddon.logger.warning("Warning: deprecated function called")
+-- Throughout your module code
+if module.logger then
+    module.logger.info('System initialized')
+    module.logger.debug('Debug value: ' .. tostring(value))
+    module.logger.warning('Deprecated function called')
+end
 ```
+
+**Do NOT use** `LibAT.Logger.RegisterAddon()` directly in SpartanUI modules — that creates a separate top-level addon entry. Always use `SUI.logger:RegisterCategory()` to keep logs organized under the SpartanUI hierarchy.
 
 ### Configuration System
 

@@ -3,4 +3,5 @@
 ..\..\FrameXML\UI.xsd">
 	<Script file="Convenience.lua" />
 	<Script file="Options.lua" />
+	<Script file="WizardPage.lua" />
 </Ui>

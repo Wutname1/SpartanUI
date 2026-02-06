@@ -18,6 +18,8 @@ function module:OnInitialize()
 	module.Database = SUI.SpartanUIDB:RegisterNamespace('Convenience', { profile = DBDefaults })
 	DB = module.Database.profile
 	module.DB = DB
+
+	module:SetupWizard()
 end
 
 function module:GetDB()
