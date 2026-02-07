@@ -242,6 +242,18 @@ function oUF:DisableBlizzard(unit)
 					CompactRaidFrameContainer.selectionIndicator:Hide()
 					CompactRaidFrameContainer.selectionIndicator:SetAlpha(0)
 				end
+
+				-- Disable the ApplyToFrames and ApplyMultipleToFrames methods to prevent Edit Mode
+				-- from trying to update unit frames we've disabled
+				CompactRaidFrameContainer.ApplyToFrames = function()
+					-- No-op: SpartanUI controls raid frames
+				end
+				CompactRaidFrameContainer.ApplyMultipleToFrames = function()
+					-- No-op: SpartanUI controls raid frames
+				end
+
+				-- Disable the OnEvent script to prevent Edit Mode callbacks
+				CompactRaidFrameContainer:SetScript('OnEvent', nil)
 			end
 		end
 	elseif unit:match('arena%d?$') then

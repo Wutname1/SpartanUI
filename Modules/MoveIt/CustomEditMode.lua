@@ -478,8 +478,17 @@ end
 if EditModeManagerFrame and EditModeManagerFrame.EnterEditMode then
 	-- Use Blizzard's EditMode button to toggle our custom system
 	hooksecurefunc(EditModeManagerFrame, 'EnterEditMode', function()
-		-- Don't use Blizzard's EditMode, use ours
-		if not CustomEditMode:IsActive() then
+		local isActive = EditModeManagerFrame:IsEditModeActive()
+		local isCustomActive = CustomEditMode:IsActive()
+		local isMigrating = MoveIt.WizardPage and MoveIt.WizardPage:IsMigrationInProgress()
+		if MoveIt.logger then
+			MoveIt.logger.debug(
+				('EnterEditMode hook fired - IsEditModeActive: %s, CustomEditMode active: %s, IsMigrating: %s'):format(tostring(isActive), tostring(isCustomActive), tostring(isMigrating))
+			)
+		end
+		-- Only enter custom edit mode if Edit Mode is actually active AND not during migration/wizard
+		-- During wizard, LibEMO:ApplyChanges() enters Edit Mode programmatically
+		if isActive and not isCustomActive and not isMigrating then
 			CustomEditMode:Enter()
 		end
 	end)

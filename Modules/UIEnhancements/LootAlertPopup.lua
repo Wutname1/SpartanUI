@@ -742,11 +742,19 @@ local function LootAlertFrame_OnClick(frame, button)
 end
 
 local function LootAlertFrame_OnHide(frame)
-	-- Prevent hiding if we have an active upgrade timer
+	-- Clean up the upgrade timer if it's still running
+	-- We cannot call frame:Show() here because Blizzard's OnFrameHide already
+	-- released the frame back to the alert pool. Re-showing it would cause
+	-- "Attempted to release inactive object" on the next hide cycle.
 	if frame.__suiUpgradeHideTimer then
-		-- Timer is still running, keep the alert visible
-		frame:Show()
-		return
+		frame.__suiUpgradeHideTimer:Cancel()
+		frame.__suiUpgradeHideTimer = nil
+	end
+
+	-- Hide the upgrade badge so it doesn't persist when the frame is reused
+	if frame.__suiUpgradeBadge then
+		frame.__suiUpgradeBadge:Hide()
+		frame.__suiUpgradeBadge.glowAnim:Stop()
 	end
 
 	if GetOwner() == frame then

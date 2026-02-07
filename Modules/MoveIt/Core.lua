@@ -188,6 +188,12 @@ function MoveIt:UnlockAll()
 		return
 	end
 
+	-- Debug logging to trace who's calling UnlockAll
+	if MoveIt.logger then
+		local stack = debugstack(2, 2, 0) -- Get caller stack
+		MoveIt.logger.debug('UnlockAll called from: ' .. (stack or 'unknown'))
+	end
+
 	for _, v in pairs(self.MoverList) do
 		v:Show()
 	end
@@ -301,10 +307,26 @@ function MoveIt:OnInitialize()
 	-- Note: HasEditMode() may not be accurate yet (logger not ready), so check basics here
 	if EditModeManagerFrame and type(EditModeManagerFrame.EnterEditMode) == 'function' and EventRegistry then
 		EventRegistry:RegisterCallback('EditMode.Enter', function()
-			self:UnlockAll()
+			local isActive = EditModeManagerFrame:IsEditModeActive()
+			local isMigrating = MoveIt.WizardPage and MoveIt.WizardPage:IsMigrationInProgress()
+			if MoveIt.logger then
+				MoveIt.logger.debug(('EditMode.Enter callback fired - IsEditModeActive: %s, IsMigrating: %s'):format(tostring(isActive), tostring(isMigrating)))
+			end
+			-- Only unlock movers if Edit Mode is actually active AND not during migration/wizard
+			-- During wizard, LibEMO:ApplyChanges() enters Edit Mode programmatically
+			if isActive and not isMigrating then
+				self:UnlockAll()
+			end
 		end)
 		EventRegistry:RegisterCallback('EditMode.Exit', function()
-			self:LockAll()
+			if MoveIt.logger then
+				MoveIt.logger.debug('EditMode.Exit callback fired')
+			end
+			-- Small delay to ensure Edit Mode fully exits and all frames are properly hidden
+			-- This prevents race conditions with Blizzard's Edit Mode checkbox toggles
+			C_Timer.After(0.1, function()
+				self:LockAll()
+			end)
 		end)
 	end
 end

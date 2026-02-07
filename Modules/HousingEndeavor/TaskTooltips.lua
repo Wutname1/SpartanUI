@@ -94,11 +94,12 @@ local function HasContributionLine(tooltip)
 	for i = 1, tooltip:NumLines() do
 		local line = _G[tooltipName .. 'TextLeft' .. i]
 		if line then
-			local success, text = pcall(function()
-				return line:GetText()
-			end)
-			if success and text and type(text) == 'string' and text:find('Endeavor Contribution') then
-				return true
+			local text = line:GetText()
+			-- Validate the value is accessible (not a secret value)
+			if text and SUI.BlizzAPI.canaccessvalue(text) and type(text) == 'string' then
+				if text:find('Endeavor Contribution') then
+					return true
+				end
 			end
 		end
 	end
@@ -132,7 +133,8 @@ local function EnhanceTaskTooltip(tooltip)
 		local line = _G[tooltipName .. 'TextLeft' .. i]
 		if line then
 			local text = line:GetText()
-			if text then
+			-- Validate the value is accessible (not a secret value)
+			if text and SUI.BlizzAPI.canaccessvalue(text) and type(text) == 'string' then
 				-- Check against task names
 				for taskName, xpAmount in pairs(taskMap) do
 					if text == taskName or text:find(taskName, 1, true) then
