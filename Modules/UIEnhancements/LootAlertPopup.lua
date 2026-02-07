@@ -90,8 +90,6 @@ local function GetItemLevel(itemLink)
 	local itemLevel = nil
 	if C_Item and C_Item.GetDetailedItemLevelInfo then
 		itemLevel = C_Item.GetDetailedItemLevelInfo(itemLink)
-	elseif GetDetailedItemLevelInfo then
-		itemLevel = GetDetailedItemLevelInfo(itemLink)
 	end
 
 	if type(itemLevel) ~= 'number' then
