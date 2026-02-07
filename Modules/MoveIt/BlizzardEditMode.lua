@@ -77,6 +77,7 @@ function BlizzardEditMode:Initialize()
 		self:SetupBlizzardFrames(LibEMO)
 		self:StartLayoutMonitoring()
 		self:RegisterEditModeExitHandler()
+		self:MonitorPartyRaidCheckboxes()
 	else
 		-- Hook into ready event
 		local frame = CreateFrame('Frame')
@@ -86,6 +87,7 @@ function BlizzardEditMode:Initialize()
 				BlizzardEditMode:SetupBlizzardFrames(LibEMO)
 				BlizzardEditMode:StartLayoutMonitoring()
 				BlizzardEditMode:RegisterEditModeExitHandler()
+				BlizzardEditMode:MonitorPartyRaidCheckboxes()
 				self:UnregisterAllEvents()
 			end
 		end)
@@ -227,6 +229,86 @@ function BlizzardEditMode:StartLayoutMonitoring()
 
 	-- Hook EditModePresetLayoutManager to override what Blizzard considers "default" positions
 	self:HookDefaultPositions()
+end
+
+---Monitor and override Edit Mode party/raid checkbox changes
+---Ensures Blizzard frames stay hidden even when Edit Mode tries to show them
+function BlizzardEditMode:MonitorPartyRaidCheckboxes()
+	if not EditModeManagerFrame then
+		return
+	end
+
+	-- Hook the party/raid checkbox callbacks
+	local accountSettings = EditModeManagerFrame.AccountSettings
+	if not accountSettings then
+		return
+	end
+
+	-- Completely replace SetPartyFramesShown to prevent protected function calls
+	-- The original function calls TargetUnit() which is protected and causes taint
+	accountSettings.SetPartyFramesShown = function(self, shown, isUserInput)
+		-- Update the account setting if this was triggered by user input
+		if isUserInput then
+			EditModeManagerFrame:OnAccountSettingChanged(Enum.EditModeAccountSetting.ShowPartyFrames, shown)
+		else
+			-- Programmatic call - just update the checkbox state
+			self.settingsCheckButtons.PartyFrames:SetControlChecked(shown)
+		end
+
+		-- Force hide Blizzard frames regardless of checkbox state
+		-- Do NOT call RefreshPartyFrames or interact with Blizzard frames at all
+		if MoveIt.logger then
+			MoveIt.logger.debug('Edit Mode party checkbox toggled - SpartanUI frames control visibility')
+		end
+	end
+
+	-- Completely replace SetRaidFramesShown to prevent protected function calls
+	-- The original function tries to update CompactRaidFrameContainer which we've disabled
+	accountSettings.SetRaidFramesShown = function(self, shown, isUserInput)
+		-- Update the account setting if this was triggered by user input
+		if isUserInput then
+			EditModeManagerFrame:OnAccountSettingChanged(Enum.EditModeAccountSetting.ShowRaidFrames, shown)
+		else
+			-- Programmatic call - just update the checkbox state
+			self.settingsCheckButtons.RaidFrames:SetControlChecked(shown)
+		end
+
+		-- Force hide Blizzard frames regardless of checkbox state
+		-- Do NOT call RefreshRaidFrames or interact with Blizzard frames at all
+		if MoveIt.logger then
+			MoveIt.logger.debug('Edit Mode raid checkbox toggled - SpartanUI frames control visibility')
+		end
+	end
+
+	-- Replace RefreshPartyFrames to prevent interaction with Blizzard frames
+	accountSettings.RefreshPartyFrames = function(self)
+		-- Do nothing - SpartanUI controls party frames
+		if MoveIt.logger then
+			MoveIt.logger.debug('RefreshPartyFrames called - no-op (SpartanUI controls party frames)')
+		end
+	end
+
+	-- Replace RefreshRaidFrames to prevent interaction with Blizzard frames
+	accountSettings.RefreshRaidFrames = function(self)
+		-- Do nothing - SpartanUI controls raid frames
+		if MoveIt.logger then
+			MoveIt.logger.debug('RefreshRaidFrames called - no-op (SpartanUI controls raid frames)')
+		end
+	end
+
+	-- Replace ResetPartyFrames to prevent interaction with Blizzard frames
+	accountSettings.ResetPartyFrames = function(self)
+		-- Do nothing - SpartanUI controls party frames
+	end
+
+	-- Replace ResetRaidFrames to prevent interaction with Blizzard frames
+	accountSettings.ResetRaidFrames = function(self)
+		-- Do nothing - SpartanUI controls raid frames
+	end
+
+	if MoveIt.logger then
+		MoveIt.logger.info('Overrode Edit Mode party/raid frame functions to prevent Blizzard frame interaction')
+	end
 end
 
 ---Hook EditModePresetLayoutManager to override default positions
@@ -657,6 +739,33 @@ function BlizzardEditMode:RegisterEditModeExitHandler()
 				C_Timer.After(0.5, function()
 					self:ShowManualSwitchPopup()
 				end)
+			end
+
+			-- Re-hide Blizzard frames when exiting Edit Mode
+			-- This ensures they stay hidden even if Edit Mode tried to show them
+			if not InCombatLockdown() then
+				pcall(function()
+					if PartyFrame then
+						PartyFrame:Hide()
+						PartyFrame:SetAlpha(0)
+					end
+					if CompactPartyFrame then
+						CompactPartyFrame:Hide()
+						CompactPartyFrame:SetAlpha(0)
+					end
+					if CompactRaidFrameManager then
+						CompactRaidFrameManager:Hide()
+						CompactRaidFrameManager:SetAlpha(0)
+					end
+					if CompactRaidFrameContainer then
+						CompactRaidFrameContainer:Hide()
+						CompactRaidFrameContainer:SetAlpha(0)
+					end
+				end)
+
+				if MoveIt.logger then
+					MoveIt.logger.debug('Edit Mode exited - re-confirmed Blizzard frame hiding')
+				end
 			end
 		end)
 		self.editModeExitRegistered = true
