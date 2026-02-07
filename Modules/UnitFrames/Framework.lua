@@ -257,6 +257,39 @@ function UF:OnEnable()
 		end)
 	end
 
+	-- Ensure Blizzard party/raid frames stay hidden even after roster updates
+	-- This is a safety measure in case other addons or Blizzard code tries to re-show the frames
+	local function EnsureBlizzardFramesHidden()
+		if not InCombatLockdown() then
+			pcall(function()
+				if PartyFrame then
+					PartyFrame:Hide()
+					PartyFrame:SetAlpha(0)
+				end
+				if CompactPartyFrame then
+					CompactPartyFrame:Hide()
+					CompactPartyFrame:SetAlpha(0)
+				end
+				if CompactRaidFrameManager then
+					CompactRaidFrameManager:Hide()
+					CompactRaidFrameManager:SetAlpha(0)
+				end
+				if CompactRaidFrameContainer then
+					CompactRaidFrameContainer:Hide()
+					CompactRaidFrameContainer:SetAlpha(0)
+				end
+			end)
+		end
+	end
+
+	-- Register GROUP_ROSTER_UPDATE on our own watcher to re-hide frames
+	-- (in case other code tries to show them)
+	local RosterWatcher = CreateFrame('Frame')
+	RosterWatcher:SetScript('OnEvent', function()
+		C_Timer.After(0.1, EnsureBlizzardFramesHidden) -- Small delay to let other code finish
+	end)
+	RosterWatcher:RegisterEvent('GROUP_ROSTER_UPDATE')
+
 	SUI:AddChatCommand('BuffDebug', function(args)
 		local unit, spellId = strsplit(' ', args)
 

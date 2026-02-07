@@ -27,7 +27,7 @@ local function resetParent(self, parent)
 	end
 end
 
-local function handleFrame(baseName, doNotReparent)
+local function handleFrame(baseName, doNotReparent, hookShow)
 	local frame
 	if type(baseName) == 'string' then
 		frame = _G[baseName]
@@ -47,6 +47,15 @@ local function handleFrame(baseName, doNotReparent)
 
 				hookedFrames[frame] = true
 			end
+		end
+
+		-- Hook Show() to prevent Blizzard from showing the frame again
+		-- This is crucial for TBC where GROUP_ROSTER_UPDATE can re-show frames
+		if hookShow and not frame.__showHooked then
+			hooksecurefunc(frame, 'Show', function(self)
+				self:Hide()
+			end)
+			frame.__showHooked = true
 		end
 
 		local health = frame.healthBar or frame.healthbar or frame.HealthBar
@@ -138,21 +147,22 @@ function oUF:DisableBlizzard(unit)
 			isPartyHooked = true
 
 			-- Handle old party frames (pre-Edit Mode)
+			-- Hook Show() to prevent GROUP_ROSTER_UPDATE from re-showing them
 			for i = 1, MAX_PARTY_MEMBERS do
-				handleFrame(string.format('PartyMemberFrame%d', i))
+				handleFrame(string.format('PartyMemberFrame%d', i), false, true)
 			end
 
 			-- Handle Edit Mode party frames (TBC+ with Edit Mode backport)
 			-- CompactPartyFrame is the new party frame system that uses Edit Mode
 			if CompactPartyFrame then
-				handleFrame(CompactPartyFrame)
+				handleFrame(CompactPartyFrame, false, true)
 			end
 
 			-- Disable CompactPartyFrameMember frames (used in Edit Mode)
 			-- Only attempt this if CompactPartyFrameMember1 exists
 			if _G['CompactPartyFrameMember1'] then
 				for i = 1, MEMBERS_PER_RAID_GROUP do
-					handleFrame('CompactPartyFrameMember' .. i)
+					handleFrame('CompactPartyFrameMember' .. i, false, true)
 				end
 			end
 
@@ -161,6 +171,10 @@ function oUF:DisableBlizzard(unit)
 			if CompactRaidFrameManager_SetSetting then
 				CompactRaidFrameManager_SetSetting('IsShown', '0')
 			end
+
+			-- Unregister GROUP_ROSTER_UPDATE from UIParent to prevent party frame updates
+			-- This event constantly triggers party frame visibility updates in TBC
+			UIParent:UnregisterEvent('GROUP_ROSTER_UPDATE')
 		end
 	elseif unit:match('arena%d?$') then
 		local id = unit:match('arena(%d)')

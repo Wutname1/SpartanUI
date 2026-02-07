@@ -1223,7 +1223,17 @@
     "GeneralDockManager",
     "FCF_GetCurrentChatFrame",
     "StaticPopup_ForEachShownDialog",
-    "QuestMapFrame"
+    "QuestMapFrame",
+    "EXPANSION_NAME4",
+    "EXPANSION_NAME3",
+    "EXPANSION_NAME2",
+    "EXPANSION_NAME1",
+    "EXPANSION_NAME0",
+    "CompactRaidFrameManager_SetSetting",
+    "SpellBookFrame",
+    "MapCanvasPinMixin",
+    "MapCanvasDataProviderMixin",
+    "CreateUnsecuredRegionPoolInstance"
   ],
   "Lua.workspace.ignoreDir": [".vscode", "libs/*"],
   "Lua.diagnostics.enable": true,

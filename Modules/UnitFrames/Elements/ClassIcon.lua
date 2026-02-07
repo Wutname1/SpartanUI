@@ -119,7 +119,7 @@ do -- ClassIcon as an SUIUF module
 				return
 			end
 
-			local path = 'Interface\\AddOns\\SpartanUI\\images\\flat_classicons\\' .. (string.lower(class))
+			local path = 'Interface\\AddOns\\SpartanUI\\images\\flat_classicons\\' .. (string.lower(class)) .. '.blp'
 
 			if class then
 				-- local coords = ClassIconCoord[class or 'DEFAULT']
